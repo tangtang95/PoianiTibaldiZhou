@@ -1,5 +1,5 @@
-
-# Created by https://www.gitignore.io/api/latex
+#PERSONAL
+*.DS_STORE
 
 ### LaTeX ###
 ## Core latex/pdflatex auxiliary files:
