@@ -1,31 +1,53 @@
-\documentclass[11pt, a4paper]{article}
+\documentclass[a4paper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[italian]{babel}
-\usepackage{lmodern,textcomp}
+\usepackage[english]{babel}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage[table,xcdraw]{xcolor}
-
-
-\graphicspath{ {Images/}}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\graphicspath{ {images/} }
+% !TeX spellcheck = en_US
+\makeindex
 
 \begin{document}
-
-\author{Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou }
-\title{TrackMe: RASD}
-\date{Ottobre 2018}
+\title{Progetto di ingegneria del software (5 CFU) 2017/2018}
+\author{
+        Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou \\
+        Politecnico di Milano\\  
+}
 \maketitle
-
-
-
+\newpage
 \tableofcontents
+\addcontentsline{toc}{section}{References}
+\newpage
 
 \input{introduction}
+
+\newpage
+
 \input{description}
+
+\newpage
+
 \input{requirement}
+
+\newpage
+
 \input{alloy}
+
+\newpage
+
 \input{effort}
+
+\newpage
+
 \input{references}
+
+% Add eventual bib here
+%\bibitem
+
+%\end{thebibliography}
 
 \end{document}
