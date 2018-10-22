@@ -16,6 +16,12 @@ one sig RequestAccepted extends RequestStatus{}
 one sig RequestRefused extends RequestStatus{}
 one sig RequestExpired extends RequestStatus{}
 
+abstract sig CallStatus{}
+one sig CallRequested extends CallStatus{}
+one sig CallAccepted extends CallStatus{}
+one sig CallRefused extends CallStatus{}
+one sig CallCancelled extends CallStatus{}
+
 /* Actors */
 abstract sig Actor{}
 
@@ -62,6 +68,7 @@ sig IndividualRequest extends Request{
 }
 
 sig SOSCall{
+  status: one CallStatus
   destinatedTo: one EmergencyInstitution
 }
 
@@ -70,7 +77,7 @@ fact DataBelongOnlyToOneUser{
   all disjoint u1, u2: User | all  d: Data | d in u1.userData implies d not in u2.userData
 }
 
-/* Help Function */
+/* Help Function and Predicate */
 fun getPeopleInvolved [d: set Data] : set User{
   userData.d
 }

@@ -1,6 +1,6 @@
 \subsection{Purpose}
 \par
-The Data4Help system is designed as a distribute software application which can be installed on smartwatches, smartrings and smartphones that dispose of a NFC sensor and a GPS system inside for monitoring the position and the health of the owner. This application is thought for all people that want to keep under control their health during the day or who want to always know the position and the status of health status of a particular person in the world. Indeed, with this system a third party user can send a request to access data of some specific user, by means of his social security number: if the receiver agrees, it is possible to see in real time the last information registered about that person. The service supports the registration of individual who, by signing in, agrees that the company TrackMe acquires their data, which will be used anonymously by third parties for making statistics on groups of people.
+The Data4Help system is designed as a distributed software application which demands the usage of  smartwatches, smartrings and smartphones that dispose of a NFC sensor and a GPS system inside for monitoring the position and the health of the owner. This application is thought for all people that want to keep under control their health during the day or who want to always know the position and the status of health status of a particular person in the world. Indeed, with this system a third party user can send a request to access data of some specific user, by means of his social security number: if the receiver agrees, it is possible to see in real time the last information registered about that person. The service supports the registration of individual who, by signing in, agrees that the company TrackMe acquires their data, which will be used anonymously by third parties for making statistics on groups of people.
 \par 
 Furthermore, in addition to the previous features, an AutomatedSOS service is available. It is thought for people that have serious health problems and, in case of illnesses (i.e. some parameters observed below the threshold), the system contacts, within 5 seconds, an ambulance. Secondly, the Track4Run service is also available. It is developed for organizers of sport events that want to monitor the runners in a race. The service allows organizers to define the path of a run, participants to enroll in the run, and spectators to see the exact position of all runners during the run on a map. \\
 
@@ -8,18 +8,16 @@ Furthermore, in addition to the previous features, an AutomatedSOS service is av
 The goals can be distinguished into two families: the former regarding the users, and the latter regarding the third part customers.\\
 The ones regarding the subscribed users, are the followings:
 \begin{enumerate}
-\item[{[G1]}] Allow a subscribed user to view his location and health status data 
-\item[{[G2]}] Allow a subscribed user to share his location and health status to third parties of his choice
-\item[{[G3]}] Once the health parameters of a subscribed user have been observed 
+\item[{[G1]}] Once the health parameters of a subscribed user have been observed 
 below the threshold, an ambulance is sent to the user location. (requires further specifications and assumptions: e.g. who owns the ambulances?)
-\item[{[G4]}] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
-\item[{[G5]}] Allow a subscribed user to enroll in a run, as athlete
-\item[{[G6]}] Allow spectators too see on a map the positions of all athletes taking part in a run
-\item[{[G7]}] Allow an organizer to set up a run, by defining its path
+\item[{[G2]}] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
+\item[{[G3]}] Allow a subscribed user to enroll in a run, as athlete
+\item[{[G4]}] Allow spectators too see on a map the positions of all athletes taking part in a run
+\item[{[G5]}] Allow an organizer to set up a run, by defining its path
 \end{enumerate}
 The goals of the project, regarding the third part customers, are the followings:
 \begin{enumerate}
-\item[{[G8]}] Allow a third party to access the data on a certain individual, only if he accepts. This is satisfied as soon as the request is approved
-\item[{[G9]}] Allow a third party to access statistical and anonymized data only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
-\item[{[G10]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
+\item[{[G6]}] Allow a third party to access the data on a certain individual if only if he accepts. This is satisfied as soon as the request is approved
+\item[{[G7]}] Allow a third party to access statistical and anonymized data if only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
+\item[{[G8]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
 \end{enumerate}
