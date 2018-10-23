@@ -1,0 +1,40 @@
+\subsection{Functional requirements}
+\par
+The functional requirements will be listed with different way:
+\begin{itemize}
+\item Some will be called core requirements, which satisfy more or less every goals in a simple way (e.g. registration, log-in, ...)
+\item Other requirements are listed together with the goal which they satisfy
+\end{itemize}
+
+\subsubsection{Core requirements}
+\par
+The following requirements are, principally, about registration:
+\begin{itemize}
+\item[{[R1]}] Allow a person to register into the system as a user by providing an username, a passowrd, credentials and a consensus on an agreement
+\item[{[R2]}] Allow a person or company to register into the system as a third party by providing an e-mail, a password, credentials and a consensus on an agreement
+\item[{[R3]}] A person cannot register as a user by inserting a username already used by someone else
+\item[{[R4]}] A person or company cannot register as a third party by inserting an e-mail already used by someone else
+\item[{[R5]}] A person cannot register as user more than once into the system by using the same credentials
+\item[{[R6]}] A person or company cannot register as third party more than once into the system by using the same credentials
+\end{itemize}
+\par
+After the registration, another essential functionality of the system is to log-in:
+\begin{itemize}
+\item[{[R7]}] Allow a person to log into the system as a user only if he has already registered as such
+\item[{[R8]}] Allow a person or company to log into the system as a third party only if he has already registered as such
+\end{itemize}
+
+\subsubsection{Goal reaching requirements}
+\par
+In this section, each requirement is necessary to satisfy specific goals of the system:
+\begin{itemize}
+\item[{[G1]}] Once the health parameters of a subscribed user have been observed below the threshold, an ambulance is sent to the user location & [G2] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
+	\begin{itemize}
+	\item[{[R9]}] When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
+	\item[{[R10]}] An SOSCall can be requested only every minute
+	\item[{[R11]}] An SOSCall is blocked if a previous one has already been accepted within 4 hours 
+	\item[{[R12]}] An SOSCall are implemented as automated calls by using an external service
+	\end{itemize}
+
+\item[{[G1]}] 
+\end{itemize}
