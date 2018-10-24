@@ -10,7 +10,7 @@ The functional requirements will be listed with different way:
 \par
 The following requirements are, principally, about registration:
 \begin{itemize}
-\item[{[R1]}] Allow a person to register into the system as a user by providing an username, a passowrd, credentials and a consensus on an agreement
+\item[{[R1]}] Allow a person to register into the system as a user by providing an username, a password, credentials and a consensus on an agreement
 \item[{[R2]}] Allow a person or company to register into the system as a third party by providing an e-mail, a password, credentials and a consensus on an agreement
 \item[{[R3]}] A person cannot register as a user by inserting a username already used by someone else
 \item[{[R4]}] A person or company cannot register as a third party by inserting an e-mail already used by someone else
@@ -28,12 +28,64 @@ After the registration, another essential functionality of the system is to log-
 \par
 In this section, each requirement is necessary to satisfy specific goals of the system:
 \begin{itemize}
-\item[{[G1]}] Once the health parameters of a subscribed user have been observed below the threshold, an ambulance is sent to the user location \& [G2] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
-\begin{itemize}
-\item[{[R9]}] When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
-\item[{[R10]}] An SOSCall can be requested only every minute
-\item[{[R11]}] An SOSCall is blocked if a previous one has already been accepted within 4 hours 
-\item[{[R12]}] An SOSCall are implemented as automated calls by using an external service
-\end{itemize}
-\item[{[G1]}] 
+\item[{[G1]}] Allow a subscribed user to contribute to data sharing by providing information about his location and health status
+	\begin{itemize}
+	\item[{[D1]}]  User's smartphones are equipped with GPS sensor
+	\item[{[D2]}] User's smartwatch/smartrings are equipped with sensors to analyze information such as heartbeat and blood oxygen saturation levels
+	\item[{[D3]}] Health data collected by the devices are correct
+	\item[{[D6]}] There is at least an external service of trusted companies which provides the possibility to transfer data from smartwatches/smartrings to smartphones
+	\item[{[R9]}] Allow a user to send its data to the system automatically when it is generated
+	\end{itemize}
+\item[{[G2]}] Once the health parameters of a subscribed user have been observed 
+below the threshold, an ambulance is sent to the user location 
+\item[{[G3]}] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
+	\begin{itemize}
+	\item[{[D5]}] There is at least an external service of trusted companies which provides the possibility to make automated calls
+	\item[{[D8]}] Hospitals always accepts new SOSCall regarding a person which has not yet received help.
+	\item[{[D9]}] if SOSCall are accepted, then an ambulance is sent to the location mentioned by the call
+	\item[{[R10]}] When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
+	\item[{[R11]}] An SOSCall can be requested only every minute
+	\item[{[R12]}] An SOSCall is blocked if a previous one has already been accepted within 4 hours 
+	\item[{[R13]}] An SOSCall are implemented as automated calls by using an external service
+	\end{itemize}
+\item[{[G4]}] Allow subscribed users to participate in a run managed by third parties, as an athlete 
+	\begin{itemize}
+	\item[{[R14]}] Allow a user to view a list of available runs, i.e. those that are still waiting to start 
+	\item[{[R15]}] Allow a user to enroll in a run by specifying its nickname
+	\item[{[R16]}] Every user enrolled in a run are able to participate in the run as athletes
+	\end{itemize}
+\item[{[G5]}] Allow spectators (i.e. subscribed user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
+	\begin{itemize}
+	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
+	\item[{[D11]}] When a user's phone GPS is set on high precision, then it provides the right position with at most a radius error ranged from 0 to 10 meters
+	\item[{[D12]}] Athlete participating in a run are equipped with a device sharing GPS position set on high precision
+	\item[{[R17]}] Every athlete participating on a run, only on this specific occasion, shares continuously (i.e. each ten seconds) its position through a device
+	\item[{[R18]}] Allow a spectator to see on a map the real-time position of every athlete in a specific run
+	\end{itemize}
+\item[{[G6]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date and start time
+	\begin{itemize}
+	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
+	\item[{[D10]}] The service which shows the map of the world offers only paths that are feasible.
+	\item[{[R19]}] Allow a third party to see a map of the world with feasible paths
+	\item[{[R20]}] Allow a third party to publish a race by providing a feasible path, a date, a start time and a brief description.
+	\end{itemize}
+\item[{[G7]}] Allow a third party to access the data on a certain individual if and only if he accepts. This is satisfied as soon as the request is approved
+	\begin{itemize}
+	\item[{[R21]}] Individual requests asked by a third party regarding a user are accepted if and only if the third party can access all the data generated by the user
+	\item[{[R22]}] Allow a user to accept or refuse request given by third parties
+	\item[{[R23]}] Allow a user to receive individual requests about data sharing from third parties
+	\item[{[R24]}] Allow a third party to send individual requests to users by providing the user's social security number and a brief motivation
+	\end{itemize}
+\item[{[G8]}] Allow a third party to access statistical and anonymized data only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
+	\begin{itemize}
+	\item[{[R25]}] Group requests asked by a third party regarding data about many users are accepted if and only if the third party can access its aggregated data
+	\item[{[R26]}] Group request are accepted if and only if the number of user involved is greater than 1000
+	\item[{[R27]}] Allow a third party to send group request to the system regarding data about many users
+	\end{itemize}
+\item[{[G9]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
+	\begin{itemize}
+	\item[{[R28]}] Allow a third party to view a list of future events, whose data will be generated once the event is finished.
+	\item[{[R29]}] Allow a third party to subscribe to a future events.
+	\item[{[R30]}] A third party can have access to non-existing aggregated data regarding future events if and only if the number of people involved is greater than 1000
+	\end{itemize}
 \end{itemize}
