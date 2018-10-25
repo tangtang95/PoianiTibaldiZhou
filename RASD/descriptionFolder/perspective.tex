@@ -1,25 +1,23 @@
 \subsection{Product perspective}
 TrackMe is a system which has to be designed as a completely new platform. It can be divided into 
-two parts: a software application designed for the stakeholders (e.g. users, third parties, ...) and a 
+two parts: a software application designed for the stakeholders (i.e. users, third parties) and a 
 core system interacting with the application via Internet. 
 \par
 The former one is intended to be a mobile application which requires, necessarily, other devices to work 
 as expected by the functionality defined in the Product functions section. For instance, a possible gear 
 to interact with the mobile application is a smartwatch, which helps, mainly, the application to 
-gather information about the user's health data. Another essential requirement for the application to 
-work is to have a stable connection to the Internet; without this obligation, the core system cannot 
-collect information about the user. All these requirements are not essentials for third party users.
+gather information about the user's health data. Another essential requirement for the application is to have a stable connection to the Internet; without this obligation, the core system cannot 
+collect information about the user. The requirement regarding the network connection is the only one mandatory for, also, the third part customers.
 \par
-The latter system has to provide a central connection for every user. The most important object, that has 
-to be regarded as a core, is the data. Overall, the TrackMe system is designed to share data and 
+The core system has to provide a central connection for every user. The most important object is the data. Overall, the TrackMe system is designed to share data and 
 information about users. Therefore, a Data Storage System (DSS) is necessary and enables the 
 core application to be able to save data and share it when asked. For instance, the DSS can be a 
-database that can be accessed through standard interfaces, such as JDBC. Another essential 
+database that can be accessed through standard interfaces. Another essential 
 requirement for the system is to safeguard the data collected; during the connection between the 
 mobile application and the core system, TrackMe has to guarantee that nobody is tracing their data. 
 Therefore, it is necessary to use some sort of strong network security, such as SSL/TLS protocols. 
 Further functionality of AutomatedSOS and Track4Run are satisfied by using APIs of other companies 
-(e.g. Google API for maps and voice recognition).
+(e.g. the one needed for maps and voice recognition).
 \\\par
 Regarding the environment of the TrackMe system, the following diagram (Figure: \ref{fig:classdiagram}) 
 is provided to describe better the domain model adopted:\\
@@ -31,12 +29,12 @@ is provided to describe better the domain model adopted:\\
 \end{figure}
 
 This diagram specifies the interaction with the actors and the objects of the world. The core point of 
-the environment is the data, but what should be analyzed are its entry point and exit point (i.e. usage):
+the environment is the data, but what should be analyzed are its entry and exit points (i.e. usage):
 
 \begin{enumerate}
 \item Request: an entry point essential to share the data;
-\item SOSCall: an very important usage for unhealthy people;
-\item Race: a feature necessary for runners.
+\item SOSCall: a very important feature for unhealthy people;
+\item Race: necessary for runners.
 \end{enumerate}
 
 \subsubsection{Request perspective}
