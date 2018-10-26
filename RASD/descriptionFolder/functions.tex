@@ -8,26 +8,26 @@ The information collection process continuously receives updated data from the u
 \subsubsection{Data requests from third party customers}
 Third party customers can send two types of requests: individual requests and aggregated requests. 
 In order to perform the former, the petitioner must provide the social security number of the individual and a brief motivation: as soon as he accepts (if he does), the access will be granted to the customer.
-Individual requests regard any subset of the stored information of the specified user; furthermore, it is possible to demand for new data that will be generated during a well-defined and limited period of time in the future. 
+Individual requests regard any subset of the stored information of the specified user; furthermore, it is possible to demand for future data that will be generated during a well-defined and limited period of time specified in the request. 
 More specifically, this last point means that third parties can ask, also, for information that will be generated, for instance, during the next month. \\
-Note that in the case in which a request will be pending for a month, it will expire and the user will no longer be able to accept it. \\
+Note that, in the case in which a request will be pending for 30 days, it will expire and the user will no longer be able to accept it. \\
 Furthermore, it is also possible for an user to block, and thus prevent, requests that he receives from a certain third party customer: in this case the system will abort the demanding process at the beginning, during a brief analysis.\\
 Aggregated requests involves, instead, anonymized set of people registered in the application. 
 This access will be granted automatically by the system in the case in which the dimension of the group is greater than 1000.   
 
 \subsubsection{Subscriptions to new data}
 Third party customers are allowed to subscribe to aggregated data that still does not exists: the access will be granted as soon as the data is generated.\\
-For instance, a petitioner could ask for the health statuses of the next month that belongs to old people (e.g. age is greater then 68) that lives in Milan. \\
-The same constraints on anonymisation (i.e. dimension of the group is greater then 1000) is applied here as well.
+For instance, a petitioner could ask for the health statuses of the next month that belongs to old people (e.g. age is greater than 68) that lives in Milan. \\
+The same constraints on anonymization (i.e. dimension of the group is greater than 1000) is applied here as well.
 
 \subsubsection{Automated calls of SOS help}
 When the health parameters of an user are detected below a certain threshold, an automated call to the nearest hospital is performed by the user device within 5 seconds. \\
 The call is handled in an totally autonomous way: the hospital can accept or declines a certain request of help. \\  
-Furthermore, the call can be requested only every minute and won't be performed in case another call from the same user has been already accepted in the previous 4 hours: this will prevent call flooding toward the hospital. 
+Furthermore, the call can be requested only every minute and won't be performed in case another call from the same user has been already accepted in the previous hour: this will prevent call flooding toward the hospital. 
 
 \subsubsection{Run organization}
-Organizers of run events, are able to select a date for a run, to define its path, and to specify an expiration date for the subscriptions. 
+Organizers of run events, are able to select a date for a run, to define its path, to specify an expiration date for the subscriptions, and also to choose a minimum number of participants.
 Since a race is set up, athletes can subscribe and unsubscribe to the run, according to their will and preferences. \\
-When a race is taking place, the athletes' information are monitored: their position can be seen on a map by users who have subscribed to the race, and their health status is kept under control in order to intervene in case of necessity. \\
+When a race is taking place, the athletes' information is monitored: their position can be seen on a map by users.\\
 An event may not be able to start (e.g. not enough runners are present, bad weather conditions and so on and so forth): in this case all the participants are notified. \\
-When a run is completed, the winner will be announced and the information regarding racers will no longer be available to the spectators.  
+When a run is completed, the leaderboard will be announced and the position information regarding racers will no longer be available to the spectators.  
