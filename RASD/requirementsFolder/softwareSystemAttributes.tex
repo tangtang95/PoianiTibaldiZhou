@@ -1,3 +1,18 @@
 \subsection{Software system attributes}
+\subsubsection{Reliability}
+The application has to be available 24/7. In particular, the reliability of the AutomatedSOS service is very high, because it could be a matter of life and death. Data4Help and Track4Run, have more concessions in these terms.
 
-\subsubsection{}
+\subsubsection{Availability}
+The automatedSOS service should be available 99.99\% of the time, due to the already mentioned reasons. Instead, Data4Help and Track4Run have to be available 99\% of the time, because they are not considered critical features.  
+
+\subsubsection{Security}
+The health statuses and the locations of the users are communicated toward the internet connection encrypted: since the communication, toward the central system is not so critical, security constraints are considered more important than the speed of the communication (same for the communication between third party customers). Instead, the communication between the device that collects the health statuses and the smartphone, is not encrypted at all, because efficiency is a must here. \\ 
+Private data, such as account information, is stored also in the smartphone with high-security encryption. Collected data that has been already sent to the system, are not saved into the smartphone. \\
+Data access is provided to third party customers with an high-secure communication protocol.
+
+\subsubsection{Maintainability}
+Since the application is very complex to implement, the system, in the future, will be maintained continuously. To ease this process, for instance, it is possible to select external services which are most trusted with respect to reliability and maintainability. Another essential feature to take in consideration is the reusability of the code, which is highly used. For instance, using an approach top-down during the design process could help or using some design patterns to facilitate code design.
+
+\subsubsection{Portability}
+The application is designed to reach more people as possible. Therefore, the application should be portable in the main smartphone operating systems; to achieve this goal, for instance, it could be used a framework which provides the possibility to use the same source code to compile it for different operating system (e.g. Ionic). 
+
