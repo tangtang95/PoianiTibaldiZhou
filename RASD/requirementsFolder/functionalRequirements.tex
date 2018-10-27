@@ -28,8 +28,11 @@ After the registration, another essential functionality of the system is to log-
 \par
 In this section, each requirement is necessary to satisfy specific goals of the system:
 \begin{itemize}
-
-\item[{[G1]}] Allow a user to contribute to data sharing by providing information about his location and health status
+\item[{[G1]}] Allow a user to access its own data
+	\begin{itemize}
+	\item[{[R9]}] If a user is logged-in, he is able to view its own data
+	\end{itemize}
+\item[{[G2]}] Allow a user to contribute to data sharing by providing information about his location and health status
 	\begin{itemize}
 	\item[{[D1]}]  User's smartphones are equipped with GPS sensor
 	\item[{[D2]}] Users own devices with sensors to acquire data information about health status
@@ -37,7 +40,7 @@ In this section, each requirement is necessary to satisfy specific goals of the 
 	\item[{[D6]}] There is at least an external service of trusted companies which provides the possibility to transfer data from smartwatches/smartrings to smartphones
 	\item[{[R9]}] Allow a user to send its data to the system automatically when it is generated
 	\end{itemize}
-\item[{[G2 \& G3]}] Once the health parameters of a user have been observed 
+\item[{[G3 \& G4]}] Once the health parameters of a user have been observed 
 below the threshold for the first time after one hour, an ambulance is sent to the user location. 
 The time experienced between the moment in which the health parameters of a user are observed below the threshold and the time in which the ambulance is sent to the user location is equal or less than 5 seconds. 
 	\begin{itemize}
@@ -50,13 +53,13 @@ The time experienced between the moment in which the health parameters of a user
 	\item[{[R12]}] An SOSCall is blocked if a previous one has already been accepted within one hour
 	\item[{[R13]}] An SOSCall are implemented as automated calls by using an external service
 	\end{itemize}
-\item[{[G4]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting condition are satisfied
+\item[{[G5]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting condition are satisfied
 	\begin{itemize}
 	\item[{[D14]}] Every user enrolled in a run are able to participate in the run as athletes if all starting conditions are satisfied
 	\item[{[R14]}] Allow a user to view a list of available runs, i.e. those that are still waiting to start 
 	\item[{[R15]}] Allow a user to enroll in a run only before the expiration date by specifying his nickname
 	\end{itemize}
-\item[{[G5]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
+\item[{[G6]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
 	\begin{itemize}
 	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
 	\item[{[D11]}] When a user's phone GPS is set on high precision, then it provides the right position with at most a radius error ranged from 0 to 10 meters
@@ -64,12 +67,24 @@ The time experienced between the moment in which the health parameters of a user
 	\item[{[R17]}] Every athlete participating on a run, only on this specific occasion, shares continuously (i.e. each ten seconds) its position through a device
 	\item[{[R18]}] Allow a spectator to see on a map the real-time position of every athlete in a specific run
 	\end{itemize}
-\item[{[G6]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date, start time, expiration date, and the minimum number of participants
+\item[{[G7]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date, start time, expiration date, and the minimum number of participants
 	\begin{itemize}
 	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
 	\item[{[D10]}] The service which shows the map of the world offers only paths that are feasible.
 	\item[{[R19]}] Allow a third party to see a map of the world with feasible paths
 	\item[{[R20]}] Allow a third party to publish a race by providing a feasible path, a date, a start time, a brief description, an expiration date for subscription and a minimum number of participants
+	\end{itemize}
+\item[{[G8]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire
+	\begin{itemize}
+	\item[{[R20]}] 
+	\end{itemize}
+\item[{[G9]}] Allow a user to block requests made by a specific third party
+	\begin{itemize}
+	\item
+	\end{itemize}
+\item[{[G10]}] In case it is impossible to start a run, the participants are notified
+	\begin{itemize}
+	\item 
 	\end{itemize}
 \item[{[G7]}] Allow a third party to access the data on a certain individual if and only if he accepts. This is satisfied as soon as the request is approved
 	\begin{itemize}
@@ -90,3 +105,5 @@ The time experienced between the moment in which the health parameters of a user
 	\item[{[R30]}] A third party can have access to non-existing aggregated data regarding future information if and only if the number of people involved will be greater than 1000
 	\end{itemize}
 \end{itemize}
+
+\input{requirementsFolder/useCase}
