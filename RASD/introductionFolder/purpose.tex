@@ -14,18 +14,20 @@ The ones regarding the subscribed users, are the followings:
 \item[{[G1]}] Allow a user to access its own data
 \item[{[G2]}] Allow a user to contribute to data sharing by providing information about his location and health status
 \item[{[G3]}] Once the health parameters of a user have been observed 
-below the threshold, an ambulance is sent to the user location 
+below the threshold for the first time after one hour, an ambulance is sent to the user location. 
 \item[{[G4]}] The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the emergency point is contacted is equal or less than 5 seconds
-\item[{[G5}] Allow a user to participate in a run managed by third parties, as an athlete
-\item[{[G6]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
-\item[{[G7]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date and start time
-\item[{[G8]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire
-\item[{[G9]}] Allow a user to block requests made by a specific third party
-\item[{[G10]}] In case it is impossible to start a run, the participants are notified
+\item[{[G5]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting condition are satisfied
+\item[{[G6]}] Allow a user to unsubscribe from a run before the expiration date
+\item[{[G7]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
+\item[{[G8]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date, start time, expiration date, and the minimum number of participants
+\item[{[G9]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire
+\item[{[G10]}] Allow a user to accept or refuse a request from third parties
+\item[{[G11]}] Allow a user to block requests made by a specific third party
+\item[{[G12]}] In case it is impossible to start a run, the participants are notified
 \end{enumerate}
 The goals of the project, regarding the third part customers, are the followings:
 \begin{enumerate}
-\item[{[G11]}] Allow a third party to access the data on a certain individual if and only if he accepts. This is satisfied as soon as the request is approved
-\item[{[G12]}] Allow a third party to access statistical and anonymized data only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
-\item[{[G13]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
+\item[{[G13]}] Allow a third party to access the data on a certain individual if and only if he accepts. This is satisfied as soon as the request is approved
+\item[{[G14]}] Allow a third party to access statistical and anonymized data only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
+\item[{[G15]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
 \end{enumerate}
