@@ -158,4 +158,4 @@ assert correctAccessToIndividualData {
 
 check correctAccessToGroupData for 2
 check correctAccessToIndividualData for 30
-run showData4HelpWorld for 7
+run showData4HelpWorld for 7 but 0 EmergencyRoom, 0 SOSCall

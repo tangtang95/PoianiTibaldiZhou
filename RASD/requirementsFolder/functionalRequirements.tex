@@ -10,7 +10,7 @@ The functional requirements will be listed with different way:
 \par
 The following requirements are, principally, about identifying a specific person on the system:
 \begin{itemize}
-\item[{[R1]}] Allow a person to register into the system as a user by providing an username, a password, his credentials, his social security number and a consensus on the agreement
+\item[{[R1]}] Allow a person to register into the system as a user by providing a username, a password, his credentials, his social security number and a consensus on the agreement
 \item[{[R2]}] Allow a person or company to register into the system as a third party by providing an e-mail, a password, its credentials and a consensus on the agreement
 \item[{[R3]}] A person cannot register as a user by inserting a username that has already been used in another successful registration process
 \item[{[R4]}] A person cannot register as user by using the same social security number used in another successful registration process 
@@ -119,3 +119,22 @@ The time experienced between the moment in which the health parameters of a subs
 \end{itemize}
 
 \input{requirementsFolder/useCase}
+
+\subsubsection{Sequence diagrams}
+To provide a better understanding of the interaction of some processes, the following diagrams are shown:
+\begin{itemize}
+\item Send individual request process
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/requestsequence}
+\caption{Sequence diagram about the process of an individual request }
+\label{fig:sequencediagram1}
+\end{figure}
+
+\item SOSCall process: the sequence diagram is designed by assuming that the process starts when for the first time the application has detected for the first time a health parameter below threshold.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/callsequence}
+\caption{Sequence diagram about the process of an SOS call }
+\label{fig:sequencediagram2}
+\end{figure}
+
+\end{itemize}
