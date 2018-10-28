@@ -71,6 +71,8 @@ This section puts focus on the relation between the user and the mobile applicat
 \captionof{figure}{Mock up: Competition view.}
 \end{minipage}
 \end{center}
+
+
 \subsubsection{Hardware interfaces}
 To exploit the functionality of TrackMe services is mandatory to have two distinct hardware components:
 \begin{enumerate}
@@ -89,7 +91,7 @@ The smartphone must also have a GPS system to provide the position, a monitor to
 The application uses external services to reduce the product complexity:
 \begin{enumerate}
 \item Race map\\
-The application requires a usage of map to define a path for the race and to see the position of the runner, during the competition. One options here is using Google Maps API which lets to customize maps with owner content and imagery for display on mobile devices. 
+The application requires the usage of maps to define a path for a race and to see the position of the athletes during the competition. One options here is using Google Maps API which lets to customize maps with owner content and imagery for display on mobile devices. 
 \item Call service\\
 The smartphone's call service installed on the device is used by the application due to call the emergency number.
 \item GPS Data service\\
@@ -100,6 +102,8 @@ For instance, an option to recognize the answer provided by the emergency room o
 \item Text-to-speech\\
 The Text-to-Speech API is ideal for any application that plays audio of human speech to users. It allows the application to convert arbitrary strings, words, and sentences into the sound of a person speaking the same things. For example, in this case the API is used to read a formatted text message during the call to the emergency number. The message provides all the information that usually are required by the health staff. One possible API for this interface can be Google Text-to-speech.
 \end{enumerate}
+
+
 \subsubsection{Communication interfaces} 
 The project needs several communication interfaces:
 \begin{enumerate}

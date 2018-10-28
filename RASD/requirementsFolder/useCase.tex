@@ -8,7 +8,7 @@ Here follows the use case diagram: \\
 \end{figure}
 
 \par 
-Beneath, the use case are analyzed:	\\
+Beneath, the use case is analyzed:	\\
 
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{|l|X|}
@@ -23,7 +23,7 @@ Beneath, the use case are analyzed:	\\
  	\item The system analyses the request and provides to the user the access to the data 
  \end{enumerate}   \\ \hline
  Exit conditions & The third party user can access the requested data \\ \hline
- Exceptions & If the request involves less or equal than 1000 distinct user, the access is not provided to the third party, that gets a notification \\ \hline
+ Exceptions & If the request involves less or equal than 1000 distinct user, the access is not provided to the third party that gets a notification \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -41,7 +41,26 @@ Beneath, the use case are analyzed:	\\
  	\item The system analyses the request and provides to the user the access to the data 
  \end{enumerate}   \\ \hline
  Exit conditions & The third party user can access the requested data \\ \hline
- Exceptions & If the request involves less or equal than 1000 distinct user, the access is not provided to the third party, that gets a notification \\ \hline
+ Exceptions & If the request involves less or equal than 1000 distinct user, the access is not provided to the third party that gets a notification \\ \hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[H]
+\begin{tabularx}{\textwidth}{|l|X|}
+\hline
+ Name & Make autonomous SOS call \\ \hline
+ Actor & User, emergency room operator \\ \hline
+ Entry conditions & User health parameters detected below the threshold for the first time in an hour \\ \hline
+ Event flow & 
+ \begin{enumerate}
+ 	\item The mobile application calls autonomously the emergency number 
+ 	\item The emergency room operator picks the call up 
+ 	\item The mobile applications communicates the health parameters and the user location to the emergency room operator, thus requesting for assistance 
+ 	\item The emergency room operator accepts the request
+ 	\item The emergency room operator sends an ambulance to the user location
+ \end{enumerate}   \\ \hline
+ Exit conditions & An ambulance is sent to the user location \\ \hline
+ Exceptions & If the emergency room operator refuses the request, a warning is sent to the user \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -54,7 +73,7 @@ Beneath, the use case are analyzed:	\\
  Event flow & 
  \begin{enumerate}
  	\item The third party customer set up a run: he provides the name, the path, the date, the starting time, a closure date for the subscriptions and the minimum number of participants
-  	\item The third party customer sends all the mentioned above information to the systme
+  	\item The third party customer sends all the mentioned above information to the system
  	\item The system adds the run to the list of the available races
  \end{enumerate}   \\ \hline
  Exit conditions & The race has been successfully added to the list of the available run \\ \hline
@@ -99,21 +118,16 @@ Beneath, the use case are analyzed:	\\
 \hline
  Name & Block requests from a company \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to block the request from a specific company \\ \hline
+ Entry conditions & The user wants to block the request from a specific company and the company has sent to the user a request \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The user accesses the list of available requests
-  	\item The user selects the request which he wants to block
- 	\item The user, with the express button, sends the request to TrackMe for classify as spam the selected request 
- 	\item The system receives the requests and permanently blocks the company that sent the request.
- 	\item The system notifies the user that the company is blocked
+  	\item The user refuses a pending request 
+ 	\item The user blocks the company that has sent the request
+ 	\item The system receives the user's decision and permanently blocks the company that has sent the request
  \end{enumerate}   \\ \hline
- Exit conditions & The company had been successfully blocked \\ \hline
- Exceptions &  
- \begin{enumerate}
- 	\item The company is already blocked.
- \end{enumerate}
- The exceptions are handled by the notification that the block of the company was unsuccessful, by providing a brief motivation.  
+ Exit conditions & The company has been successfully blocked \\ \hline
+ Exceptions &  No exceptions
  \\ \hline
 \end{tabularx}
 \end{table}
@@ -122,25 +136,18 @@ Beneath, the use case are analyzed:	\\
 \begin{table}[H]
 \begin{tabularx}{\textwidth}{|l|X|}
 \hline
- Name & Shared data with a third party\\ \hline
+ Name & Accept request\\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to share data with a third party that it sent you a shared data request \\ \hline
+ Entry conditions & The user wants to accept a request that a company has sent to the user and the request is in the pending request list \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The user accesses the list of available requests
   	\item The user selects the request which he wants to accept
- 	\item The user accept the request from a specific company
+ 	\item The user accepts the request from a specific company
  	\item The system receives the acceptance and notifies both the third party and the user of the successful of the operation
- 	\item The system provide the user health information to the third party
  \end{enumerate}   \\ \hline
- Exit conditions & The health status of the user is provided to the third party \\ \hline
- Exceptions &  
- \begin{enumerate}
- 	\item The user accepts the request, but there are not available data in the system.
-	\item The user accepts a request that has already accepted 
- \end{enumerate}
- The first exception is handle by notifying the third party that there are not available data stored in the system and it provides the data as soon as possible.
- The second exception is handle by notifying the user that the request has already accepted.
+ Exit conditions & The data specified in the request is now accessible to the third party that has sent the request that has been accepted\\ \hline
+ Exceptions & No exceptions
  \\ \hline
 \end{tabularx}
 \end{table}
@@ -151,24 +158,18 @@ Beneath, the use case are analyzed:	\\
 \hline
  Name & Sign up \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to join to the application but he has not already registered \\ \hline
+ Entry conditions & The user wants to utilize the application, but he has not registered yet \\ \hline
  Event flow & 
  \begin{enumerate}
- 	\item The user click on the sign up button
-  	\item The user complete the registration's form and provide his information
- 	\item The user send the form to the system
- 	\item The system checks that an account associated with identification information and social security number does not exists
- 	\item The system notify to the user the success of the operation
+  	\item The user completes the registration's form and provides his information
+ 	\item The user sends the information to the system
+ 	\item The system checks that an account associated with the specified credentials does not exist
+ 	\item The system checks that an account associated with the specified social security number does not exist
+ 	\item The system checks that an account associated with the specified username does not exist
+ 	\item The system registers the user into the application
  \end{enumerate}   \\ \hline
- Exit conditions & The user receive the notify about the successful of the operation \\ \hline
- Exceptions &  
- \begin{enumerate}
- 	\item The user has already sign up into the application
- 	\item The user doesn't provide valid data 
- 	\item The username has already taken 
- \end{enumerate}
- The first exception is handle by notifying that the user has already subscribe into the application.
- All other exceptions are handled in the same way: the user is notified that the subscription was unsuccessful, by providing a brief motivation. The user is remanded to the sign up page.  
+ Exit conditions & The user is successfully been registered \\ \hline
+ Exceptions & The user provides non-valid data: credential or username or social security number has already been used in another successful registration process. In this case, the user is notified that the subscription is unsuccessful, by providing a brief motivation. 
  \\ \hline
 \end{tabularx}
 \end{table}
@@ -179,20 +180,20 @@ Beneath, the use case are analyzed:	\\
 \hline
  Name & Login \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to join into the application and he has already registered into the application\\ \hline
+ Entry conditions & The user wants to use the application and he is already registered \\ \hline
  Event flow & 
  \begin{enumerate}
- 	\item The user enters his credentials in the “Username” and “Password” fields of the login page of “Data4Help” application 
+ 	\item The user sends his username and password credentials through the application
   	\item The system checks the information provided by the user
- 	\item The system redirects the user to the application home page
+ 	\item The system provides access to the user to the TrackMe services
  \end{enumerate}   \\ \hline
  Exit conditions & The user is logged in the application \\ \hline
  Exceptions &  
  \begin{enumerate}
- 	\item The user enters invalid username
- 	\item The user enters invalid password 
+ 	\item The user sends invalid username
+ 	\item The user sends invalid password 
  \end{enumerate}
- All the exceptions are handled in the same way: the user is notified that the logged in procedure was unsuccessful, by providing a brief motivation. Then the user is remanded to the login page.
+ All the exceptions are handled in the same way: the user is notified that the procedure was unsuccessful, by providing a brief motivation. The access to the services is not granted. 
  \\ \hline
 \end{tabularx}
 \end{table}
