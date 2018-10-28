@@ -107,16 +107,21 @@ pred requestAcceptedIffDataAccessible {
 		}
 	}
    
-    all r: IndividualRequest | r.status = RequestAccepted implies {
-	    all tp : ThirdParty | r in tp.requests iff r.requestedData in tp.accessibleData
+    all r: IndividualRequest, tp : ThirdParty | r.status = RequestAccepted implies {
+	    r in tp.requests iff r.requestedData in tp.accessibleData
     } 
+}
+
+pred individualDataAccessibleOnlyIfAnAcceptedRequestExist {
+	all tp : ThirdParty,  d : Data | d in tp.accessibleData implies {
+		some r : IndividualRequest | r in tp.requests and r.status = RequestAccepted and r.requestedData in d 
+	}
 }
 
 pred groupRequestRequirement {
     // number of people involved in the request must be greater than 1000 to be accepted by 
     //  the system (here we decrease 1000 for simplicity)
     all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) > 5 implies {gr.status = RequestAccepted}
-	
     all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) < 6 implies {gr.status = RequestRefused}
 }
 
@@ -140,17 +145,17 @@ assert correctAccessToGroupData {
 }
 
 assert correctAccessToIndividualData {
-	requestAcceptedIffDataAccessible implies {	
+	requestAcceptedIffDataAccessible and individualDataAccessibleOnlyIfAnAcceptedRequestExist implies {	
 		all r : IndividualRequest, tp : ThirdParty | r in tp.requests implies {
 			r.status = RequestAccepted implies {r.requestedData in tp.accessibleData }
 			and
-			r.status != RequestAccepted and  (r.requestedData not in tp.accessibleData) implies {
-				no r2 : IndividualRequest | r2 in tp.requests and r2.status = RequestAccepted and  no (r2.requestedData & r.requestedData) 
-			}
+			(r.status != RequestAccepted and  no r2 : IndividualRequest | r2 in tp.requests and r2.status = RequestAccepted and  some (r2.requestedData & r.requestedData))  implies {
+				(r.requestedData not in tp.accessibleData)
+			} 
     		}
 	}
 }
 
-check correctAccessToGroupData for 30
+check correctAccessToGroupData for 2
 check correctAccessToIndividualData for 30
 run showData4HelpWorld for 7
