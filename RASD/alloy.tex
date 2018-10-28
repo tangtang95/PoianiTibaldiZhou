@@ -1,2 +1,12 @@
 \section{Formal Analysis using Alloy}
+In the alloy model, in order to be safer w.r.t. the requirements that have been stated in this document, critical aspects have been modeled. 
+In particular, the following vital goals have been asserted:
+\begin{enumerate}
+\item[{[G14]}]  Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data 
+\item[{[G15]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied as soon as the request is approved  
+\item[{[Gx]}] Insert SOS part here
+\end{enumerate}
+
+Notes that for G15, the fact that the aggregated request is satisfied as soon as the it is approved, is not been proven: the part considered critical is the access to the demanded information. \\
+
 \lstinputlisting[language=alloy]{Alloy/trackme.als}
