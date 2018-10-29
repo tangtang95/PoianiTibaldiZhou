@@ -79,7 +79,7 @@ sig Ambulance{
 }
 
 /* Domain Assumptions */
-fact DataBelongOnlyToOneUser{
+fact DataBelongOnlyToOneUser {
     all d: Data | some u : User | d in u.userData and (no u1 : User | u != u1 and d in u1.userData)
 } 
 
@@ -87,10 +87,10 @@ fact RequestBelongOnlyToOneThirdParty{
     all r : Request | some tp : ThirdParty | r in tp.requests and (no tp1: ThirdParty | tp != tp1 and r in tp1.requests)
 }
 
-fact AggregatedDataBelongAlwaysToSomeGroupRequest{
+fact AggregatedDataBelongAlwaysToSomeGroupRequest {
     all ad: AggregatedData | some gr : GroupRequest | gr.aggregatedData = ad
 }
-
+ 
 fact ThereIsAtLeastAnSOSExternalServiceWithAmbulance{
    some er: EmergencyRoom | #er.ambulances > 0 
 }
