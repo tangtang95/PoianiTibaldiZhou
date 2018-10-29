@@ -7,6 +7,13 @@ In particular, the following vital goals have been asserted:
 \item[{[G3]}] Once the health parameters of a user have been observed below the threshold for the first time after one hour, an ambulance is sent to the user location
 \end{enumerate}
 
-Notes that for G15, the fact that the aggregated request is satisfied as soon as the it is approved, is not been proven: the part considered critical is the access to the demanded information. \\
+Note on the alloy model: 
+\begin{itemize}
+\item Some trivial domain assumptions are written in order to prove the goals. However, they are 
+not stated in the domain assumption chapter of this document 
+\item The context of G3 has been modeled considering that an user uses the AutomatedSOS service at most once in an hour. This allows to prove the goals, without loss of generality 
+\item For G15, the fact that the aggregated request is satisfied as soon as the it is approved, is not been proven: the part considered critical is the access to the demanded information 
+\item The constraint on the number people involved in an aggregated request is modified without loss of generality: the group dimension has to be greater then 6 
+\end{itemize}
 
 \lstinputlisting[language=alloy]{Alloy/trackme.als}
