@@ -23,18 +23,18 @@ one sig CallAccepted extends CallStatus{}
 abstract sig Actor{}
 
 sig User extends Actor{
-  userData: set Data,
-  ambulancesProvided: set Ambulance
+    userData: set Data,
+    ambulancesProvided: set Ambulance
 }
 
 sig ThirdParty extends Actor{
-  accessibleData: set Data,
-  accessibleAggregatedData: set AggregatedData,
-  requests: set Request
+    accessibleData: set Data,
+    accessibleAggregatedData: set AggregatedData,
+    requests: set Request
 }
 
 sig EmergencyRoom{
-  ambulances: set Ambulance
+    ambulances: set Ambulance
 }
 
 /* Objects */
@@ -42,7 +42,6 @@ abstract sig Data{
 }
 
 sig LocationData extends Data{
-
 }
 
 sig HealthData extends Data{
@@ -92,24 +91,24 @@ fact AggregatedDataBelongAlwaysToSomeGroupRequest {
 }
  
 fact ThereIsAtLeastAnSOSExternalServiceWithAmbulance{
-   some er: EmergencyRoom | #er.ambulances > 0 
+    some er: EmergencyRoom | #er.ambulances > 0 
 }
 
 fact EmergencyRoomAcceptsNewSOSCall{
-  //In this model, a SOSCall is performed only if it has not already performed in the last hour
-  all sc: SOSCall | some er: EmergencyRoom | #er.ambulances > 0  and sc.destinatedTo = er and sc.status = CallAccepted
+    //In this model, a SOSCall is performed only if it has not already performed in the last hour
+    all sc: SOSCall | some er: EmergencyRoom | #er.ambulances > 0  and sc.destinatedTo = er and sc.status = CallAccepted
 }
 
 fact IfSOSCallAreAcceptedThanAnAmbulanceIsSent{
-  all a: Ambulance |some u: User | a in u.ambulancesProvided iff (some sc: SOSCall | sc.status = CallAccepted and sc.performedBy = u)
+    all a: Ambulance |some u: User | a in u.ambulancesProvided iff (some sc: SOSCall | sc.status = CallAccepted and sc.performedBy = u)
 }
 
 fact ambulanceBelongToAtLeastAnEmergencyRoom{
-  all a: Ambulance | some er: EmergencyRoom | a in er.ambulances
+    all a: Ambulance | some er: EmergencyRoom | a in er.ambulances
 }
 
 fact ForAllSOSCallAreProvidedOnlyOneAmbulance{
-  all sc: SOSCall | #sc.performedBy.ambulancesProvided = 1
+    all sc: SOSCall | #sc.performedBy.ambulancesProvided = 1
 }
 
 /* Help Function and Predicate */
@@ -126,7 +125,7 @@ fun getPeopleInvolved [d: set Data] : set User{
  * When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
  */
 pred parametersHasBeenBelowThenAnSOSCallIsRequested {
-   all hd: HealthData |one sc: SOSCall | some u: User | sc.performedBy = u and  hd in u.userData and hd.belowThreshold = True 
+    all hd: HealthData |one sc: SOSCall | some u: User | sc.performedBy = u and  hd in u.userData and hd.belowThreshold = True 
 }
 
 /*
@@ -134,7 +133,7 @@ pred parametersHasBeenBelowThenAnSOSCallIsRequested {
  * All the automated SOS call are performed with devices of users whose health parameters are observed below a certain threshold
  */ 
 pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
-  all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
+    all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
 }
 
 // Requirements for G14
@@ -144,9 +143,9 @@ pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
  * If an individual request is accepted, then the third party who has made the request can access the data specified in the request
  */ 
 pred individualRequestAcceptedIfDataAccessible {
-	all r : IndividualRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
- 		r.requestedData in tp.accessibleData
-	}
+    all r : IndividualRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
+         r.requestedData in tp.accessibleData
+    }
 }
 
 
@@ -155,9 +154,9 @@ pred individualRequestAcceptedIfDataAccessible {
  * For each piece of individual data accessible by a third part customer, exists an accepted request regarding it, performed by the same third party 
  */
 pred individualDataAccessibleIfAnAcceptedRequestExist {
-	all tp : ThirdParty,  d : Data | d in tp.accessibleData implies {
-		some r : IndividualRequest | r in tp.requests and r.status = RequestAccepted and r.requestedData in d 
-	}
+    all tp : ThirdParty,  d : Data | d in tp.accessibleData implies {
+        some r : IndividualRequest | r in tp.requests and r.status = RequestAccepted and r.requestedData in d 
+    }
 }
 
 // Requirements for G15
@@ -167,9 +166,9 @@ pred individualDataAccessibleIfAnAcceptedRequestExist {
  * A group request is accepted if the aggregated data specified in the request is accessible to the third party who performed the demand
  */ 
 pred groupRequestAcceptedIfAggregatedDataAccessible {
-	all r : GroupRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
-		r.aggregatedData in tp.accessibleAggregatedData		
-	}
+    all r : GroupRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
+        r.aggregatedData in tp.accessibleAggregatedData		
+    }
 }
 
 /*
@@ -189,9 +188,9 @@ pred groupRequestNumberOfPeopleInvolved {
  * Aggregated data is accessible to a third party if an accepted aggregated data that request that data exists
  */
 pred groupDataAccessibleIfAcceptedRequestExist {
-	all tp : ThirdParty, d : AggregatedData | d in tp.accessibleAggregatedData implies {
-		some r : GroupRequest | r in tp.requests and r.status = RequestAccepted and r.aggregatedData in d
-	}
+    all tp : ThirdParty, d : AggregatedData | d in tp.accessibleAggregatedData implies {
+        some r : GroupRequest | r in tp.requests and r.status = RequestAccepted and r.aggregatedData in d
+    }
 }
 
 
@@ -205,11 +204,11 @@ pred groupDataAccessibleIfAcceptedRequestExist {
  * below the threshold for the first time after one hour, an ambulance is sent to the user location.  
  */ 
 assert ambulanceIsProvidedAfterASOSCall {
-	parametersHasBeenBelowThenAnSOSCallIsRequested  and AllSOSCallArePerformedByUserWithDataBelowTheThreshold implies{
-		all hd: HealthData | some u: User | hd in u.userData and hd.belowThreshold = True implies{
-			 some a: Ambulance | a in u.ambulancesProvided
-		}
-	}
+    parametersHasBeenBelowThenAnSOSCallIsRequested  and AllSOSCallArePerformedByUserWithDataBelowTheThreshold implies{
+        all hd: HealthData | some u: User | hd in u.userData and hd.belowThreshold = True implies{
+            some a: Ambulance | a in u.ambulancesProvided
+        }
+    }
 }
 
 /* 
@@ -218,15 +217,15 @@ assert ambulanceIsProvidedAfterASOSCall {
  * from the same third party that provided access to the same data 
  */
 assert correctAccessToIndividualData {
-	individualDataAccessibleIfAnAcceptedRequestExist  and individualRequestAcceptedIfDataAccessible implies {	
-		all r : IndividualRequest, tp : ThirdParty | r in tp.requests implies {
-			r.status = RequestAccepted implies {r.requestedData in tp.accessibleData }
-			and
-			(r.status != RequestAccepted and  no r2 : IndividualRequest | r2 in tp.requests and r2.status = RequestAccepted and  some (r2.requestedData & r.requestedData))  implies {
-				(r.requestedData not in tp.accessibleData)
-			} 
-    		}
-	}
+    individualDataAccessibleIfAnAcceptedRequestExist  and individualRequestAcceptedIfDataAccessible implies {	
+        all r : IndividualRequest, tp : ThirdParty | r in tp.requests implies {
+            r.status = RequestAccepted implies {r.requestedData in tp.accessibleData }
+            and
+            (r.status != RequestAccepted and  no r2 : IndividualRequest | r2 in tp.requests and r2.status = RequestAccepted and  some (r2.requestedData & r.requestedData))  implies {
+                (r.requestedData not in tp.accessibleData)
+            } 
+        }
+    }
 }
 
 /*
@@ -236,9 +235,9 @@ assert correctAccessToIndividualData {
  */
 assert correctAccessToGroupData {
     groupRequestAcceptedIfAggregatedDataAccessible and groupRequestNumberOfPeopleInvolved and groupDataAccessibleIfAcceptedRequestExist implies {
-         all r : GroupRequest, tp : ThirdParty | r in tp.requests implies {
-			#(getPeopleInvolved[r.aggregatedData.regardingData]) >5 iff r.aggregatedData in tp.accessibleAggregatedData 			
-		}	
+        all r : GroupRequest, tp : ThirdParty | r in tp.requests implies {
+            #(getPeopleInvolved[r.aggregatedData.regardingData]) >5 iff r.aggregatedData in tp.accessibleAggregatedData 			
+        }	
     } 
 }
 
