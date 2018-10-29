@@ -118,65 +118,108 @@ fun getPeopleInvolved [d: set Data] : set User{
 }
 
 /* Requirements */
-pred requestAcceptedIffDataAccessible {
-    all r : GroupRequest | r.status = RequestAccepted implies { 
-        all tp : ThirdParty | r in tp.requests iff r.aggregatedData in tp.accessibleAggregatedData 
-    } else {
-		all tp : ThirdParty | no r2 : GroupRequest | r2.status = RequestAccepted and r2.aggregatedData = r.aggregatedData implies {
-			r.aggregatedData not in tp.accessibleAggregatedData
-		}
-	}
-   
-    all r: IndividualRequest, tp : ThirdParty | r.status = RequestAccepted implies {
-	    r in tp.requests iff r.requestedData in tp.accessibleData
-    } 
+
+// Requirements for G3
+
+/*
+ * R12
+ * When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
+ */
+pred parametersHasBeenBelowThenAnSOSCallIsRequested {
+   all hd: HealthData |one sc: SOSCall | some u: User | sc.performedBy = u and  hd in u.userData and hd.belowThreshold = True 
 }
 
-pred individualDataAccessibleOnlyIfAnAcceptedRequestExist {
+/*
+ * R13
+ * All the automated SOS call are performed with devices of users whose health parameters are observed below a certain threshold
+ */ 
+pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
+  all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
+}
+
+// Requirements for G14
+
+/*
+ * R33
+ * If an individual request is accepted, then the third party who has made the request can access the data specified in the request
+ */ 
+pred individualRequestAcceptedIfDataAccessible {
+	all r : IndividualRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
+ 		r.requestedData in tp.accessibleData
+	}
+}
+
+
+/*
+ * R34
+ * For each piece of individual data accessible by a third part customer, exists an accepted request regarding it, performed by the same third party 
+ */
+pred individualDataAccessibleIfAnAcceptedRequestExist {
 	all tp : ThirdParty,  d : Data | d in tp.accessibleData implies {
 		some r : IndividualRequest | r in tp.requests and r.status = RequestAccepted and r.requestedData in d 
 	}
 }
 
-pred groupRequestRequirement {
-    // number of people involved in the request must be greater than 1000 to be accepted by 
-    //  the system (here we decrease 1000 for simplicity)
+// Requirements for G15
+
+/*
+ * R37
+ * A group request is accepted if the aggregated data specified in the request is accessible to the third party who performed the demand
+ */ 
+pred groupRequestAcceptedIfAggregatedDataAccessible {
+	all r : GroupRequest, tp : ThirdParty | r in tp.requests and r.status = RequestAccepted implies {
+		r.aggregatedData in tp.accessibleAggregatedData		
+	}
+}
+
+/*
+ * R38 
+ * Group requests is accepted if and only if the number of user involved is greater than 1000
+ *
+ * Note: the number of people involved in the request must be greater than 1000 to be accepted by 
+ *          the system (here 1000 has been decreased for simplicity)
+ */
+pred groupRequestNumberOfPeopleInvolved {
     all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) > 5 implies {gr.status = RequestAccepted}
     all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) < 6 implies {gr.status = RequestRefused}
 }
 
-pred parametersHasBeenBelowThenAnSOSCallIsRequested {
-   all hd: HealthData |one sc: SOSCall | some u: User | sc.performedBy = u and  hd in u.userData and hd.belowThreshold = True 
+
+/*
+ * R39 
+ * Aggregated data is accessible to a third party if an accepted aggregated data that request that data exists
+ */
+pred groupDataAccessibleIfAcceptedRequestExist {
+	all tp : ThirdParty, d : AggregatedData | d in tp.accessibleAggregatedData implies {
+		some r : GroupRequest | r in tp.requests and r.status = RequestAccepted and r.aggregatedData in d
+	}
 }
 
-pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
-  all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
+
+/* 
+ * Goals 
+ */
+
+/*
+ * G3
+ * Once the health parameters of a user have been observed 
+ * below the threshold for the first time after one hour, an ambulance is sent to the user location.  
+ */ 
+assert ambulanceIsProvidedAfterASOSCall {
+	parametersHasBeenBelowThenAnSOSCallIsRequested  and AllSOSCallArePerformedByUserWithDataBelowTheThreshold implies{
+		all hd: HealthData | some u: User | hd in u.userData and hd.belowThreshold = True implies{
+			 some a: Ambulance | a in u.ambulancesProvided
+		}
+	}
 }
 
-/* Show World Predicate */
-pred showData4HelpWorld{
-    requestAcceptedIffDataAccessible and groupRequestRequirement 
-}
-
-pred showAutomatedSOSWorld{
-    parametersHasBeenBelowThenAnSOSCallIsRequested and  AllSOSCallArePerformedByUserWithDataBelowTheThreshold
-}
-
-/* Goals */
-assert correctAccessToGroupData {
-    requestAcceptedIffDataAccessible and groupRequestRequirement implies {
-         all r : GroupRequest, tp : ThirdParty | r in tp.requests implies {
-			#(getPeopleInvolved[r.aggregatedData.regardingData]) >5 implies {
-				r.status = RequestAccepted  and r.aggregatedData in tp.accessibleAggregatedData 			
-			} 	else {
-         		r.aggregatedData not in tp.accessibleAggregatedData
-         	}
-		}	
-    } 
-}
-
+/* 
+ * G14: 
+ * Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests 
+ * from the same third party that provided access to the same data 
+ */
 assert correctAccessToIndividualData {
-	requestAcceptedIffDataAccessible and individualDataAccessibleOnlyIfAnAcceptedRequestExist implies {	
+	individualDataAccessibleIfAnAcceptedRequestExist  and individualRequestAcceptedIfDataAccessible implies {	
 		all r : IndividualRequest, tp : ThirdParty | r in tp.requests implies {
 			r.status = RequestAccepted implies {r.requestedData in tp.accessibleData }
 			and
@@ -187,20 +230,32 @@ assert correctAccessToIndividualData {
 	}
 }
 
-assert ambulanceIsProvidedAfterASOSCall {
-	parametersHasBeenBelowThenAnSOSCallIsRequested  and AllSOSCallArePerformedByUserWithDataBelowTheThreshold implies{
-		all hd: HealthData | some u: User | hd in u.userData and hd.belowThreshold = True implies{
-			 some a: Ambulance | a in u.ambulancesProvided
-		}
-	}
+/*
+ * G15: 
+ * Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. 
+ * This is satisfied as soon as the request is approved  
+ */
+assert correctAccessToGroupData {
+    groupRequestAcceptedIfAggregatedDataAccessible and groupRequestNumberOfPeopleInvolved and groupDataAccessibleIfAcceptedRequestExist implies {
+         all r : GroupRequest, tp : ThirdParty | r in tp.requests implies {
+			#(getPeopleInvolved[r.aggregatedData.regardingData]) >5 iff r.aggregatedData in tp.accessibleAggregatedData 			
+		}	
+    } 
 }
 
-check correctAccessToGroupData for 2
-check correctAccessToIndividualData for 30
-<<<<<<< HEAD
+/* Show World Predicate */
+pred showData4HelpWorld{
+    
+}
+
+pred showAutomatedSOSWorld{
+    parametersHasBeenBelowThenAnSOSCallIsRequested and  AllSOSCallArePerformedByUserWithDataBelowTheThreshold
+}
+
+check correctAccessToGroupData for 10
+check correctAccessToIndividualData for 10
 check ambulanceIsProvidedAfterASOSCall  for 2
 run showData4HelpWorld for 7
 run showAutomatedSOSWorld for 3
-=======
 run showData4HelpWorld for 7 but 0 EmergencyRoom, 0 SOSCall
->>>>>>> e2a21ecb5c552d464ac3c8a33a2ab50b16c720e1
+
