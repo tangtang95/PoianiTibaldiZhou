@@ -17,16 +17,14 @@ one sig RequestRefused extends RequestStatus{}
 one sig RequestExpired extends RequestStatus{}
 
 abstract sig CallStatus{}
-one sig CallRequested extends CallStatus{}
 one sig CallAccepted extends CallStatus{}
-one sig CallRefused extends CallStatus{}
-one sig CallCancelled extends CallStatus{}
 
 /* Actors */
 abstract sig Actor{}
 
 sig User extends Actor{
-  userData: set Data
+  userData: set Data,
+  ambulancesProvided: set Ambulance
 }
 
 sig ThirdParty extends Actor{
@@ -36,7 +34,7 @@ sig ThirdParty extends Actor{
 }
 
 sig EmergencyRoom{
-  
+  ambulances: set Ambulance
 }
 
 /* Objects */
@@ -48,7 +46,7 @@ sig LocationData extends Data{
 }
 
 sig HealthData extends Data{
-    belowThreshold: one Bool
+    belowThreshold : one Bool
 }
 
 sig AggregatedData{
@@ -72,7 +70,12 @@ sig IndividualRequest extends Request{
 
 sig SOSCall{
     status: one CallStatus,
-    destinatedTo: one EmergencyRoom
+    destinatedTo: one EmergencyRoom,
+    performedBy: one User
+}
+
+sig Ambulance{
+
 }
 
 /* Domain Assumptions */
@@ -88,8 +91,25 @@ fact AggregatedDataBelongAlwaysToSomeGroupRequest{
     all ad: AggregatedData | some gr : GroupRequest | gr.aggregatedData = ad
 }
 
-fact SOSCallBelongOnlyToOneUser{
-  // TODO
+fact ThereIsAtLeastAnSOSExternalServiceWithAmbulance{
+   some er: EmergencyRoom | #er.ambulances > 0 
+}
+
+fact EmergencyRoomAcceptsNewSOSCall{
+  //In this model, a SOSCall is performed only if it has not already performed in the last hour
+  all sc: SOSCall | some er: EmergencyRoom | #er.ambulances > 0  and sc.destinatedTo = er and sc.status = CallAccepted
+}
+
+fact IfSOSCallAreAcceptedThanAnAmbulanceIsSent{
+  all a: Ambulance |some u: User | a in u.ambulancesProvided iff (some sc: SOSCall | sc.status = CallAccepted and sc.performedBy = u)
+}
+
+fact ambulanceBelongToAtLeastAnEmergencyRoom{
+  all a: Ambulance | some er: EmergencyRoom | a in er.ambulances
+}
+
+fact ForAllSOSCallAreProvidedOnlyOneAmbulance{
+  all sc: SOSCall | #sc.performedBy.ambulancesProvided = 1
 }
 
 /* Help Function and Predicate */
@@ -125,9 +145,21 @@ pred groupRequestRequirement {
     all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) < 6 implies {gr.status = RequestRefused}
 }
 
+pred parametersHasBeenBelowThenAnSOSCallIsRequested {
+   all hd: HealthData |one sc: SOSCall | some u: User | sc.performedBy = u and  hd in u.userData and hd.belowThreshold = True 
+}
+
+pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
+  all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
+}
+
 /* Show World Predicate */
 pred showData4HelpWorld{
     requestAcceptedIffDataAccessible and groupRequestRequirement 
+}
+
+pred showAutomatedSOSWorld{
+    parametersHasBeenBelowThenAnSOSCallIsRequested and  AllSOSCallArePerformedByUserWithDataBelowTheThreshold
 }
 
 /* Goals */
@@ -137,8 +169,7 @@ assert correctAccessToGroupData {
 			#(getPeopleInvolved[r.aggregatedData.regardingData]) >5 implies {
 				r.status = RequestAccepted  and r.aggregatedData in tp.accessibleAggregatedData 			
 			} 	else {
-         		r.aggregatedData not in tp.accessibleAggregatedData iff 	
-				(no r2 : GroupRequest| r2 in tp.requests and r2.status = RequestAccepted and  (r2.aggregatedData = r.aggregatedData) )
+         		r.aggregatedData not in tp.accessibleAggregatedData
          	}
 		}	
     } 
@@ -156,6 +187,16 @@ assert correctAccessToIndividualData {
 	}
 }
 
+assert ambulanceIsProvidedAfterASOSCall {
+	parametersHasBeenBelowThenAnSOSCallIsRequested  and AllSOSCallArePerformedByUserWithDataBelowTheThreshold implies{
+		all hd: HealthData | some u: User | hd in u.userData and hd.belowThreshold = True implies{
+			 some a: Ambulance | a in u.ambulancesProvided
+		}
+	}
+}
+
 check correctAccessToGroupData for 2
 check correctAccessToIndividualData for 30
+check ambulanceIsProvidedAfterASOSCall  for 2
 run showData4HelpWorld for 7
+run showAutomatedSOSWorld for 3
