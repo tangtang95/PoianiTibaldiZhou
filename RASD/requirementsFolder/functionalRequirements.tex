@@ -10,18 +10,19 @@ The functional requirements will be listed with different way:
 \par
 The following requirements are, principally, about identifying a specific person on the system:
 \begin{itemize}
-\item[{[R1]}] Allow a person to register into the system as a user by providing an username, a password, his credentials, his social security number and a consensus on the agreement
+\item[{[R1]}] Allow a person to register into the system as a user by providing a username, a password, his credentials, his social security number and a consensus on the agreement
 \item[{[R2]}] Allow a person or company to register into the system as a third party by providing an e-mail, a password, its credentials and a consensus on the agreement
-\item[{[R3]}] A person cannot register as a user by inserting a username already used by someone else
-\item[{[R4]}] A person or company cannot register as a third party by inserting an e-mail already used by someone else
-\item[{[R5]}] A person cannot register as user more than once into the system by using the same credentials and social security number
-\item[{[R6]}] A person or company cannot register as third party more than once into the system by using the same credentials
+\item[{[R3]}] A person cannot register as a user by inserting a username that has already been used in another successful registration process
+\item[{[R4]}] A person cannot register as user by using the same social security number used in another successful registration process 
+\item[{[R5]}] A person cannot register as user by using the same credential used in another successful registration process 
+\item[{[R6]}] A person or company cannot register as third party into the system by using the same credentials used in another successful process
+\item[{[R7]}] A person or company cannot register as third party by using the same e-mail used in another successful registration process
 \end{itemize}
 \par
-After the registration, another essential functionality of the system is to log-in:
+After the registration, another essential functionality of the system is to permit log-in:
 \begin{itemize}
-\item[{[R7]}] Allow a person to log into the system as a user only if he has already registered as such
-\item[{[R8]}] Allow a person or company to log into the system as a third party only if he has already registered as such
+\item[{[R8]}] Allow a person to log into the system as a user only if he has already registered as such
+\item[{[R9]}] Allow a person or company to log into the system as a third party only if he has already registered as such
 \end{itemize}
 
 \subsubsection{Goal reaching requirements}
@@ -30,15 +31,15 @@ In this section, each requirement is necessary to satisfy specific goals of the 
 \begin{itemize}
 \item[{[G1]}] Allow a user to access its own data
 	\begin{itemize}
-	\item[{[R9]}] If a user is logged-in, he is able to view its own data
+	\item[{[R10]}] If a user is logged-in, he is able to view its own data
 	\end{itemize}
 \item[{[G2]}] Allow a user to contribute to data sharing by providing information about his location and health status
 	\begin{itemize}
 	\item[{[D1]}]  User's smartphones are equipped with GPS sensor
 	\item[{[D2]}] Users own devices with sensors to acquire data information about health status
 	\item[{[D3]}] Health data collected by the devices are correct
-	\item[{[D6]}] There is at least an external service of trusted companies which provides the possibility to transfer data from smartwatches/smartrings to smartphones
-	\item[{[R10]}] Allow a user to send its data to the system automatically when it is generated
+	\item[{[D6]}] There is at least an external service of trusted companies which provides the possibility to transfer data from devices containing sensors to acquire health data to smartphones
+	\item[{[R11]}] Allow a user to send its data to the system automatically when it is generated
 	\end{itemize}
 \item[{[G3 \& G4]}] Once the health parameters of a user have been observed 
 below the threshold for the first time after one hour, an ambulance is sent to the user location. 
@@ -47,67 +48,93 @@ The time experienced between the moment in which the health parameters of a subs
 	\item[{[D5]}] There is at least an external service of trusted companies which provides the possibility to make automated calls
 	\item[{[D8]}] Hospitals always accepts new SOSCall regarding a person which has not yet received help.
 	\item[{[D9]}] if SOSCall are accepted, then an ambulance is sent to the location mentioned by the call
-	\item[{[D13]}] After receiving help from an ambulance, a person is discharged after one hour
-	\item[{[R11]}] When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
-	\item[{[R12]}] An SOSCall can be requested only every minute
-	\item[{[R13]}] An SOSCall is blocked if a previous one has already been accepted within one hour
-	\item[{[R14]}] An SOSCall are implemented as automated calls by using an external service
+	\item[{[D13]}] After receiving help from an ambulance, a person can't be discharged before an hour
+	\item[{[R12]}] When a user's health parameters has been observed below the threshold, an SOSCall is requested within 5 seconds
+	\item[{[R13]}] An SOSCall can be requested only every minute
+	\item[{[R14]}] An SOSCall is blocked if a previous one has already been accepted within one hour
+	\item[{[R15]}] An SOSCall are implemented as automated calls by using an external service
 	\end{itemize}
-\item[{[G5 \& G6]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting condition are satisfied. Allow a user to unsubscribe from a run before the expiration date
+\item[{[G5 \& G6]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting conditions are satisfied. Allow a user to unsubscribe from a run before the expiration date
 	\begin{itemize}
 	\item[{[D14]}] Every user enrolled in a run are able to participate in the run as athletes if all starting conditions are satisfied
-	\item[{[R15]}] Allow a user to view a list of available runs, i.e. those that are still waiting to start 
-	\item[{[R16]}] Allow a user to enroll in a run, after choosing it from the list, only before the expiration date by specifying his nickname
-	\item[{[R17]}] Allow a user to unsubscribe from an enrolled run only before the expiration date
+	\item[{[R16]}] Allow a user to view a list of available runs, i.e. those that are still waiting to start 
+	\item[{[R17]}] Allow a user to enroll in a run, after choosing it from the list, only before the expiration date by specifying his nickname
+	\item[{[R18]}] Allow a user to unsubscribe from an enrolled run only before the expiration date
 	\end{itemize}
 \item[{[G7]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error
 	\begin{itemize}
 	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
 	\item[{[D11]}] When a user's phone GPS is set on high precision, then it provides the right position with at most a radius error ranged from 0 to 10 meters
 	\item[{[D12]}] Athlete participating in a run are equipped with a device sharing GPS position set on high precision
-	\item[{[R18]}] Every athlete participating on a run, only on this specific occasion, shares continuously (i.e. each ten seconds) its position through a device
-	\item[{[R19]}] Allow a spectator to see on a map the real-time position of every athlete in a specific run
+	\item[{[R19]}] Every athlete participating on a run, only on this specific occasion, shares continuously (i.e. each ten seconds) its position through a device
+	\item[{[R20]}] Allow a spectator to see on a map the real-time position of every athlete in a specific run
 	\end{itemize}
-\item[{[G8]}] Allow organizers (i.e. third parties) to set up a run, by defining its path, date, start time, expiration date, and the minimum number of participants
+\item[{[G8]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire
+	\begin{itemize}
+	\item[{[R21]}] Once the time elapsed from sending request is greater than 30 days, then the request will be deleted from the system
+	\end{itemize}
+\item[{[G9 \& G10]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party
+	\begin{itemize}
+	\item[{[R22]}] Allow a user to receive individual requests about data sharing from third parties
+	\item[{[R23]}] Allow a user to view a list of pending requests
+	\item[{[R24]}] Allow a user to accept or refuse a request from the list of pending request
+	\item[{[R25]}] Allow a user to block requests from a defined third party, after refusing it
+	\end{itemize}	
+\item[{[G11]}] In case it is impossible to start a run, the enrolled runners are notified
+	\begin{itemize}
+	\item[{[R26]}] If, after the expiration date, the number of participants is less than the minimum number defined by the organizer, then it is impossible to start the run.
+	\item[{[R27]}] If the run cannot start due to minimum number of participants unsatisfied, then the enrolled runners are notified.
+	\end{itemize}
+\item[{[G12]}] Allow spectators and runners to see the leaderboard, when a run is completed
+	\begin{itemize}
+	\item[{[D15]}]All the organizers close a race that has not been canceled due to starting conditions
+	\item[{[R28]}] Allow an organizer to close the run (when it is terminated)
+	\item[{[R29]}] After a run is closed, show the leaderboard to the spectators and runners
+	\end{itemize}
+\item[{[G13]}] Allow organizers (i.e. third parties) to set up a run, by defining its name, its path, date, start time, expiration date, and the minimum number of participants
 	\begin{itemize}
 	\item[{[D4]}] There is at least an external service of trusted companies which provides the possibility to the user to view detailed maps
 	\item[{[D10]}] The service which shows the map of the world offers only paths that are feasible.
-	\item[{[R20]}] Allow a third party to see a map of the world with feasible paths
-	\item[{[R21]}] Allow a third party to publish a race by providing a feasible path, a date, a start time, a brief description, an expiration date for subscription and a minimum number of participants
+	\item[{[R30]}] Allow a third party to see a map of the world with feasible paths
+	\item[{[R31]}] Allow a third party to publish a race by providing an unique name, a feasible and a non-overlapping path (non-overlapping with other races of the same date), a date, a start time, a brief description, an expiration date for subscription and a minimum number of participants
 	\end{itemize}
-\item[{[G9}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire
+\item[{[G14]}] Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data 
 	\begin{itemize}
-	\item[{[R22]}] Once the time elapsed from sending request is greater than 30 days, then the request will be deleted from the system
+	\item[{[R32]}] Individual requests asked by a third party regarding a user are accepted if and only if the third party can access all the data generated by the user
+	\item[{[R33]}] For each piece of individual data accessible by a third part customer, exists an accepted request regarding it, performed by the same third party 
+	\item[{[R34]}] Allow a user to accept or refuse request given by third parties
+	\item[{[R35]}] Allow a third party to send individual requests to users by providing the user's social security number and a brief motivation
 	\end{itemize}
-\item[{[G10 \& G11]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party
+\item[{[G15]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied as soon as the request is approved  
 	\begin{itemize}
-	\item[{[R23]}] Allow a user to receive individual requests about data sharing from third parties
-	\item[{[R24]}] Allow a user to view a list of pending requests
-	\item[{[R25]}] Allow a user to accept or refuse a request from the list of pending request
-	\item[{[R26]}] Allow a user to block requests from a definite third party after refusing a specific request from them
+	\item[{[R36]}] Group requests asked by a third party regarding data about many users are accepted if and only if the third party can access its aggregated data
+	\item[{[R37]}] Group request are accepted if and only if the number of user involved is greater than 1000
+	\item[{[R38]}] Allow a third party to send group request to the system regarding data about many users
 	\end{itemize}
-\item[{[G12]}] In case it is impossible to start a run, the enrolled runners are notified
+\item[{[G16]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
 	\begin{itemize}
-	\item[{[R27]}] If, after the expiration date, the number of participants is less than the minimum number defined by the organizer, then it is impossible to start the run.
-	\item[{[R28]}] If the run cannot start due to minimum number of participants unsatisfied, then the enrolled runners are notified.
-	\end{itemize}
-\item[{[G13]}] Allow a third party to access the data on a certain individual if and only if he accepts. This is satisfied as soon as the request is approved
-	\begin{itemize}
-	\item[{[R29]}] Individual requests asked by a third party regarding a user are accepted if and only if the third party can access all the data generated by the user
-	\item[{[R30]}] Allow a user to accept or refuse request given by third parties
-	\item[{[R31]}] Allow a third party to send individual requests to users by providing the user's social security number and a brief motivation
-	\end{itemize}
-\item[{[G14]}] Allow a third party to access statistical and anonymized data only on groups of individual greater than 1000. This is satisfied as soon as the request is approved
-	\begin{itemize}
-	\item[{[R32]}] Group requests asked by a third party regarding data about many users are accepted if and only if the third party can access its aggregated data
-	\item[{[R33]}] Group request are accepted if and only if the number of user involved is greater than 1000
-	\item[{[R34]}] Allow a third party to send group request to the system regarding data about many users
-	\end{itemize}
-\item[{[G15]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. 
-	\begin{itemize}
-	\item[{[R35]}] Allow a third party to express a data request on future data
-	\item[{[R36]}] A third party can have access to non-existing aggregated data regarding future information if and only if the number of people involved will be greater than 1000
+	\item[{[R39]}] Allow a third party to express a data request on future data
+	\item[{[R40]}] A third party can have access to non-existing aggregated data regarding future information if and only if the number of people involved will be greater than 1000
 	\end{itemize}
 \end{itemize}
 
 \input{requirementsFolder/useCase}
+
+\subsubsection{Sequence diagrams}
+To provide a better understanding of the interaction of some processes, the following diagrams are shown:
+\begin{itemize}
+\item Send individual request process
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/requestsequence}
+\caption{Sequence diagram about the process of an individual request }
+\label{fig:sequencediagram1}
+\end{figure}
+
+\item SOSCall process: the sequence diagram is designed by assuming that the process starts when for the first time the application has detected for the first time a health parameter below threshold.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/callsequence}
+\caption{Sequence diagram about the process of an SOS call }
+\label{fig:sequencediagram2}
+\end{figure}
+
+\end{itemize}

@@ -197,6 +197,10 @@ assert ambulanceIsProvidedAfterASOSCall {
 
 check correctAccessToGroupData for 2
 check correctAccessToIndividualData for 30
+<<<<<<< HEAD
 check ambulanceIsProvidedAfterASOSCall  for 2
 run showData4HelpWorld for 7
 run showAutomatedSOSWorld for 3
+=======
+run showData4HelpWorld for 7 but 0 EmergencyRoom, 0 SOSCall
+>>>>>>> e2a21ecb5c552d464ac3c8a33a2ab50b16c720e1
