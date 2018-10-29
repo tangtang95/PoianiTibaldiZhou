@@ -140,7 +140,7 @@ pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
 // Requirements for G14
 
 /*
- * R33
+ * R34
  * If an individual request is accepted, then the third party who has made the request can access the data specified in the request
  */ 
 pred individualRequestAcceptedIfDataAccessible {
@@ -151,7 +151,7 @@ pred individualRequestAcceptedIfDataAccessible {
 
 
 /*
- * R34
+ * R35
  * For each piece of individual data accessible by a third part customer, exists an accepted request regarding it, performed by the same third party 
  */
 pred individualDataAccessibleIfAnAcceptedRequestExist {
@@ -163,7 +163,7 @@ pred individualDataAccessibleIfAnAcceptedRequestExist {
 // Requirements for G15
 
 /*
- * R37
+ * R38
  * A group request is accepted if the aggregated data specified in the request is accessible to the third party who performed the demand
  */ 
 pred groupRequestAcceptedIfAggregatedDataAccessible {
@@ -173,20 +173,19 @@ pred groupRequestAcceptedIfAggregatedDataAccessible {
 }
 
 /*
- * R38 
+ * R39 
  * Group requests is accepted if and only if the number of user involved is greater than 1000
  *
  * Note: the number of people involved in the request must be greater than 1000 to be accepted by 
  *          the system (here 1000 has been decreased for simplicity)
  */
 pred groupRequestNumberOfPeopleInvolved {
-    all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) > 5 implies {gr.status = RequestAccepted}
-    all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) < 6 implies {gr.status = RequestRefused}
+    all gr : GroupRequest | #(getPeopleInvolved[gr.aggregatedData.regardingData]) > 5 implies {gr.status = RequestAccepted} else {gr.status = RequestRefused}
 }
 
 
 /*
- * R39 
+ * R40
  * Aggregated data is accessible to a third party if an accepted aggregated data that request that data exists
  */
 pred groupDataAccessibleIfAcceptedRequestExist {
@@ -245,17 +244,17 @@ assert correctAccessToGroupData {
 
 /* Show World Predicate */
 pred showData4HelpWorld{
-    
+    individualRequestAcceptedIfDataAccessible and individualDataAccessibleIfAnAcceptedRequestExist and groupRequestNumberOfPeopleInvolved
+    and groupRequestAcceptedIfAggregatedDataAccessible and groupDataAccessibleIfAcceptedRequestExist 
 }
 
 pred showAutomatedSOSWorld{
-    parametersHasBeenBelowThenAnSOSCallIsRequested and  AllSOSCallArePerformedByUserWithDataBelowTheThreshold
+    parametersHasBeenBelowThenAnSOSCallIsRequested and AllSOSCallArePerformedByUserWithDataBelowTheThreshold
 }
 
 check correctAccessToGroupData for 10
 check correctAccessToIndividualData for 10
-check ambulanceIsProvidedAfterASOSCall  for 2
-run showData4HelpWorld for 7
-run showAutomatedSOSWorld for 3
-run showData4HelpWorld for 7 but 0 EmergencyRoom, 0 SOSCall
+check ambulanceIsProvidedAfterASOSCall  for 10
+run showAutomatedSOSWorld for 5 but 0 Request
+run showData4HelpWorld for 5 but 1 EmergencyRoom, 1 Ambulance, 0 SOSCall
 
