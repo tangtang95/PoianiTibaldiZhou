@@ -129,16 +129,23 @@ To provide a better understanding of the interaction of some processes, the foll
 \item Send individual request process
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/requestsequence}
-\caption{Sequence diagram about the process of an individual request }
+\caption{Sequence diagram about the process of sending a request }
 \label{fig:sequencediagram1}
 \end{figure}
 In this sequence diagram, it is assumed that the request is created correctly, since the most important things are the relationships with TrackMe and the other actors.
 
-\item SOSCall process: the sequence diagram is designed by assuming that the process starts when for the first time the application has detected for the first time a health parameter below threshold.
+\item SOSCall process: the sequence diagram is designed by assuming that the process starts when the application has detected a health parameter below threshold for the first time within one hour.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/callsequence}
 \caption{Sequence diagram about the process of an SOS call }
 \label{fig:sequencediagram2}
+\end{figure}
+
+\item Publish Race process: in this sequence diagram, it is shown how the organizer, i.e. third party, can publish a race to be seen by potential athletes that want to participate.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/racesequence}
+\caption{Sequence diagram about the process of how a race is published}
+\label{fig:sequencediagram3}
 \end{figure}
 
 \end{itemize}
