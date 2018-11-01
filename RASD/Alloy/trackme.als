@@ -136,10 +136,10 @@ pred AllSOSCallArePerformedByUserWithDataBelowTheThreshold{
     all sc: SOSCall | some hd: HealthData | hd in sc.performedBy.userData and hd.belowThreshold = True
 }
 
-// Requirements for G14
+// Requirements for G12
 
 /*
- * R34
+ * R35
  * If an individual request is accepted, then the third party who has made the request can access the data specified in the request
  */ 
 pred individualRequestAcceptedIfDataAccessible {
@@ -150,7 +150,7 @@ pred individualRequestAcceptedIfDataAccessible {
 
 
 /*
- * R35
+ * R36
  * For each piece of individual data accessible by a third part customer, exists an accepted request regarding it, performed by the same third party 
  */
 pred individualDataAccessibleIfAnAcceptedRequestExist {
@@ -159,10 +159,10 @@ pred individualDataAccessibleIfAnAcceptedRequestExist {
     }
 }
 
-// Requirements for G15
+// Requirements for G13
 
 /*
- * R38
+ * R39
  * A group request is accepted if the aggregated data specified in the request is accessible to the third party who performed the demand
  */ 
 pred groupRequestAcceptedIfAggregatedDataAccessible {
@@ -172,7 +172,7 @@ pred groupRequestAcceptedIfAggregatedDataAccessible {
 }
 
 /*
- * R39 
+ * R40 
  * Group requests is accepted if and only if the number of user involved is greater than 1000
  *
  * Note: the number of people involved in the request must be greater than 1000 to be accepted by 
@@ -184,7 +184,7 @@ pred groupRequestNumberOfPeopleInvolved {
 
 
 /*
- * R40
+ * R41
  * Aggregated data is accessible to a third party if an accepted aggregated data that request that data exists
  */
 pred groupDataAccessibleIfAcceptedRequestExist {
@@ -212,7 +212,7 @@ assert ambulanceIsProvidedAfterASOSCall {
 }
 
 /* 
- * G14: 
+ * G12: 
  * Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests 
  * from the same third party that provided access to the same data 
  */
@@ -229,7 +229,7 @@ assert correctAccessToIndividualData {
 }
 
 /*
- * G15: 
+ * G13: 
  * Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. 
  * This is satisfied as soon as the request is approved  
  */

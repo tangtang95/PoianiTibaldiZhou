@@ -15,7 +15,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Send aggregated request \\ \hline
  Actor & Third party customer  \\ \hline
- Entry conditions & Third party customer needs some aggregated data on anonymized users and the third party has performed log-in \\ \hline
+ Entry conditions & Third party customer is logged in\\ \hline
  Event flow & 
  \begin{enumerate}
  	\item Third party customer compiles a form specifying the aggregated data that he wants to access
@@ -32,7 +32,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Subscribe to new data \\ \hline
  Actor & Third party customer  \\ \hline
- Entry conditions & Third party customer needs some future aggregated data on anonymized users and the third party has performed log-in \\ \hline
+ Entry conditions & Third party customer is logged in \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item Third party customer compiles a form specifying the future aggregated data that he wants to access, when they will be available
@@ -60,7 +60,7 @@ Beneath, the use case is analyzed:	\\
  	\item The emergency room operator sends an ambulance to the user location
  \end{enumerate}   \\ \hline
  Exit conditions & An ambulance is sent to the user location \\ \hline
- Exceptions & If the emergency room operator refuses the request, a warning is sent to the user \\ \hline
+ Exceptions & No exceptions \\ \hline
 \end{tabularx}
 \end{table}
 
@@ -69,10 +69,10 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Organize run \\ \hline
  Actor & Third party customer \\ \hline
- Entry conditions & The third party customer has performed login and needs to organize a race\\ \hline
+ Entry conditions & The third party customer is logged in\\ \hline
  Event flow & 
  \begin{enumerate}
- 	\item The third party customer set up a run: he provides the name, the path, the date, the starting time, a closure date for the subscriptions and the minimum number of participants
+ 	\item The third party customer sets up a run: he provides the name, the path, the date, the starting time, a closure date for the subscriptions and the minimum number of participants
   	\item The third party customer sends all the mentioned above information to the system
  	\item The system adds the run to the list of the available races
  \end{enumerate}   \\ \hline
@@ -80,7 +80,7 @@ Beneath, the use case is analyzed:	\\
  Exceptions & 
  \begin{enumerate}
  	\item The name is already used by another run
- 	\item Another run is already been specified for the same date and at least a portion of the path is overlapping 
+ 	\item Another run is already been specified for the same date and two paths are overlapping 
  \end{enumerate}  
  All the exceptions are handled in the same way: the race is not added to the list and the third party user gets notified of the unsuccessful operation 
  \\ \hline
@@ -93,7 +93,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Enroll in a run \\ \hline
  Actor & Athlete \\ \hline
- Entry conditions & The user wants to join to a run that has previously been added to the list of the available race \\ \hline
+ Entry conditions & The user is logged in and there is at least a run in the list of the available race \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The athlete accesses the list of available run
@@ -118,7 +118,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Block requests from a company \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to block the request from a specific company and the company has sent to the user a request \\ \hline
+ Entry conditions & The user is logged in and there is at least a request in the pending request list \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The user accesses the list of available requests
@@ -138,7 +138,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Accept request\\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to accept a request that a company has sent to the user and the request is in the pending request list \\ \hline
+ Entry conditions & The user is logged in and there is at least a request in the pending request list \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The user accesses the list of available requests
@@ -158,7 +158,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Sign up \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to utilize the application, but he has not registered yet \\ \hline
+ Entry conditions & The user has not registered yet \\ \hline
  Event flow & 
  \begin{enumerate}
   	\item The user completes the registration's form and provides his information
@@ -180,7 +180,7 @@ Beneath, the use case is analyzed:	\\
 \hline
  Name & Login \\ \hline
  Actor & User \\ \hline
- Entry conditions & The user wants to use the application and he is already registered \\ \hline
+ Entry conditions & The user has already sign up \\ \hline
  Event flow & 
  \begin{enumerate}
  	\item The user sends his username and password credentials through the application

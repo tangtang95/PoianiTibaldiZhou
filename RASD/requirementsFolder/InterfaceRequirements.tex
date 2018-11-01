@@ -1,6 +1,6 @@
 \subsection{External interface requirements}
 \subsubsection{User interfaces}
-This section puts focus on the relation between the user and the mobile application. For better understanding the functionality of the application and the interaction with the user, beneath there are some mockups that represent a basic idea of what the mobile app will look like.
+This section puts focus on the relation between the user and the mobile application. For better understanding the set of functionality of the application and the interaction with the user, beneath there are some mockups that represent a basic idea of what the mobile app will look like.
 
 \begin{center}
 \begin{minipage}[c]{.40\textwidth}
@@ -74,7 +74,7 @@ This section puts focus on the relation between the user and the mobile applicat
 
 
 \subsubsection{Hardware interfaces}
-To exploit the functionality of TrackMe services is mandatory to have two distinct hardware components:
+To exploit the set of functionality of TrackMe services is mandatory to have two distinct hardware components:
 \begin{enumerate}
 \item First, it is necessary to own a smartphone which is used to interact with the mobile application;
 \item Second, it is also essential to have a device provided with at least one NFC sensor: this has the ability to acquire heartbeat, blood pressure and blood oxygen saturation levels data.
@@ -91,11 +91,11 @@ The smartphone must also have a GPS system to provide the position, a monitor to
 The application uses external services to reduce the product complexity:
 \begin{enumerate}
 \item Race map\\
-The application requires the usage of maps to define a path for a race and to see the position of the athletes during the competition. One options here is using Google Maps API which lets to customize maps with owner content and imagery for display on mobile devices. 
+The application requires the usage of maps to define a path for a race and to see the position of the athletes during the competition. One option here is using Google Maps API which lets customize maps with owner content and imagery.
 \item Call service\\
 The smartphone's call service installed on the device is used by the application due to call the emergency number.
 \item GPS Data service\\
-The GPS Data as a Service API allows developers to store, handle, and manage GPS data in the system. It also analyzes GPS data in real time so that application can use it to provide the position during the call to the emergency room operator and during the running race. It can also provide reports on analyzed data. 
+The GPS Data as a Service API allows developers to store, handle, and manage GPS data in the system. It also analyzes GPS data in real time so that application can use it to provide the position during the call to the emergency room operator and during the running race.
 \item Automated call\\
 Automated call service allows, to AutomatedSOS, to call the emergency number and to speak with the operator.
 For instance, an option to recognize the answer provided by the emergency room operator could be the Google Cloud Speech API, that enables the AutomatedSOS feature to convert audio to text by applying neural network models in an easy to use API. 
@@ -110,5 +110,5 @@ The project needs several communication interfaces:
 \item A communication interface to read/write data from the NFC tag. Fortunately, this already exists and it is called NFC protocol.
 \item A communication interface to send and receive data over the network, in order to interact with the TrackMe system. One possible solution is to use the protocol HTTPS, that guarantees data security during upload and download operations. 
 \item A communication interface to perform calls. 
-\item A communication interface that exploit the GPS technology
+\item A communication interface that exploits the GPS technology
 \end{enumerate} 
