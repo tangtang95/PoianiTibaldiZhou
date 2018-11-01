@@ -6,12 +6,15 @@
 \item spectator: a user who wants to watch the runners' position during a race   
 \item third party customer: a person or company that wants to access data
 \item organizer: a third party customer who can set up a run
-\item individual requests: requests that third party customers can send that allow, if permissions are granted, to access the data of a specific user
+\item individual requests: requests that third party customers can send that allow, if permissions are granted, to access the requested data of a specific user
 \item aggregated requests: requests that third party customers can send that allow, if permissions are granted, to access aggregated and statistical data on a certain group of user
 \item health parameter: a value regarding healthcare status of a specific individual that can be heartbeat, blood pressure or blood oxygen saturation levels 
 \item threshold: a critical value regarding health parameters, which is unique for every user
 \item starting condition of a run: minimum number of participants
-\item race's overlapping path: a path is considered to be overlapping with that of another race, if they share at least a piece path and if the two races are defined in the same date
+\item race's overlapping path: a path is considered to be overlapping with that of another race, if they share at least a piece of path
+\item autonomous call: a call that starts automatically and in which a text-to-speech API is used to communicate with the other end point. 
+Furthermore, a voice recognition API is used to retrieve a response. 
+For better specifying, in the AutomatedSOS service, the autonomous call contacts the hospital and communicate the health parameters and the user location, and waits the a confirmation (e.g. "OK") from the emergency room operator
 \end{itemize}
 
 \subsubsection{Acronyms}
