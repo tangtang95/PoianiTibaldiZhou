@@ -1,1 +1,24 @@
 \subsection{Overview}
+In this whole chapter the architecture design process is described, and contains all the significant
+architecture decisions. 
+Therefore, first of all, in this section an high-level and very general architecture for the TrackMe 
+project is presented and discussed.  
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/highlevelcd.pdf}
+\caption{ High-level component diagram }
+\label{fig:world2}
+\end{figure}
+
+As a reference architecture, the microservices one has been considered: this decision will be later discussed. \\
+From the picture, it is evident that the project consists of two applications, one for the users and one for the third parties customers: they both interact with an API gateway that can access all the
+microservices that compose the core functionality of the business.
+More specifically, the "microservices" block includes Data4Help and Track4Run functions, while the goals
+of AutomatedSOS service are reached locally and directly by means of the user application, that, when
+needed, will perform a call with the help of the SIM service. The user application also needs to
+communicate with a device that is able to collect data that regards his health: more specifically, this
+instrument will send data toward the user application autonomously, without being asked. Examples of 
+this machines are smartrings and smartwatches. The data regarding the position of the user is, instead, retrieved via GPS's API. \\
+Note, also, that the microservices need to keep some data persistent, and, thus access to a DBMS, by means
+of its API. \\
+
