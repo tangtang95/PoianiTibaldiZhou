@@ -1,1 +1,51 @@
 \subsection{Selected architectural styles and patterns}
+The selected architectural style, as already mentioned, is the microservices architecture. This choice is
+supported by multiple reasons. In particular, a strong motivation in the decision process is the
+conjunction of the following two facts:
+\begin{enumerate}
+\item Data4Help and Track4Run are features that provides totally different and independent functions.
+Track4Run can, without any problem, even be deployed in a different moment
+\item Scalability is one of the main QoS that the system requires. Indeed, the application is expected to
+be used by many people in the future, and therefore, designing the architecture, making scaling fast is
+really important
+\end{enumerate}
+It is important to note that it could happen that one of the two functions needs to scale, while
+the other does not. 
+More specifically, this reasoning also applies to some pieces of functionality that
+are internal to both Data4Help and Track4Run. 
+For instance, it is reasonable to assume that the functions of data collection from users (positions and
+health statuses) will be much more used and will generate much more network traffic, compared to the one
+that regards the requests. 
+In order to clarify this, all the active users will periodically send data at each moment of the day,
+while third party customers that are performing requests don't keep forwarding request to the user: it is
+something that happens more rarely. 
+The same holds, for example, when considering the set up of run events from the organizer, and the fact
+that spectators will monitor in real time positions of athletes during a race. \\ 
+Therefore, the combination of these things, suggests that the scaling should be independent w.r.t. the
+function considered. \\
+Furthermore, the microservices architecture make it easier to implement failure isolation: it is not
+desirable that a failure in Track4Run leads in a failure in also Data4Help. 
+Moreover, failing in managing the request should not prevent the data collection: as one can see the
+reason also applies to the various business capabilities that are bounded in the single Data4Help, or
+Track4Run, feature.  
+Due to this, the overall availability is improved. \\
+Now, some patterns adopted related to the microservices architecture are exposed:
+\begin{itemize}
+\item API gateway: this is a component already introduced in the high level component diagram and it
+satisfies and deals with the following problem: how do clients of the application access to the individual
+services? The API gateway is a single entry point for all clients and it can exposes different API for
+each client: this suits well for the TrackMe project. This should be implemented with an event-driven
+reactive approach in order to scale if it is necessary to manage big loads of data. \\
+\item The access token pattern is very useful, since the application is composed of various services and
+an important issue is how to communicate the identity of the petitioner to the service that handles the
+request. 
+The pattern suggests to implement the API gateway in such
+a way that it authenticates requests and passes an access token that securely identifies the client (a
+service may later include the access token in requests that it makes to other services)
+\item Database per service pattern: all the services need to persist data in some kind of databases and
+the solution is to keep each microservice's data private to that service and accessible only via its API.
+So a database can't be accessed directly by another service. In particular the pattern of schema-per
+service is always guaranteed, while a database-server-per-service is allocated to the services that are
+though to be the one with the highest throughput (i.e. spectator service and share data service)
+\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of asynchronous messages, since a chain of synchronous calls could lead to slow down the entire architecture. 
+\end{itemize}
