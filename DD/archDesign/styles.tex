@@ -6,7 +6,7 @@ conjunction of the following two facts:
 \item Data4Help and Track4Run are features that provides totally different and independent functions.
 Track4Run can, without any problem, even be deployed in a different moment
 \item Scalability is one of the main QoS that the system requires. Indeed, the application is expected to
-be used by many people in the future, and therefore, designing the architecture, making scaling fast is
+be used by many people in the future, and therefore, designing the architecture making scaling fast is
 really important
 \end{enumerate}
 It is important to note that it could happen that one of the two functions needs to scale, while
@@ -17,13 +17,13 @@ For instance, it is reasonable to assume that the functions of data collection f
 health statuses) will be much more used and will generate much more network traffic, compared to the one
 that regards the requests. 
 In order to clarify this, all the active users will periodically send data at each moment of the day,
-while third party customers that are performing requests don't keep forwarding request to the user: it is
+while third party customers that are performing requests do not keep forwarding request to the user: it is
 something that happens more rarely. 
 The same holds, for example, when considering the set up of run events from the organizer, and the fact
 that spectators will monitor in real time positions of athletes during a race. \\ 
 Therefore, the combination of these things, suggests that the scaling should be independent w.r.t. the
 function considered. \\
-Furthermore, the microservices architecture make it easier to implement failure isolation: it is not
+Furthermore, the microservices architecture makes it easier to implement failure isolation: it is not
 desirable that a failure in Track4Run leads in a failure in also Data4Help. 
 Moreover, failing in managing the request should not prevent the data collection: as one can see the
 reason also applies to the various business capabilities that are bounded in the single Data4Help, or
@@ -47,5 +47,5 @@ the solution is to keep each microservice's data private to that service and acc
 So a database can't be accessed directly by another service. In particular the pattern of schema-per
 service is always guaranteed, while a database-server-per-service is allocated to the services that are
 though to be the one with the highest throughput (i.e. spectator service and share data service)
-\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of asynchronous messages, since a chain of synchronous calls could lead to slow down the entire architecture. 
+\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the replication of some data, however, performance is considered more important than cost in this case 
 \end{itemize}
