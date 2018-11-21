@@ -1,12 +1,13 @@
 \subsection{Runtime view}
 An important issue in the project is the process in which the user gives a reply to an individual request
-performed by a third party customer. This is exploited in the following diagram, that assumes that the user
+performed by a third party customer. 
+This is exploited in the following diagram, that assumes that the user
 has already logged in and that the list of pending request is non-empty.
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/requestacceptance.pdf}
 \caption{ Sequence diagram: request acceptance }
-\label{fig:world2}
+\label{fig:requestacceptance}
 \end{figure}
 
 Some comments follows in order to clarify some essential points:
@@ -31,7 +32,7 @@ Another important feature is the fact that third party customers can perform req
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/grouprequest.pdf}
 \caption{ Sequence diagram: group request }
-\label{fig:world2}
+\label{fig:grouprequest}
 \end{figure}
 
 The same comments of the previous diagram hold, also, in this situation. 
@@ -50,12 +51,44 @@ A critical feature of the project is the the one that regards AutomatedSOS:
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/automatedsos.pdf}
-\caption{ Sequence diagram: group request }
-\label{fig:world2}
+\caption{ Sequence diagram: automated SOS call}
+\label{fig:automatedSOScall}
 \end{figure}
 
 This feature is implemented locally, in the mobile application, in order to guarantee the best efficiency and reduce to the minimum delays
-that may be introduced due to data transfer over the Internet. Indeed, the diagrams shows that the user hardware device component will collect
-user health data, and send them to the user application: if this observes some parameters below the threshold, it will perform an SOS
-call. The call is handled in the following way: the mobile app uses a default template to communicate with an emergency room operator all the
-information needed to provide assistance (i.e. health data and position). The emergency room operator, replies with a response that should be "Yes" or "No", in order that the application is aware of it. 
+that may be introduced due to data transfer over the Internet. 
+Indeed, the diagrams shows that the user hardware device component will collect user health data, and send them to the user application: if this observes some parameters below the threshold, it will perform an SOS call. 
+The call is handled in the following way: the mobile app uses a default template to communicate with an emergency room operator all the
+information needed to provide assistance (i.e. health data and position). 
+The emergency room operator, replies with a response that should be "Yes" or "No", in order that the application is aware of it.  \\
+
+\par 
+The log in is an important feature of large interest, because it is also central for the process of handling the users' session. The next
+diagram expose the procedure for the user.
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/login.pdf}
+\caption{ Sequence diagram: log in}
+\label{fig:login}
+\end{figure}
+
+As the diagram show, if the log in is done correctly, a token is generated from the account service and returned back to the API gateway
+and to the client. 
+The information will be used by both the client and the API gateway to manage the user session: all the next requests will be authenticated
+using that token.  \\
+
+\par 
+The procedure of closing a race is here described: 
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/closerace.pdf}
+\caption{ Sequence diagram: close race}
+\label{fig:closerace}
+\end{figure}
+
+It is worth to comment the asynchronous message from race service to spectator service. 
+Indeed, in this case the race is successfully closed, therefore, data collection from athletes from that event should be stopped and not 
+more available; and the same holds for the fact that user are no more able to see their positions, but only the leaderboard.
+In order to accomplish this, an asynchronous call is here performed, to inform the spectator service. 
+Note that some delay could happen, due to asynchronicity, in preventing the above mentioned features; however this is tolerated, because
+it is not something considered that critical.
