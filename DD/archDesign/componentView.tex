@@ -36,13 +36,13 @@ More specifically, when a third party is accessing individual data through the d
 needs to know if a request associated with those data was sent and accepted. 
 Indeed, the request acceptance and its data, are managed in the following way: the share data service provides an  interface that enables the
 individual request service to communicate this event. \\ 
-A slightly different reasoning holds for the management of the group request. In this case the exchange is bidirectional, among two different
-interfaces. 
+A slightly different reasoning holds for the management of the group requests. In this case, the exchange is bidirectional, and happens via
+two different interfaces. 
 In particular, when a new group request is performed, the share data service will be notified by the group request service, and it will check
 the number of involved user.
 After that, the share data service will communicate the response to the group request service: in this case it may happen that he status of
 the request changes again, and, therefore, will be notified to the share data service again. Anyway, this will be later exposed and commented
-in the run time view.  
+in the run time view.  \\
 The other important message exchange is between spectator and race services: in particular, data that the spectator service is receiving must
 be matched with an active run, and thus it needs to know the status of the run: the change will be communicated by the interface exposed
 by the spectator service. \\
