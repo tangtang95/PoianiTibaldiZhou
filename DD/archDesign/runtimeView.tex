@@ -92,3 +92,16 @@ more available; and the same holds for the fact that user are no more able to se
 In order to accomplish this, an asynchronous call is here performed, to inform the spectator service. 
 Note that some delay could happen, due to asynchronicity, in preventing the above mentioned features; however this is tolerated, because
 it is not something considered that critical.
+
+\par
+The interaction between components during the send of cluster of data done by a user is described as follows:
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/senddata.pdf}
+\caption{ Sequence diagram: send cluster of data}
+\label{fig:closerace}
+\end{figure}
+
+The most of the request done by users is related to sending data to the TrackMe system. Therefore, this is one of the bottleneck 
+of the system. By taking into consideration that more or less every application server accepts about 8Kb of header HTTP request, 
+then it means that having 
