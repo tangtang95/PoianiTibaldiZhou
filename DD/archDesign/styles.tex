@@ -47,5 +47,17 @@ the solution is to keep each microservice's data private to that service and acc
 So a database can't be accessed directly by another service. In particular the pattern of schema-per
 service is always guaranteed, while a database-server-per-service is allocated to the services that are
 though to be the one with the highest throughput (i.e. spectator service and share data service)
-\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the replication of some data, however, performance is considered more important than cost in this case 
+\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of
+asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the
+replication of some data, however, performance is considered more important than cost in this case 
+\item As shown, services need to call one another, but a microservices-based application typically runs in a virtualized 
+environment where the number of instances of a service and their locations changes dynamically. 
+The solution is to use a router that runs at a well known location. 
+The router will query a service registry, which may be built into the
+router, and forwards the requests to an available service instance.
+Of course, when a new instance is created, it has to perform registration to the service registry. \\
+The API gateway will send translated requests to the router, that will load balance them onto the active instances.
+This pattern gives great benefits: indeed, the clients do not deal with the discovery of the service, but it comes with the drawback of
+an additional component that need to be installed and configured, and, if needed, replicated, in order to scale. 
+
 \end{itemize}
