@@ -28,7 +28,27 @@ desirable that a failure in Track4Run leads in a failure in also Data4Help.
 Moreover, failing in managing the request should not prevent the data collection: as one can see the
 reason also applies to the various business capabilities that are bounded in the single Data4Help, or
 Track4Run, feature.  
-Due to this, the overall availability is improved. \\
+Due to this, the overall availability is improved. 
+
+\par
+
+Before going to analyze all the patterns adopted for the microservices architecture, one must define the most important thing in a microservices architecture: how to achieve consistency of data. For instance, solutions for this issue are:
+\begin{itemize}
+\item Avoiding transactions across microservices: usually if a microservices architecture needs to have distributed transactions 
+it means that there are redundant data. But if this is avoided, the lack of redundant data means that everytime a microservice needs 
+to ask data from another microservice, a request is sent and if the other microservice is under high load, it will not be able to 
+process it fast.
+\item Two-Phase commit protocol (2PC): The distributed transaction of 2PC consists on two steps: Prepare phase (lock-phase) 
+and Commit-rollback phase (unlock-phase). The problem with this protocol is that it is too slow compared to the time for an 
+operation of a single microservice.
+\item Eventual consistency and compensation: it is a model different from ACID transactions, but it is a mechanism to 
+achieve consistency eventually at some point in the future. This might not achieve the same thing as 2PC but it is faster and if 
+the architecture does not need the strict properties of ACID, then it is better. Otherwise, it could be very difficult to implement it.
+\end{itemize}
+Out of the three solutions, Eventual consistency and compensation is the one adopted by this project due to the fact that the system will scale a lot and there are no problem if consistency is achieved in the future.
+
+\par
+
 Now, some patterns adopted related to the microservices architecture are exposed:
 \begin{itemize}
 \item API gateway: this is a component already introduced in the high level component diagram and it
@@ -47,5 +67,26 @@ the solution is to keep each microservice's data private to that service and acc
 So a database can't be accessed directly by another service. In particular the pattern of schema-per
 service is always guaranteed, while a database-server-per-service is allocated to the services that are
 though to be the one with the highest throughput (i.e. spectator service and share data service)
-\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the replication of some data, however, performance is considered more important than cost in this case 
+\item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of
+asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the
+replication of some data, however, performance is considered more important than cost in this case. A way to achieve a better communications between services is to use something similar to the API gateway: a message queue architecture which requires also an additional service called message broker that is responsible for gathering, routing and distributing messages from services to other services (something similar to a mail service).
+\item As shown, services need to call one another, but a microservices-based application typically runs in a virtualized 
+environment where the number of instances of a service and their locations changes dynamically. 
+The solution is to use a router that runs at a well known location. 
+The router will query a service registry, which may be built into the
+router, and forwards the requests to an available service instance.
+Of course, when a new instance is created, it has to perform registration to the service registry. \\
+The API gateway will send translated requests to the router, that will load balance them onto the active instances.
+This pattern gives great benefits: indeed, the clients do not deal with the discovery of the service, but it comes with the drawback of
+an additional component that need to be installed and configured, and, if needed, replicated, in order to scale. 
+\item Saga pattern: this design pattern is, practically, a way to achieve the solution of Eventual consistency and compensation described before. It solves the trouble of distributed transactions without using 2PC by using a sequence of local transactions where each transaction updates data within a single service. There are two main different ways to implement a saga transaction:
+\begin{itemize}
+\item Events/Choreography: each service subscribe and publish to other service's events
+\item Command/Orchestration: there is a central coordinator service which is responsible about decision making and sequencing business logic 
+\end{itemize}
+In the project it is implemented the version of event transaction. Other than this implementation, Saga pattern defines also 
+the compensation action: an action to restore the original states if there are failures during a distributed transaction (e.g. in 
+the individual request service, if a third party sends a request regarding a non-existing social security number, then when 
+account service is triggered, it will send a compensation action to the individual request by saying that the request must be canceled).
+
 \end{itemize}
