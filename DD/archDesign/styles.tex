@@ -55,7 +55,7 @@ Now, some patterns adopted related to the microservices architecture are exposed
 satisfies and deals with the following problem: how do clients of the application access to the individual
 services? The API gateway is a single entry point for all clients and it can exposes different API for
 each client: this suits well for the TrackMe project. This should be implemented with an event-driven
-reactive approach in order to scale if it is necessary to manage big loads of data. \\
+reactive approach in order to scale if it is necessary to manage big loads of data \\
 \item The access token pattern is very useful, since the application is composed of various services and
 an important issue is how to communicate the identity of the petitioner to the service that handles the
 request. 
@@ -69,8 +69,9 @@ service is always guaranteed, while a database-server-per-service is allocated t
 though to be the one with the highest throughput (i.e. spectator service and share data service)
 \item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of
 asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the
-replication of some data, however, performance is considered more important than cost in this case. A way to achieve a better communications between services is to use something similar to the API gateway: a message queue architecture which requires also an additional service called message broker that is responsible for gathering, routing and distributing messages from services to other services (something similar to a mail service).
-\item As shown, services need to call one another, but a microservices-based application typically runs in a virtualized 
+replication of some data, however, performance is considered more important than cost in this case. A way to achieve a better communications between services is to use something similar to the API gateway: a message queue architecture which requires also an additional service called message broker that is responsible for gathering, routing and distributing messages from services to other services (something similar to a mail service)
+\item 
+As shown, services need to call one another, but a microservices-based application typically runs in a virtualized 
 environment where the number of instances of a service and their locations changes dynamically. 
 The solution is to use a router that runs at a well known location. 
 The router will query a service registry, which may be built into the
@@ -78,7 +79,10 @@ router, and forwards the requests to an available service instance.
 Of course, when a new instance is created, it has to perform registration to the service registry. \\
 The API gateway will send translated requests to the router, that will load balance them onto the active instances.
 This pattern gives great benefits: indeed, the clients do not deal with the discovery of the service, but it comes with the drawback of
-an additional component that need to be installed and configured, and, if needed, replicated, in order to scale. 
+an additional component that need to be installed and configured, and, if needed, replicated, in order to scale
+\item Microservices expose REST API that will be provided only by HTTPS endpoints. This will ensure
+all the benefits of REST API, such the fact that services are stateless, with the security of an high-level encryption protocol. Other
+benefits of the REST API witch are relevant to the requirements of the project are: separation of concerns between client and server, reliability and scalability.
 \item Saga pattern: this design pattern is, practically, a way to achieve the solution of Eventual consistency and compensation described before. It solves the trouble of distributed transactions without using 2PC by using a sequence of local transactions where each transaction updates data within a single service. There are two main different ways to implement a saga transaction:
 \begin{itemize}
 \item Events/Choreography: each service subscribe and publish to other service's events

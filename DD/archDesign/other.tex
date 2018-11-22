@@ -1,1 +1,26 @@
 \subsection{Other design decisions}
+\subsubsection{Frameworks}
+The chosen and described architectural style, leads to some choices in the framework that will be used for the development and the deployment. 
+In particular, to implement a microservices architecture, a microservices chassis framework is needed, in order to have the best support 
+in the developing phase. 
+An option here is to adopt both Spring boot (for what concerns the microservices) and Spring Cloud (that facilitates the set up of distrubed
+system software). They are widely adopted and greatly supported by the community; also many guides and articles are available on the internet. 
+
+\subsubsection{Automated SOS encryption and data transfer}
+Another important issue is regarding the communication between the user hardware device and the user application. This is encrypted with
+AES-128. \\
+The communication happens by means of bluetooth: the version 4.0 + LE, that is available from 2010, provides some nice features for the
+project, because it provides enough  bandwidth (1Mbps when the low energy mode is enabled) for transmitting the data, and it is also a low
+energy consumer. Furthermore, there is no needs of internet connection (with the limits of the network coverage): the devices just need to be
+close, but this is a totally rationale assumption, given the context of the application. 
+Note that this version ensure a good compatibility with a large set of devices. 
+
+\subsubsection{Android application} 	 
+The user application will be developed for the Android operative system, at least in a first moment. This is due to the criticality of the
+automatedSOS service. Assuming that the application will be deployed with Italy as the first market target, this choice covers the biggest
+part of the market.
+
+\subsubsection{Choice of external services}
+Google maps platform is the choice adopted for the external service regarding the Maps. This decision is motivated by reliability, 
+is kept under update and it is well supported by the community. Furthermore, if in the client it is necessary to show some maps, the one
+provided by Google are thought to be the most trusted by the user. 
