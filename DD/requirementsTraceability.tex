@@ -1,1 +1,58 @@
 \section{Requirements traceability}
+Below are listed the design components to which Data4Help requirements and goals are mapped: 
+\begin{itemize}
+\item[{[G1]}] Allow a user to access its own data. Requirements([R10])
+	\begin{enumerate}
+	\item Account service.
+	\item Share data service.
+	\end{enumerate}
+\item[{[G2]}] Allow a user to contribute to data sharing by providing information about his location and health status. Requirements([R11])
+	\begin{enumerate}
+	\item Share data service.
+	\end{enumerate}
+\item[{[G3 \& G4]}] Once the health parameters of a user have been observed below the threshold for the first time after one hour, an ambulance is sent to the user location. 
+The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the emergency point is contacted is equal or less than 5 seconds. Requirements([R12]-[R13]-[R14]-[R14]-[R15]-[R16]-[R17])
+	\begin{enumerate}
+	\item Share data service.
+	\item SIM services.
+	\end{enumerate}
+\item[{[G5]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting conditions are satisfied. Requirements([R18]-[R19]-[R20]-[R21]-[R22])
+	\begin{enumerate}
+	\item Race service.
+	\end{enumerate}
+\item[{[G6]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error.
+Requirements([R23]-[R24])
+	\begin{enumerate}
+	\item  Spectator service.
+	\end{enumerate}
+\item[{[G7]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire. Requirements([R25])
+	\begin{enumerate}
+	\item Individual request service.
+	\item Group request service.
+	\end{enumerate}
+\item[{[G8 \& G9]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party. Requirements([R26]-[R27]-[R28]-[R29])
+	\begin{enumerate}
+	\item Individual request service.
+	\end{enumerate}
+\item[{[G10]}] Allow spectators and runners to see the leader board, when a run is completed. Requirements([R30]-[R31]-[R32])
+	\begin{enumerate}
+	\item Spectator service.
+	\end{enumerate}
+\item[{[G11]}] Allow organizers (i.e. third parties) to set up a run, by defining its name, its path, date, start time, expiration date, and the minimum number of participants. Requirements([R33]-[R34])
+	\begin{enumerate}
+	\item Race service.
+	\end{enumerate}
+\item[{[G12]}] Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data. Requirements([R35]-[R36]-[R37]-[R38])
+	\begin{enumerate}
+	\item Individual request service.
+	\end{enumerate}
+\item[{[G13]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied as soon as the request is approved. Requirements([R39]-[R40]-[R41]-[R42])
+	\begin{enumerate}
+	\item Group request service.
+	\end{enumerate}
+\item[{[G14]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. Requirements([R43]-[R44])
+	\begin{enumerate}
+	\item Individual request service.
+	\item Group request service.
+	\end{enumerate}
+\end{itemize}
