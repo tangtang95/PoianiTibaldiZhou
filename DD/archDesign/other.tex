@@ -4,7 +4,12 @@ The chosen and described architectural style, leads to some choices in the frame
 In particular, to implement a microservices architecture, a microservices chassis framework is needed, in order to have the best support 
 in the developing phase. 
 An option here is to adopt both Spring boot (for what concerns the microservices) and Spring Cloud (that facilitates the set up of distrubed
-system software). They are widely adopted and greatly supported by the community; also many guides and articles are available on the internet. 
+system software). They are widely adopted and greatly supported by the community; also many guides and articles are available on the internet. \\
+
+\subsubsection{Asynchronous messages}
+RabbitMQ, that is a message broker software, to implement the exchange of messages among services. This choice is motivated 
+by the following facts: it enhance delivery and order guarantee, redundancy, decoupling and scalability. 
+Finally, it is well supported in Spring boot. 
 
 \subsubsection{Automated SOS encryption and data transfer}
 Another important issue is regarding the communication between the user hardware device and the user application. This is encrypted with
@@ -21,6 +26,12 @@ automatedSOS service. Assuming that the application will be deployed with Italy 
 part of the market.
 
 \subsubsection{Choice of external services}
-Google maps platform is the choice adopted for the external service regarding the Maps. This decision is motivated by reliability, 
-is kept under update and it is well supported by the community. Furthermore, if in the client it is necessary to show some maps, the one
-provided by Google are thought to be the most trusted by the user. 
+Google maps platform is the choice adopted for the external service regarding the maps. This decision is motivated by its reliability;
+moreover, it is kept under update and it is well supported by the community. Furthermore, if in the client it is necessary to show some maps,
+as it is, the one provided by Google are thought to be the most trusted by the user. 
+
+
+\subsubsection{JSON}
+REST API will be implemented using JSON as protocol for exchanging data. \\
+Compared to XML, it is less verbose and JSON packets require less size. Furthermore, it is well supported
+by Spring Boot. 

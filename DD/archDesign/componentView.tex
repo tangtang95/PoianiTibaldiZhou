@@ -7,11 +7,11 @@ The main analysis regards the microservices block:
 \label{fig:componentdiagram}
 \end{figure}
 Various service components are present, and they all expose at least an interface that is accessed by the
-clients via the API gateway. It follows a brief description of the various services, and a better
-specification of the interfaces they provide to the API gateway:
+clients via the joint combination of API gateway and router. It follows a brief description of the various services, and a better
+specification of the interfaces they provide to users and third party customers:
 \begin{itemize}
 \item The account service provides all the functions related to user sessions, such as login and logout,
-and also the registration of clients (both user and third party customer)
+and also the registration of clients 
 \item The race service makes possible for an athlete to enroll in a run; for a third party customer to set
 up one, and also close it; and it also enables the possibility of retrieving the available races and their
 status (e.g. in course, terminated). Therefore, it manages the "more static" part
@@ -28,23 +28,34 @@ check if there are some requests for him and upload responses
 \end{itemize}
 
 Microservices have their own data and, therefore, access DBMS's API, while Maps's API are necessary 
-only for race and spectator service, in order to manage and double check position data and feasible paths
-\\
+only for race and spectator service, in order to manage and double check position data and feasible paths. \\
 The diagram also shows the main communications that take place between components. The following message exchange is needed to completely and
 correctly exploit the project functions. 
-More specifically, when a third party is accessing individual data through the data share service, it
+\begin{itemize}
+\item 
+When a third party is accessing individual data through the data share service, it
 needs to know if a request associated with those data was sent and accepted. 
-Indeed, the request acceptance and its data, are managed in the following way: the share data service provides an  interface that enables the
-individual request service to communicate this event. \\ 
-A slightly different reasoning holds for the management of the group requests. In this case, the exchange is bidirectional, and happens via
-two different interfaces. 
-In particular, when a new group request is performed, the share data service will be notified by the group request service, and it will check
-the number of involved user.
-After that, the share data service will communicate the response to the group request service: in this case it may happen that he status of
-the request changes again, and, therefore, will be notified to the share data service again. Anyway, this will be later exposed and commented
-in the run time view.  \\
-The other important message exchange is between spectator and race services: in particular, data that the spectator service is receiving must
-be matched with an active run, and thus it needs to know the status of the run: the change will be communicated by the interface exposed
-by the spectator service. \\
-It is possible to develop all the messages exchanged in an asynchronous way: this will prevent a possible slowdown of the application 
-due to chains of synchronous calls.
+Indeed, the request acceptance and its data, are managed in the following way: the share data service provides an interface that enables the
+message queue to send them these pieces of information (i.e. pushIndividualRequestEventInt), while the individual request service will
+reach the interface to send them to the message queue (i.e. newIndividualRequestEventInt). \\
+Moreover, to guarantee that individual requests must be performed on registered users, a match with the account service is necessary. The 
+account service will listen for messages regarding the uploading of new demands, and it will check if the user is present. 
+The account service, will reply accessing the newCheckEventInt, and the queue will forwards that to the individual request service (this is achieved with pushCheckEventInt).
+\item 
+A slightly different reasoning holds for the management of the group requests. In this case, the exchange is bidirectional. 
+In particular, when a new group request is performed, the share data service will be notified by the message queue via the
+pushGroupRequestEventInt, and it will be sent to the message queue by newGroupRequestEventInt. \\
+When the share data service receive this event, it will query its data in order to retrieve information regarding the number of users
+involved: of course, this information needs to be sent back to the group request service, that will accept or refuse the request
+(newNumberOfUserInvoledEventInt and pushNumberOfUserInvolvedEventInt are the interfaces that accomplish this task). 
+Of course, the acceptance of the request may trigger again the new group request event. 
+However, it will be later exposed and commented in the run time view. \\
+Moreover, to guarantee that the filters on the aggregated request are applied correctly (e.g. data on the users whose age is greater then 40)
+a match with the account service is needed. 
+Indeed, when a user registers to the service, the account service will sends user information to the message queue with newAccountEventInt. 
+The information will be forwarded to the share data service with pushAccountEventInt.
+\item
+Another important message exchange is between spectator and race services: in particular, data that the spectator service is receiving must
+be matched with an active run, and thus it needs to know the status of the run: the changes will be communicated by pushRaceEventInt and
+newRaceEventInt.
+\end{itemize}
