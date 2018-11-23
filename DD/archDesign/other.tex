@@ -35,3 +35,19 @@ as it is, the one provided by Google are thought to be the most trusted by the u
 REST API will be implemented using JSON as protocol for exchanging data. \\
 Compared to XML, it is less verbose and JSON packets require less size. Furthermore, it is well supported
 by Spring Boot. 
+
+\subsubsection{Group Request Filtering}
+Up until now, group requests were more or less abstract: there was no definition of what group requests could possibly get from 
+data. Therefore, here it is defined what group requests return. They only give as an output aggregated data, which means count 
+of tuples, sum of values, average of values or other aggregate operator available (e.g. in SQL). Another thing to clarify is that 
+the tuples of the result from a group request have to satisfy a certain constraint requested by the petitioner. Consequently, 
+the following filters are the ones available:
+\begin{itemize}
+\item Filtering by birthplace
+\item Filtering by age
+\item Filtering by a combination of birth year/month/day
+\item Filtering by the GPS position data
+\item Filtering by the health status
+\item Filtering by date and time
+\item Filtering by name or surname (not both of them, otherwise it will compromise privacy data)
+\end{itemize}

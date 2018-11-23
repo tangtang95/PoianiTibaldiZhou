@@ -231,7 +231,7 @@ assert correctAccessToIndividualData {
 /*
  * G13: 
  * Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. 
- * This is satisfied as soon as the request is approved  
+ * This is satisfied after the request is approved  
  */
 assert correctAccessToGroupData {
     groupRequestAcceptedIfAggregatedDataAccessible and groupRequestNumberOfPeopleInvolved and groupDataAccessibleIfAcceptedRequestExist implies {

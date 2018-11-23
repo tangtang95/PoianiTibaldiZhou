@@ -4,7 +4,7 @@ In particular, the following vital goals have been asserted:
 \begin{enumerate}
 \item[{[G3]}] Once the health parameters of a user have been observed below the threshold for the first time after one hour, an ambulance is sent to the user location
 \item[{[G12]}]  Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data 
-\item[{[G13]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied as soon as the request is approved  
+\item[{[G13]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied after the request is approved  
 \end{enumerate}
 
 Note on the alloy model: 
@@ -13,7 +13,7 @@ Note on the alloy model:
 However, they are not stated in the domain assumption chapter of this document 
 \item The context of G3 has been modeled considering that a user uses the AutomatedSOS service at most once in an hour. 
 This allows to prove the goals, without loss of generality 
-\item For G13, the fact that the aggregated request is satisfied as soon as it is approved, has not been proven: the part considered critical is the access to the demanded information 
+\item For G13, the fact that the aggregated request is satisfied after it is approved, has not been proven: the part considered critical is the access to the demanded information 
 \item The constraint on the number of people involved in an aggregated request is modified without loss of generality: the group dimension has to be greater than 5 
 \end{itemize}
 
