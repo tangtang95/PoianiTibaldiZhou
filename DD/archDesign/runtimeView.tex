@@ -1,9 +1,34 @@
 \subsection{Runtime view}
+In this section, to clarify better how the system works dynamically at runtime, a series of sequence diagram is shown:
+\begin{itemize}
+\item Log-in diagram
+\item Request-acceptance diagram
+\item Publish group request diagram
+\item Automated SOS call diagram
+\item Close race diagram
+\item Send cluster of data diagram
+\end{itemize}
+
+\subsubsection{Log-in sequence diagram}
+The log in is an important feature of large interest, because it is also central for the process of handling the users' session. The next
+diagram exposes the procedure for the user.
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/login.pdf}
+\caption{ Sequence diagram: log in}
+\label{fig:login}
+\end{figure}
+
+Only in this diagram, it is shown how the router and service registry works when they are called from the API gateway due to achieve simplicity on other diagrams which are more complex. As the diagram show, if the log-in is done correctly, a token is generated from the account service and returned back to the API gateway
+and to the client. 
+The information will be used by both the client and the API gateway to manage the user session: all the next requests will be authenticated
+using that token.  \\
+
+\subsubsection{Request-acceptance sequence diagram}
 An important issue in the project is the process in which the user gives a reply to an individual request
 performed by a third party customer. 
 This is exploited in the following diagram, that assumes that the user
 has already logged in and that the list of pending request is non-empty.
-
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/requestacceptance.pdf}
 \caption{ Sequence diagram: request acceptance }
@@ -14,18 +39,19 @@ Some comments follows in order to clarify some essential points:
 \begin{itemize}
 \item The API gateway functions also as a proxy for the authentication service. In particular, it keeps track of the active sessions of the
 users (identified by a token\_id). This information is in memory since
-it was returned from the account service in the moment in which that user has performed the log in
-\item The communication between services is kept asynchronous, in order to not reduce the response time 
+it was returned from the account service in the moment in which that user has performed the log-in
+\item The communication between services is kept asynchronous, in order to reduce the response time 
 toward the user that initially used the individual request service. This is acceptable because there are
 no strict requirement on the efficiency on the access of data by third party customer (i.e. the data should
 not be available in the exact moment in which an user sends a response: some latency is tolerated). 
 \item The share data service needs information about requests that have been accepted, in order to correctly
 provide the data access in the right way (i.e. granting access if an accepted request on the data has been 
 accepted). Therefore, when a request is assigned to a new status in the individual request service, this information is communicated
+\item the Message Queue component is responsible to forward the event of new request status to all the other services which has subscribed to this event. This helps to achieve a messaging system able to send asynchronous messages across services.
 \end{itemize}
 
 
-\par 
+\subsubsection{Publish group request sequence diagram}
 Another important feature is the fact that third party customers can perform requests on aggregated data. \\
 
 
@@ -46,8 +72,8 @@ analyzing the request: it will then reply with the number of user involved. If t
 change the status of the request from "under analysis" to "accepted" and it will send this information to the share data service, that, thus,
 will be able to provide correct access to the requested data. \\
 
-\par 
-A critical feature of the project is the the one that regards AutomatedSOS: 
+\subsubsection{Automated SOS call sequence diagram}
+Another critical feature of the project is the the one that regards AutomatedSOS: 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/automatedsos.pdf}
@@ -62,22 +88,7 @@ The call is handled in the following way: the mobile app uses a default template
 information needed to provide assistance (i.e. health data and position). 
 The emergency room operator, replies with a response that should be "Yes" or "No", in order that the application is aware of it.  \\
 
-\par 
-The log in is an important feature of large interest, because it is also central for the process of handling the users' session. The next
-diagram expose the procedure for the user.
-
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{Images/login.pdf}
-\caption{ Sequence diagram: log in}
-\label{fig:login}
-\end{figure}
-
-As the diagram show, if the log in is done correctly, a token is generated from the account service and returned back to the API gateway
-and to the client. 
-The information will be used by both the client and the API gateway to manage the user session: all the next requests will be authenticated
-using that token.  \\
-
-\par 
+\subsubsection{Close race sequence diagram}
 The procedure of closing a race is here described: 
 
 \begin{figure}[H]
@@ -93,7 +104,7 @@ In order to accomplish this, an asynchronous call is here performed, to inform t
 Note that some delay could happen, due to asynchronicity, in preventing the above mentioned features; however this is tolerated, because
 it is not something considered that critical.
 
-\par
+\subsubsection{Send cluster of data sequence diagram}
 The interaction between components during the send of cluster of data done by a user is described as follows:
 
 \begin{figure}[H]
@@ -103,5 +114,15 @@ The interaction between components during the send of cluster of data done by a 
 \end{figure}
 
 The most of the request done by users is related to sending data to the TrackMe system. Therefore, this is one of the bottleneck 
-of the system. By taking into consideration that more or less every application server accepts about 8Kb of header HTTP request, 
-then it means that having 
+of the system. By taking into consideration that more or less every application server accepts about 8Kb of header HTTP request and the data to send at each time:
+\begin{itemize}
+\item token\_id: it is a token of 16 bytes, which is necessary to identify the user;
+\item position data: it is, basically, two double representing latitude and longitude, but since the RESTful message cannot send double, it can be seen as two strings of 10 bytes;
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/gpsprecision.pdf}
+\caption{ Degree precision versus length }
+\label{fig:precisiongps}
+\end{figure}
+\item health data: this type of data can be a heartbeat value (i.e. integer), a blood pressure value (i.e. minimum pressure or maximum pressure, which means two integers), or a bloody oxygen level (i.e. integer). Therefore, at most it is possible to have 2 integers when a health data is sent.
+\end{itemize}
+After this consideration, a possible recommendation about how periodically the user should send data is to do it once the data collected exceed 64 Kb or when 10 minutes are elapsed. This choice is due to the fact that too much requests within a short time could overload the servers, but the system should also have updated data, so, if 10 minutes are elapsed from the last transfer and there are data available, then  the user application should send data to TrackMe.

@@ -1,4 +1,7 @@
 \subsection{Selected architectural styles and patterns}
+In this section, all the adopted architectural styles and patterns are explained sufficiently to define why the specific style or pattern is chosen.
+
+\subsubsection{Microservices}
 The selected architectural style, as already mentioned, is the microservices architecture. This choice is
 supported by multiple reasons. In particular, a strong motivation in the decision process is the
 conjunction of the following two facts:
@@ -30,8 +33,7 @@ reason also applies to the various business capabilities that are bounded in the
 Track4Run, feature.  
 Due to this, the overall availability is improved. 
 
-\par
-
+\subsubsection{Eventually consistency and compensation}
 Before going to analyze all the patterns adopted for the microservices architecture, one must define the most important thing in a microservices architecture: how to achieve consistency of data. For instance, solutions for this issue are:
 \begin{itemize}
 \item Avoiding transactions across microservices: usually if a microservices architecture needs to have distributed transactions 
@@ -47,8 +49,8 @@ the architecture does not need the strict properties of ACID, then it is better.
 \end{itemize}
 Out of the three solutions, Eventual consistency and compensation is the one adopted by this project due to the fact that the system will scale a lot and there are no problem if consistency is achieved in the future.
 
-\par
 
+\subsubsection{Design patterns}
 Now, some patterns adopted related to the microservices architecture are exposed:
 \begin{itemize}
 \item API gateway: this is a component already introduced in the high level component diagram and it
