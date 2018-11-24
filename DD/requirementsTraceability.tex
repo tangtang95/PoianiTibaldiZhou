@@ -1,58 +1,97 @@
 \section{Requirements traceability}
-Below are listed the design components to which Data4Help requirements and goals are mapped: 
+In this section the requirements and goals specified into the \textit{Requirements Analysis and Specification Document} of the RASD are discussed. The following list provide the design components to which Data4Help requirements and goals are mapped: 
 \begin{itemize}
 \item[{[G1]}] Allow a user to access its own data. Requirements([R10])
 	\begin{enumerate}
 	\item Account service.
 	\item Share data service.
 	\end{enumerate}
+As already mentions in the \textit{Component view} chapter, the account service provide all the user session functionality, likes the login into the application, fundamental for accessing to user data. Furthermore the account service allows a user to perform all the possible actions provided by Data4Help, since the user must be subscribe to the application, and for this is always necessary for reaching all goals, but for more legibility is described only in the first point. Share data service instead is responsible for the monitoring the user health status and allows to download the user data from the server and shows it to him.
+
 \item[{[G2]}] Allow a user to contribute to data sharing by providing information about his location and health status. Requirements([R11])
 	\begin{enumerate}
+	\item Account service.
 	\item Share data service.
 	\end{enumerate}
+Share data service monitoring continuously the user health status and the position and store them into a temporary file on the mobile device. Then with own component UploadDataService sent the file to the server and saved into the DBMS.
+
 \item[{[G3 \& G4]}] Once the health parameters of a user have been observed below the threshold for the first time after one hour, an ambulance is sent to the user location. 
 The time experienced between the moment in which the health parameters of a subscribed user are observed below the threshold and the time in which the emergency point is contacted is equal or less than 5 seconds. Requirements([R12]-[R13]-[R14]-[R14]-[R15]-[R16]-[R17])
 	\begin{enumerate}
-	\item Share data service.
+	\item Account service.
+	\item GPS sensor.
+	\item User HW Device.
 	\item SIM services.
 	\end{enumerate}
+This is one of the most critical feature. The user hardware device provide the heath status of the owner and when at least one parameter is observed below the threshold a reading from the GPS sensor is performed. With this data (i.e. GPS coordinate), the SIM service is able to call the emergency room and provide them all the necessary information. Note that for guaranteeing this functionality the connection between the mobile device and the sensors must be presented and the user must be in an area, where is possible perform a call.
+
 \item[{[G5]}] Allow a user to participate in a run managed by third parties, as an athlete, if all starting conditions are satisfied. Requirements([R18]-[R19]-[R20]-[R21]-[R22])
 	\begin{enumerate}
+	\item Account service.
 	\item Race service.
 	\end{enumerate}
+The service that allows to achieve this goal is the Race service. This service, as already specified, makes possible for an athlete to enroll in a run by showing a list of the available race. Furthermore it manages the race status and all the possible actions that a user or the third party can perform on it. (i.e. close it, set date, subscribe, etc...) 
+
 \item[{[G6]}] Allow spectators (i.e. user) to see on real-time the "correct" positions of all athletes taking part in a run, with at most 15 meters of radius error.
 Requirements([R23]-[R24])
 	\begin{enumerate}
-	\item  Spectator service.
-	\end{enumerate}
-\item[{[G7]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire. Requirements([R25])
-	\begin{enumerate}
-	\item Individual request service.
-	\item Group request service.
-	\end{enumerate}
-\item[{[G8 \& G9]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party. Requirements([R26]-[R27]-[R28]-[R29])
-	\begin{enumerate}
-	\item Individual request service.
-	\end{enumerate}
-\item[{[G10]}] Allow spectators and runners to see the leader board, when a run is completed. Requirements([R30]-[R31]-[R32])
-	\begin{enumerate}
+	\item Account service.
 	\item Spectator service.
 	\end{enumerate}
-\item[{[G11]}] Allow organizers (i.e. third parties) to set up a run, by defining its name, its path, date, start time, expiration date, and the minimum number of participants. Requirements([R33]-[R34])
+As it can be deduced from the name, Spectator service regards the dynamic part of a race and allows spectators to see on real-time the athletes in a run. The service receiving position data from the participants and shares it with the spectators by showing on the map. 
+	
+\item[{[G7]}] The maximum time to accept an individual request from any third party is 30 days; after that, the request will expire. Requirements([R25])
 	\begin{enumerate}
-	\item Race service.
-	\end{enumerate}
-\item[{[G12]}] Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data. Requirements([R35]-[R36]-[R37]-[R38])
-	\begin{enumerate}
+	\item Account service.
 	\item Individual request service.
 	\end{enumerate}
+All the constrictions on the individual requests are handled by the Individual request service, which receives the request from the third party, and after has  calculated the time between the date, when the request is posted, and the current date, it decides if the request is expired.
+
+\item[{[G8 \& G9]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party. Requirements([R26]-[R27]-[R28]-[R29])
+	\begin{enumerate}
+	\item Account service.
+	\item Individual request service.
+	\end{enumerate}
+Always the Individual request service manages the accepting or the refusing of the request or the blocking of one by showing a list of the pending requests. 	
+	
+\item[{[G10]}] Allow spectators and runners to see the leader board, when a run is completed. Requirements([R30]-[R31]-[R32])
+	\begin{enumerate}
+	\item Account service.
+	\item Spectator service.
+	\end{enumerate}
+The Spectator service furthermore allows spectator to see the leaderboard on the map during the race, and at the end to see the winner. 
+	
+\item[{[G11]}] Allow organizers (i.e. third parties) to set up a run, by defining its name, its path, date, start time, expiration date, and the minimum number of participants. Requirements([R33]-[R34])
+	\begin{enumerate}
+	\item Account service.
+	\item Race service.
+	\end{enumerate}
+Race service allows third party customer to set up a race and manage one. The service provides a form for posting a race with all the required information.
+	
+\item[{[G12]}] Allow a third party to access data specified in a request if the user accepts the request or if he accepted one or more requests from the same third party that provided access to the same data. Requirements([R35]-[R36]-[R37]-[R38])
+	\begin{enumerate}
+	\item Account service.
+	\item Individual request service.
+	\end{enumerate}
+In the \textit{Component view} section the Individual request service has already discussed and it enables third party customer to upload individual request and monitor their status.	
+	
 \item[{[G13]}] Allow a third party to access statistical and anonymized data if and only if the number of individual involved is greater than 1000. This is satisfied as soon as the request is approved. Requirements([R39]-[R40]-[R41]-[R42])
 	\begin{enumerate}
+	\item Account service.
 	\item Group request service.
 	\end{enumerate}
+The Group request service controls if all constraints on the group request are satisfied, in particular the number of user involved in the request must be greater than 1000. After the request is accepted and the data are provided to the Third party customer with specific filter on it, requiring in the request message.	
+	
 \item[{[G14]}] Allow a third party to subscribe to non-existing data. They will have access to them, as soon as the data is generated. Requirements([R43]-[R44])
 	\begin{enumerate}
+	\item Account service.
 	\item Individual request service.
 	\item Group request service.
 	\end{enumerate}
 \end{itemize}
+Each request service allows to subscribe to non-exiting data and then as soon as the data is generated, it sent to the applicant.
+\\
+\\
+Other requirements likes reliability, availability, security, maintainability and portability are now discussed in particular. \\
+The system must be able to manage huge number of requests, as written also in the RASD 50000-100000 users is estimated and for achieving this performance requirement TrackMe uses a cloud database. These ones manages a big database. Furthermore, since the Spectator service and the Share data service requires highest throughput, these services are be deployed in a cluster. This, also, enhances scalability.\\ The application has to be available 24/7, therefore TrackMe has duplicated server in different areas and the data, as already describe, are stored in a cloud. The other external services are also choice in order to achieve full reliability, indeed for example maps are provided by Google maps service precisely for this reason. Note that the data are replicated among the services, that increases reliability and performance, but it introduces consistency problems. (This problems and their solution are well discussed before in the \textit{Eventually consistency and compensation } section) For all these thinks the reliability of the application is very high.\\ Also the security and the privacy of data are requirements very important, each transactions between the user hardware device and the user application and all temporary data store into the mobile device are encrypted with AES-128 and each exchange of data between the user application and the TrackMe server use HTTPS protocol for a high-security communication, indeed microservices expose REST API, which introduces also other benefits likes separation of concerns between client and server, reliability and scalability. Furthermore the use of the API Gateway and the access token pattern easiness the management of the security in the system, since it is the only way to interact with the application and the token certifies the action.\\ The use of external services, framework and the microservices architecture allow to achieve a easy maintainability of the system. Also the use of a specific patterns help to achieve this scope.\\
+The portability is achieved by developing the application in Android. Indeed after an analysis of the Italy market, has resulted that Android is the most popular mobile system and the framework chosen are also well supported by the current market.
