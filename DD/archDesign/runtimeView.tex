@@ -28,7 +28,7 @@ using that token.  \\
 An important issue in the project is the process in which the user gives a reply to an individual request
 performed by a third party customer. 
 This is exploited in the following diagram, that assumes that the user
-has already logged in and that the list of pending request is non-empty.
+is already logged in and that the list of pending request is non-empty.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/requestacceptance.pdf}
 \caption{ Sequence diagram: request acceptance }
@@ -69,11 +69,11 @@ some time to serve and verify the request can be taken, but a non-desired behavi
 of the request can be checked in a second moment, always via the group request service. 
 Therefore, when a petitioner asks for some aggregated data, the group request service will delegate to the share data service the task of 
 analyzing the request: it will then reply with the number of user involved. If this number is greater than 1000, the group request service
-change the status of the request from "under analysis" to "accepted" and it will send this information to the share data service, that, thus,
+changes the status of the request from "in progress" to "accepted" and it will send this information to the share data service, that, thus,
 will be able to provide correct access to the requested data. \\
 
 \subsubsection{Automated SOS call sequence diagram}
-Another critical feature of the project is the the one that regards AutomatedSOS: 
+Another critical feature of the project is the one regarding AutomatedSOS: 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/automatedsos.pdf}
@@ -83,10 +83,10 @@ Another critical feature of the project is the the one that regards AutomatedSOS
 
 This feature is implemented locally, in the mobile application, in order to guarantee the best efficiency and reduce to the minimum delays
 that may be introduced due to data transfer over the Internet. 
-Indeed, the diagrams shows that the user hardware device component will collect user health data, and send them to the user application: if this observes some parameters below the threshold, it will perform an SOS call. 
+Indeed, the diagram shows that the user hardware device component will collect user health data, and send them to the user application: if this observes some parameters below the threshold, it will perform an SOS call. 
 The call is handled in the following way: the mobile app uses a default template to communicate with an emergency room operator all the
 information needed to provide assistance (i.e. health data and position). 
-The emergency room operator, replies with a response that should be "Yes" or "No", in order that the application is aware of it.  \\
+The emergency room operator replies with a response that should be "Yes" or "No", in order that the application is aware of it.  \\
 
 \subsubsection{Close race sequence diagram}
 The procedure of closing a race is here described: 
@@ -99,7 +99,7 @@ The procedure of closing a race is here described:
 
 It is worth to comment the asynchronous message from race service to spectator service. 
 Indeed, in this case the race is successfully closed, therefore, data collection from athletes from that event should be stopped and not 
-more available; and the same holds for the fact that user are no more able to see their positions, but only the leaderboard.
+more available; and the same holds for the fact that users are no more able to see their positions, but only the leaderboard.
 In order to accomplish this, an asynchronous call is here performed, to inform the spectator service. 
 Note that some delay could happen, due to asynchronicity, in preventing the above mentioned features; however this is tolerated, because
 it is not something considered that critical.
@@ -114,7 +114,7 @@ The interaction between components during the send of cluster of data done by a 
 \end{figure}
 
 The most of the request done by users is related to sending data to the TrackMe system. Therefore, this is one of the bottleneck 
-of the system. By taking into consideration that more or less every application server accepts about 8Kb of header HTTP request and the data to send at each time:
+of the system. By taking into consideration that more or less every application server accepts about 8kB of header HTTP request and the data to send at each time:
 \begin{itemize}
 \item token\_id: it is a token of 16 bytes, which is necessary to identify the user;
 \item position data: it is, basically, two double representing latitude and longitude, but since the RESTful message cannot send double, it can be seen as two strings of 10 bytes;
@@ -126,4 +126,4 @@ of the system. By taking into consideration that more or less every application 
 \item health data: this type of data can be a heartbeat value (i.e. integer), a blood pressure value (i.e. minimum pressure or maximum pressure, which means two integers), or a bloody oxygen level (i.e. integer). Therefore, at most it is possible to have 2 integers when a health data is sent.
 \item timestamp: it usually weights 8 bytes when the timestamp has a timezone. To be coherent with everyone, the timestamp will always have a timezone of Greewich UTC.
 \end{itemize}
-After this consideration, a possible recommendation about how periodically the user should send data is to do it once the data collected exceed 64 Kb or when 10 minutes are elapsed. This choice is due to the fact that too much requests within a short time could overload the servers, but the system should also have updated data, so, if 10 minutes are elapsed from the last transfer and there are data available, then  the user application should send data to TrackMe.
+After this consideration, a possible recommendation about how periodically the user should send data is to do it once the data collected exceed 64 kB or when 10 minutes are elapsed. This choice is due to the fact that too much requests within a short time could overload the servers, but the system should also have updated data, so, if 10 minutes are elapsed from the last transfer and there are data available, then  the user application should send data to TrackMe.

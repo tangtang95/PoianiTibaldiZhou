@@ -47,7 +47,7 @@ operation of a single microservice.
 achieve consistency eventually at some point in the future. This might not achieve the same thing as 2PC but it is faster and if 
 the architecture does not need the strict properties of ACID, then it is better. Otherwise, it could be very difficult to implement it.
 \end{itemize}
-Out of the three solutions, 2PC is not an option since the messages are synchronous, which means too slow. Therefore, Eventual consistency and compensation is the one adopted by this project due to the fact that the system will scale a lot and there are no problem if consistency is achieved in the future.
+Out of the three solutions, 2PC is not an option since the messages are synchronous, which means too slow. Therefore, Eventual consistency and compensation is the one adopted by this project due to the fact that the system will scale a lot and there is no problem if consistency is achieved in the future.
 
 
 \subsubsection{Design patterns}
@@ -55,7 +55,7 @@ Now, some patterns adopted related to the microservices architecture are exposed
 \begin{itemize}
 \item API gateway: this is a component already introduced in the high level component diagram and it
 satisfies and deals with the following problem: how do clients of the application access to the individual
-services? The API gateway is a single entry point for all clients and it can exposes different API for
+services? The API gateway is a single entry point for all clients and it can expose different API for
 each client: this suits well for the TrackMe project. This should be implemented with an event-driven
 reactive approach in order to scale if it is necessary to manage big loads of data \\
 \item The access token pattern is very useful, since the application is composed of various services and
@@ -84,10 +84,10 @@ This pattern gives great benefits: indeed, the clients do not deal with the disc
 an additional component that need to be installed and configured, and, if needed, replicated, in order to scale
 \item Microservices expose REST API that will be provided only by HTTPS endpoints. This will ensure
 all the benefits of REST API, such the fact that services are stateless, with the security of an high-level encryption protocol. Other
-benefits of the REST API witch are relevant to the requirements of the project are: separation of concerns between client and server, reliability and scalability.
+benefits of the REST API which are relevant to the requirements of the project are: separation of concerns between client and server, reliability and scalability.
 \item Saga pattern: this design pattern is, practically, a way to achieve the solution of Eventual consistency and compensation described before. It solves the trouble of distributed transactions without using 2PC by using a sequence of local transactions where each transaction updates data within a single service. Even though 2PC guarantees ACID properties, it is better Saga pattern that achieves only different properties, called BASE: Basic Availability Soft-state Eventually consistent.  But with Saga, there are two main different ways to implement a saga transaction:
 \begin{itemize}
-\item Events/Choreography: each service subscribe and publish to other service's events
+\item Events/Choreography: each service subscribes and publishes to other service's events
 \item Command/Orchestration: there is a central coordinator service which is responsible about decision making and sequencing business logic 
 \end{itemize}
 In the project it is implemented the version of event transaction. Other than this implementation, Saga pattern defines also 
