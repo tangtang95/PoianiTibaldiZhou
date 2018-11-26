@@ -1,0 +1,23 @@
+\subsection{Implementation plan}
+A grate property of microservices structure is that it can be developed independently. The implementation of each service will be done by starting from the set up of its DBMS system and then the main logic of the service. Each service can be seen as a completely separate system with its memory stack, its logic and its user interface that at the end all of GUI are merged in a single interface. The order in which the service is be carried out depends on a number of factors, like the complexity of the services and the dependence of other modules. In this sense, the components of the TrackMe server, could be made in the following way, by specifying the order of implementation:
+\begin{enumerate}
+\item Share data service.
+This service is one of the more important component server side. It takes the GPS data and the health data and it shares them through the two internal services, download and upload data service. Other services, like the request services are depended from it, and for this reason it should be made at the beginning.
+\item Race service.
+Race service take the second place in the list, because of its complicity. The integration with maps API and the several features, that it is composed, makes the programming of this component rather long. Although this fact has already been considered in the design of the system, this still represents a point of possible problems.
+\item Spectator service.
+Spectator service is an other service rich of feature to implement and its user interface is not so easy.  
+\item Account service.
+This service is likely the most easy to develop, because of the code is already existed, but the security of the access is not to be underestimated and its importance is crucial in the system. 
+\item Individual request service and Group request service.
+The request services are the main modules for the interaction with the third party customer and they represent a message system. They required the share data service already built and for this reason and for the fact that their implementation are a simple REST API with HTTPS communication, they are positioned at the end.
+\end{enumerate}   
+Note that for the Race service and the spectator service before their implementation they need to have already configured the external service Google maps API. After this, for completing the server side, the main parts of communication system must be built, in particularity the components which are interested are: 
+\begin{enumerate}
+\item Server registry
+\item Message queue
+\item Router
+\end{enumerate}
+Between client and server an other important component must be done before that the communication is available. Indeed, there is the API Gateway. It is one of the more complex components of the system, due to it is the only way to communicate with the server and it must certificate the action into the system. 
+Now the network is run and the communication between server and client is available.
+The beauty of microservices structure is also that the client side is can be done at the same time of the server side. The development of the user application start with the set up of the communication with the hardware, like GPS sensor and Call service. Then, the user interface of each service, server side, are drawn and developed, so the mock-up of the application takes shape.
