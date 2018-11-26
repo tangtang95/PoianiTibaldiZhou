@@ -1,0 +1,32 @@
+\subsection{Test plan}
+Considering the implementation plan of the TrackMe system, the chosen strategy for the integration testing is the bottom-up. Starting from the leaves of the hierarchy, it never needs the use of stubs. This kind of strategy require therefore a unit test for each module. A unit is the smallest possible testable software component. Usually, it performs a single cohesive function. This decision is supported by the fact that a unit is small, so it is easier to design, execute, record, and analyze test results for than larger chunks of code are. Defects revealed by a unit test are easy to locate and relatively easy to repair. Furthermore, since lot of services have several features, units tests result the perfect choice. Indeed, one of the main benefits of unit testing is that it makes the coding process more Agile and it improves the quality of the code. Unit test also helps to achieve a good line coverage, that for this project must be at least 90\% for each service and components, which has presented in the \textit{Component view} section. Note that for critical components, like message queue, router and API Gateway, the coverage will be 100\% of lines. When the message queue component and two services are developed and the unit testing is performed, the integration testing will can start. 
+
+\subsubsection{Entry Criteria}
+As just describe, the integration testing should start as soon as two components of the system and the message queue are released, but some preconditions should be satisfied:
+\begin{itemize}
+\item In order to test the system components, some low level modules and external APIs should be available. In particular: 
+\begin{enumerate}
+\item For integration tests involving the AutomatedSOS feature, the user application with each ones of its components (i.e. SIM service, GPS sensor and User HW devices) should be fully implemented.
+\item For integration tests involving maps components, like Race service and Spectator service, the Maps API should be available and fully usable.
+\item The DBMS of the services, that should be tested, should be configured and operative in order to allow to test all the components which need access to the databases. The testing of the DBMS is particularity important with this type of design structure. Since the services are perfectly independent among them, also each DBMS is independent among them and that requires a specific tests on consistency and compensation.
+\item For integration tests between server side and client side requires that API Gateway, Router and service registry components are fully developed.
+\end{enumerate}
+\item In order to test the integration of two components, the main features of both of them should have been developed and, as already mentions, the related unit tests should have been performed.
+\end{itemize}
+Note that the message queue component is fundamental for the integration testing, without it never communication between two services are available. For this reason the message queue is the first component done and its line coverage is so high. A good testing of this module discriminates the possible causes of error in the debugging process during the integration testing.  
+\subsubsection{Elements to be Integrated}
+Referring to the \textit{design document}, the system is composed of several components, that can be divided into three categories: 
+\begin{itemize}
+\item Front-end components: mobile application (i.e user application and third party application)
+\item Back-end components: All services deployed on the server and the communication component.
+\item External components: all the components which refer to functionalities provided by external service and the DBMS.
+\end{itemize}
+\subsubsection{Integration strategy}
+Given that the entire development effort mainly follows a bottom-up strategy, we opted to use a similar approach with respect to the testing phase. Due to the complexity of the system for a better visibility a critical modules testing strategy should be performed on critical services.\\
+When all the component are made and the application is ready, for testing if the system satisfied the goals and the non-functional requirement describe into the RASD document, a system testing will be performed. For completeness, below is presented the three system testing strategy that will be used on the system: 
+\begin{enumerate}
+\item Performance testing: whit this test is possible check if the TrackMe application respect the performance described. In this particularity case it checks if the system performs an SOSCall within 5 seconds when the constraints are satisfied.
+\item Load Testing: the load testing exposes bugs such as memory leaks, mismanagement of memory and buffer overflows, excellent for application, as this, that takes data from sensor and tries to manage them in a correct way.
+\item Stress Testing: finally this testing checks the availability and the reliability of the system.
+\end{enumerate}
+As well shown in this section of the document, the testing is taken into great consideration, because of the TrackMe application is responsible of the life of the people that use it. Indeed the security and the correctness of the software must be better as possible when a human's life is in danger. 
