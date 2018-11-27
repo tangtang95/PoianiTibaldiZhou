@@ -1,23 +1,54 @@
 \subsection{Implementation plan}
-A great property of microservices structure is that it can be developed independently. The implementation of each service will be done by starting from the set up of its DBMS system and then the main logic of the service. Each service can be seen as a completely separate system with its memory stack, its logic and its user interface that at the end all of GUI are merged in a single interface. The order in which the service is be carried out depends on a number of factors, like the complexity of the services and the dependence of other modules. In this sense, the components of the TrackMe server, could be made in the following way, by specifying the order of implementation:
-\begin{enumerate}
+First of all, since client and server can be developed at the same time: indeed, there is low coupling
+between them, and this is also enhanced by the REST API. To give some structure to the chapter, first the
+implementation of the server components are discussed, and than the ones regarding the client. \\ 
+ \par 
+A great property of microservices structure is that microservices can be developed independently. 
+The implementation of each service will be done by starting from the set up of its DBMS system and then
+the main logic of the service. 
+Each service can be seen as a completely separate system with its memory stack, its logic and its user
+interface. 
+At the end, the user interfaces are merged and reachable from a single mobile application. 
+The order in which the services are implemented depends on a number of factors, like the complexity of the
+service and the dependence of other modules. 
+In this sense, the components of the TrackMe server, could be developed in the following order:
+ \begin{enumerate}
 \item Share data service.
-This service is one of the more important component server side. It takes the GPS data and the health data and it shares them through the two internal services, download and upload data service. Other services, like the request services are depended from it, and for this reason it should be made at the beginning.
-\item Race service.
-Race service take the second place in the list, because of its complicity. The integration with maps API and the several features, that it is composed, makes the programming of this component rather long. Although this fact has already been considered in the design of the system, this still represents a point of possible problems.
-\item Spectator service.
-Spectator service is an other service rich of feature to implement and its user interface is not so easy.  
-\item Account service.
-This service is likely the most easy to develop, because of the code is already existed, but the security of the access is not to be underestimated and its importance is crucial in the system. 
+This service is one of the more important server side component. It takes the GPS data and the health data
+and it shares them through the two interfaces: download and upload data service. 
+This is the first module since it is the main core functionality of the whole project. 
 \item Individual request service and Group request service.
-The request services are the main modules for the interaction with the third party customer and they represent a message system. They required the share data service already built and for this reason and for the fact that their implementation are a simple REST API with HTTPS communication, they are positioned at the end.
+The request services are the main modules for the interaction with the third party customer, and, also
+the one that are more dependent w.r.t. to the core business of Data4Help. For this reason, it follows 
+the share data service.
+\item Race service.
+The integration with maps API and the several features, that it is composed, makes the programming of this
+component rather long. Although this fact has already been considered in the design of the system, this
+still represents a point of possible problems.
+\item Spectator service.
+Spectator service is another service rich of feature to implement and its user interface is not so easy.  
+This component and the previous one need the configuration of an external service (i.e. Google Maps) 
+\item Account service. 
+This service is likely the most easy to develop, because it is, somehow, a basic feature for most of the
+applications. 
+However,the security of the access has not to be underestimated, and its importance is crucial in the
+system.
 \end{enumerate}   
-Note that for the Race service and the spectator service before their implementation they need to have already configured the external service Google maps API. After this, for completing the server side, the main parts of communication system must be built, in particularity the components which are interested are: 
+As one can see from the order, first of all the functions of Data4Help are implemented, since it is
+considered to be the most relevant feature of the project. \\ 
+Parallel to the service, it is important to implement the message queue, since this will give the 
+possibility of starting integration test much earlier. 
+ After this, for completing the server side, the main parts of communication system must be built, in
+particularity the components which are interested are: 
 \begin{enumerate}
-\item Server registry
-\item Message queue
-\item Router
+\item API Gateway: this will be the first one among the remaining server components, since it gives the
+possibility to set up the connection with the clients
+\item Router and API gateway: this are strongly connected, since they are part of the same architectural
+design pattern, so they will be developed simultaneously
 \end{enumerate}
-Between client and server an other important component must be done before that the communication is available. Indeed, there is the API Gateway. It is one of the more complex components of the system, due to it is the only way to communicate with the server and it must certificate the action into the system. 
-Now the network is run and the communication between server and client is available.
-The beauty of microservices structure is also that the client side is can be done at the same time of the server side. The development of the user application start with the set up of the communication with the hardware, like GPS sensor and Call service. Then, the user interface of each service, server side, are drawn and developed, so the mock-up of the application takes shape. 
+\par
+As already mentioned, the client side can be developed at the same time as the server side. 
+A good approach at the beginning of the client side builds the skeleton of the user interface for each service, that helps the programmer to have clear ideas on the aspect of the complete application. This allows understanding if all the requirements are satisfied and if the user experience with the application is satisfactory. 
+Then the development of the user application proceeds with the set up of the communication with the hardware,
+like GPS sensor and Call service. \\
+On the mobile side, there are several features to implement. It is a good idea start the implementation from the AutomatedSOS, due to its dependency from external services, like GPS sensor, SIM service and the user HW device that made the service hard to be implemented. A benefit of this choice is that after this implementation the other results more easily and all the interface with the hardware are just built and ready to be integrated with Data4Help service. Furthermore, this service is only on the client side and it doesn't require the communication with the TrackMe servers. Note that the third party application is always the same application with a different user interface, which allows sending the data request message to other users or to TrackMe system, manages their answers and download data from the servers and it disables the other functionality available in the user application. The discrimination between the two GUI is the kind of account, indeed during the subscribing process, the user chooses the type of account (i.e. simple user or third party) and obviously provides different information. Now two application's features are developed and at the end, after having configured the maps API, there is time to implement the third feature (i.e. Track4Run), that result to be separate from the other two and it rather easy to develop client side.
