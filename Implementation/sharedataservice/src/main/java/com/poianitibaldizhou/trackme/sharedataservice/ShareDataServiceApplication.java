@@ -9,4 +9,5 @@ public class ShareDataServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ShareDataServiceApplication.class, args);
 	}
+
 }
