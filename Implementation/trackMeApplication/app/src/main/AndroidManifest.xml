@@ -16,10 +16,10 @@
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
         <activity
-            android:name=".MainActivity" >
+            android:name=".HomeActivity" >
         </activity>
         <activity
-            android:name=".LoginActivity">
+            android:name=".account.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />

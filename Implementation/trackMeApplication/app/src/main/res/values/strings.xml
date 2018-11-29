@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">trackMeApplication</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">LOGIN</string>
+    <string name="register_here">Register Here.</string>
+    <string name="track_me_logo">TrackMeLogo</string>
+    <string name="login_error">Username or password wrong</string>
 </resources>
