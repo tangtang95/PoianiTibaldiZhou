@@ -1,8 +1,8 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.util;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import java.io.Serializable;
 
-public enum IndividualRequestStatus {
+public enum IndividualRequestStatus implements Serializable {
     PENDING,
     REFUSED,
     ACCEPTED,

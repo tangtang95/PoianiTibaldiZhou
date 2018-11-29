@@ -3,7 +3,6 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestResourceAssembler;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -21,12 +20,12 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 @RequestMapping(path = "/individualrequestservice")
 public class IndividualRequestController {
 
-    @Autowired
-    private IndividualRequestManagerService requestManagerService;
+    private final IndividualRequestManagerService requestManagerService;
 
     private final IndividualRequestResourceAssembler assembler;
 
-    IndividualRequestController(IndividualRequestResourceAssembler assembler) {
+    IndividualRequestController(IndividualRequestManagerService individualRequestManagerService, IndividualRequestResourceAssembler assembler) {
+        this.requestManagerService = individualRequestManagerService;
         this.assembler = assembler;
     }
 
@@ -46,8 +45,8 @@ public class IndividualRequestController {
                 linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(thirdPartyID)).withSelfRel());
     }
 
-    @PostMapping("/request")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestParam IndividualRequest newRequest) throws URISyntaxException {
+    @PostMapping("/requests")
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestBody IndividualRequest newRequest) throws URISyntaxException {
         Resource<IndividualRequest> resource = assembler.toResource(requestManagerService.addRequest(newRequest));
 
         return ResponseEntity
