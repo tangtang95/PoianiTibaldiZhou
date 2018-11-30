@@ -35,16 +35,17 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
     @Override
     public IndividualRequest addRequest(IndividualRequest newRequest) {
         // Check if the request regards some registered user
-        if(userRepository.findById(newRequest.getSsn()).isPresent()) {
+        if(!userRepository.findById(newRequest.getSsn()).isPresent()) {
             throw new UserNotFoundException(newRequest.getSsn());
         }
 
         // Check if the request is blocked
         BlockedThirdPartyKey key = new BlockedThirdPartyKey(newRequest.getThirdPartyID(), newRequest.getSsn());
-        if(blockedThirdPartyRepository.findById(key).isPresent())
+        if(blockedThirdPartyRepository.findById(key).isPresent()) {
             newRequest.setStatus(IndividualRequestStatus.REFUSED);
-        else
+        } else {
             newRequest.setStatus(IndividualRequestStatus.PENDING);
+        }
 
         // Save the request
         return individualRequestRepository.save(newRequest);
