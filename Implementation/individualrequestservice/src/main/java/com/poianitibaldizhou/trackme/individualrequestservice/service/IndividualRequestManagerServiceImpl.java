@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Implementation of the individual request manager service.
+*/
 @Service
 public class IndividualRequestManagerServiceImpl implements IndividualRequestManagerService {
 
@@ -19,6 +22,16 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final UserRepository userRepository;
 
+    /**
+     * Creates an individual request manager service.
+     * It needs some repository in order to make some operations on data (e.g. saving a new request).
+     *
+     * @param individualRequestRepository repository regarding the individual requests, useful to manage (i.e.
+     *                                    saving and retrieving) requests
+     * @param blockedThirdPartyRepository repository regarding the blocked third party, useful to check if a user
+     *                                    blocked a certain third party
+     * @param userRepository repository regarding the users, useful to match that users exist
+     */
     public IndividualRequestManagerServiceImpl(IndividualRequestRepository individualRequestRepository,
                                                BlockedThirdPartyRepository blockedThirdPartyRepository,
                                                UserRepository userRepository) {
@@ -33,8 +46,17 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
     }
 
     @Override
+    public List<IndividualRequest> getUserPendingRequests(String ssn) {
+        // Check if the request regards a registered user
+        if(!userRepository.findById(ssn).isPresent())
+            throw new UserNotFoundException(ssn);
+
+        return individualRequestRepository.findAllBySsnAndStatus(ssn, IndividualRequestStatus.PENDING);
+    }
+
+    @Override
     public IndividualRequest addRequest(IndividualRequest newRequest) {
-        // Check if the request regards some registered user
+        // Check if the request regards a registered user
         if(!userRepository.findById(newRequest.getSsn()).isPresent()) {
             throw new UserNotFoundException(newRequest.getSsn());
         }

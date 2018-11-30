@@ -27,11 +27,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Test for the individual request manager service
+ * Unit test for the individual request manager service
  */
 @RunWith(SpringRunner.class)
 public class IndividualRequestManagerServiceImplUnitTest {
-
 
     @MockBean
     private IndividualRequestRepository individualRequestRepository;
@@ -69,6 +68,10 @@ public class IndividualRequestManagerServiceImplUnitTest {
         user = new User();
         user.setSsn("user3");
         Mockito.when(userRepo.findById("user3")).thenReturn(java.util.Optional.ofNullable(user));
+
+        user = new User();
+        user.setSsn("user15");
+        Mockito.when(userRepo.findById("user15")).thenReturn(java.util.Optional.ofNullable(user));
     }
 
     /**
@@ -99,6 +102,11 @@ public class IndividualRequestManagerServiceImplUnitTest {
 
         Mockito.when(requestRepo.findAllByThirdPartyID((long) 1)).thenReturn(listOfFirstTP);
         Mockito.when(requestRepo.findAllByThirdPartyID((long) 2)).thenReturn(listOfSecondTP);
+
+        List<IndividualRequest> listOfUser3 = new ArrayList<>();
+        listOfUser3.add(request3);
+
+        Mockito.when(requestRepo.findAllBySsnAndStatus("user3", IndividualRequestStatus.PENDING)).thenReturn(listOfUser3);
     }
 
     /**
@@ -180,5 +188,35 @@ public class IndividualRequestManagerServiceImplUnitTest {
         requestManagerService.addRequest(newRequest);
 
         assertEquals(IndividualRequestStatus.REFUSED, newRequest.getStatus());
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user, when the user is not registered
+     * into the system
+     */
+    @Test(expected = UserNotFoundException.class)
+    public void getUserPendingRequestTestWhenUserNotRegistered() {
+        requestManagerService.getUserPendingRequests("notPresentUser");
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user, when the user is registered into the
+     * system but no pending requests are present
+     */
+    @Test
+    public void getUserPendingRequestTestWhenListEmpty() {
+        assertTrue(requestManagerService.getUserPendingRequests("user15").isEmpty());
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user when the user is registered
+     * and has some pending requests
+     */
+    @Test
+    public void getUserPendingRequestTest() {
+        List<IndividualRequest> requestList = requestManagerService.getUserPendingRequests("user3");
+        assertEquals(1,requestList.size());
+        assertEquals("user3", requestList.get(0).getSsn());
+        assertEquals(IndividualRequestStatus.PENDING, requestList.get(0).getStatus());
     }
 }
