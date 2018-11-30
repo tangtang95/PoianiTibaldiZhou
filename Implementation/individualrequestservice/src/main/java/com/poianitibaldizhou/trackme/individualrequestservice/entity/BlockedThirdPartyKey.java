@@ -1,10 +1,13 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.entity;
 
+import lombok.EqualsAndHashCode;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @Embeddable
+@EqualsAndHashCode
 public class BlockedThirdPartyKey implements Serializable {
 
     @Column(name = "thirdPartyID", nullable = false)
@@ -33,4 +36,5 @@ public class BlockedThirdPartyKey implements Serializable {
     public void setSsn(String ssn) {
         this.ssn = ssn;
     }
+
 }
