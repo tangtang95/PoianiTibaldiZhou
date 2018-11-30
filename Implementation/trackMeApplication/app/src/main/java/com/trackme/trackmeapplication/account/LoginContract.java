@@ -10,13 +10,17 @@ class LoginContract {
         void navigateToHome();
 
         void navigateToRegister();
+
+        void navigateToBusinessLogin();
+
+        void setLoginError();
     }
 
     interface LoginPresenter extends BasePresenter<LoginView> {
 
-        void validateCredentials(String username, String password);
-
         void register();
+
+        void businessLogin();
 
         void onLoginError();
 
