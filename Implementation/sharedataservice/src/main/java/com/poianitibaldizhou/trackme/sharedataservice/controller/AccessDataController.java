@@ -11,12 +11,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/access_data")
 public class AccessDataController implements AccessDataService {
 
-    @Autowired
-    private HealthDataRepository healthDataRepository;
-
-    @Autowired
-    private PositionDataRepository positionDataRepository;
-
     @GetMapping("/individual_request/{request_id}")
     @Override
     public @ResponseBody String getIndividualRequestData(@PathVariable(name = "request_id") Long requestId){

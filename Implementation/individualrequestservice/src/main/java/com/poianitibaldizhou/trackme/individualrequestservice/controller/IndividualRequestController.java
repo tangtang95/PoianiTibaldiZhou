@@ -47,7 +47,7 @@ public class IndividualRequestController {
     }
 
     @PostMapping("/request")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestParam IndividualRequest newRequest) throws URISyntaxException {
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestBody IndividualRequest newRequest) throws URISyntaxException {
         Resource<IndividualRequest> resource = assembler.toResource(requestManagerService.addRequest(newRequest));
 
         return ResponseEntity

@@ -1,8 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.util;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
-
-public enum IndividualRequestStatus {
+public enum IndividualRequestStatus{
     PENDING,
     REFUSED,
     ACCEPTED,
