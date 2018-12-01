@@ -1,11 +1,9 @@
 package com.poianitibaldizhou.trackme.sharedataservice.repository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.DataWrapper;
+import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
-import jdk.nashorn.internal.ir.debug.JSONWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,6 @@
 package com.poianitibaldizhou.trackme.sharedataservice.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.DataWrapper;
+import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 
