@@ -1,22 +1,27 @@
 package com.poianitibaldizhou.trackme.sharedataservice.service;
 
-import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
-import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.domain.QHealthData;
+import com.poianitibaldizhou.trackme.sharedataservice.domain.QPositionData;
+import com.poianitibaldizhou.trackme.sharedataservice.domain.QUser;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
-import com.poianitibaldizhou.trackme.sharedataservice.repository.specification.CustomSpecificationBuilder;
-import com.poianitibaldizhou.trackme.sharedataservice.util.FilterableTable;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.mysql.MySQLQueryFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Slf4j
 @Service
 public class AccessDataServiceImpl implements AccessDataService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private MySQLQueryFactory queryFactory;
 
     private UserRepository userRepository;
     private HealthDataRepository healthDataRepository;
@@ -40,17 +45,30 @@ public class AccessDataServiceImpl implements AccessDataService {
         return null;
     }
 
+    @Transactional
     @Override
     public String getGroupRequestData(Long requestId) {
-        GroupRequest groupRequest = groupRequestRepository.findById(requestId)
+        /*GroupRequest groupRequest = groupRequestRepository.findById(requestId)
                 .orElseThrow(() -> new GroupRequestNotFoundException(requestId));
-        JPAQuery query = new JPAQuery();
+        List<FilterStatement> filters = filterStatementRepository.findAllByGroupRequest(groupRequest);*/
+        QUser user = QUser.user;
+        QHealthData healthData= QHealthData.healthData;
+        QPositionData positionData = QPositionData.positionData;
+        SubQueryExpression<Tuple> healthQuery = queryFactory.query().from(healthData).select(healthData.userSsn.as("userssn"),
+                healthData.timestamp.as("timestamp1"), Expressions.as(null, positionData.latitude),
+                Expressions.as(null, positionData.longitude),
+                healthData.heartBeat, healthData.pressureMin, healthData.pressureMax,
+                healthData.bloodOxygenLevel);
+        SubQueryExpression<Tuple> positionQuery = queryFactory.query().from(positionData).select(positionData.userSsn.as("userssn"),
+                positionData.timestamp.as("timestamp1"), positionData.latitude, positionData.longitude,
+                Expressions.as(null , healthData.heartBeat), Expressions.as(null, healthData.pressureMin),
+                Expressions.as(null, healthData.pressureMax), Expressions.as(null, healthData.bloodOxygenLevel));
+        Expression<Tuple> unionData = queryFactory.query().union(positionQuery, healthQuery).as("unionData");
+        List<Tuple> list = queryFactory.query().select(user.all()).from(user)
+                .from(unionData).fetch();
+        /*for (FilterStatement filter: filters) {
 
-
-        
-
-
-
-        return null;
+        }*/
+        return list.toString();
     }
 }

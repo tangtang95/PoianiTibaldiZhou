@@ -13,14 +13,15 @@ import org.springframework.stereotype.Component;
 public class Logger {
 
     @Around("execution(public * com.poianitibaldizhou.trackme.sharedataservice.service.*.*(..))")
-    public Object logShareDataServiceCall(ProceedingJoinPoint joinPoint) {
-        Object retValue = null;
+    public Object logShareDataServiceCall(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object retValue;
         log.info("Before method: " + joinPoint.getSignature().toString());
         try {
             retValue = joinPoint.proceed();
             log.info("After method: " + joinPoint.getSignature().toString());
         } catch (Throwable throwable) {
-            log.info("Exception: " + joinPoint.getSignature().toString());
+            log.info("Exception: " + joinPoint.getSignature().toString() + " caused by:" + throwable.toString());
+            throw throwable;
         }
         return retValue;
     }

@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class FilterStatement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @Column(name = "filter_table", length = 10, nullable = false)
