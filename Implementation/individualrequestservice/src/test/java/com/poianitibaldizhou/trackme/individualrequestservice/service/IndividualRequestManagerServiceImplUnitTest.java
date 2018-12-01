@@ -1,9 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdParty;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -25,6 +22,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
  * Unit test for the individual request manager service
@@ -177,7 +177,6 @@ public class IndividualRequestManagerServiceImplUnitTest {
         requestManagerService.addRequest(new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user4"), (long) 1));
     }
 
-
     /**
      * Test the add of a new request, when the user related with it is present (i.e. registered), but has already
      * blocked the petitioner
@@ -185,9 +184,10 @@ public class IndividualRequestManagerServiceImplUnitTest {
     @Test
     public void addRequestTestWhenBlocked() {
         IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long) 4);
+
         requestManagerService.addRequest(newRequest);
 
-        assertEquals(IndividualRequestStatus.REFUSED, newRequest.getStatus());
+        verify(individualRequestRepository, times(1)).save(any(IndividualRequest.class));
     }
 
     /**

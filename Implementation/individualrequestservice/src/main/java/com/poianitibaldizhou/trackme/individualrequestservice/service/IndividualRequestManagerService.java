@@ -32,7 +32,7 @@ public interface IndividualRequestManagerService {
     /**
      * This adds a new request. The request will be signed as pending, in the case in which the user has not blocked
      * the third party customer, otherwise it will get instantly refused.
-     * Note that this can a runtime exception, that is UserNotFoundException, in the case in which the third party
+     * Note that this can throw a runtime exception, that is UserNotFoundException, in the case in which the third party
      * customer is trying to make a request of a user that is not registered into the system.
      *
      * @param newRequest request that will be added

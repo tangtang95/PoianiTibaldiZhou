@@ -7,7 +7,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Individ
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -59,20 +58,21 @@ public class UploadResponseServiceImpl implements UploadResponseService {
             throw new NonMatchingUserException(user.getSsn());
         }
 
-        // Update row in the database
-        if (response == ResponseType.ACCEPT) {
-            request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-        } else if (response == ResponseType.REFUSE) {
-            request.setStatus(IndividualRequestStatus.REFUSED);
-
-        }
+        // TODO MAKE TRIGGER INSTEAD OF THIS
+        // Update row in the database (this maybe should have be in another part: it is not adding a response, maybe
+        // and event listener is better
+        //if (response == ResponseType.ACCEPT) {
+        //    request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
+        //} else if (response == ResponseType.REFUSE) {
+        //    request.setStatus(IndividualRequestStatus.REFUSED);
+        //}
 
         // Save the individual response in the database
         Response individualResponse = new Response();
         individualResponse.setRequestID(request.getId());
+        individualResponse.setRequest(request);
         individualResponse.setResponse(response);
         individualResponse.setAcceptanceTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
-        individualResponse.setSsn(user);
 
         return individualResponseRepository.save(individualResponse);
     }
@@ -84,7 +84,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
             throw new UserNotFoundException(user);
         List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
 
-        if(requestList.stream()
+        if(!requestList.stream()
                 .anyMatch(individualRequest -> individualRequest.getUser().equals(user))) {
             throw new ThirdPartyNotFoundException(thirdPartyID);
         }
@@ -93,9 +93,10 @@ public class UploadResponseServiceImpl implements UploadResponseService {
             throw new BlockAlreadyPerformedException(thirdPartyID);
         }
 
+        // TODO MAKE TRIGGER INSTEAD OF THIS
         // Change all the pending requests to refused
-        requestList.stream().filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING))
-                .forEach(individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED));
+        //requestList.stream().filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING))
+        //        .forEach(individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED));
 
         // Save the blocked third party
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();

@@ -217,7 +217,6 @@ public class IndividualRequestControllerUnitTest {
         mockedRequest.setTimestamp(new Timestamp(0));
         mockedRequest.setStatus(IndividualRequestStatus.PENDING);
 
-
         String json = "{\n" +
                 "\t\"id\": 1,\n" +
                 "\t\"status\": \"PENDING\",\n" +

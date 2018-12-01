@@ -5,20 +5,19 @@ import com.poianitibaldizhou.trackme.individualrequestservice.assembler.Response
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.Response;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.BadResponseTypeException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.UploadResponseService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import org.springframework.hateoas.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
  * Entry point for accessing the service that regards the responses to individual request
  */
 @RestController
-@RequestMapping(path="/individualresponseservice")
+@RequestMapping(path="/uploadresponseservice")
 public class ResponseController {
 
     private final UploadResponseService uploadResponseService;
@@ -46,17 +45,25 @@ public class ResponseController {
      *
      * @param requestID id of the request that is replied with this call
      * @param ssn identified of the user that is performing the response
-     * @param newResponse type of response (e.g. accept the request)
+     * @param response type of response (e.g. accept the request)
      * @return an http 201 created message that contains the newly formed link
-     * @throws URISyntaxException due to the creation of a new URI resource
      */
     @PostMapping("/response/{ssn}/{requestID}")
     public @ResponseBody ResponseEntity<?> newResponse(@PathVariable Long requestID, @PathVariable
-            String ssn, @RequestBody ResponseType newResponse) throws URISyntaxException {
+            String ssn, @RequestBody String response) {
+        ResponseType newResponse;
+
+        if (response.equals(ResponseType.ACCEPT.toString())) {
+            newResponse = ResponseType.ACCEPT;
+        } else if (response.equals(ResponseType.REFUSE.toString())) {
+            newResponse = ResponseType.REFUSE;
+        } else {
+            throw new BadResponseTypeException(response);
+        }
 
         Resource<Response> resource = responseAssembler.toResource(uploadResponseService.addResponse(requestID, newResponse, new User(ssn)));
 
-        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
+        return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }
 
     /**
@@ -65,11 +72,12 @@ public class ResponseController {
      * @param ssn identified of the user that blocks the third party
      * @param thirdPartyID identified of the third party that will be blocked
      * @return an http 201 created message that contains the newly formed link
-     * @throws URISyntaxException due to the creation of a new URI resource
      */
     @PostMapping("/blockedThirdParty/{ssn}/{thirdPartyID}")
-    public @ResponseBody ResponseEntity<?> blockThirdParty(@PathVariable String ssn, @PathVariable Long thirdPartyID) throws URISyntaxException {
-        Resource<BlockedThirdParty> resource = blockAssembler.toResource(uploadResponseService.addBlock(new User(ssn), thirdPartyID));
-        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
+    public @ResponseBody ResponseEntity<?> blockThirdParty(@PathVariable String ssn, @PathVariable Long thirdPartyID) {
+        BlockedThirdParty blockedThirdParty = uploadResponseService.addBlock(new User(ssn), thirdPartyID);
+        System.out.println("BLOCKED " +blockedThirdParty);
+        Resource<BlockedThirdParty> resource = blockAssembler.toResource(blockedThirdParty);
+        return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }
 }

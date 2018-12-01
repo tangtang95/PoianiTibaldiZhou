@@ -19,7 +19,7 @@ public class Response implements Serializable {
     private Long requestID;
 
     @MapsId
-    @OneToOne(mappedBy = "response")
+    @OneToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "requestID")
     private IndividualRequest request;
 
@@ -29,8 +29,4 @@ public class Response implements Serializable {
 
     @Column(nullable = false)
     private Timestamp acceptanceTimeStamp;
-
-    @JoinColumn(name = "ssn", nullable = false)
-    @ManyToOne
-    private User ssn;
 }

@@ -14,8 +14,6 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  */
 @Component
 public class IndividualRequestResourceAssembler implements ResourceAssembler<IndividualRequest, Resource<IndividualRequest>> {
-
-
     @Override
     public Resource<IndividualRequest> toResource(IndividualRequest individualRequest) {
         return new Resource<>(individualRequest,

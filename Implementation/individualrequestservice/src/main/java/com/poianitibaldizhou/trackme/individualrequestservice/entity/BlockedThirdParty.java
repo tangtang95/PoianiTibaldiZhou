@@ -15,10 +15,6 @@ public class BlockedThirdParty {
     @EmbeddedId
     private BlockedThirdPartyKey key;
 
-    @MapsId("user")
-    @ManyToOne
-    private User user;
-
     @Column(nullable = false)
     private Date blockDate;
 }

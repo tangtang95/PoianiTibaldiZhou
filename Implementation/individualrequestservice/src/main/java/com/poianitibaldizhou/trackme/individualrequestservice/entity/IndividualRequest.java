@@ -38,9 +38,9 @@ public class IndividualRequest {
     @Column(nullable = false)
     private Long thirdPartyID;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    private Response response;
+    //@OneToOne(cascade = CascadeType.REFRESH)
+    //@PrimaryKeyJoinColumn
+    //private Response response;
 
     /**
      * Empty constructor

@@ -13,7 +13,7 @@ public class Constants {
     public static final String RESPONSE_ALREADY_PRESENT = "Response already present for the request";
     public static final String NON_MATCHIN_USER = "Could not accept request of another user";
     public static final String TP_ALREADY_BLOCKED = "Third party customer already blocked";
+    public static final String BAD_RESPONSE_TYPE = "Could not find response type";
 
     public static final String SPACE = " ";
-
 }
