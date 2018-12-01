@@ -5,6 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Date;
 
+/**
+ * JPA entity object regarding the user
+ */
 @Data
 @Entity
 public class User {

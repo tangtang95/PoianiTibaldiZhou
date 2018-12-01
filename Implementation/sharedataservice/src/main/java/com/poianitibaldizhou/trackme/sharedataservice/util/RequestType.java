@@ -1,5 +1,8 @@
 package com.poianitibaldizhou.trackme.sharedataservice.util;
 
+/**
+ * Type of object that can be requested from a group request
+ */
 public enum  RequestType {
-    ALL, SSN, FIRST_NAME, LAST_NAME, AGE, BIRTH_CITY, HEARTBEAT, PRESSURE_MIN, PRESSURE_MAX, BLOOD_OXYGEN_LEVEL
+    ALL, SSN, AGE, BIRTH_CITY, HEARTBEAT, PRESSURE_MIN, PRESSURE_MAX, BLOOD_OXYGEN_LEVEL
 }

@@ -6,6 +6,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 
+/**
+ * JPA entity object regarding the filter about a group request
+ */
 @Data
 @Entity
 public class FilterStatement {

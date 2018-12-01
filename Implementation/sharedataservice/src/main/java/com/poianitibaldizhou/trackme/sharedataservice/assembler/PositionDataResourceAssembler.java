@@ -9,12 +9,15 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+/**
+ * Component that facilitates the creation of resources regarding the position data of users
+ */
 @Component
 public class PositionDataResourceAssembler implements ResourceAssembler<PositionData, Resource<PositionData>> {
 
     @Override
     public Resource<PositionData> toResource(PositionData positionData) {
         return new Resource<>(positionData,
-                linkTo(methodOn(SendDataController.class).sendPosition(positionData.getUser().getSsn(), positionData)).withSelfRel());
+                linkTo(methodOn(SendDataController.class).sendPositionData(positionData.getUser().getSsn(), positionData)).withSelfRel());
     }
 }

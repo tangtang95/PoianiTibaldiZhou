@@ -8,6 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+/**
+ * JPA entity object regarding the individual request
+ */
 @Data
 @Entity
 public class IndividualRequest {

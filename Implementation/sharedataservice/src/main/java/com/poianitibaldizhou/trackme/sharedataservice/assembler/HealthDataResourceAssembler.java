@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
+
+/**
+ * Component that facilitates the creation of resources regarding health data of users
+ */
 @Component
 public class HealthDataResourceAssembler implements ResourceAssembler<HealthData, Resource<HealthData>>{
 

@@ -7,6 +7,9 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
+/**
+ * JPA entity object regarding the group request
+ */
 @Data
 @Entity
 public class GroupRequest {

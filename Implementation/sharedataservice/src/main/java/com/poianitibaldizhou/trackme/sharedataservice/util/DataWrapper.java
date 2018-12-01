@@ -8,6 +8,9 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A wrapper of data to be received from the user
+ */
 @Data
 @JsonIgnoreProperties
 public class DataWrapper {
@@ -15,6 +18,9 @@ public class DataWrapper {
     private List<PositionData> positionDataList;
     private List<HealthData> healthDataList;
 
+    /**
+     * Empty constructor: initialize lists
+     */
     public DataWrapper(){
         positionDataList = new ArrayList<>();
         healthDataList = new ArrayList<>();
