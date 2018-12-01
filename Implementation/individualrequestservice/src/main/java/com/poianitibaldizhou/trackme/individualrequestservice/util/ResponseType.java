@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Type of response of individual requests
  */
-public enum IndividualRequestResponse implements Serializable {
+public enum ResponseType implements Serializable {
     ACCEPT,
     REFUSE,
 }

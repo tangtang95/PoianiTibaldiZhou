@@ -7,13 +7,24 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Advice for managing error about not found third party
+ */
 @ControllerAdvice
 public class ThirdPartyNotFoundAdvice {
 
+    /**
+     * An advice signaled into the body of the response that activates
+     * only when the exception ThirdPartyNotFoundException is thrown.
+     * The issue is an HTTP 404.
+     * The body of the advice contains the message of the exception
+     *
+     * @param e error that triggers the advice
+     * @return http 404 that contains the message of the exception
+     */
     @ResponseBody
     @ExceptionHandler(ThirdPartyNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-
     public String thirdPartyNotFoundHandler(ThirdPartyNotFoundException e) {
         return e.getMessage();
     }

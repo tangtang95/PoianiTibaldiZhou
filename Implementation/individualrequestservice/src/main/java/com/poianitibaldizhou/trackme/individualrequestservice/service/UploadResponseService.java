@@ -1,9 +1,9 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdParty;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualResponse;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.Response;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestResponse;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 
 /**
  * Interface provided to offer the service that manages that upload of responses to request
@@ -22,7 +22,7 @@ public interface UploadResponseService {
      * @param user user providing the response: this has to be an existing user
      * @return uploaded response
      */
-    IndividualResponse addResponse(Long requestID, IndividualRequestResponse response, User user);
+    Response addResponse(Long requestID, ResponseType response, User user);
 
 
     /**

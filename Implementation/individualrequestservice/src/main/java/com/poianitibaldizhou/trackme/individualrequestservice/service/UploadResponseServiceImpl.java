@@ -4,24 +4,28 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualResponseRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestResponse;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
+import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * Implementation of the upload response service.
  */
+@Service
 public class UploadResponseServiceImpl implements UploadResponseService {
 
     private final UserRepository userRepository;
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final IndividualRequestRepository individualRequestRepository;
-    private final IndividualResponseRepository individualResponseRepository;
+    private final ResponseRepository individualResponseRepository;
 
     /**
      * Creates an individual request manager service.
@@ -34,7 +38,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
      * @param individualResponseRepository repository regarding the responses to individual requests
      */
     public UploadResponseServiceImpl(UserRepository userRepository, BlockedThirdPartyRepository blockedThirdPartyRepository,
-                                     IndividualRequestRepository individualRequestRepository, IndividualResponseRepository individualResponseRepository) {
+                                     IndividualRequestRepository individualRequestRepository, ResponseRepository individualResponseRepository) {
         this.userRepository = userRepository;
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.individualRequestRepository = individualRequestRepository;
@@ -42,7 +46,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     }
 
     @Override
-    public IndividualResponse addResponse(Long requestID, IndividualRequestResponse response, User user) {
+    public Response addResponse(Long requestID, ResponseType response, User user) {
         // Check that the response is a valid one
         User finalUser = user;
         user = userRepository.findById(user.getSsn()).orElseThrow(() -> new UserNotFoundException(finalUser));
@@ -56,23 +60,21 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         }
 
         // Update row in the database
-        if (response == IndividualRequestResponse.ACCEPT) {
+        if (response == ResponseType.ACCEPT) {
             request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-        } else if (response == IndividualRequestResponse.REFUSE) {
+        } else if (response == ResponseType.REFUSE) {
             request.setStatus(IndividualRequestStatus.REFUSED);
 
         }
 
-        // TODO fix
         // Save the individual response in the database
-        /*IndividualResponse individualResponse = new IndividualResponse();
-        individualResponse.setRequestID(request);
+        Response individualResponse = new Response();
+        individualResponse.setRequestID(request.getId());
         individualResponse.setResponse(response);
         individualResponse.setAcceptanceTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
         individualResponse.setSsn(user);
 
-        return individualResponseRepository.save(individualResponse);*/
-        return null;
+        return individualResponseRepository.save(individualResponse);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.entity;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestResponse;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Data
 @Entity
-public class IndividualResponse implements Serializable {
+public class Response implements Serializable {
 
     @Id
     @Column(name = "requestID")
@@ -25,7 +25,7 @@ public class IndividualResponse implements Serializable {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private IndividualRequestResponse response;
+    private ResponseType response;
 
     @Column(nullable = false)
     private Timestamp acceptanceTimeStamp;

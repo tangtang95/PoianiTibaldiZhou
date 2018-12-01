@@ -7,9 +7,21 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Advice for managing error about block already performed
+ */
 @ControllerAdvice
 public class BlockAlreadyPerformedAdvice {
 
+    /**
+     * An advice signaled into the body of the response that activates
+     * only when the exception BlockAlreadyPerformedException is thrown.
+     * The issue is an HTTP 400.
+     * The body of the advice contains the message of the exception
+     *
+     * @param e error that triggers the advice
+     * @return http 400 that contains the message of the exception
+     */
     @ResponseBody
     @ExceptionHandler(BlockAlreadyPerformedException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)

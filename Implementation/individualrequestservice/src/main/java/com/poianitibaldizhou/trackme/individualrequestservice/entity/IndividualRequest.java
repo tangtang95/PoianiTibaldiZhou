@@ -40,7 +40,7 @@ public class IndividualRequest {
 
     @OneToOne(cascade = CascadeType.ALL)
     @PrimaryKeyJoinColumn
-    private IndividualResponse response;
+    private Response response;
 
     /**
      * Empty constructor

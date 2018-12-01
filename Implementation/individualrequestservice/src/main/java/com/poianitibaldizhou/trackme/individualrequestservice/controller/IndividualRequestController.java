@@ -92,11 +92,11 @@ public class IndividualRequestController {
                 linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(thirdPartyID)).withSelfRel());
     }
 
-    // TODO fix this method
     /**
      * Add a new request to the set of individual request.
      * The request will not be added in the case in which it is performed on a non existing user.
      *
+     * @param ssn the request regards the user identified by this field
      * @param newRequest request that will be added to the system
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
@@ -107,7 +107,6 @@ public class IndividualRequestController {
 
         Resource<IndividualRequest> resource = assembler.toResource(requestManagerService.addRequest(newRequest));
 
-        return ResponseEntity
-                .created(new URI(resource.getId().expand().getHref())).body(resource);
+        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 }
