@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.entity;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
@@ -11,7 +12,7 @@ import javax.persistence.*;
 public class GroupRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)

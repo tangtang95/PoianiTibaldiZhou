@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/send_data")
+@RequestMapping("/senddata")
 public class SendDataController {
 
     private SendDataService sendDataService;
@@ -30,21 +30,21 @@ public class SendDataController {
     }
 
     @JsonView(Views.Public.class)
-    @PostMapping("/new_health_data/{userId}")
+    @PostMapping("/healthdata/{userId}")
     public @ResponseBody Resource<HealthData> sendHealthData(@PathVariable(name = "userId") String userId,
                                         @Valid @RequestBody HealthData healthData){
         return healthDataAssembler.toResource(sendDataService.sendHealthData(userId, healthData));
     }
 
     @JsonView(Views.Public.class)
-    @PostMapping("/new_position_data/{userId}")
+    @PostMapping("/positiondata/{userId}")
     public @ResponseBody Resource<PositionData> sendPosition(@PathVariable(name="userId") String userId,
                                                    @Valid @RequestBody PositionData positionData){
         return positionDataAssembler.toResource(sendDataService.sendPosition(userId, positionData));
     }
 
     @JsonView(Views.Public.class)
-    @PostMapping("/new_cluster_data/{userId}")
+    @PostMapping("/clusterdata/{userId}")
     public @ResponseBody DataWrapper sendClusterOfData(@PathVariable(name = "userId") String userId,
                                   @RequestBody DataWrapper data) {
         return sendDataService.sendClusterOfData(userId, data);

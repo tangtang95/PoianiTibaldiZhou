@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.entity;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,7 +14,7 @@ public class HealthData {
 
     @Id
     @JsonView(Views.Internal.class)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @JsonView(Views.Internal.class)
