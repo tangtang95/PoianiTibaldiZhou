@@ -4,8 +4,13 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
+/**
+ * Key for the BlockedThirdParty entity
+ */
 @Embeddable
 @EqualsAndHashCode
 public class BlockedThirdPartyKey implements Serializable {
@@ -13,12 +18,20 @@ public class BlockedThirdPartyKey implements Serializable {
     @Column(name = "thirdPartyID", nullable = false)
     private Long thirdPartyID;
 
-    @Column(name = "ssn", nullable = false, length = 16)
-    private String ssn;
+    @ManyToOne
+    @JoinColumn(name = "ssn", nullable = false)
+    private User user;
 
-    public BlockedThirdPartyKey(Long thirdPartyID, String ssn) {
+    /**
+     * Creates a key for the BlockedThirdParty entity.
+     * A key is formed by two fields: thirdPartyID and ssn.
+     *
+     * @param thirdPartyID third party that will be blocked to access data regarding user specified by the ssn
+     * @param user user that blocked the third party identified by thirdPartyID
+     */
+    public BlockedThirdPartyKey(Long thirdPartyID, User user) {
         this.thirdPartyID = thirdPartyID;
-        this.ssn = ssn;
+        this.user = user;
     }
 
     public Long getThirdPartyID() {
@@ -29,12 +42,12 @@ public class BlockedThirdPartyKey implements Serializable {
         this.thirdPartyID = thirdPartyID;
     }
 
-    public String getSsn() {
-        return ssn;
+    public User getUser() {
+        return user;
     }
 
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
+    public void setSsn(User user) {
+        this.user = user;
     }
 
 }

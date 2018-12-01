@@ -1,6 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.repository;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -24,9 +25,9 @@ public interface IndividualRequestRepository extends JpaRepository<IndividualReq
      * Return the list of all the individual requests with a certain status that are related to a certain user,
      * identified by the ssn.
      *
-     * @param ssn identifier of a certain user
+     * @param user identifier of a certain user
      * @param status all the returned request are characterized by this status
      * @return list of requests related to the specified user and with a certain status
      */
-    List<IndividualRequest> findAllBySsnAndStatus(String ssn, IndividualRequestStatus status);
+    List<IndividualRequest> findAllByUserAndStatus(User user, IndividualRequestStatus status);
 }

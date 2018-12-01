@@ -1,6 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 
 import java.util.List;
 
@@ -23,10 +24,10 @@ public interface IndividualRequestManagerService {
      * Retrieves the list of the pending request of a certain user.
      * Note that this will throw a runtime exception in case the specified is not registered into the system
      *
-     * @param ssn request retrieved are related to the user identified by this ssn
+     * @param user request retrieved are related to the user identified by this ssn
      * @return list of request related to the specified user, that have PENDING as status
      */
-    List<IndividualRequest> getUserPendingRequests(String ssn);
+    List<IndividualRequest> getUserPendingRequests(User user);
 
     /**
      * This adds a new request. The request will be signed as pending, in the case in which the user has not blocked

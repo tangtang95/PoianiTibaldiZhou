@@ -2,6 +2,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestResourceAssembler;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -64,7 +65,8 @@ public class IndividualRequestController {
      */
     @GetMapping("requests/users/{ssn}")
     public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@PathVariable String ssn) {
-        List<Resource<IndividualRequest>> pendingRequests = requestManagerService.getUserPendingRequests(ssn).stream()
+        User user = new User(ssn);
+        List<Resource<IndividualRequest>> pendingRequests = requestManagerService.getUserPendingRequests(user).stream()
                 .map(assembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(pendingRequests,
@@ -90,6 +92,7 @@ public class IndividualRequestController {
                 linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(thirdPartyID)).withSelfRel());
     }
 
+    // TODO fix this method
     /**
      * Add a new request to the set of individual request.
      * The request will not be added in the case in which it is performed on a non existing user.
@@ -98,8 +101,10 @@ public class IndividualRequestController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @PostMapping("/requests")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestBody IndividualRequest newRequest) throws URISyntaxException {
+    @PostMapping("/requests/{ssn}")
+    public @ResponseBody ResponseEntity<?> newRequest(@PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+        newRequest.setUser(new User(ssn));
+
         Resource<IndividualRequest> resource = assembler.toResource(requestManagerService.addRequest(newRequest));
 
         return ResponseEntity

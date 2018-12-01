@@ -21,6 +21,6 @@ public class IndividualRequestResourceAssembler implements ResourceAssembler<Ind
         return new Resource<>(individualRequest,
                 linkTo(methodOn(IndividualRequestController.class).getRequestById(individualRequest.getId())).withSelfRel(),
                 linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(individualRequest.getThirdPartyID())).withRel("thirdPartyRequest"),
-                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(individualRequest.getSsn())).withRel("userPendingRequest"));
+                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(individualRequest.getUser().getSsn())).withRel("userPendingRequest"));
     }
 }

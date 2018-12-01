@@ -4,7 +4,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThir
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualResponse;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualResponseRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.service.UploadResponseService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(path="/individualresponseservice")
-public class IndividualResponseController implements UploadResponseService {
+public class IndividualResponseController {
 
     private final IndividualResponseRepository individualResponseRepository;
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;

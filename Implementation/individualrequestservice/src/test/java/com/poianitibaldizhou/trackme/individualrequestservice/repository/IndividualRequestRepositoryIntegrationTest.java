@@ -1,6 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.repository;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.junit.After;
 import org.junit.Before;
@@ -37,10 +38,17 @@ public class IndividualRequestRepositoryIntegrationTest {
     private IndividualRequestRepository requestRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private TestEntityManager entityManager;
 
     @Before
     public void setUpPersistentUnit() {
+        entityManager.persist(new User("user1"));
+        entityManager.persist(new User("user3"));
+        entityManager.flush();
+
         entityManager.persist(getIndividualRequest1());
 
         entityManager.persist(getIndividualRequest2());
@@ -62,7 +70,7 @@ public class IndividualRequestRepositoryIntegrationTest {
         request.setEndDate(new Date(90000000));
         request.setStartDate(new Date(0));
         request.setTimestamp(timestamp);
-        request.setSsn("user1");
+        request.setUser(new User("user1"));
         request.setThirdPartyID((long) 1);
         return request;
     }
@@ -74,7 +82,7 @@ public class IndividualRequestRepositoryIntegrationTest {
         request2.setEndDate(new Date(40000000));
         request2.setStartDate(new Date(1000000));
         request2.setTimestamp(timestamp);
-        request2.setSsn("user1");
+        request2.setUser(new User("user1"));
         request2.setThirdPartyID((long) 2);
         return request2;
     }
@@ -87,7 +95,7 @@ public class IndividualRequestRepositoryIntegrationTest {
         request3.setEndDate(new Date(90000000));
         request3.setStartDate(new Date(1000000));
         request3.setTimestamp(timestamp);
-        request3.setSsn("user3");
+        request3.setUser(new User("user3"));
         request3.setThirdPartyID((long) 1);
         return request3;
     }
@@ -142,7 +150,7 @@ public class IndividualRequestRepositoryIntegrationTest {
         // given: three requests (see setup)
 
         // when: retrieving the request of a user not related with the present request
-        List<IndividualRequest> requestList = requestRepository.findAllBySsnAndStatus("notPresentUser", IndividualRequestStatus.PENDING);
+        List<IndividualRequest> requestList = requestRepository.findAllByUserAndStatus(new User("notPresentUser"), IndividualRequestStatus.PENDING);
 
         // then: the size of the response is 0
         assertTrue(requestList.isEmpty());
@@ -158,7 +166,7 @@ public class IndividualRequestRepositoryIntegrationTest {
         // given: three request (see setup)
 
         // when: retrieving the request of a user that has no pending request
-        List<IndividualRequest> requestList = requestRepository.findAllBySsnAndStatus("user1", IndividualRequestStatus.ELAPSED);
+        List<IndividualRequest> requestList = requestRepository.findAllByUserAndStatus(new User("user1"), IndividualRequestStatus.ELAPSED);
 
         // then: the size of the response is 0
         assertTrue(requestList.isEmpty());
@@ -175,12 +183,12 @@ public class IndividualRequestRepositoryIntegrationTest {
         // given: three request (see setup)
 
         // when: the list of the accepted request by user1 is requested
-        List<IndividualRequest> requestList = requestRepository.findAllBySsnAndStatus("user1", IndividualRequestStatus.ACCEPTED);
+        List<IndividualRequest> requestList = requestRepository.findAllByUserAndStatus(new User("user1"), IndividualRequestStatus.ACCEPTED);
 
         // then: expect that the size of retrieval is 1 and that the accepted request is the one present in the list
         IndividualRequest request2 = getIndividualRequest2();
         assertEquals(1, requestList.size());
-        assertEquals(request2.getSsn(), requestList.get(0).getSsn());
+        assertEquals(request2.getUser(), requestList.get(0).getUser());
         assertEquals(request2.getThirdPartyID(), requestList.get(0).getThirdPartyID());
         assertEquals(request2.getStatus(), requestList.get(0).getStatus());
         assertEquals(request2.getStartDate(), requestList.get(0).getStartDate());

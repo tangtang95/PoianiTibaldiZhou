@@ -2,6 +2,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -10,6 +11,8 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRep
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 /**
@@ -46,28 +49,30 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
     }
 
     @Override
-    public List<IndividualRequest> getUserPendingRequests(String ssn) {
+    public List<IndividualRequest> getUserPendingRequests(User user) {
         // Check if the request regards a registered user
-        if(!userRepository.findById(ssn).isPresent())
-            throw new UserNotFoundException(ssn);
+        if(!userRepository.findById(user.getSsn()).isPresent())
+            throw new UserNotFoundException(user);
 
-        return individualRequestRepository.findAllBySsnAndStatus(ssn, IndividualRequestStatus.PENDING);
+        return individualRequestRepository.findAllByUserAndStatus(user, IndividualRequestStatus.PENDING);
     }
 
     @Override
     public IndividualRequest addRequest(IndividualRequest newRequest) {
         // Check if the request regards a registered user
-        if(!userRepository.findById(newRequest.getSsn()).isPresent()) {
-            throw new UserNotFoundException(newRequest.getSsn());
+        if(!userRepository.findById(newRequest.getUser().getSsn()).isPresent()) {
+            throw new UserNotFoundException(newRequest.getUser());
         }
 
         // Check if the request is blocked
-        BlockedThirdPartyKey key = new BlockedThirdPartyKey(newRequest.getThirdPartyID(), newRequest.getSsn());
+        BlockedThirdPartyKey key = new BlockedThirdPartyKey(newRequest.getThirdPartyID(), newRequest.getUser());
         if(blockedThirdPartyRepository.findById(key).isPresent()) {
             newRequest.setStatus(IndividualRequestStatus.REFUSED);
         } else {
             newRequest.setStatus(IndividualRequestStatus.PENDING);
         }
+
+        newRequest.setTimestamp(Timestamp.from(Instant.now()));
 
         // Save the request
         return individualRequestRepository.save(newRequest);
