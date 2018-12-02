@@ -8,6 +8,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+/**
+ * Repository for accessing data regarding the health data of a user
+ */
 public interface HealthDataRepository extends JpaRepository<HealthData, Long>, JpaSpecificationExecutor<HealthData> {
 
 }

@@ -8,6 +8,9 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * JPA entity object regarding the position data of a specific user
+ */
 @Data
 @Entity
 public class PositionData {

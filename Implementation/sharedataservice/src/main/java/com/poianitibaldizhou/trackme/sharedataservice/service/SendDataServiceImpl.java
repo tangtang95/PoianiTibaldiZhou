@@ -9,6 +9,9 @@ import com.poianitibaldizhou.trackme.sharedataservice.repository.PositionDataRep
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of the send data service.
+ */
 @Service
 public class SendDataServiceImpl implements SendDataService{
 
@@ -31,12 +34,6 @@ public class SendDataServiceImpl implements SendDataService{
         this.positionDataRepository = positionDataRepository;
     }
 
-    /**
-     * User's API method: call by the user {userId} to send a new healthData
-     * @param userId the social security number of the user's healthData
-     * @param healthData the new health data to be saved
-     * @return the healthData itself if successful, otherwise throw a runtime exception (UserNotFoundException)
-     */
     @Override
     public HealthData sendHealthData(String userId, HealthData healthData) {
         return userRepository.findById(userId).map(user -> {
@@ -45,26 +42,14 @@ public class SendDataServiceImpl implements SendDataService{
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    /**
-     * User's API method: call by the user {userId} to send a new positionData
-     * @param userId the social security number of the user's positionData
-     * @param positionData the new position data to be saved
-     * @return the positionData itself if successful, otherwise throw a runtime exception (UserNotFoundException)
-     */
     @Override
-    public PositionData sendPosition(String userId, PositionData positionData) {
+    public PositionData sendPositionData(String userId, PositionData positionData) {
         return userRepository.findById(userId).map(user ->{
             positionData.setUser(user);
             return positionDataRepository.save(positionData);
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
-    /**
-     * User's API method: call by the user {userId} to send new blocks of data
-     * @param userId the social security number of the user's positionData
-     * @param data the new blocks of data to be saved
-     * @return the block of data itself if successful, otherwise throw a runtime exception (UserNotFoundException)
-     */
     @Override
     public DataWrapper sendClusterOfData(String userId, DataWrapper data) {
         return userRepository.findById(userId).map(user -> {

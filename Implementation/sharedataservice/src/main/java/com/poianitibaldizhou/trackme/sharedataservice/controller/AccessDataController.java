@@ -1,13 +1,12 @@
 package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+/**
+ * Entry point for accessing services regarding the access of data
+ */
+@RestController
 @RequestMapping("/accessdata")
 public class AccessDataController {
 

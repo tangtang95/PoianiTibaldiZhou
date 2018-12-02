@@ -77,6 +77,12 @@
             <version>4.2.1</version>
         </dependency>
 		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>3.7.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.querydsl</groupId>
 			<artifactId>querydsl-sql-spring</artifactId>
 			<version>4.2.1</version>
@@ -102,7 +108,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.46</version>
+            <version>8.0.11</version>
         </dependency>
     </dependencies>
 
@@ -128,8 +134,8 @@
                     <jdbcUrl>jdbc:mysql://localhost:3306/share_data_db?autoReconnect=true&amp;useSSL=false</jdbcUrl>
                     <jdbcUser>trackmeadmin</jdbcUser>
                     <jdbcPassword>datecallmeeting95</jdbcPassword>
-                    <packageName>com.poianitibaldizhou.trackme.sharedataservice.domain</packageName>
-                    <targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
+                    <packageName>com.poianitibaldizhou.trackme.sharedataservice.entity.domain</packageName>
+                    <targetFolder>${project.basedir}/src/main/java</targetFolder>
                     <sourceFolder/>
                 </configuration>
                 <dependencies>
