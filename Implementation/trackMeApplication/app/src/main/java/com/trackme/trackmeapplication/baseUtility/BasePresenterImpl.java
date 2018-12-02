@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.baseUtility;
 
+import java.util.Objects;
+
 public class BasePresenterImpl<V extends BaseView> implements BasePresenter<V>{
 
     protected V mView;
@@ -16,5 +18,18 @@ public class BasePresenterImpl<V extends BaseView> implements BasePresenter<V>{
 
     public V getView() {
         return mView;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BasePresenterImpl<?> that = (BasePresenterImpl<?>) o;
+        return Objects.equals(mView, that.mView);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mView);
     }
 }

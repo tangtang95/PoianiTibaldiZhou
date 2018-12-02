@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.baseUtility;
 
+import android.support.annotation.NonNull;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
@@ -20,4 +22,7 @@ public abstract class BaseActivityDelegate<
         mUnBinder.unbind();
     }
 
+    public Unbinder getmUnBinder() {
+        return mUnBinder;
+    }
 }

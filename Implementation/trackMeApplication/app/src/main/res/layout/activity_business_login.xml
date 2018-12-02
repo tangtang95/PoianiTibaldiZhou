@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradient_background"
-    tools:context=".account.UserLoginActivity">
+    tools:context=".account.login.UserLoginActivity">
 
     <EditText
         android:id="@+id/editTextMail"
@@ -84,8 +84,8 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="7dp"
-        app:srcCompat="@drawable/track_me_logo"
-        android:contentDescription="@string/track_me_logo" />
+        app:srcCompat="@drawable/track_me_business_logo"
+        android:contentDescription="@string/track_me_business_logo" />
 
     <ProgressBar
         android:id="@+id/progressBar"
