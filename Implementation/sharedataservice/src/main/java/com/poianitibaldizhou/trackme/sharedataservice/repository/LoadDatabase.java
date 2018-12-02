@@ -30,7 +30,8 @@ public class LoadDatabase implements CommandLineRunner{
         user.setSsn("SSN");
         user.setFirstName("firstName");
         user.setLastName("lastName");
-        user.setAge(30);
+        user.setBirthCity("milan");
+        user.setBirthNation("italy");
         user.setBirthDate(Date.valueOf(LocalDate.now()));
         log.info("Preloading: " + user);
         userRepository.save(user);
