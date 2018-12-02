@@ -7,6 +7,9 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Timestamp;
 
+/**
+ * Information regarding the individual request
+ */
 @Data
 @Entity
 public class IndividualRequest {
@@ -28,22 +31,39 @@ public class IndividualRequest {
     @Column(nullable = false)
     private Date endDate;
 
-    @Column(nullable = false, length = 16)
-    private String ssn;
+    @ManyToOne
+    @JoinColumn(name = "ssn", nullable = false)
+    private User user;
 
     @Column(nullable = false)
     private Long thirdPartyID;
 
+    //@OneToOne(cascade = CascadeType.REFRESH)
+    //@PrimaryKeyJoinColumn
+    //private Response response;
+
+    /**
+     * Empty constructor
+     */
     public IndividualRequest() {
 
     }
 
-    public IndividualRequest(Timestamp timestamp, Date startDate, Date endDate, String ssn, Long thirdPartyID) {
+    /**
+     * Creates an individual request with pending status
+     *
+     * @param timestamp timestamp of the request
+     * @param startDate the request will allow to access data starting from this date
+     * @param endDate the request will allow to access data up to this date
+     * @param user the request will allow to acces data regarding the user identified by this ssn
+     * @param thirdPartyID the request is performed by a third party customer identified by this number
+     */
+    public IndividualRequest(Timestamp timestamp, Date startDate, Date endDate, User user, Long thirdPartyID) {
         this.status = IndividualRequestStatus.PENDING;
         this.timestamp = timestamp;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.ssn = ssn;
+        this.user = user;
         this.thirdPartyID = thirdPartyID;
     }
 }

@@ -5,6 +5,9 @@ import lombok.Data;
 import javax.persistence.*;
 import java.sql.Date;
 
+/**
+ * JPA entity object regarding the user
+ */
 @Data
 @Entity
 public class User {
@@ -20,9 +23,13 @@ public class User {
     private String lastName;
 
     @Column(nullable = false)
-    private Integer age;
+    private Date birthDate;
 
     @Column(nullable = false)
-    private Date birthDate;
+    private String birthCity;
+
+    @Column(nullable = false)
+    private String birthNation;
+
 
 }

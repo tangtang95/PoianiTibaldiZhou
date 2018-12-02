@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.sharedataservice.entity;
 
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
+import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
+/**
+ * JPA entity object regarding the group request
+ */
 @Data
 @Entity
 public class GroupRequest {
@@ -13,5 +17,16 @@ public class GroupRequest {
     @Id
     @GeneratedValue
     private Long id;
+
+    @Column(nullable = false)
+    private Long thirdPartyId;
+
+    @Column(length = 10, nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private AggregatorOperator aggregatorOperator = AggregatorOperator.COUNT;
+
+    @Column(length = 20, nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private RequestType requestType;
 
 }

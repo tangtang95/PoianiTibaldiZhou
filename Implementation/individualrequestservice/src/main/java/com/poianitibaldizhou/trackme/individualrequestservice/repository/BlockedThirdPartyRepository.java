@@ -4,6 +4,9 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThir
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+/**
+ * Repository for accessing data regarding the blocked third party customer
+ */
 public interface BlockedThirdPartyRepository extends JpaRepository<BlockedThirdParty, BlockedThirdPartyKey> {
 
 }

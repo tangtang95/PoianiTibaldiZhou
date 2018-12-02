@@ -3,17 +3,21 @@ package com.poianitibaldizhou.trackme.sharedataservice.entity;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import lombok.Data;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
+/**
+ * JPA entity object regarding the health data of a specific user
+ */
 @Data
 @Entity
 public class HealthData {
 
     @Id
     @JsonView(Views.Internal.class)
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private Long id;
 
     @JsonView(Views.Internal.class)

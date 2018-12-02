@@ -2,8 +2,10 @@ package com.poianitibaldizhou.trackme.individualrequestservice.util;
 
 import java.io.Serializable;
 
-public enum IndividualRequestResponse implements Serializable {
+/**
+ * Type of response of individual requests
+ */
+public enum ResponseType implements Serializable {
     ACCEPT,
-    DENY,
-    BLOCK
+    REFUSE,
 }

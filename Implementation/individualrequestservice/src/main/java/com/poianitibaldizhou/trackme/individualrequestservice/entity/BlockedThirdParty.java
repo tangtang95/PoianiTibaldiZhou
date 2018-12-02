@@ -2,11 +2,12 @@ package com.poianitibaldizhou.trackme.individualrequestservice.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.sql.Date;
 
+/**
+ * Information regarding the blocks that users have perfomed on some third party
+ */
 @Data
 @Entity
 public class BlockedThirdParty {

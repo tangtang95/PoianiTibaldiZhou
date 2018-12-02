@@ -1,31 +1,28 @@
 package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
-import com.poianitibaldizhou.trackme.sharedataservice.repository.HealthDataRepository;
-import com.poianitibaldizhou.trackme.sharedataservice.repository.PositionDataRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/access_data")
-public class AccessDataController implements AccessDataService {
+/**
+ * Entry point for accessing services regarding the access of data
+ */
+@RestController
+@RequestMapping("/accessdata")
+public class AccessDataController {
 
-    @Autowired
-    private HealthDataRepository healthDataRepository;
+    private AccessDataService accessDataService;
 
-    @Autowired
-    private PositionDataRepository positionDataRepository;
+    public AccessDataController(AccessDataService accessDataService) {
+        this.accessDataService = accessDataService;
+    }
 
-    @GetMapping("/individual_request/{request_id}")
-    @Override
+    @GetMapping("/individualrequest/{request_id}")
     public @ResponseBody String getIndividualRequestData(@PathVariable(name = "request_id") Long requestId){
         return null;
     }
 
-    @GetMapping("/group_request/{request_id}")
-    @Override
+    @GetMapping("/grouprequest/{request_id}")
     public @ResponseBody String getGroupRequestData(@PathVariable(name = "request_id") Long requestId){
-        return  null;
+        return accessDataService.getGroupRequestData(requestId);
     }
 }

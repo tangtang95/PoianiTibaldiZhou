@@ -1,9 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdParty;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -25,13 +22,15 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 /**
- * Test for the individual request manager service
+ * Unit test for the individual request manager service
  */
 @RunWith(SpringRunner.class)
 public class IndividualRequestManagerServiceImplUnitTest {
-
 
     @MockBean
     private IndividualRequestRepository individualRequestRepository;
@@ -69,6 +68,10 @@ public class IndividualRequestManagerServiceImplUnitTest {
         user = new User();
         user.setSsn("user3");
         Mockito.when(userRepo.findById("user3")).thenReturn(java.util.Optional.ofNullable(user));
+
+        user = new User();
+        user.setSsn("user15");
+        Mockito.when(userRepo.findById("user15")).thenReturn(java.util.Optional.ofNullable(user));
     }
 
     /**
@@ -77,13 +80,13 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     private void setUpMockRequestRepo(IndividualRequestRepository requestRepo) {
         IndividualRequest request1 = new IndividualRequest(
-                new Timestamp(0), new Date(0), new Date(0), "user1", (long) 1);
+                new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long) 1);
         request1.setId((long) 1);
         IndividualRequest request2 = new IndividualRequest(
-                new Timestamp(10000), new Date(10000), new Date(10000), "user1", (long) 1);
+                new Timestamp(10000), new Date(10000), new Date(10000), new User("user1"), (long) 1);
         request2.setId((long) 2);
         IndividualRequest request3 = new IndividualRequest(
-                new Timestamp(0), new Date(0), new Date(0), "user3", (long) 2);
+                new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 2);
         request3.setId((long) 3);
 
         List<IndividualRequest> listOfFirstTP = new ArrayList<>();
@@ -99,6 +102,11 @@ public class IndividualRequestManagerServiceImplUnitTest {
 
         Mockito.when(requestRepo.findAllByThirdPartyID((long) 1)).thenReturn(listOfFirstTP);
         Mockito.when(requestRepo.findAllByThirdPartyID((long) 2)).thenReturn(listOfSecondTP);
+
+        List<IndividualRequest> listOfUser3 = new ArrayList<>();
+        listOfUser3.add(request3);
+
+        Mockito.when(requestRepo.findAllByUserAndStatus(new User("user3"), IndividualRequestStatus.PENDING)).thenReturn(listOfUser3);
     }
 
     /**
@@ -106,7 +114,7 @@ public class IndividualRequestManagerServiceImplUnitTest {
      * @param blockedRepo blocked third party repository that will be mocked
      */
     private void setUpMockBlockedRepo(BlockedThirdPartyRepository blockedRepo) {
-        BlockedThirdPartyKey key = new BlockedThirdPartyKey((long)4, "user1");
+        BlockedThirdPartyKey key = new BlockedThirdPartyKey((long)4, new User("user1"));
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();
         blockedThirdParty.setKey(key);
         Mockito.when(blockedRepo.findById(key)).thenReturn(java.util.Optional.ofNullable(blockedThirdParty));
@@ -155,7 +163,7 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test
     public void addRequestTest() {
-        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user3", (long) 4);
+        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 4);
         requestManagerService.addRequest(newRequest);
 
         assertEquals(IndividualRequestStatus.PENDING, newRequest.getStatus());
@@ -166,9 +174,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test(expected = UserNotFoundException.class)
     public void addRequestTestWhenUserNotPresent() {
-        requestManagerService.addRequest(new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user4", (long) 1));
+        requestManagerService.addRequest(new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user4"), (long) 1));
     }
-
 
     /**
      * Test the add of a new request, when the user related with it is present (i.e. registered), but has already
@@ -176,9 +183,40 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test
     public void addRequestTestWhenBlocked() {
-        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user1", (long) 4);
+        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long) 4);
+
         requestManagerService.addRequest(newRequest);
 
-        assertEquals(IndividualRequestStatus.REFUSED, newRequest.getStatus());
+        verify(individualRequestRepository, times(1)).save(any(IndividualRequest.class));
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user, when the user is not registered
+     * into the system
+     */
+    @Test(expected = UserNotFoundException.class)
+    public void getUserPendingRequestTestWhenUserNotRegistered() {
+        requestManagerService.getUserPendingRequests(new User("notPresentUser"));
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user, when the user is registered into the
+     * system but no pending requests are present
+     */
+    @Test
+    public void getUserPendingRequestTestWhenListEmpty() {
+        assertTrue(requestManagerService.getUserPendingRequests(new User("user15")).isEmpty());
+    }
+
+    /**
+     * Test the retrieval of the pending request related with a specified user when the user is registered
+     * and has some pending requests
+     */
+    @Test
+    public void getUserPendingRequestTest() {
+        List<IndividualRequest> requestList = requestManagerService.getUserPendingRequests(new User("user3"));
+        assertEquals(1,requestList.size());
+        assertEquals("user3", requestList.get(0).getUser().getSsn());
+        assertEquals(IndividualRequestStatus.PENDING, requestList.get(0).getStatus());
     }
 }

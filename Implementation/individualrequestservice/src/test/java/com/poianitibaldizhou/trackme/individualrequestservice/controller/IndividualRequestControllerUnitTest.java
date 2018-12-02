@@ -1,8 +1,8 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestResourceAssembler;
-import com.poianitibaldizhou.trackme.individualrequestservice.controller.IndividualRequestController;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
@@ -44,6 +44,61 @@ public class IndividualRequestControllerUnitTest {
     @MockBean
     private IndividualRequestManagerService service;
 
+    /**
+     * Test the retrieval of the pending request of a certain user, when this list is non empty (in particular,
+     * size 1)
+     *
+     * @throws Exception exception due to mock mvc method get
+     */
+    @Test
+    public void getUserRequestTest() throws Exception {
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)2);
+        request.setId((long) 3);
+
+        List<IndividualRequest> allRequests = Arrays.asList(request);
+        given(service.getUserPendingRequests(new User("user1"))).willReturn(allRequests);
+
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.individualRequests[0].thirdPartyID", is(2)))
+                .andExpect(jsonPath("$._embedded.individualRequests[0].status", is(IndividualRequestStatus.PENDING.toString())))
+                //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
+                .andExpect(jsonPath("$._embedded.individualRequests[0].startDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequests[0].endDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.self.href", is("http://localhost/individualrequestservice/requests/3")))
+                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.thirdPartyRequest.href", is("http://localhost/individualrequestservice/requests/thirdparty/2")))
+                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.userPendingRequest.href", is("http://localhost/individualrequestservice/requests/users/user1")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/users/user1")));
+    }
+
+    /**
+     * Test the retrieval of the pending request of a certain user, when this list is empty
+     *
+     * @throws Exception exception due to mock mvc method get
+     */
+    @Test
+    public void getUserRequestTestWhenTheListIsEmpty() throws Exception {
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/users/user1")));
+    }
+
+    /**
+     * Test the retrieval of the pending request of a certain user, when the user is not registered into the system
+     *
+     * @throws Exception exception due to mock mvc method get
+     */
+    @Test
+    public void getUserRequestTestWhenUserNotRegistered() throws Exception {
+        given(service.getUserPendingRequests(new User("user1"))).willThrow(new UserNotFoundException(new User("user1")));
+
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
+                .andExpect(status().isNotFound());
+    }
 
     /**
      * Test the access to the rest api provided by the IndividualRequest controller.
@@ -54,7 +109,7 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getThirdPartyRequestTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user1", (long)1);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
         request.setId((long)1);
 
         List<IndividualRequest> allRequests = Arrays.asList(request);
@@ -65,7 +120,6 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].ssn", is("user1")))
                 .andExpect(jsonPath("$._embedded.individualRequests[0].thirdPartyID", is(1)))
                 .andExpect(jsonPath("$._embedded.individualRequests[0].status", is(IndividualRequestStatus.PENDING.toString())))
                 //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
@@ -73,6 +127,7 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$._embedded.individualRequests[0].endDate", is(new Date(0).toString())))
                 .andExpect(jsonPath("$._embedded.individualRequests[0]._links.self.href", is("http://localhost/individualrequestservice/requests/1")))
                 .andExpect(jsonPath("$._embedded.individualRequests[0]._links.thirdPartyRequest.href", is("http://localhost/individualrequestservice/requests/thirdparty/1")))
+                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.userPendingRequest.href", is("http://localhost/individualrequestservice/requests/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/thirdparty/1")));
     }
 
@@ -116,7 +171,7 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getRequestByIdTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user1", (long)1);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
         request.setId((long)1);
 
         given(service.getRequestById((long) 1)).willReturn(request);
@@ -128,7 +183,6 @@ public class IndividualRequestControllerUnitTest {
                 //.andExpect(jsonPath("$.timestamp", is(request.getTimestamp().toString())))
                 .andExpect(jsonPath("$.startDate", is(request.getStartDate().toString())))
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
-                .andExpect(jsonPath("$.ssn", is(request.getSsn())))
                 .andExpect(jsonPath("$.thirdPartyID", is(request.getThirdPartyID().intValue())))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/1")))
                 .andExpect(jsonPath("$._links.thirdPartyRequest.href", is("http://localhost/individualrequestservice/requests/thirdparty/1")));
@@ -142,25 +196,35 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void newRequestTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user1", (long)1);
-        request.setId((long)1);
+        IndividualRequest request = new IndividualRequest();
+        request.setUser(new User("user1"));
+        request.setThirdPartyID((long) 1);
+        request.setStartDate(new Date(0));
+        request.setEndDate(new Date(0));
+        request.setId((long) 1);
+        request.setStatus(IndividualRequestStatus.PENDING);
 
-        System.out.println(new Timestamp(0));
-        System.out.println(new Date(0));
+        IndividualRequest mockedRequest = new IndividualRequest();
+        mockedRequest.setUser(new User("user1"));
+        mockedRequest.setThirdPartyID((long) 1);
+        mockedRequest.setStartDate(new Date(0));
+        mockedRequest.setEndDate(new Date(0));
+        mockedRequest.setId((long) 1);
+        mockedRequest.setTimestamp(new Timestamp(0));
+        mockedRequest.setStatus(IndividualRequestStatus.PENDING);
 
         String json = "{\n" +
                 "\t\"id\": 1,\n" +
                 "\t\"status\": \"PENDING\",\n" +
-                "\t\"timestamp\": \"1970-01-01T00:00:00.000+0000\",\n" +
                 "\t\"startDate\": \"1970-01-01\",\n" +
                 "\t\"endDate\": \"1970-01-01\",\n" +
                 "\t\"ssn\": \"user1\",\n" +
                 "\t\"thirdPartyID\": 1\n" +
                 "}";
 
-        given(service.addRequest(request)).willReturn(request);
+        given(service.addRequest(request)).willReturn(mockedRequest);
 
-        mvc.perform(post("/individualrequestservice/requests").
+        mvc.perform(post("/individualrequestservice/requests/user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
                 content(json))
                 .andExpect(status().isCreated())
@@ -169,10 +233,10 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.startDate", is(request.getStartDate().toString())))
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
-                .andExpect(jsonPath("$.ssn", is(request.getSsn())))
                 .andExpect(jsonPath("$.thirdPartyID", is(request.getThirdPartyID().intValue())))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/1")))
-                .andExpect(jsonPath("$._links.thirdPartyRequest.href", is("http://localhost/individualrequestservice/requests/thirdparty/1")));
+                .andExpect(jsonPath("$._links.thirdPartyRequest.href", is("http://localhost/individualrequestservice/requests/thirdparty/1")))
+                .andExpect(jsonPath("$._links.userPendingRequest.href", is("http://localhost/individualrequestservice/requests/users/user1")));
     }
 
     /**
@@ -183,12 +247,12 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void newRequestTestWhenRelatedUserNotExist() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), "user1", (long)1);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
         request.setId((long)1);
 
-        given(service.addRequest(request)).willThrow(new UserNotFoundException("user1"));
+        given(service.addRequest(request)).willThrow(new UserNotFoundException(new User("user1")));
 
         mvc.perform(post("/individualrequestservice/requests"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 }
