@@ -5,7 +5,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualR
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.junit.Test;
@@ -44,9 +43,6 @@ public class IndividualRequestControllerUnitTest {
 
     @MockBean
     private IndividualRequestManagerService service;
-
-    @MockBean
-    private UserRepository userRepository;
 
     /**
      * Test the retrieval of the pending request of a certain user, when this list is non empty (in particular,
@@ -226,7 +222,6 @@ public class IndividualRequestControllerUnitTest {
                 "\t\"thirdPartyID\": 1\n" +
                 "}";
 
-        given(userRepository.findById("user1")).willReturn(java.util.Optional.of(new User("user1")));
         given(service.addRequest(request)).willReturn(mockedRequest);
 
         mvc.perform(post("/individualrequestservice/requests/user1").

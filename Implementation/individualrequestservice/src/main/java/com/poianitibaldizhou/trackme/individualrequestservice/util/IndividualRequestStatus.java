@@ -9,6 +9,5 @@ public enum IndividualRequestStatus implements Serializable {
     PENDING,
     REFUSED,
     ACCEPTED,
-    ACCEPTED_UNDER_ANALYSIS,
-    ELAPSED
+    ACCEPTED_UNDER_ANALYSIS
 }

@@ -6,9 +6,11 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Blocked
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -24,7 +26,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     private final UserRepository userRepository;
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final IndividualRequestRepository individualRequestRepository;
-    private final ResponseRepository individualResponseRepository;
+    private final ResponseRepository responseRepository;
 
     /**
      * Creates an individual request manager service.
@@ -41,9 +43,10 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         this.userRepository = userRepository;
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.individualRequestRepository = individualRequestRepository;
-        this.individualResponseRepository = individualResponseRepository;
+        this.responseRepository = individualResponseRepository;
     }
 
+    @Transactional
     @Override
     public Response addResponse(Long requestID, ResponseType response, User user) {
         // Check that the response is a valid one
@@ -51,32 +54,32 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         user = userRepository.findById(user.getSsn()).orElseThrow(() -> new UserNotFoundException(finalUser));
         IndividualRequest request = individualRequestRepository.findById(requestID).orElseThrow(() -> new RequestNotFoundException(requestID));
 
-        if(individualResponseRepository.findById(requestID).isPresent())
+        if(responseRepository.findById(requestID).isPresent())
             throw new ResponseAlreadyPresentException(requestID);
         if(individualRequestRepository.findById(requestID).map(IndividualRequest::getUser).
                 filter(userRequest -> !userRequest.equals(finalUser)).isPresent()) {
             throw new NonMatchingUserException(user.getSsn());
         }
 
-        // TODO MAKE TRIGGER INSTEAD OF THIS
-        // Update row in the database (this maybe should have be in another part: it is not adding a response, maybe
-        // and event listener is better
-        //if (response == ResponseType.ACCEPT) {
-        //    request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-        //} else if (response == ResponseType.REFUSE) {
-        //    request.setStatus(IndividualRequestStatus.REFUSED);
-        //}
-
         // Save the individual response in the database
         Response individualResponse = new Response();
-        individualResponse.setRequestID(request.getId());
         individualResponse.setRequest(request);
         individualResponse.setResponse(response);
         individualResponse.setAcceptanceTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
 
-        return individualResponseRepository.save(individualResponse);
+        // Update the status of the request according to the type of resposne
+        switch(response) {
+            case ACCEPT:
+                request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
+                break;
+            case REFUSE:
+                request.setStatus(IndividualRequestStatus.REFUSED);
+        }
+
+        return responseRepository.saveAndFlush(individualResponse);
     }
 
+    @Transactional
     @Override
     public BlockedThirdParty addBlock(User user, Long thirdPartyID) {
         // Check that the block is valid (i.e. user registerd, a request exist, and no other block exists
@@ -93,16 +96,17 @@ public class UploadResponseServiceImpl implements UploadResponseService {
             throw new BlockAlreadyPerformedException(thirdPartyID);
         }
 
-        // TODO MAKE TRIGGER INSTEAD OF THIS
-        // Change all the pending requests to refused
-        //requestList.stream().filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING))
-        //        .forEach(individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED));
-
         // Save the blocked third party
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();
         blockedThirdParty.setKey(key);
         blockedThirdParty.setBlockDate(Date.valueOf(LocalDate.now()));
 
-        return blockedThirdPartyRepository.save(blockedThirdParty);
+        // all the pending request for that user becomes blocked
+        individualRequestRepository.findAllByThirdPartyID(thirdPartyID).stream().
+                filter(individualRequest -> individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
+                        individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED)
+        );
+
+        return blockedThirdPartyRepository.saveAndFlush(blockedThirdParty);
     }
 }

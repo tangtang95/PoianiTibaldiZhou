@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Blocked
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +21,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
@@ -59,7 +62,7 @@ public class UploadResponseServiceImplUnitTest {
         request2.setId((long) 2);
 
         Response response = new Response();
-        response.setRequestID((long) 2);
+        //response.setRequestID((long) 2);
         response.setRequest(request2);
         response.setResponse(ResponseType.REFUSE);
         response.setAcceptanceTimeStamp(new Timestamp(0));
@@ -136,10 +139,24 @@ public class UploadResponseServiceImplUnitTest {
      * no response is already present
      */
     @Test
-    public void testAddResponse(){
+    public void testAddResponseWithAccept() throws Exception{
         uploadResponseService.addResponse((long) 1, ResponseType.ACCEPT, new User("user1"));
 
-        verify(responseRepository, times(1)).save(any(Response.class));
+        assertEquals(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
+        verify(responseRepository, times(1)).saveAndFlush(any(Response.class));
+    }
+
+    /**
+     * Test the add of a response when everything is fine, that means that the user is registered, that a request
+     * to that user is present, that the user calling the service is matched with the one of the request and that
+     * no response is already present
+     */
+    @Test
+    public void testAddResponseWithRefuse() throws Exception{
+        uploadResponseService.addResponse((long) 1, ResponseType.REFUSE, new User("user1"));
+
+        assertEquals(IndividualRequestStatus.REFUSED, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
+        verify(responseRepository, times(1)).saveAndFlush(any(Response.class));
     }
 
     /**
@@ -202,7 +219,14 @@ public class UploadResponseServiceImplUnitTest {
      * Test the block when the block is inserted successfully
      */
     @Test
-    public void testBlock() {
+    public void testBlock() throws Exception{
+        List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdPartyID(1L);
+        List<Long> idOfPendingRequest = requestList.stream().
+                filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING))
+                .map(IndividualRequest::getId).collect(Collectors.toList());
+
+        System.out.println("ID OF LIST: " + idOfPendingRequest);
+
         uploadResponseService.addBlock(new User("user4"), (long)1);
 
         BlockedThirdPartyKey blockedThirdPartyKey = new BlockedThirdPartyKey((long) 1, new User("user4"));
@@ -210,7 +234,12 @@ public class UploadResponseServiceImplUnitTest {
         blockedThirdParty.setKey(blockedThirdPartyKey);
         blockedThirdParty.setBlockDate(Date.valueOf(LocalDate.now()));
 
-        verify(blockedThirdPartyRepository, times(1)).save(blockedThirdParty);
+        verify(blockedThirdPartyRepository, times(1)).saveAndFlush(blockedThirdParty);
+
+        for(Long id : idOfPendingRequest) {
+            if(individualRequestRepository.findById(id).orElseThrow(Exception::new).getUser().equals(new User("user4")))
+                assertEquals(IndividualRequestStatus.REFUSED, individualRequestRepository.findById(id).orElseThrow(Exception::new).getStatus());
+        }
     }
 }
 
