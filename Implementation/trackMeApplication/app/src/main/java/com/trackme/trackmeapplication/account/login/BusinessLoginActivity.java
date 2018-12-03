@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.trackme.trackmeapplication.UserHomeActivity;
+import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import butterknife.BindView;

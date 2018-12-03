@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.trackme.trackmeapplication.UserHomeActivity;
+import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import java.util.Objects;
@@ -42,7 +42,9 @@ public class UserLoginActivity extends LoginActivity{
         Intent intent = new Intent(this, UserHomeActivity.class);
         startActivity(intent);
         finish();
-        unregisterReceiver(broadcastReceiver);
+        try {
+            unregisterReceiver(broadcastReceiver);
+        }catch (Exception ignored) {}
     }
 
     @Override

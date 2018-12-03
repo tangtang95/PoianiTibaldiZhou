@@ -25,7 +25,7 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     protected @NonNull abstract P getPresenterInstance();
 
-    protected P mPresenter;
+    protected P mPresenter = null;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,16 +81,11 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || !((Object) this).getClass().getSimpleName().equals(o.getClass().getSimpleName())) return false;
         BaseActivity<?> that = (BaseActivity<?>) o;
         return Objects.equals(mUnBinder, that.mUnBinder) &&
                 Objects.equals(progressBar, that.progressBar) &&
-                mPresenter.equals(that.mPresenter);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(mUnBinder, progressBar, mPresenter);
+                Objects.equals(mPresenter, that.mPresenter);
     }
 
 }

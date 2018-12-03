@@ -57,10 +57,4 @@ public class BasePresenterImplTest {
         });
         assertNotEquals(basePresenter, basePresenter3);
     }
-
-    @Test
-    public void hashcode(){
-        BasePresenterImpl basePresenter2 = new BasePresenterImpl();
-        assertEquals(basePresenter.hashCode(),basePresenter2.hashCode());
-    }
 }

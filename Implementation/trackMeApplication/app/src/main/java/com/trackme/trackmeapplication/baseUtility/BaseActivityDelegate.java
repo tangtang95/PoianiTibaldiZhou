@@ -1,6 +1,8 @@
 package com.trackme.trackmeapplication.baseUtility;
 
-import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.trackme.trackmeapplication.R;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
