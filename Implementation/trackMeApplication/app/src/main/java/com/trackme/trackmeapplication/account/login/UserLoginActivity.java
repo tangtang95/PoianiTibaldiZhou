@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.account;
+package com.trackme.trackmeapplication.account.login;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -7,7 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.trackme.trackmeapplication.HomeActivity;
+import com.trackme.trackmeapplication.UserHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import java.util.Objects;
@@ -39,9 +39,10 @@ public class UserLoginActivity extends LoginActivity{
 
     @Override
     public void navigateToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, UserHomeActivity.class);
         startActivity(intent);
         finish();
+        unregisterReceiver(broadcastReceiver);
     }
 
     @Override
@@ -54,6 +55,11 @@ public class UserLoginActivity extends LoginActivity{
     @Override
     public void setLoginError() {
         password.setError(getString(R.string.user_login_error));
+    }
+
+    @Override
+    public void setMailError() {
+        throw new IllegalStateException();
     }
 
     @OnClick(R.id.userLoginButton)

@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.account;
+package com.trackme.trackmeapplication.account.login;
 
 import com.trackme.trackmeapplication.baseUtility.BasePresenter;
 import com.trackme.trackmeapplication.baseUtility.BaseView;
@@ -14,6 +14,8 @@ class LoginContract {
         void navigateToBusinessLogin();
 
         void setLoginError();
+
+        void setMailError();
     }
 
     interface LoginPresenter extends BasePresenter<LoginView> {
@@ -25,6 +27,8 @@ class LoginContract {
         void onLoginError();
 
         void onLoginSuccess();
+
+        void onMailError();
 
     }
 }

@@ -11,15 +11,17 @@ import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 
+import java.util.Objects;
+
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity
         implements BaseView {
 
-    private Unbinder mUnBinder;
+    private Unbinder mUnBinder = null;
 
-    private ProgressBar progressBar;
+    private ProgressBar progressBar = null;
 
     protected @NonNull abstract P getPresenterInstance();
 
@@ -47,18 +49,15 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void showProgress(){
-        progressBar.setVisibility(View.VISIBLE);
+        if (progressBar != null)
+            progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideProgress(){
-        progressBar.setVisibility(View.INVISIBLE);
+        if (progressBar != null)
+            progressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -70,4 +69,28 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
     public View getContentView() {
         return getWindow().getDecorView();
     }
+
+    protected ProgressBar getProgressBar(){
+        return progressBar;
+    }
+
+    protected Unbinder getmUnBinder() {
+        return mUnBinder;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BaseActivity<?> that = (BaseActivity<?>) o;
+        return Objects.equals(mUnBinder, that.mUnBinder) &&
+                Objects.equals(progressBar, that.progressBar) &&
+                mPresenter.equals(that.mPresenter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mUnBinder, progressBar, mPresenter);
+    }
+
 }

@@ -6,8 +6,10 @@
     <string name="user_login">USER LOGIN</string>
     <string name="business_login">BUSINESS LOGIN</string>
     <string name="register_here">Register Here.</string>
-    <string name="track_me_logo">TrackMeLogo</string>
+    <string name="track_me_user_logo">TrackMe user logo</string>
+    <string name="track_me_business_logo">TrackMe business logo</string>
     <string name="user_login_error">Username and password do not match.</string>
     <string name="business_login_error">E-mail and password do not match.</string>
+    <string name="email_is_not_valid">E-mail is not valid</string>
     <string name="you_are_a_third_party_customer_login_here">You are a third party customer? <u>Login Here.</u></string>
 </resources>

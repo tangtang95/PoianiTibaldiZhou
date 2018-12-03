@@ -1,10 +1,10 @@
-package com.trackme.trackmeapplication.account;
+package com.trackme.trackmeapplication.account.login;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.trackme.trackmeapplication.HomeActivity;
+import com.trackme.trackmeapplication.UserHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import butterknife.BindView;
@@ -22,7 +22,7 @@ public class BusinessLoginActivity extends LoginActivity{
 
     @Override
     public void navigateToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
+        Intent intent = new Intent(this, UserHomeActivity.class);
         Intent finishIntent = new Intent("finish_activity");
         sendBroadcast(finishIntent);
         startActivity(intent);
@@ -37,6 +37,11 @@ public class BusinessLoginActivity extends LoginActivity{
     @Override
     public void setLoginError() {
         password.setError(getString(R.string.business_login_error));
+    }
+
+    @Override
+    public void setMailError() {
+        mail.setError(getString(R.string.email_is_not_valid));
     }
 
     @OnClick(R.id.businessLoginButton)
