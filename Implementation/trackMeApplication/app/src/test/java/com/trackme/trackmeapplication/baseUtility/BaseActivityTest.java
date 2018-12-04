@@ -70,26 +70,11 @@ public class BaseActivityTest {
             @NonNull
             @Override
             protected BasePresenter getPresenterInstance() {
-                return basePresenter;
-            }
-        };
-        assertNotEquals(baseActivity, baseActivity2);
-        assertNotEquals(baseActivity, null);
-        assertEquals(baseActivity.mPresenter, baseActivity3.mPresenter);
-        assertTrue(baseActivity.equals(baseActivity3));
-    }
-
-    @Test
-    public void hashcode(){
-        assertEquals(baseActivity.hashCode(), baseActivity.hashCode());
-        BaseActivity baseActivity2 = new BaseActivity() {
-            @NonNull
-            @Override
-            protected BasePresenter getPresenterInstance() {
                 return new BasePresenterImpl();
             }
         };
-        assertEquals(baseActivity.hashCode(), baseActivity2.hashCode());
+        assertNotEquals(baseActivity, null);
+        assertEquals(baseActivity2, baseActivity3);
     }
 
 }
