@@ -208,8 +208,6 @@ public class UploadResponseServiceIntegrationTest {
                 createURLWithPort("/uploadresponseservice/blockedThirdParty/user1/1"),
                 HttpMethod.POST, entity, String.class);
 
-        System.out.println("RESPONSE : " + response);
-
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         BlockedThirdPartyKey newItemKey = new BlockedThirdPartyKey(1L, new User("user1"));
         assertTrue(blockedThirdPartyRepository.findById(newItemKey).isPresent());
