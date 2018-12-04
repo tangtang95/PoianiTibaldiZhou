@@ -34,6 +34,13 @@ public class BlockedThirdPartyKey implements Serializable {
         this.user = user;
     }
 
+    /**
+     * Empty constructor used by hibernate
+     */
+    public BlockedThirdPartyKey() {
+
+    }
+
     public Long getThirdPartyID() {
         return thirdPartyID;
     }
