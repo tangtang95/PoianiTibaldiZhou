@@ -12,7 +12,7 @@ import java.util.List;
 public interface FilterStatementRepository extends JpaRepository<FilterStatement, Long> {
 
     /**
-     * Return the list of all the filter statements that are related to a certain group request
+     * Returns the list of all the filter statements that are related to a certain group request
      *
      * @param groupRequest the specific group request
      * @return list of all the filter statements of a certain group request

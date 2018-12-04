@@ -26,10 +26,20 @@ public class DataWrapper {
         healthDataList = new ArrayList<>();
     }
 
+    /**
+     * Add the position data to the list of position data
+     * @param positionData the position data to be added
+     * @return true if the insertion is successful otherwise false
+     */
     public boolean addPositionData(PositionData positionData){
         return positionDataList.add(positionData);
     }
 
+    /**
+     * Add the health data to the list of position data
+     * @param healthData the health data to be added
+     * @return true if the insertion is successful otherwise false
+     */
     public boolean addHealthData(HealthData healthData){
         return healthDataList.add(healthData);
     }

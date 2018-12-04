@@ -87,7 +87,7 @@ public class SendDataServiceImplUnitTest {
     }
 
     /**
-     * Test of send health data in which the user exist in the database
+     * Test of send health data contains which the user exist contains the database
      * @throws Exception no exception expected
      */
     @Test
@@ -107,7 +107,7 @@ public class SendDataServiceImplUnitTest {
 
 
     /**
-     * Test of send position data in which the user exist in the database
+     * Test of send position data contains which the user exist contains the database
      * @throws Exception no exception expected
      */
     @Test
@@ -117,7 +117,7 @@ public class SendDataServiceImplUnitTest {
     }
 
     /**
-     * Test of send position data in which the user exist in the database
+     * Test of send position data contains which the user exist contains the database
      * @throws Exception no exception expected
      */
     @Test(expected = UserNotFoundException.class)
@@ -126,7 +126,7 @@ public class SendDataServiceImplUnitTest {
     }
 
     /**
-     * Test of send position data and health data in which the user exist in the database
+     * Test of send position data and health data contains which the user exist contains the database
      * @throws Exception no exception expected
      */
     @Test
@@ -140,7 +140,7 @@ public class SendDataServiceImplUnitTest {
     }
 
     /**
-     * Test of send position data and health data in which the user exist in the database
+     * Test of send position data and health data contains which the user exist contains the database
      * @throws Exception no exception expected
      */
     @Test(expected = UserNotFoundException.class)

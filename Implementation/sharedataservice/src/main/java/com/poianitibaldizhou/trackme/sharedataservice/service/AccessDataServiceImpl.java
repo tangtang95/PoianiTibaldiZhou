@@ -1,19 +1,21 @@
 package com.poianitibaldizhou.trackme.sharedataservice.service;
 
-import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
-import lombok.extern.slf4j.Slf4j;
+import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 /**
  * Implementation of the access data service.
  */
-@Slf4j
 @Service
 public class AccessDataServiceImpl implements AccessDataService {
 
@@ -21,6 +23,7 @@ public class AccessDataServiceImpl implements AccessDataService {
     private HealthDataRepository healthDataRepository;
     private PositionDataRepository positionDataRepository;
     private GroupRequestRepository groupRequestRepository;
+    private IndividualRequestRepository individualRequestRepository;
     private FilterStatementRepository filterStatementRepository;
 
     /**
@@ -36,26 +39,43 @@ public class AccessDataServiceImpl implements AccessDataService {
     public AccessDataServiceImpl(UserRepository userRepository, HealthDataRepository healthDataRepository,
                                  PositionDataRepository positionDataRepository,
                                  GroupRequestRepository groupRequestRepository,
+                                 IndividualRequestRepository individualRequestRepository,
                                  FilterStatementRepository filterStatementRepository){
         this.userRepository = userRepository;
         this.healthDataRepository = healthDataRepository;
         this.positionDataRepository = positionDataRepository;
         this.groupRequestRepository = groupRequestRepository;
+        this.individualRequestRepository = individualRequestRepository;
         this.filterStatementRepository = filterStatementRepository;
     }
 
     @Override
-    public String getIndividualRequestData(Long requestId) {
-        return null;
+    public DataWrapper getIndividualRequestData(Long thirdPartyId, Long requestId) {
+        IndividualRequest individualRequest = individualRequestRepository.findByIdAndThirdPartyId(requestId, thirdPartyId)
+                .orElseThrow(() -> new IndividualRequestNotFoundException(requestId));
+
+        Timestamp startTimestamp = Timestamp.valueOf(LocalDateTime.of(
+                individualRequest.getStartDate().toLocalDate(), LocalTime.MIN));
+        Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(
+                individualRequest.getEndDate().toLocalDate(), LocalTime.MAX));
+        List<HealthData> healthDataList = healthDataRepository.findAllByUserAndTimestampBetween(
+                individualRequest.getUser(), startTimestamp, endTimestamp);
+        List<PositionData> positionDataList = positionDataRepository.findAllByUserAndTimestampBetween(
+                individualRequest.getUser(), startTimestamp, endTimestamp);
+
+        DataWrapper dataWrapper = new DataWrapper();
+        healthDataList.forEach(dataWrapper::addHealthData);
+        positionDataList.forEach(dataWrapper::addPositionData);
+        return dataWrapper;
+
     }
 
     @Transactional
     @Override
-    public String getGroupRequestData(Long requestId) {
-        GroupRequest groupRequest = groupRequestRepository.findById(requestId)
+    public Double getGroupRequestData(Long thirdPartyId, Long requestId) {
+        GroupRequest groupRequest = groupRequestRepository.findByIdAndThirdPartyId(requestId, thirdPartyId)
                 .orElseThrow(() -> new GroupRequestNotFoundException(requestId));
         List<FilterStatement> filters = filterStatementRepository.findAllByGroupRequest(groupRequest);
-        log.info(userRepository.complexUnionQuery(groupRequest, filters).toString());
-        return null;
+        return userRepository.getAggregateData(groupRequest.getAggregatorOperator(), groupRequest.getRequestType(), filters);
     }
 }

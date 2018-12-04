@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Advice to manage errors about requests not found
+ * Advice for managing errors about group requests not found
  */
 @ControllerAdvice
 public class GroupRequestNotFoundAdvice {
