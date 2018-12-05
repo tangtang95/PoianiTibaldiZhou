@@ -3,13 +3,14 @@ package com.poianitibaldizhou.trackme.grouprequestservice.util;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * This class wraps all the information regarding the group request: indeed, a group request
  * and all the filter statement associated with it are present
  */
-public class GroupRequestWrapper {
+public class GroupRequestWrapper implements Serializable {
 
     private GroupRequest groupRequest;
     private List<FilterStatement> filterStatementList;
@@ -29,6 +30,13 @@ public class GroupRequestWrapper {
 
         this.groupRequest = groupRequest;
         this.filterStatementList = filterStatementList;
+    }
+
+    /**
+     * Empty constructor for (de)serialization
+     */
+    public GroupRequestWrapper() {
+
     }
 
     /**

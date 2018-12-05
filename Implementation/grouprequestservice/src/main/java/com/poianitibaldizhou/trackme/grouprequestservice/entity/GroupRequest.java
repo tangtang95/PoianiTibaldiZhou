@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestType;
@@ -15,10 +16,12 @@ import java.sql.Date;
 @Entity
 public class GroupRequest {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private Long id;
 
+    @JsonIgnore
     @Column(nullable = false)
     private Long thirdPartyId;
 

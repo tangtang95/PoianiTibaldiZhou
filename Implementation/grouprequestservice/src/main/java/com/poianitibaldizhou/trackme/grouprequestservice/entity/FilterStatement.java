@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.ComparisonSymbol;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.FieldType;
 import lombok.Data;
@@ -13,6 +14,7 @@ import javax.persistence.*;
 @Entity
 public class FilterStatement {
 
+    @JsonIgnore
     @Id
     @GeneratedValue
     private Long id;

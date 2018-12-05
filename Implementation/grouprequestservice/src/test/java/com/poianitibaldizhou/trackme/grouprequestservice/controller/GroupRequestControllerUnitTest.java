@@ -26,12 +26,15 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Unit test for the group request controller
+ */
 @RunWith(SpringRunner.class)
 @WebMvcTest(GroupRequestController.class)
 @Import({GroupRequestWrapperAssembler.class})
@@ -72,18 +75,14 @@ public class GroupRequestControllerUnitTest {
         mvc.perform(get("/grouprequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.groupRequest.id", is(groupRequest.getId().intValue())))
-                .andExpect(jsonPath("$.groupRequest.thirdPartyId", is(groupRequest.getThirdPartyId().intValue())))
                 .andExpect(jsonPath("$.groupRequest.date", is(groupRequest.getDate().toString())))
                 .andExpect(jsonPath("$.groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("$.groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("$.groupRequest.status", is(groupRequest.getStatus().toString())))
                 .andExpect(jsonPath("$.filterStatementList", hasSize(1)))
-                .andExpect(jsonPath("$.filterStatementList[0].id", is(filterStatement.getId().intValue())))
                 .andExpect(jsonPath("$.filterStatementList[0].column", is(filterStatement.getColumn().toString())))
                 .andExpect(jsonPath("$.filterStatementList[0].value", is(filterStatement.getValue())))
                 .andExpect(jsonPath("$.filterStatementList[0].comparisonSymbol", is(filterStatement.getComparisonSymbol().toString())))
-                .andExpect(jsonPath("$.filterStatementList[0].groupRequest.id", is(groupRequest.getId().intValue())))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/grouprequestservice/requests/1")));
 
     }
@@ -150,13 +149,10 @@ public class GroupRequestControllerUnitTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.id", containsInAnyOrder(1, 2)))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.thirdPartyId", containsInAnyOrder(1, 1)))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.date", containsInAnyOrder(groupRequest1.getDate().toString(), groupRequest2.getDate().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.aggregatorOperator", containsInAnyOrder(groupRequest1.getAggregatorOperator().toString(), groupRequest2.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.requestType", containsInAnyOrder(groupRequest1.getRequestType().toString(), groupRequest2.getRequestType().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.status", containsInAnyOrder(groupRequest1.getStatus().toString(), groupRequest2.getStatus().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].id", containsInAnyOrder(1, 2)))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].column", containsInAnyOrder(filterStatement1.getColumn().toString(), filterStatement2.getColumn().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].value", containsInAnyOrder(filterStatement1.getValue(), filterStatement2.getValue())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].comparisonSymbol", containsInAnyOrder(filterStatement1.getComparisonSymbol().toString(), filterStatement2.getComparisonSymbol().toString())))
@@ -168,9 +164,69 @@ public class GroupRequestControllerUnitTest {
      * Test the add of a new request when everything is fine
      */
     @Test
-    public void testAddNewRequest() {
+    public void testAddNewRequest() throws Exception {
         GroupRequest groupRequest = new GroupRequest();
-        // TODO
+        groupRequest.setId(1L);
+        groupRequest.setRequestType(RequestType.PRESSURE_MAX);
+        groupRequest.setAggregatorOperator(AggregatorOperator.MAX);
+        groupRequest.setStatus(RequestStatus.REFUSED);
+        groupRequest.setDate(new Date(0));
+        groupRequest.setThirdPartyId(1L);
+
+        FilterStatement filterStatement1 = new FilterStatement();
+        filterStatement1.setGroupRequest(groupRequest);
+        filterStatement1.setColumn(FieldType.LATITUDE);
+        filterStatement1.setValue("100000");
+        filterStatement1.setComparisonSymbol(ComparisonSymbol.LESS);
+        filterStatement1.setId(1L);
+
+        FilterStatement filterStatement2 = new FilterStatement();
+        filterStatement2.setGroupRequest(groupRequest);
+        filterStatement2.setColumn(FieldType.LATITUDE);
+        filterStatement2.setValue("50000");
+        filterStatement2.setComparisonSymbol(ComparisonSymbol.GREATER);
+        filterStatement2.setId(2L);
+
+        List<FilterStatement> filterStatementList = new ArrayList<>();
+        filterStatementList.add(filterStatement1);
+        filterStatementList.add(filterStatement2);
+
+        GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper(groupRequest, filterStatementList);
+
+        given(service.addGroupRequest(any(GroupRequestWrapper.class))).willReturn(groupRequestWrapper);
+
+        String json = "{\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\"," +
+                "\"requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"},\"filterStatementList\":" +
+                "[{\"id\":1,\"column\":\"LATITUDE\",\"value\":\"100000\",\"comparisonSymbol\":\"LESS\"," +
+                "\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\",\"" +
+                "requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"}},{\"id\":2,\"column\":\"LATITUDE\",\"" +
+                "value\":\"50000\",\"comparisonSymbol\":\"GREATER\",\"groupRequest\":{\"id\":1," +
+                "\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\",\"requestType\":" +
+                "\"PRESSURE_MAX\",\"status\":\"REFUSED\"}}]}";
+
+        mvc.perform(post("/grouprequestservice/requests").
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
+                content(json))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("groupRequest.date", is("1970-01-01")))
+                .andExpect(jsonPath("groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
+                .andExpect(jsonPath("groupRequest.requestType", is(groupRequest.getRequestType().toString())))
+                .andExpect(jsonPath("groupRequest.status", is(groupRequest.getStatus().toString())))
+                .andExpect(jsonPath("filterStatementList[0].column", is(filterStatement1.getColumn().toString())))
+                .andExpect(jsonPath("filterStatementList[0].value", is(filterStatement1.getValue())))
+                .andExpect(jsonPath("filterStatementList[0].comparisonSymbol", is(filterStatement1.getComparisonSymbol().toString())))
+                .andExpect(jsonPath("filterStatementList[0].groupRequest.date", is(groupRequest.getDate().toString())))
+                .andExpect(jsonPath("filterStatementList[0].groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
+                .andExpect(jsonPath("filterStatementList[0].groupRequest.requestType", is(groupRequest.getRequestType().toString())))
+                .andExpect(jsonPath("filterStatementList[0].groupRequest.status", is(groupRequest.getStatus().toString())))
+                .andExpect(jsonPath("filterStatementList[1].column", is(filterStatement2.getColumn().toString())))
+                .andExpect(jsonPath("filterStatementList[1].value", is(filterStatement2.getValue())))
+                .andExpect(jsonPath("filterStatementList[1].comparisonSymbol", is(filterStatement2.getComparisonSymbol().toString())))
+                .andExpect(jsonPath("filterStatementList[1].groupRequest.date", is(groupRequest.getDate().toString())))
+                .andExpect(jsonPath("filterStatementList[1].groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
+                .andExpect(jsonPath("filterStatementList[1].groupRequest.requestType", is(groupRequest.getRequestType().toString())))
+                .andExpect(jsonPath("filterStatementList[1].groupRequest.status", is(groupRequest.getStatus().toString())))
+                .andExpect(jsonPath("_links.self.href", is("http://localhost/grouprequestservice/requests/1")));
     }
 
     /**
