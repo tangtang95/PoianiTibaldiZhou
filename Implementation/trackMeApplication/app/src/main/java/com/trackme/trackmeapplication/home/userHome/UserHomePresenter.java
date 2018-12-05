@@ -6,17 +6,12 @@ public class UserHomePresenter extends BasePresenterImpl<
         UserHomeContract.UserHomeView> implements UserHomeContract.UserHomePresenter {
 
     @Override
-    public void onMessageSelected() {
-        mView.showIndividualMessageFragment();
-    }
-
-    @Override
     public void onProfileSelected() {
-        mView.showProfileFragment();
+        mView.navigateToUserProfile();
     }
 
     @Override
     public void onSettingsSelected() {
-        mView.showSettingsFragment();
+        mView.navigateToUserSettings();
     }
 }

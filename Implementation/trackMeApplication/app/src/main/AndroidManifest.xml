@@ -14,17 +14,21 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
+        android:theme="@style/MyApplicationTheme">
         <activity android:name=".home.userHome.UserHomeActivity" />
         <activity android:name=".account.login.UserLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".account.login.BusinessLoginActivity" />
-        <activity android:name=".account.register.UserRegisterActivity"></activity>
+        <activity android:name=".account.register.UserRegisterActivity" />
+        <activity android:name=".home.userHome.UserSettingsActivity" />
+        <activity android:name=".account.register.UserProfileActivity" />
+        <activity android:name=".home.businessHome.BusinessHomeActivity"></activity>
     </application>
 
 </manifest>

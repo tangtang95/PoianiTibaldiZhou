@@ -9,7 +9,7 @@
     </style>
 
     <!-- Full screen application theme. -->
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="MyApplicationTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
@@ -17,6 +17,11 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="AppTheme.TextView" parent="@android:style/Widget.TextView">
+        <item name="android:background">@drawable/circle</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
 </resources>

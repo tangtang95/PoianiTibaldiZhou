@@ -9,6 +9,8 @@ class LoginContract {
 
         void navigateToHome();
 
+        void saveUserSession();
+
         void navigateToRegister();
 
         void navigateToBusinessLogin();

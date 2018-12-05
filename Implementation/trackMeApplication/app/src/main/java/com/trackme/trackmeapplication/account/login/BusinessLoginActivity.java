@@ -1,10 +1,11 @@
 package com.trackme.trackmeapplication.account.login;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 
-import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
+import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import butterknife.BindView;
@@ -22,11 +23,19 @@ public class BusinessLoginActivity extends LoginActivity{
 
     @Override
     public void navigateToHome() {
-        Intent intent = new Intent(this, UserHomeActivity.class);
+        Intent intent = new Intent(this, BusinessHomeActivity.class);
         Intent finishIntent = new Intent("finish_activity");
         sendBroadcast(finishIntent);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void saveUserSession() {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("business_logged",true);
+        editor.putString("email", mail.getText().toString());
+        editor.apply();
     }
 
     @Override

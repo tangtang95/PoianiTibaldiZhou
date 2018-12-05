@@ -1,11 +1,12 @@
 package com.trackme.trackmeapplication.account.login;
 
 import android.text.TextUtils;
-import android.util.Patterns;
 
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 
 public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,LoginPresenter> {
+
+    String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
     public void userLogin(final String username, final String password) {
         /*TODO*/
@@ -26,7 +27,7 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
                 mPresenter.onLoginSuccess();
     }
 
-    private boolean isValidEmail(CharSequence target) {
-        return (!TextUtils.isEmpty(target) && Patterns.EMAIL_ADDRESS.matcher(target).matches());
+    private boolean isValidEmail(String target) {
+        return (!TextUtils.isEmpty(target) && target.matches(emailPattern));
     }
 }

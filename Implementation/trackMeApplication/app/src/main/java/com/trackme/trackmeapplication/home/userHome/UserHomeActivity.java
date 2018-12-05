@@ -2,15 +2,18 @@ package com.trackme.trackmeapplication.home.userHome;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.account.register.ProfileFragment;
+import com.trackme.trackmeapplication.account.login.UserLoginActivity;
+import com.trackme.trackmeapplication.account.register.UserProfileActivity;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
-import com.trackme.trackmeapplication.idividualRequest.IndividualMessageFragment;
 
 import butterknife.BindView;
 
@@ -20,6 +23,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
         UserHomeDelegate> implements UserHomeContract.UserHomeView {
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
+    private SharedPreferences sp;
+    private String username;
 
     public static Intent newIntent(Context context) {
         return new Intent(context, UserHomeActivity.class);
@@ -35,13 +40,10 @@ public class UserHomeActivity extends BaseDelegationActivity<
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_user_home);
         setSupportActionBar(toolbar);
-        super.onCreate(savedInstanceState);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new IndividualMessageFragment()).commit();
-            mDelegate.setCheckedItem(R.id.nav_message);
-        }
+        sp = getSharedPreferences("login", MODE_PRIVATE);
+        username = sp.getString("username", null);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -57,25 +59,55 @@ public class UserHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public void showIndividualMessageFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new IndividualMessageFragment()).commit();
+    protected void onResume() {
+        username = sp.getString("username", null);
+        super.onResume();
     }
 
     @Override
-    public void showProfileFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new ProfileFragment()).commit();
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.list_menu, menu);
+        return true;
     }
 
     @Override
-    public void showSettingsFragment() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new SettingsFragment()).commit();
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_logout) {
+            /*TODO*/
+            sp.edit().putBoolean("user_logged", false).apply();
+            navigateToUserLogin();
+        }
+        return true;
+    }
+
+    @Override
+    public void navigateToUserProfile() {
+        Intent intent = new Intent(this, UserProfileActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToUserSettings() {
+        Intent intent = new Intent(this, UserSettingsActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToUserLogin() {
+        Intent intent = new Intent(this, UserLoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     @Override
     public UserHomeActivity getActivity() {
         return this;
     }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
 }

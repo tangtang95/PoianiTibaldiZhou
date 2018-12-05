@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.account.register;
+package com.trackme.trackmeapplication.home.userHome;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,11 +10,12 @@ import android.view.ViewGroup;
 
 import com.trackme.trackmeapplication.R;
 
-public class ProfileFragment extends Fragment {
+public class UserHomeFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_profile, container, false);
+        return inflater.inflate(R.layout.fragment_user_home, container, false);
     }
+
 }

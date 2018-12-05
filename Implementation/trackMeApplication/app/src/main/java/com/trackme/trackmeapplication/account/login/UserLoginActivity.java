@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 
+import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import com.trackme.trackmeapplication.R;
 
@@ -15,9 +17,10 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-public class UserLoginActivity extends LoginActivity{
+public class UserLoginActivity extends LoginActivity {
 
-    @BindView(R.id.editTextUser) protected EditText username;
+    @BindView(R.id.editTextUser)
+    protected EditText username;
 
     BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
@@ -35,6 +38,14 @@ public class UserLoginActivity extends LoginActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
+
+        sp = getSharedPreferences("login",MODE_PRIVATE);
+
+        if (sp.getBoolean("user_logged", false)) {
+            navigateToHome();
+        } else if (sp.getBoolean("business_logged", false))
+            navigateToBusinessHome();
+
     }
 
     @Override
@@ -44,7 +55,22 @@ public class UserLoginActivity extends LoginActivity{
         finish();
         try {
             unregisterReceiver(broadcastReceiver);
-        }catch (Exception ignored) {}
+        } catch (Exception ignored) { }
+    }
+
+
+    private void navigateToBusinessHome() {
+        Intent intent = new Intent(this, BusinessHomeActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void saveUserSession() {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("user_logged", true);
+        editor.putString("username", username.getText().toString());
+        editor.apply();
     }
 
     @Override

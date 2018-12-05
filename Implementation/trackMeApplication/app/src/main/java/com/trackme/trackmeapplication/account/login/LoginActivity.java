@@ -1,11 +1,14 @@
 package com.trackme.trackmeapplication.account.login;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.register.UserRegisterActivity;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 
 import butterknife.BindView;
@@ -19,6 +22,7 @@ public abstract class LoginActivity extends BaseDelegationActivity<
 
     @BindView(R.id.progressBar) protected ProgressBar progressBar;
     @BindView(R.id.editTextPass) protected EditText password;
+    protected SharedPreferences sp;
 
     @NonNull
     @Override
@@ -43,7 +47,8 @@ public abstract class LoginActivity extends BaseDelegationActivity<
 
     @Override
     public void navigateToRegister() {
-        /*TODO*/
+        Intent intent = new Intent(this, UserRegisterActivity.class);
+        startActivity(intent);
     }
 
     @Override
