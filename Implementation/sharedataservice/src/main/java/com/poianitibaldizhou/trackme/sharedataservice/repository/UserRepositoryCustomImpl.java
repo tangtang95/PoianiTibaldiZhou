@@ -1,72 +1,75 @@
 package com.poianitibaldizhou.trackme.sharedataservice.repository;
 
+import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QHealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QPositionData;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUnionDataPath;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUser;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.filter.PredicateBuilder;
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperatorUtils;
+import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.sql.JPASQLQuery;
 import com.querydsl.sql.MySQLTemplates;
 import com.querydsl.sql.SQLTemplates;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.sql.Timestamp;
 import java.util.List;
 
 /**
  * Implementation of the custom user repository
  */
-@Slf4j
 public class UserRepositoryCustomImpl implements UserRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Double complexUnionQuery(GroupRequest groupRequest, List<FilterStatement> filters) {
+    public Double getAggregateData(AggregatorOperator aggregatorOperator, RequestType requestType, List<FilterStatement> filters) {
         QUser user = QUser.user;
         QHealthData healthData= QHealthData.healthData;
         QPositionData positionData = QPositionData.positionData;
-        Path<Void> unionData = Expressions.path(Void.class, "unionData");
-        Path<String> userSsn = Expressions.stringPath(unionData, "userSsn");
-        Path<Timestamp> timestamp = Expressions.dateTimePath(Timestamp.class, unionData,"timestamp");
-        Path<Double> latitude = Expressions.numberPath(Double.class, unionData,"latitude");
-        Path<Double> longitude = Expressions.numberPath(Double.class, unionData,"longitude");
-        Path<Integer> heartBeat = Expressions.numberPath(Integer.class, unionData,"heartBeat");
-        Path<Integer> pressureMin = Expressions.numberPath(Integer.class, unionData,"pressureMin");
-        Path<Integer> pressureMax = Expressions.numberPath(Integer.class, unionData,"pressureMax");
-        Path<Integer> bloodOxygenLevel = Expressions.numberPath(Integer.class, unionData,"bloodOxygenLevel");
+        QUnionDataPath unionDataPath = new QUnionDataPath("unionData");
 
         JPASQLQuery healthQuery = query().from(healthData).select(
-                healthData.userSsn.as(userSsn),
-                healthData.timestamp.as(timestamp),
-                Expressions.as(null, latitude),
-                Expressions.as(null, longitude),
-                healthData.heartBeat.as(heartBeat),
-                healthData.pressureMin.as(pressureMin),
-                healthData.pressureMax.as(pressureMax),
-                healthData.bloodOxygenLevel.as(bloodOxygenLevel));
+                healthData.userSsn.as(unionDataPath.userSsn),
+                healthData.timestamp.as(unionDataPath.timestamp),
+                Expressions.as(null, unionDataPath.latitude),
+                Expressions.as(null, unionDataPath.longitude),
+                healthData.heartBeat.as(unionDataPath.heartBeat),
+                healthData.pressureMin.as(unionDataPath.pressureMin),
+                healthData.pressureMax.as(unionDataPath.pressureMax),
+                healthData.bloodOxygenLevel.as(unionDataPath.bloodOxygenLevel));
         JPASQLQuery positionQuery = query().from(positionData).select(
-                positionData.userSsn.as(userSsn),
-                positionData.timestamp.as(timestamp),
-                positionData.latitude.as(latitude),
-                positionData.longitude.as(longitude),
-                Expressions.as(null , heartBeat),
-                Expressions.as(null, pressureMin),
-                Expressions.as(null, pressureMax),
-                Expressions.as(null, bloodOxygenLevel));
+                positionData.userSsn.as(unionDataPath.userSsn),
+                positionData.timestamp.as(unionDataPath.timestamp),
+                positionData.latitude.as(unionDataPath.latitude),
+                positionData.longitude.as(unionDataPath.longitude),
+                Expressions.as(null , unionDataPath.heartBeat),
+                Expressions.as(null, unionDataPath.pressureMin),
+                Expressions.as(null, unionDataPath.pressureMax),
+                Expressions.as(null, unionDataPath.bloodOxygenLevel));
         Path joinData = Expressions.path(Void.class, "joinData");
         JPASQLQuery unionQuery = query().select(Expressions.path(Tuple.class, "*")).from(query()
                 .union(healthQuery, positionQuery).as(joinData));
-        List<Timestamp> result = query().select(timestamp).from(user).join(unionQuery, unionData)
-                .on(user.ssn.eq(userSsn)).fetch();
-        log.info(result.toString());
-        return 1D;
+        JPASQLQuery<Double> query = query()
+                .select(Expressions.numberOperation(Double.class,
+                        AggregatorOperatorUtils.getAggregatorOperator(aggregatorOperator),
+                        requestType.getFieldPath())).from(user)
+                .join(unionQuery, unionDataPath.alias).on(user.ssn.eq(unionDataPath.userSsn));
+        PredicateBuilder predicateBuilder = new PredicateBuilder();
+        filters.forEach(predicateBuilder::addFilterStatement);
+        List<Double> result = query.where(predicateBuilder.build(unionDataPath)).fetch();
+        return result.get(0);
+    }
+
+    @Override
+    public Double getNumberOfPeopleInvolved(List<FilterStatement> filters) {
+        return getAggregateData(AggregatorOperator.COUNT, RequestType.USER_SSN, filters);
     }
 
     private JPASQLQuery<?> query(){

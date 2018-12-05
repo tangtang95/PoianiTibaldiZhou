@@ -1,7 +1,7 @@
 package com.poianitibaldizhou.trackme.sharedataservice.entity;
 
 import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbol;
-import com.poianitibaldizhou.trackme.sharedataservice.util.FilterableTable;
+import com.poianitibaldizhou.trackme.sharedataservice.util.FieldType;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -17,12 +17,9 @@ public class FilterStatement {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "filter_table", length = 10, nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private FilterableTable table;
-
     @Column(name = "filter_column", length = 20, nullable = false)
-    private String column;
+    @Enumerated(value = EnumType.STRING)
+    private FieldType column;
 
     @Column(length = 50, nullable = false)
     private String value;

@@ -24,9 +24,11 @@ public class QUser extends com.querydsl.sql.RelationalPathBase<QUser> {
 
     public static final QUser user = new QUser("user");
 
-    public final NumberPath<Integer> age = createNumber("age", Integer.class);
+    public final StringPath birthCity = createString("birthCity");
 
     public final DatePath<java.sql.Date> birthDate = createDate("birthDate", java.sql.Date.class);
+
+    public final StringPath birthNation = createString("birthNation");
 
     public final StringPath firstName = createString("firstName");
 
@@ -62,10 +64,11 @@ public class QUser extends com.querydsl.sql.RelationalPathBase<QUser> {
     }
 
     public void addMetadata() {
-        addMetadata(age, ColumnMetadata.named("age").withIndex(2).ofType(Types.INTEGER).withSize(10).notNull());
+        addMetadata(birthCity, ColumnMetadata.named("birth_city").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
         addMetadata(birthDate, ColumnMetadata.named("birth_date").withIndex(3).ofType(Types.DATE).withSize(10).notNull());
-        addMetadata(firstName, ColumnMetadata.named("first_name").withIndex(4).ofType(Types.VARCHAR).withSize(50).notNull());
-        addMetadata(lastName, ColumnMetadata.named("last_name").withIndex(5).ofType(Types.VARCHAR).withSize(50).notNull());
+        addMetadata(birthNation, ColumnMetadata.named("birth_nation").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(firstName, ColumnMetadata.named("first_name").withIndex(5).ofType(Types.VARCHAR).withSize(50).notNull());
+        addMetadata(lastName, ColumnMetadata.named("last_name").withIndex(6).ofType(Types.VARCHAR).withSize(50).notNull());
         addMetadata(ssn, ColumnMetadata.named("ssn").withIndex(1).ofType(Types.VARCHAR).withSize(16).notNull());
     }
 

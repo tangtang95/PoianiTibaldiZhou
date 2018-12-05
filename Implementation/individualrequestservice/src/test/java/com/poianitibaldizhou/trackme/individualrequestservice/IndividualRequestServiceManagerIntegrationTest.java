@@ -28,14 +28,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Integration test for the individual request service application
+ * Integration test for the individual request manager service
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = IndividualRequestServiceApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-public class IndividualRequestServiceApplicationTests {
+public class IndividualRequestServiceManagerIntegrationTest {
 
     @LocalServerPort
     private int port;

@@ -40,7 +40,7 @@ public class SendDataController {
     }
 
     /**
-     * Adds a new health data of the user {userId} in the database
+     * Adds a new health data of the user {userId} contains the database
      *
      * @param userId the social security number of the user
      * @param healthData the new health data
@@ -55,7 +55,7 @@ public class SendDataController {
     }
 
     /**
-     * Adds a new position data of the user {userId} in the database
+     * Adds a new position data of the user {userId} contains the database
      *
      * @param userId the social security number of the user
      * @param positionData the new position data
@@ -70,7 +70,7 @@ public class SendDataController {
     }
 
     /**
-     * Adds a list of new position data and a list of health position data of the user {userId} in the database
+     * Adds a list of new position data and a list of health position data of the user {userId} contains the database
      *
      * @param userId the social security number of the user
      * @param data the data wrapper containing a list of health data and a list of position data

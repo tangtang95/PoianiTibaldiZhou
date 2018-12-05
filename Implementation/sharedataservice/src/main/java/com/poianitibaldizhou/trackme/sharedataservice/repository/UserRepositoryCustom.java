@@ -1,7 +1,8 @@
 package com.poianitibaldizhou.trackme.sharedataservice.repository;
 
 import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
+import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 
 import java.util.List;
 
@@ -11,11 +12,22 @@ import java.util.List;
 public interface UserRepositoryCustom {
 
     /**
-     * 
-     * @param request
-     * @param filters
-     * @return
+     * Retrieves the aggregated data of the aggregator operator over the request type with all the filters applied
+     *
+     *
+     * @param aggregatorOperator the aggregator operator of the query asked
+     * @param requestType the type of request: the field on which the aggregator operator is applied
+     * @param filters the list of filters defining the constraints of the query
+     * @return a number aggregated value of all the data regarding the group request
      */
-    Double complexUnionQuery(GroupRequest request, List<FilterStatement> filters);
+    Double getAggregateData(AggregatorOperator aggregatorOperator, RequestType requestType, List<FilterStatement> filters);
+
+    /**
+     * Retrieves the number of people involved based on a list of filters
+     *
+     * @param filters the list of filters defining the constraints of the query
+     * @return the number of people involved based on a list of filters
+     */
+    Double getNumberOfPeopleInvolved(List<FilterStatement> filters);
 
 }

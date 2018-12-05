@@ -18,22 +18,45 @@ public class Logger {
     /**
      * Logs methods regarding the call of services of share data service
      *
-     * @param joinPoint the join point in which the call happened
+     * @param joinPoint the join point contains which the call happened
      * @return the object which the service call should return
      * @throws Throwable propagated exception from the service call
      */
     @Around("execution(public * com.poianitibaldizhou.trackme.sharedataservice.service.*.*(..))")
     public Object logShareDataServiceCall(ProceedingJoinPoint joinPoint) throws Throwable {
         Object retValue;
-        log.info("Before method: " + joinPoint.getSignature().toString());
+        log.info("Service call (before): " + joinPoint.getSignature().toString());
         try {
             retValue = joinPoint.proceed();
-            log.info("After method: " + joinPoint.getSignature().toString());
+            log.info("Service call (after): " + joinPoint.getSignature().toString());
         } catch (Throwable throwable) {
-            log.info("Exception: " + joinPoint.getSignature().toString() + " caused by:" + throwable.toString());
+            log.info("Service call (exception): " + joinPoint.getSignature().toString() + " caused by:" + throwable.toString());
             throw throwable;
         }
         return retValue;
     }
+
+    /**
+     * Logs methods regarding the call of query db of share data service
+     *
+     * @param joinPoint the join point contains which the call happened
+     * @return the object which the service call should return
+     * @throws Throwable propagated exception from the service call
+     */
+    @Around("execution(public * com.poianitibaldizhou.trackme.sharedataservice.repository.*.get*(..))")
+    public Object logCustomRepositoryQuery(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object retValue;
+        log.info("QueryDB (before): " + joinPoint.getSignature().toString());
+        try {
+            retValue = joinPoint.proceed();
+            log.info("QueryDB (after): " + joinPoint.getSignature().toString());
+        } catch (Throwable throwable) {
+            log.info("QueryDB (exception): " + joinPoint.getSignature().toString() + " caused by:" + throwable.toString());
+            throw throwable;
+        }
+        return retValue;
+    }
+
+
 
 }

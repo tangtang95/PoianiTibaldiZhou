@@ -14,6 +14,6 @@ public class NonMatchingUserException extends RuntimeException {
      * @param ssn can't accept the request of this user
      */
     public NonMatchingUserException(String ssn) {
-        super(Constants.NON_MATCHIN_USER + Constants.SPACE + ssn);
+        super(Constants.NON_MATCHING_USER + Constants.SPACE + ssn);
     }
 }

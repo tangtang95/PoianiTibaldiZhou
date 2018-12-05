@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Advice to manage errors about users not found
+ * Advice for managing errors about users not found
  */
 @ControllerAdvice
 public class UserNotFoundAdvice {

@@ -9,6 +9,7 @@ INSERT INTO individual_request(id, end_date, start_date, status, third_partyid, 
 INSERT INTO individual_request(id, end_date, start_date, status, third_partyid, timestamp, ssn) VALUES(3, '2000-01-01', '2000-01-01', 'PENDING', 1, '2000-01-01 00:00:00','user1')^;
 INSERT INTO individual_request(id, end_date, start_date, status, third_partyid, timestamp, ssn) VALUES(4, '2000-01-01', '2000-01-01', 'PENDING', 2, '2000-01-01 00:00:00','user1')^;
 INSERT INTO individual_request(id, end_date, start_date, status, third_partyid, timestamp, ssn) VALUES(5, '2000-01-01', '2000-01-01', 'PENDING', 2, '2000-01-01 00:00:00','user2')^;
+INSERT INTO individual_request(id, end_date, start_date, status, third_partyid, timestamp, ssn) VALUES(6, '2000-01-01', '2000-01-01', 'REFUSED', 4, '2000-01-01 00:00:00','user5')^;
 
 INSERT INTO blocked_third_party(third_partyid, block_date, ssn) VALUES(4, '2000-01-01', 'user5')^;
 

@@ -76,7 +76,6 @@ public class ResponseController {
     @PostMapping("/blockedThirdParty/{ssn}/{thirdPartyID}")
     public @ResponseBody ResponseEntity<?> blockThirdParty(@PathVariable String ssn, @PathVariable Long thirdPartyID) {
         BlockedThirdParty blockedThirdParty = uploadResponseService.addBlock(new User(ssn), thirdPartyID);
-        System.out.println("BLOCKED " +blockedThirdParty);
         Resource<BlockedThirdParty> resource = blockAssembler.toResource(blockedThirdParty);
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }

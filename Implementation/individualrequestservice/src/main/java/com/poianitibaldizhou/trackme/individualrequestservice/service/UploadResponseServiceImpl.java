@@ -56,6 +56,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
 
         if(responseRepository.findById(requestID).isPresent())
             throw new ResponseAlreadyPresentException(requestID);
+
         if(individualRequestRepository.findById(requestID).map(IndividualRequest::getUser).
                 filter(userRequest -> !userRequest.equals(finalUser)).isPresent()) {
             throw new NonMatchingUserException(user.getSsn());
@@ -101,10 +102,12 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         blockedThirdParty.setKey(key);
         blockedThirdParty.setBlockDate(Date.valueOf(LocalDate.now()));
 
-        // all the pending request for that user becomes blocked
+        // all the pending request for that user becomes refused
         individualRequestRepository.findAllByThirdPartyID(thirdPartyID).stream().
-                filter(individualRequest -> individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
-                        individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED)
+                filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING) &&
+                        individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
+                        individualRequest -> {individualRequest.setStatus(IndividualRequestStatus.REFUSED);
+                        System.out.println("CHANGED REQUEST " + individualRequest);}
         );
 
         return blockedThirdPartyRepository.saveAndFlush(blockedThirdParty);

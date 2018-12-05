@@ -28,8 +28,6 @@ public class QFilterStatement extends com.querydsl.sql.RelationalPathBase<QFilte
 
     public final StringPath filterColumn = createString("filterColumn");
 
-    public final StringPath filterTable = createString("filterTable");
-
     public final NumberPath<Long> groupRequestId = createNumber("groupRequestId", Long.class);
 
     public final NumberPath<Long> id = createNumber("id", Long.class);
@@ -66,10 +64,9 @@ public class QFilterStatement extends com.querydsl.sql.RelationalPathBase<QFilte
     public void addMetadata() {
         addMetadata(comparisonSymbol, ColumnMetadata.named("comparison_symbol").withIndex(3).ofType(Types.VARCHAR).withSize(10).notNull());
         addMetadata(filterColumn, ColumnMetadata.named("filter_column").withIndex(2).ofType(Types.VARCHAR).withSize(20).notNull());
-        addMetadata(filterTable, ColumnMetadata.named("filter_table").withIndex(4).ofType(Types.VARCHAR).withSize(10).notNull());
-        addMetadata(groupRequestId, ColumnMetadata.named("group_request_id").withIndex(6).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(groupRequestId, ColumnMetadata.named("group_request_id").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(value, ColumnMetadata.named("value").withIndex(5).ofType(Types.VARCHAR).withSize(50).notNull());
+        addMetadata(value, ColumnMetadata.named("value").withIndex(4).ofType(Types.VARCHAR).withSize(50).notNull());
     }
 
 }
