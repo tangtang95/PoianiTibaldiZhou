@@ -204,7 +204,7 @@ public class GroupRequestControllerUnitTest {
                 "\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\",\"requestType\":" +
                 "\"PRESSURE_MAX\",\"status\":\"REFUSED\"}}]}";
 
-        mvc.perform(post("/grouprequestservice/requests").
+        mvc.perform(post("/grouprequestservice/requests/thirdparties/1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
                 content(json))
                 .andExpect(status().isCreated())
@@ -248,7 +248,7 @@ public class GroupRequestControllerUnitTest {
         given(service.addGroupRequest(groupRequestWrapper)).willThrow(new BadOperatorRequestTypeException(
                 groupRequest.getAggregatorOperator(), groupRequest.getRequestType()));
 
-        mvc.perform(post("/grouprequestservice/requests"))
+        mvc.perform(post("/grouprequestservice/requests/thirdparties/1"))
                 .andExpect(status().isBadRequest());
     }
 }

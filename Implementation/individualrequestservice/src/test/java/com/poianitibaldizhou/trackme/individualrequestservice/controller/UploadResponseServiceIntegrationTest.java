@@ -1,5 +1,6 @@
-package com.poianitibaldizhou.trackme.individualrequestservice;
+package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
+import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.*;

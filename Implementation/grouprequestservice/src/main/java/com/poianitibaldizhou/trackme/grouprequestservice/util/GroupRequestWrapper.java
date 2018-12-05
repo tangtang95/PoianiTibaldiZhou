@@ -52,4 +52,22 @@ public class GroupRequestWrapper implements Serializable {
     public List<FilterStatement> getFilterStatementList() {
         return filterStatementList;
     }
+
+    /**
+     * Set the group request
+     *
+     * @param groupRequest group request that is wrapped
+     */
+    public void setGroupRequest(GroupRequest groupRequest) {
+        this.groupRequest = groupRequest;
+    }
+
+    /**
+     * Set the filter statement related with that request
+     *
+     * @param filterStatementList filter statement related with the group request
+     */
+    public void setFilterStatementList(List<FilterStatement> filterStatementList) {
+        this.filterStatementList = filterStatementList;
+    }
 }

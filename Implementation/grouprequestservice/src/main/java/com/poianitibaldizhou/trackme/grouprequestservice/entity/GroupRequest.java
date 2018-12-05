@@ -18,7 +18,7 @@ public class GroupRequest {
 
     @JsonIgnore
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonIgnore
@@ -28,7 +28,7 @@ public class GroupRequest {
     @Column(nullable = false)
     private Date date;
 
-    @Column(length = 10, nullable = false)
+    @Column(length = 20, nullable = false)
     @Enumerated(value = EnumType.STRING)
     private AggregatorOperator aggregatorOperator = AggregatorOperator.COUNT;
 
