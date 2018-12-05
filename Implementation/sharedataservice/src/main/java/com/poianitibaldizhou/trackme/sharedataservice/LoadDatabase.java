@@ -1,6 +1,7 @@
-package com.poianitibaldizhou.trackme.sharedataservice.repository;
+package com.poianitibaldizhou.trackme.sharedataservice;
 
 import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbol;
 import com.poianitibaldizhou.trackme.sharedataservice.util.FieldType;
@@ -8,16 +9,18 @@ import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
 @Slf4j
+@Profile("!test")
 public class LoadDatabase implements CommandLineRunner{
 
     @Autowired
@@ -34,6 +37,9 @@ public class LoadDatabase implements CommandLineRunner{
 
     @Autowired
     FilterStatementRepository filterStatementRepository;
+
+    @Autowired
+    IndividualRequestRepository individualRequestRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -76,6 +82,7 @@ public class LoadDatabase implements CommandLineRunner{
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
         groupRequest.setRequestType(RequestType.USER_SSN);
         groupRequest.setThirdPartyId(1L);
+        groupRequest.setDate(new Date(0));
         log.info("Preloading: " + groupRequest);
         groupRequestRepository.save(groupRequest);
         List<GroupRequest> gr = groupRequestRepository.findAll();
@@ -87,5 +94,15 @@ public class LoadDatabase implements CommandLineRunner{
         filterStatement.setGroupRequest(gr.get(0));
         log.info("Preloading: " + filterStatement);
         filterStatementRepository.save(filterStatement);
+
+        IndividualRequest individualRequest = new IndividualRequest();
+        individualRequest.setStartDate(Date.valueOf(LocalDate.of(2018, 12, 6)));
+        individualRequest.setEndDate(Date.valueOf(LocalDate.of(2018, 12, 6)));
+        individualRequest.setThirdPartyId(1L);
+        individualRequest.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        individualRequest.setUser(user);
+        log.info("Preloading: " + individualRequest);
+        individualRequestRepository.save(individualRequest);
+
     }
 }

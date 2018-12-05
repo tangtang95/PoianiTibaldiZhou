@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.sharedataservice.util.generator;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javafaker.Faker;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
@@ -14,6 +15,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -31,26 +33,21 @@ public class HealthDataGenerator implements Generator {
         mapper.writeValue(file, healthDataList);
     }
 
-    /**
-     *
-     *
-     * @param numberOfObjects
-     * @return
-     * @throws IOException
-     */
     @Override
     public List<Object> generateObjects(int numberOfObjects) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        List<User> users = mapper.readValue(ResourceUtils.getFile("classpath:repository/users.json"), List.class);
+        List<User> users = mapper.readValue(ResourceUtils.getFile("classpath:repository/users.json"),
+                new TypeReference<List<User>>(){});
         List<Object> healthDataList = new ArrayList<>();
         Faker faker = new Faker();
         for (int i = 0; i < numberOfObjects; i++) {
             User user = users.get(faker.number().numberBetween(0, users.size()-1));
             HealthData healthData = new HealthData();
             healthData.setUser(user);
-            Timestamp timestamp = Timestamp.from(faker.date().between(
-                    Date.from(user.getBirthDate().toInstant()),
-                    Date.from(Instant.now())).toInstant());
+            Date date = faker.date().between(
+                    Date.from(user.getBirthDate().toLocalDate().atStartOfDay().toInstant(ZoneOffset.UTC)),
+                    Date.from(Instant.now()));
+            Timestamp timestamp = Timestamp.from(date.toInstant());
             healthData.setTimestamp(timestamp);
             healthData.setHeartBeat(faker.number().numberBetween(40, 200));
             healthData.setPressureMin(faker.number().numberBetween(60, 130));

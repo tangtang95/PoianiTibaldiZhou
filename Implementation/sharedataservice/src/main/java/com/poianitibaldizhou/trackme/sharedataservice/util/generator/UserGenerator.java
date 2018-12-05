@@ -35,7 +35,7 @@ public class UserGenerator implements Generator{
         Faker faker = new Faker();
         for (int i = 0; i < numberOfObjects; i++) {
             User user = new User();
-            user.setSsn(UUID.randomUUID().toString());
+            user.setSsn(String.format("%016d", i));
 
             user.setFirstName(faker.name().firstName());
             user.setLastName(faker.name().lastName());

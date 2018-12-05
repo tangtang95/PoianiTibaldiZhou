@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * Repository for accessing data regarding the user
  */
-public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User>, UserRepositoryCustom{
+public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom{
 
 }

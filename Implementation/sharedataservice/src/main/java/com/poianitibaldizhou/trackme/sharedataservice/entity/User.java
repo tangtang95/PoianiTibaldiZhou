@@ -25,10 +25,10 @@ public class User {
     @Column(nullable = false)
     private Date birthDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 150)
     private String birthCity;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String birthNation;
 
 

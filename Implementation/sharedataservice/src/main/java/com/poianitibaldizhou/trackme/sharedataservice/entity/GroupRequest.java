@@ -6,6 +6,8 @@ import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -16,13 +18,16 @@ import java.util.List;
 public class GroupRequest {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
     private Long thirdPartyId;
 
-    @Column(length = 10, nullable = false)
+    @Column(nullable = false)
+    private Date date;
+
+    @Column(length = 20, nullable = false)
     @Enumerated(value = EnumType.STRING)
     private AggregatorOperator aggregatorOperator = AggregatorOperator.COUNT;
 

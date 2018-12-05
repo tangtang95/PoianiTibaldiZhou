@@ -4,6 +4,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.springframework.stereotype.Service;
 
@@ -66,16 +67,23 @@ public class AccessDataServiceImpl implements AccessDataService {
         DataWrapper dataWrapper = new DataWrapper();
         healthDataList.forEach(dataWrapper::addHealthData);
         positionDataList.forEach(dataWrapper::addPositionData);
+        dataWrapper.setPositionDataList(positionDataList);
+        dataWrapper.setHealthDataList(healthDataList);
         return dataWrapper;
 
     }
 
     @Transactional
     @Override
-    public Double getGroupRequestData(Long thirdPartyId, Long requestId) {
+    public AggregatedData getGroupRequestData(Long thirdPartyId, Long requestId) {
         GroupRequest groupRequest = groupRequestRepository.findByIdAndThirdPartyId(requestId, thirdPartyId)
                 .orElseThrow(() -> new GroupRequestNotFoundException(requestId));
-        List<FilterStatement> filters = filterStatementRepository.findAllByGroupRequest(groupRequest);
-        return userRepository.getAggregateData(groupRequest.getAggregatorOperator(), groupRequest.getRequestType(), filters);
+        List<FilterStatement> filters = filterStatementRepository.findAllByGroupRequest_Id(requestId);
+        AggregatedData result = new AggregatedData();
+        result.setThirdPartyId(thirdPartyId);
+        result.setGroupRequestId(requestId);
+        result.setValue(userRepository.getAggregatedData(groupRequest.getAggregatorOperator(),
+                groupRequest.getRequestType(), filters));
+        return result;
     }
 }

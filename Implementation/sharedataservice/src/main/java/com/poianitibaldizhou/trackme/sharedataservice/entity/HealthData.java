@@ -3,7 +3,6 @@ package com.poianitibaldizhou.trackme.sharedataservice.entity;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -17,7 +16,7 @@ public class HealthData {
 
     @Id
     @JsonView(Views.Internal.class)
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @JsonView(Views.Internal.class)
@@ -44,5 +43,19 @@ public class HealthData {
     @JsonView(Views.Public.class)
     @Column(nullable = false)
     private Integer pressureMax;
+
+    public static HealthData newHealthData(Long id, Timestamp timestamp, User user, Integer heartbeat,
+                                           Integer pressureMin, Integer pressureMax, Integer bloodOxygenLevel){
+        HealthData healthData = new HealthData();
+        healthData.setId(id);
+        healthData.setTimestamp(timestamp);
+        healthData.setUser(user);
+        healthData.setHeartBeat(heartbeat);
+        healthData.setPressureMin(pressureMin);
+        healthData.setPressureMax(pressureMax);
+        healthData.setBloodOxygenLevel(bloodOxygenLevel);
+        return healthData;
+    }
+
 
 }

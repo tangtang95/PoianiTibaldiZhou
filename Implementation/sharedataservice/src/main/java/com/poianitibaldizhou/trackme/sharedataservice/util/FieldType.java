@@ -1,45 +1,53 @@
 package com.poianitibaldizhou.trackme.sharedataservice.util;
 
 
-import java.sql.Timestamp;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QHealthData;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QPositionData;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUser;
+import com.querydsl.core.types.Expression;
 
-import static com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUnionDataPath.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Type of field that can be used on a filter statement
  */
 public enum FieldType {
-    TIMESTAMP(Timestamp.class, ALIAS_TIMESTAMP), LATITUDE(Double.class, ALIAS_LATITUDE),
-    LONGITUDE(Double.class, ALIAS_LONGITUDE), HEART_BEAT(Integer.class, ALIAS_HEARTBEAT),
-    PRESSURE_MIN(Integer.class, ALIAS_PRESSURE_MIN), PRESSURE_MAX(Integer.class, ALIAS_PRESSURE_MAX),
-    BLOOD_OXYGEN_LEVEL(Integer.class, ALIAS_BLOOD_OXYGEN_LEVEL);
+    POSITION_TIMESTAMP(QPositionData.positionData.timestamp), HEALTH_TIMESTAMP(QHealthData.healthData.timestamp),
+    LATITUDE(QPositionData.positionData.latitude), LONGITUDE(QPositionData.positionData.longitude),
+    HEART_BEAT(QHealthData.healthData.heartBeat), PRESSURE_MIN(QHealthData.healthData.pressureMin),
+    PRESSURE_MAX(QHealthData.healthData.pressureMax), BLOOD_OXYGEN_LEVEL(QHealthData.healthData.bloodOxygenLevel),
+    BIRTH_CITY(QUser.user.birthCity), BIRTH_YEAR(QUser.user.birthDate.year());
 
-    private Class<?> fieldClass;
-    private String fieldName;
+    private Expression<?> expression;
 
     /**
      * Constructor.
-     * Create a FieldType of a specific field class and the name of the field
+     * Create a FieldType of a specific expression to the db table
      *
-     * @param fieldClass the class of the field
-     * @param fieldName the name of the field
+     * @param expression the expression of the field
      */
-    private FieldType(Class<?> fieldClass, String fieldName){
-        this.fieldClass = fieldClass;
-        this.fieldName = fieldName;
+    FieldType(Expression<?> expression){
+        this.expression = expression;
     }
 
-    /**
-     * @return the field class of the fieldType
-     */
-    public Class<?> getFieldClass() {
-        return fieldClass;
+    public Expression getExpression() {
+        return expression;
     }
 
-    /**
-     * @return the name of the field of a specific fieldType
-     */
-    public String getFieldName() {
-        return fieldName;
+    public boolean contains(List<FieldType> fieldTypes){
+        return fieldTypes.stream().filter(this::equals).count() > 0;
+    }
+
+    public static List<FieldType> getPositionDataFields(){
+        return Arrays.asList(POSITION_TIMESTAMP, LATITUDE, LONGITUDE);
+    }
+
+    public static List<FieldType> getHealthDataFields(){
+        return Arrays.asList(HEALTH_TIMESTAMP, HEART_BEAT, PRESSURE_MAX, PRESSURE_MIN, BLOOD_OXYGEN_LEVEL);
+    }
+
+    public static List<FieldType> getUserFields(){
+        return Arrays.asList(BIRTH_CITY, BIRTH_YEAR);
     }
 }

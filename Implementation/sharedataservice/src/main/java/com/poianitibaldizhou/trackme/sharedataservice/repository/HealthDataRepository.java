@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Repository for accessing data regarding the health data of a user
  */
-public interface HealthDataRepository extends JpaRepository<HealthData, Long>, JpaSpecificationExecutor<HealthData> {
+public interface HealthDataRepository extends JpaRepository<HealthData, Long> {
 
     /**
      * Retrieves all the health data regarding the user between startTimestamp and endTimestamp

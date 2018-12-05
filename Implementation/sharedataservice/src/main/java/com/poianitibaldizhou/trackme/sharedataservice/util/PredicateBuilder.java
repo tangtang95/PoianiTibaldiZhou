@@ -1,11 +1,11 @@
-package com.poianitibaldizhou.trackme.sharedataservice.repository.filter;
+package com.poianitibaldizhou.trackme.sharedataservice.util;
 
 import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUnionDataPath;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbolUtils;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Operator;
-import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
 
@@ -41,21 +41,20 @@ public class PredicateBuilder {
      * Builds a where expression containing all the constraint defined by all the filter statements concatenated by
      * an AND
      *
-     * @param unionDataPath the QUnionDataPath of a specific alias of the union data (health data + position data)
      * @return the where predicate containing all the constraint defined by filter statements
      */
-    public Predicate build(QUnionDataPath unionDataPath){
+    public Predicate build(){
         BooleanBuilder where = new BooleanBuilder();
         for(FilterStatement filterStatement: filterStatements) {
             Operator operator = ComparisonSymbolUtils.getOperator(filterStatement.getComparisonSymbol());
 
-            Path<?> propPath = Expressions.path(filterStatement.getColumn().getFieldClass(), unionDataPath.alias,
-                    filterStatement.getColumn().getFieldName());
+            Expression<?> expression = filterStatement.getColumn().getExpression();
 
-            Predicate predicate = Expressions.predicate(operator, propPath,
+            Predicate predicate = Expressions.predicate(operator, expression,
                     Expressions.constant(filterStatement.getValue()));
             where.and(predicate);
         }
+        filterStatements = new ArrayList<>();
         return where;
     }
 

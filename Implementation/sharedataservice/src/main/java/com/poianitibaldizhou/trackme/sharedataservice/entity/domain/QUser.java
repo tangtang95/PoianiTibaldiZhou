@@ -64,9 +64,9 @@ public class QUser extends com.querydsl.sql.RelationalPathBase<QUser> {
     }
 
     public void addMetadata() {
-        addMetadata(birthCity, ColumnMetadata.named("birth_city").withIndex(2).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(birthCity, ColumnMetadata.named("birth_city").withIndex(2).ofType(Types.VARCHAR).withSize(150).notNull());
         addMetadata(birthDate, ColumnMetadata.named("birth_date").withIndex(3).ofType(Types.DATE).withSize(10).notNull());
-        addMetadata(birthNation, ColumnMetadata.named("birth_nation").withIndex(4).ofType(Types.VARCHAR).withSize(255).notNull());
+        addMetadata(birthNation, ColumnMetadata.named("birth_nation").withIndex(4).ofType(Types.VARCHAR).withSize(100).notNull());
         addMetadata(firstName, ColumnMetadata.named("first_name").withIndex(5).ofType(Types.VARCHAR).withSize(50).notNull());
         addMetadata(lastName, ColumnMetadata.named("last_name").withIndex(6).ofType(Types.VARCHAR).withSize(50).notNull());
         addMetadata(ssn, ColumnMetadata.named("ssn").withIndex(1).ofType(Types.VARCHAR).withSize(16).notNull());

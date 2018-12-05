@@ -30,15 +30,4 @@ public class AggregatorOperatorUtils {
 
         return operators.get(aggregatorOperator.name());
     }
-
-    /**
-     * Returns if an aggregator operator is valid w.r.t. a request type
-     *
-     * @param operator the aggregator operator to be checked
-     * @param requestType the request type to be checked
-     * @return true if the aggregator operator is valid w.r.t. the request type otherwise false
-     */
-    public static boolean isValidOperator(AggregatorOperator operator, RequestType requestType){
-        return operator.contains(AggregatorOperator.getNumberAggregatorOperators()) && requestType.isNumber();
-    }
 }
