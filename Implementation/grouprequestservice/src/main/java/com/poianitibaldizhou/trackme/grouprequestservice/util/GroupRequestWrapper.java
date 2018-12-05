@@ -23,7 +23,7 @@ public class GroupRequestWrapper {
      * @param filterStatementList filter statement associated with it
      */
     public GroupRequestWrapper(GroupRequest groupRequest, List<FilterStatement> filterStatementList) {
-        if(filterStatementList.stream().map(filterStatement -> filterStatement.getGroupRequest().getId())
+        if (filterStatementList.stream().map(filterStatement -> filterStatement.getGroupRequest().getId())
                 .anyMatch(requestID -> !requestID.equals(groupRequest.getId())))
             throw new IllegalArgumentException();
 

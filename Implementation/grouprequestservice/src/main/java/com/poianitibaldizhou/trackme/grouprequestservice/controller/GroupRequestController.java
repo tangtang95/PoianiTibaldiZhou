@@ -1,12 +1,16 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.controller;
 
 import com.poianitibaldizhou.trackme.grouprequestservice.assembler.GroupRequestWrapperAssembler;
+import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
 import com.poianitibaldizhou.trackme.grouprequestservice.service.GroupRequestManagerService;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -45,7 +49,7 @@ public class GroupRequestController {
      * @param id id of the interested group request
      * @return resource containing the requested individual request
      */
-    @GetMapping("{id}")
+    @GetMapping("/requests/{id}")
     public @ResponseBody Resource<GroupRequestWrapper> getRequest(@PathVariable Long id) {
         return groupRequestWrapperAssembler.toResource(requestManagerService.getById(id));
     }
@@ -57,9 +61,11 @@ public class GroupRequestController {
      * @return  set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
-    @GetMapping("/thirdparty/{thirdPartyId}")
+    @GetMapping("/requests/thirdparties/{thirdPartyId}")
     public @ResponseBody Resources<Resource<GroupRequestWrapper>> getRequestByThirdParty(@PathVariable Long thirdPartyId) {
-        List<Resource<GroupRequestWrapper>> requests = requestManagerService.getByThirdPartyId(thirdPartyId).stream()
+        List<GroupRequestWrapper> requestWrappers = requestManagerService.getByThirdPartyId(thirdPartyId);
+
+        List<Resource<GroupRequestWrapper>> requests = requestWrappers.stream()
                 .map(groupRequestWrapperAssembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(requests,
@@ -68,5 +74,21 @@ public class GroupRequestController {
 
     // POST METHODS
 
-    // TODO: add new request method
+    /**
+     * This method will create a new group request
+     *
+     * @param groupRequestWrapper group request that is asked to be added inside the system
+     * @return an entity containing information about the created request, embedded with useful links to accessing
+     * the new resource
+     * @throws URISyntaxException due to the creation of a new uri resource: this will throw some exception if the syntax
+     * is not well expressed
+     */
+    @PostMapping("/requests")
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
+        groupRequestWrapper.getFilterStatementList().forEach(filterStatement -> filterStatement.setGroupRequest(groupRequestWrapper.getGroupRequest()));
+
+        Resource<GroupRequestWrapper> resource = groupRequestWrapperAssembler.toResource(requestManagerService.addGroupRequest(groupRequestWrapper));
+
+        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
+    }
 }

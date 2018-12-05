@@ -30,7 +30,8 @@ public interface GroupRequestManagerService {
     /**
      * Add a group request with the status of under analysis
      *
+     * @param groupRequestWrapper group request performed by the third party customer
      * @return group request that has been added
      */
-    GroupRequestWrapper addGroupRequest();
+    GroupRequestWrapper addGroupRequest(GroupRequestWrapper groupRequestWrapper);
 }

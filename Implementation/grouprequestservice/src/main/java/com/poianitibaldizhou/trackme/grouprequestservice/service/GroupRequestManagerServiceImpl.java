@@ -2,12 +2,17 @@ package com.poianitibaldizhou.trackme.grouprequestservice.service;
 
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.grouprequestservice.exception.BadOperatorRequestTypeException;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +60,24 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
     }
 
     @Override
-    public GroupRequestWrapper addGroupRequest() {
-        // TODO
-        return null;
+    public GroupRequestWrapper addGroupRequest(GroupRequestWrapper groupRequestWrapper) {
+        if(!AggregatorOperator.isValidOperator(groupRequestWrapper.getGroupRequest().getAggregatorOperator(),
+                groupRequestWrapper.getGroupRequest().getRequestType())) {
+            throw new BadOperatorRequestTypeException(groupRequestWrapper.getGroupRequest().getAggregatorOperator(),
+                    groupRequestWrapper.getGroupRequest().getRequestType());
+        }
+
+        groupRequestWrapper.getGroupRequest().setDate(Date.valueOf(LocalDate.now()));
+        groupRequestWrapper.getGroupRequest().setStatus(RequestStatus.UNDER_ANALYSIS);
+
+        GroupRequest savedRequest = groupRequestRepository.saveAndFlush(groupRequestWrapper.getGroupRequest());
+
+        groupRequestWrapper.getFilterStatementList().forEach(filterStatement -> {
+            filterStatement.setGroupRequest(savedRequest);
+            filterStatementRepository.save(filterStatement);});
+
+        filterStatementRepository.flush();
+
+        return new GroupRequestWrapper(savedRequest, filterStatementRepository.findAllByGroupRequest_Id(savedRequest.getId()));
     }
 }
