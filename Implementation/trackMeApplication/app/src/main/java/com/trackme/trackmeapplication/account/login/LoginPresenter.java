@@ -22,6 +22,7 @@ public class LoginPresenter extends BasePresenterImpl<LoginContract.LoginView> i
 
     @Override
     public void onLoginSuccess() {
+        mView.saveUserSession();
         mView.navigateToHome();
     }
 

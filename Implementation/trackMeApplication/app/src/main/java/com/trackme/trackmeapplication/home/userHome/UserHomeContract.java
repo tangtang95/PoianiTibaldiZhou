@@ -7,19 +7,19 @@ public class UserHomeContract {
 
     interface UserHomeView extends BaseView {
 
-        void showIndividualMessageFragment();
+        void navigateToUserProfile();
 
-        void showProfileFragment();
+        void navigateToUserSettings();
 
-        void showSettingsFragment();
+        void navigateToUserLogin();
 
         UserHomeActivity getActivity();
+
+        String getUsername();
 
     }
 
     interface UserHomePresenter extends BasePresenter<UserHomeView> {
-
-        void onMessageSelected();
 
         void onProfileSelected();
 
