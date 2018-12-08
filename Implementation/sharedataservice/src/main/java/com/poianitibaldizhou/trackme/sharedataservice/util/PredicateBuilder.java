@@ -1,8 +1,6 @@
 package com.poianitibaldizhou.trackme.sharedataservice.util;
 
 import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.domain.QUnionDataPath;
-import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbolUtils;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Operator;
@@ -46,7 +44,7 @@ public class PredicateBuilder {
     public Predicate build(){
         BooleanBuilder where = new BooleanBuilder();
         for(FilterStatement filterStatement: filterStatements) {
-            Operator operator = ComparisonSymbolUtils.getOperator(filterStatement.getComparisonSymbol());
+            Operator operator = ComparisonSymbolUtils.getSqlOperator(filterStatement.getComparisonSymbol());
 
             Expression<?> expression = filterStatement.getColumn().getExpression();
 

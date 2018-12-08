@@ -31,11 +31,11 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(value = Enclosed.class)
+@ActiveProfiles(profiles = {"test"})
 public class UserRepositoryCustomImplIntegrationTest {
 
     @RunWith(value = Parameterized.class)
     @DataJpaTest
-    @ActiveProfiles(profiles = {"test"})
     @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
     @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
     public static class ParameterizedPart {

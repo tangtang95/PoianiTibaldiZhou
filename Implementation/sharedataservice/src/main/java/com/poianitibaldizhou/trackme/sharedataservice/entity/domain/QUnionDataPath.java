@@ -13,7 +13,7 @@ public class QUnionDataPath {
     public static final String ALIAS_USER_SSN = "userSsn";
     public static final String ALIAS_LATITUDE = "latitude";
     public static final String ALIAS_LONGITUDE = "longitude";
-    public static final String ALIAS_TIMESTAMP = "timestamp";
+    public static final String ALIAS_TIMESTAMP = "creationTimestamp";
     public static final String ALIAS_HEARTBEAT = "heartbeat";
     public static final String ALIAS_BLOOD_OXYGEN_LEVEL = "bloodOxygenLevel";
     public static final String ALIAS_PRESSURE_MIN = "pressureMin";

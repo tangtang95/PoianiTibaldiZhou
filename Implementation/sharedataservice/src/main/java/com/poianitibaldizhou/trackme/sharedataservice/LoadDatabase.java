@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -82,7 +81,7 @@ public class LoadDatabase implements CommandLineRunner{
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
         groupRequest.setRequestType(RequestType.USER_SSN);
         groupRequest.setThirdPartyId(1L);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         log.info("Preloading: " + groupRequest);
         groupRequestRepository.save(groupRequest);
         List<GroupRequest> gr = groupRequestRepository.findAll();
@@ -99,7 +98,7 @@ public class LoadDatabase implements CommandLineRunner{
         individualRequest.setStartDate(Date.valueOf(LocalDate.of(2018, 12, 6)));
         individualRequest.setEndDate(Date.valueOf(LocalDate.of(2018, 12, 6)));
         individualRequest.setThirdPartyId(1L);
-        individualRequest.setTimestamp(Timestamp.valueOf(LocalDateTime.now()));
+        individualRequest.setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         individualRequest.setUser(user);
         log.info("Preloading: " + individualRequest);
         individualRequestRepository.save(individualRequest);

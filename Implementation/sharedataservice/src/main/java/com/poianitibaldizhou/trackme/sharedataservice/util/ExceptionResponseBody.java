@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.sql.Timestamp;
 
+/**
+ * An entity body object to be returned by REST controller when an exception happens
+ */
 @Data
 public class ExceptionResponseBody {
 

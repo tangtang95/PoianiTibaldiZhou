@@ -19,6 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 
 import static org.junit.Assert.assertThat;
 
@@ -42,16 +43,18 @@ public class FilterStatementRepositoryIntegrationTest {
     @Before
     public void setUp() throws Exception {
         GroupRequest groupRequest = new GroupRequest();
+        groupRequest.setId(1L);
         groupRequest.setThirdPartyId(1L);
         groupRequest.setRequestType(RequestType.ALL);
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         this.groupRequest = groupRequestRepository.save(groupRequest);
         GroupRequest groupRequest1 = new GroupRequest();
+        groupRequest1.setId(2L);
         groupRequest1.setThirdPartyId(2L);
         groupRequest1.setRequestType(RequestType.USER_SSN);
         groupRequest1.setAggregatorOperator(AggregatorOperator.COUNT);
-        groupRequest1.setDate(new Date(0));
+        groupRequest1.setCreationTimestamp(new Timestamp(0));
         emptyGroupRequest = groupRequestRepository.save(groupRequest1);
         filterStatement1 = FilterStatement.newFilterStatement(null, FieldType.BIRTH_YEAR,
                 "1990", ComparisonSymbol.EQUALS, this.groupRequest);

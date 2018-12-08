@@ -51,7 +51,7 @@ public class AccessDataServiceIntegrationTest {
     // TEST GET INDIVIDUAL REQUEST DATA METHOD
 
     /**
-     * Test the get individual request data with a request body which is correct and a user ssn which exists
+     * Test the get individual request data with individual id and third party id matching in individual request
      *
      * @throws Exception due to json assertEquals method
      */
@@ -113,6 +113,87 @@ public class AccessDataServiceIntegrationTest {
         JSONAssert.assertEquals(expectedBody, response.getBody(), false);
     }
 
+    /**
+     * Test the get individual request data with a third party not existing
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getIndividualDataWithNotExistingThirdPartyId() throws Exception {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/individualrequest/3/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    /**
+     * Test the get individual request data with an existing third party but not matching individual request id
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getIndividualDataWithNotMatchingRequestId() throws Exception {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/individualrequest/1/4"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    // TEST GET INDIVIDUAL REQUEST DATA METHOD
+
+    /**
+     * Test the get group request data
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getGroupRequestDataSuccessful() throws Exception {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/1/1"),
+                HttpMethod.GET, entity, String.class);
+
+        String expectedBody = "{\n" +
+                "  \"value\": 8.0,\n" +
+                "  \"_links\": {\n" +
+                "    \"self\": {\n" +
+                "      \"href\": \"http://localhost:" + port + "/accessdata/grouprequest/1/1\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
+    }
+
+    /**
+     * Test the get group request data
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getGroupRequestDataWithNotExistingThirdParty() throws Exception {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/4/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    /**
+     * Test the get group request data
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getGroupRequestDataWithNotMatchingRequestId() throws Exception {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/1/2"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
     // UTILITY FUNCTIONS
 
     /**

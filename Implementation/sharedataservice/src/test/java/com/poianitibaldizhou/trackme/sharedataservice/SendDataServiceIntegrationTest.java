@@ -294,21 +294,21 @@ public class SendDataServiceIntegrationTest {
         String requestBody = "{\n" +
                 "\t\"positionDataList\": [\n" +
                 "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422758573,\n" +
+                "\t\t\t\"creationTimestamp\": 1543422758573,\n" +
                 "\t\t\t\"latitude\": 20,\n" +
                 "\t\t\t\"longitude\": 30\n" +
                 "\t\t}\n" +
                 "\t],\n" +
                 "\t\"healthDataList\": [\n" +
                 "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422758573,\n" +
+                "\t\t\t\"creationTimestamp\": 1543422758573,\n" +
                 "\t\t\t\"heartBeat\": 60,\n" +
                 "\t\t\t\"bloodOxygenLevel\": 30,\n" +
                 "\t\t\t\"pressureMin\": 60,\n" +
                 "\t\t\t\"pressureMax\": 80\n" +
                 "\t\t},\n" +
                 "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422713573,\n" +
+                "\t\t\t\"creationTimestamp\": 1543422713573,\n" +
                 "\t\t\t\"heartBeat\": 20,\n" +
                 "\t\t\t\"bloodOxygenLevel\": 30,\n" +
                 "\t\t\t\"pressureMin\": 45,\n" +

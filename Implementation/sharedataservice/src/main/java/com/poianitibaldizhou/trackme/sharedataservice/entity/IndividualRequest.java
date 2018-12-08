@@ -14,11 +14,10 @@ import java.sql.Timestamp;
 public class IndividualRequest {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private Timestamp timestamp;
+    private Timestamp creationTimestamp;
 
     @Column(nullable = false)
     private Date startDate;

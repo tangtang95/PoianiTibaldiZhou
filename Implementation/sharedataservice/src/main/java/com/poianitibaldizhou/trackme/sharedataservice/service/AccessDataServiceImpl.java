@@ -7,8 +7,8 @@ import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

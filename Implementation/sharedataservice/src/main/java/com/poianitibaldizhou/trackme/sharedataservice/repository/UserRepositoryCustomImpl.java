@@ -78,7 +78,7 @@ public class UserRepositoryCustomImpl implements UserRepositoryCustom {
                 .union(healthQuery, positionQuery).as(joinData));
         JPASQLQuery<Double> query = query()
                 .select(Expressions.numberOperation(Double.class,
-                        AggregatorOperatorUtils.getAggregatorOperator(aggregatorOperator),
+                        AggregatorOperatorUtils.getSqlOperator(aggregatorOperator),
                         requestType.getFieldPath())).from(unionQuery, unionDataPath.alias)
                 .join(user).on(user.ssn.eq(unionDataPath.userSsn));
         filters.stream().filter(filterStatement -> filterStatement.getColumn().contains(FieldType.getUserFields()))

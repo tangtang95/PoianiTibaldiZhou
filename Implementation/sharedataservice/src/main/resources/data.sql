@@ -21,11 +21,11 @@ INSERT INTO position_data(id, timestamp, user_ssn, latitude, longitude) VALUES
 INSERT INTO position_data(id, timestamp, user_ssn, latitude, longitude) VALUES
   (4, '2010-01-01 11:00:00','user2', 30.3, 70.2);
 
-INSERT INTO individual_request(id, end_date, start_date, third_party_id, timestamp, user_ssn) VALUES(1, '2010-01-02', '2010-01-01', 1, '2010-01-02 00:00:00','user1');
-INSERT INTO individual_request(id, end_date, start_date, third_party_id, timestamp, user_ssn) VALUES(4, '2000-01-01', '2000-01-01', 2, '2000-01-01 00:00:00','user1');
-INSERT INTO individual_request(id, end_date, start_date, third_party_id, timestamp, user_ssn) VALUES(5, '2000-12-01', '2000-01-01', 2, '2000-01-01 00:00:00','user2');
-INSERT INTO individual_request(id, end_date, start_date, third_party_id, timestamp, user_ssn) VALUES(6, '2000-01-01', '2010-01-01', 4, '2000-01-01 00:00:00','user2');
+INSERT INTO individual_request(id, end_date, start_date, third_party_id, creation_timestamp, user_ssn) VALUES(1, '2010-01-02', '2010-01-01', 1, '2010-01-02 00:00:00','user1');
+INSERT INTO individual_request(id, end_date, start_date, third_party_id, creation_timestamp, user_ssn) VALUES(4, '2000-01-01', '2000-01-01', 2, '2000-01-01 00:00:00','user1');
+INSERT INTO individual_request(id, end_date, start_date, third_party_id, creation_timestamp, user_ssn) VALUES(5, '2000-12-01', '2000-01-01', 2, '2000-01-01 00:00:00','user2');
+INSERT INTO individual_request(id, end_date, start_date, third_party_id, creation_timestamp, user_ssn) VALUES(6, '2000-01-01', '2010-01-01', 4, '2000-01-01 00:00:00','user2');
 
-INSERT INTO group_request(id, aggregator_operator, date, request_type, third_party_id) VALUES (1, 'COUNT', '2000-01-01', 'ALL', 1);
-INSERT INTO group_request(id, aggregator_operator, date, request_type, third_party_id) VALUES (3, 'AVG', '2000-05-05', 'PRESSURE_MIN', 1);
-INSERT INTO group_request(id, aggregator_operator, date, request_type, third_party_id) VALUES (2, 'MAX', '2000-10-11', 'HEART_BEAT', 2);
+INSERT INTO group_request(id, aggregator_operator, creation_timestamp, request_type, third_party_id) VALUES (1, 'COUNT', '2000-01-01 00:00:00', 'ALL', 1);
+INSERT INTO group_request(id, aggregator_operator, creation_timestamp, request_type, third_party_id) VALUES (3, 'AVG', '2000-05-05 00:00:00', 'PRESSURE_MIN', 1);
+INSERT INTO group_request(id, aggregator_operator, creation_timestamp, request_type, third_party_id) VALUES (2, 'MAX', '2000-10-11 00:00:00', 'HEART_BEAT', 2);
