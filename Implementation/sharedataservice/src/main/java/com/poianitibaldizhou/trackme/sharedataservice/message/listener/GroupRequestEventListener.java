@@ -2,7 +2,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
 
-public interface GroupRequestQueueListener {
+public interface GroupRequestEventListener {
 
     /**
      * Called when a message regarding group request created has been found on the message broker (rabbit-mq).

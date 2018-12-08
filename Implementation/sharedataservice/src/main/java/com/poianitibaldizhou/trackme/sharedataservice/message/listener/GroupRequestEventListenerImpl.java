@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class GroupRequestQueueListenerImpl implements GroupRequestQueueListener {
+public class GroupRequestEventListenerImpl implements GroupRequestEventListener {
 
     private final UserRepository userRepository;
     private final FilterStatementRepository filterStatementRepository;
     private final GroupRequestRepository groupRequestRepository;
     private final NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher;
 
-    public GroupRequestQueueListenerImpl(UserRepository userRepository,
+    public GroupRequestEventListenerImpl(UserRepository userRepository,
                                          GroupRequestRepository groupRequestRepository,
                                          FilterStatementRepository filterStatementRepository,
                                          NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher){

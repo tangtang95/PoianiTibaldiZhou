@@ -7,7 +7,7 @@ An option here is to adopt both Spring Boot (for what concerns the microservices
 system software). They are widely adopted and greatly supported by the community; also many guides and articles are available on the internet. \\
 
 \subsubsection{Asynchronous messages}
-RabbitMQ, that is a message broker software, is used to implement the exchange of messages among services. This choice is motivated 
+RabbitMQ, that is a message broker server, is used to implement the exchange of messages among services. This choice is motivated 
 by the following facts: it enhances delivery and order guarantee, redundancy, decoupling and scalability. 
 Finally, it is well supported in Spring boot. 
 
@@ -43,11 +43,11 @@ of tuples, sum of values, average of values or other aggregate operator availabl
 the tuples of the result from a group request have to satisfy a certain constraint requested by the petitioner. Consequently, 
 the following filters are the ones available:
 \begin{itemize}
-\item Filtering by birthplace
-\item Filtering by age
-\item Filtering by a combination of birth year/month/day
+\item Filtering by birth city
+\item Filtering by birth nation
+\item Filtering by birth year
 \item Filtering by the GPS position data
-\item Filtering by the health status
+\item Filtering by the health statuses
 \item Filtering by date and time
-\item Filtering by name or surname (not both of them, otherwise it will compromise privacy data)
 \end{itemize}
+Since this type of service is very difficult to implement for the user (user-friendly difficult), each filter is applied to decrease the number of users and every query is applied only to users that have at least one position data and one health data. Basically there is no group-by statement in the query.

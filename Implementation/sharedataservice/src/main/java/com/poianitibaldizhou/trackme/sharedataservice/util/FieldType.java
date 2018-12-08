@@ -17,7 +17,7 @@ public enum FieldType {
     LATITUDE(QPositionData.positionData.latitude), LONGITUDE(QPositionData.positionData.longitude),
     HEART_BEAT(QHealthData.healthData.heartBeat), PRESSURE_MIN(QHealthData.healthData.pressureMin),
     PRESSURE_MAX(QHealthData.healthData.pressureMax), BLOOD_OXYGEN_LEVEL(QHealthData.healthData.bloodOxygenLevel),
-    BIRTH_CITY(QUser.user.birthCity), BIRTH_YEAR(QUser.user.birthDate.year());
+    BIRTH_CITY(QUser.user.birthCity), BIRTH_NATION(QUser.user.birthNation), BIRTH_YEAR(QUser.user.birthDate.year());
 
     private Expression<?> expression;
 
@@ -48,6 +48,6 @@ public enum FieldType {
     }
 
     public static List<FieldType> getUserFields(){
-        return Arrays.asList(BIRTH_CITY, BIRTH_YEAR);
+        return Arrays.asList(BIRTH_CITY, BIRTH_NATION, BIRTH_YEAR);
     }
 }

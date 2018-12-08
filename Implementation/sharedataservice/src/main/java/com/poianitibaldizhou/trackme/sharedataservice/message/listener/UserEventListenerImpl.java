@@ -10,11 +10,11 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-public class UserQueueListenerImpl implements UserQueueListener {
+public class UserEventListenerImpl implements UserEventListener {
 
     private final UserRepository userRepository;
 
-    public UserQueueListenerImpl(UserRepository userRepository){
+    public UserEventListenerImpl(UserRepository userRepository){
         this.userRepository = userRepository;
     }
 

@@ -13,12 +13,12 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
-public class IndividualRequestQueueListenerImpl implements IndividualRequestQueueListener{
+public class IndividualRequestEventListenerImpl implements IndividualRequestEventListener {
 
     private final UserRepository userRepository;
     private final IndividualRequestRepository individualRequestRepository;
 
-    public IndividualRequestQueueListenerImpl(UserRepository userRepository,
+    public IndividualRequestEventListenerImpl(UserRepository userRepository,
                                               IndividualRequestRepository individualRequestRepository){
         this.userRepository = userRepository;
         this.individualRequestRepository = individualRequestRepository;

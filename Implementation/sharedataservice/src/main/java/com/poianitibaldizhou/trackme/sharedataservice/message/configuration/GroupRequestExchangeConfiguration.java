@@ -1,8 +1,8 @@
 package com.poianitibaldizhou.trackme.sharedataservice.message.configuration;
 
 
-import com.poianitibaldizhou.trackme.sharedataservice.message.listener.GroupRequestQueueListener;
-import com.poianitibaldizhou.trackme.sharedataservice.message.listener.GroupRequestQueueListenerImpl;
+import com.poianitibaldizhou.trackme.sharedataservice.message.listener.GroupRequestEventListener;
+import com.poianitibaldizhou.trackme.sharedataservice.message.listener.GroupRequestEventListenerImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisher;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
@@ -98,11 +98,11 @@ public class GroupRequestExchangeConfiguration {
      * @return the group request queue listener
      */
     @Bean
-    public GroupRequestQueueListener groupRequestQueueListener(UserRepository userRepository,
+    public GroupRequestEventListener groupRequestEventListener(UserRepository userRepository,
                                                                GroupRequestRepository groupRequestRepository,
                                                                FilterStatementRepository filterStatementRepository,
                                                                NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher){
-        return new GroupRequestQueueListenerImpl(userRepository, groupRequestRepository,
+        return new GroupRequestEventListenerImpl(userRepository, groupRequestRepository,
                 filterStatementRepository, numberOfUserInvolvedDataPublisher);
     }
 

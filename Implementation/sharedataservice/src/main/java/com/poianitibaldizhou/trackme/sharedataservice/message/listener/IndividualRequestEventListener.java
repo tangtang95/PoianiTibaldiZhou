@@ -2,7 +2,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
 
-public interface IndividualRequestQueueListener {
+public interface IndividualRequestEventListener {
 
     /**
      * Called when a message regarding individual request accepted has been found on the message broker (rabbit-mq).

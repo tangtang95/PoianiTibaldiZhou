@@ -2,7 +2,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
 
-public interface UserQueueListener {
+public interface UserEventListener {
 
     /**
      * Called when a message regarding user created has been found on the message broker (rabbit-mq).

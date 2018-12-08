@@ -25,6 +25,7 @@ public class FieldTypeUtils {
                 .put(FieldTypeProtocolMessage.POSITION_TIMESTAMP, FieldType.POSITION_TIMESTAMP)
                 .put(FieldTypeProtocolMessage.PRESSURE_MAX, FieldType.PRESSURE_MAX)
                 .put(FieldTypeProtocolMessage.PRESSURE_MIN, FieldType.PRESSURE_MIN)
+                .put(FieldTypeProtocolMessage.BIRTH_NATION, FieldType.BIRTH_NATION)
                 .build();
         return fieldTypeMap.get(fieldTypeProtocol);
     }

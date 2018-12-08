@@ -1,7 +1,7 @@
 package com.poianitibaldizhou.trackme.sharedataservice.message.configuration;
 
-import com.poianitibaldizhou.trackme.sharedataservice.message.listener.IndividualRequestQueueListener;
-import com.poianitibaldizhou.trackme.sharedataservice.message.listener.IndividualRequestQueueListenerImpl;
+import com.poianitibaldizhou.trackme.sharedataservice.message.listener.IndividualRequestEventListener;
+import com.poianitibaldizhou.trackme.sharedataservice.message.listener.IndividualRequestEventListenerImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
@@ -67,9 +67,9 @@ public class IndividualRequestExchangeConfiguration {
      * @return the individual request queue listener
      */
     @Bean
-    public IndividualRequestQueueListener individualRequestQueueListener(UserRepository userRepository,
+    public IndividualRequestEventListener individualRequestEventListener(UserRepository userRepository,
                                                                          IndividualRequestRepository individualRequestRepository){
-        return new IndividualRequestQueueListenerImpl(userRepository, individualRequestRepository);
+        return new IndividualRequestEventListenerImpl(userRepository, individualRequestRepository);
     }
 
 }
