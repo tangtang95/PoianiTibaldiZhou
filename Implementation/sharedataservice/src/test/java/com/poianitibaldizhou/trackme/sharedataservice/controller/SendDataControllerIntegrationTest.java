@@ -1,6 +1,7 @@
-package com.poianitibaldizhou.trackme.sharedataservice;
+package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
 import com.jayway.jsonpath.JsonPath;
+import com.poianitibaldizhou.trackme.sharedataservice.ShareDataServiceApplication;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(profiles = {"test"})
 @Sql("classpath:sql/testSendDataService.sql")
-public class SendDataServiceIntegrationTest {
+public class SendDataControllerIntegrationTest {
 
     @LocalServerPort
     private int port;

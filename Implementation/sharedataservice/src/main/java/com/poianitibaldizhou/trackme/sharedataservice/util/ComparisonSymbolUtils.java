@@ -26,6 +26,7 @@ public class ComparisonSymbolUtils {
                 .put(ComparisonSymbol.NOT_EQUALS.name(), Ops.NE)
                 .put(ComparisonSymbol.LESS.name(), Ops.LT)
                 .put(ComparisonSymbol.GREATER.name(), Ops.GT)
+                .put(ComparisonSymbol.LIKE.name(), Ops.LIKE)
                 .build();
 
         return operators.get(comparisonSymbol.name());
@@ -44,6 +45,7 @@ public class ComparisonSymbolUtils {
                 .put(ComparisonSymbolProtocolMessage.NOT_EQUALS, ComparisonSymbol.NOT_EQUALS)
                 .put(ComparisonSymbolProtocolMessage.LESS, ComparisonSymbol.LESS)
                 .put(ComparisonSymbolProtocolMessage.GREATER, ComparisonSymbol.GREATER)
+                .put(ComparisonSymbolProtocolMessage.LIKE, ComparisonSymbol.LIKE)
                 .build();
 
         return comparisonSymbolsMap.get(comparisonSymbolProtocol);

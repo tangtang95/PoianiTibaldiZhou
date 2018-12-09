@@ -4,6 +4,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
+import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.IndividualRequestStatusProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
@@ -29,6 +30,10 @@ public class IndividualRequestEventListenerImpl implements IndividualRequestEven
     @Override
     public void onIndividualRequestAccepted(@Payload IndividualRequestProtocolMessage individualRequestProtocol) {
         log.info("BEFORE: onIndividualRequestAccepted " + individualRequestProtocol.toString());
+        if(!individualRequestProtocol.getStatus().equals(IndividualRequestStatusProtocolMessage.ACCEPTED)) {
+            log.info("INDIVIDUAL REQUEST NOT ACCEPTED");
+            return;
+        }
         User user = userRepository.findById(individualRequestProtocol.getUserSsn())
                 .orElseThrow(() -> new UserNotFoundException(individualRequestProtocol.getUserSsn()));
         IndividualRequest individualRequest = new IndividualRequest();

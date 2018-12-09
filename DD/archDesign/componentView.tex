@@ -21,7 +21,7 @@ athletes who are running (therefore they can retrieve their positions and the le
 service is also in charge of receiving position data of the participants
 \item Share data service is responsible for the monitoring the user health statuses and positions: here a
 user will upload his data. Furthermore, third party customer will access the data that they have
-previously requested, by means of "DownloadDataService" interface
+previously requested, by means of "AccessDataService" interface
 \item The group request service provides to the third parties the possibility of uploading group requests and see their status 
 \item The individual request service enables third party customer to upload individual request and monitor their status, and allows a user to
 check if there are some requests for him, and, eventually, upload responses 
@@ -35,27 +35,26 @@ The following message exchange is needed to completely and correctly exploit the
 \item 
 When a third party is accessing individual data through the data share service, it
 needs to know if a request associated with those data was sent and accepted. 
-Indeed, the request acceptance and its data, are managed in the following way: the share data service provides an interface that enables the
-message queue to send them these pieces of information (i.e. pushIndividualRequestEventInt), while the individual request service will
-reach the interface to send them to the message queue (i.e. newIndividualRequestEventInt). \\
-Moreover, to guarantee that individual requests must be performed on registered users, a match with the account service is necessary. The 
-account service will listen for messages regarding the uploading of new demands, and it will check if the user is present. 
-The account service, will reply accessing the newCheckEventInt, and the queue will forward that to the individual request service (this is achieved with pushCheckEventInt).
+Indeed, the request acceptance and its data, are managed in the following way: when an individual request has been accepted, a message is sent through the message queue with the help of an interface, IndividualRequestEventPublisher. Then, this message reaches the share data service thanks to the interface provided by it (i.e. IndividualRequestEventListener). \\
+Moreover, to guarantee that individual requests must be performed on registered users, a match with the account service 
+is necessary. When a new user registers, the account service will send the data about the user through the message queue to reach 
+all the services which need it. One of these services is the Individual Request Service which needs the user to check if an individual 
+request is coherent with the system (UserEventListener and UserEventPublisher are the interfaces that accomplish this task). 
 \item 
 A slightly different reasoning holds for the management of the group requests. In this case, the exchange is bidirectional. 
 In particular, when a new group request is performed, the share data service will be notified by the message queue via the
-pushGroupRequestEventInt, and it will be sent to the message queue by newGroupRequestEventInt. \\
+GroupRequestEventListener, and it will be sent to the message queue by GroupRequestEventPublisher. \\
 When the share data service receives this event, it will query its data in order to retrieve information regarding the number of users
 involved: of course, this information needs to be sent back to the group request service, that will accept or refuse the request
-(newNumberOfUserInvoledEventInt and pushNumberOfUserInvolvedEventInt are the interfaces that accomplish this task). 
+(DataEventListener and DataEventPublisher are the interfaces that accomplish this task). 
 Of course, the acceptance of the request may trigger again the new group request event. 
 However, this will be later exposed and commented in the run time view. \\
 Moreover, to guarantee that the filters on the aggregated request are applied correctly (e.g. data on the users whose age is greater then 40)
 a match with the account service is needed. 
-Indeed, when a user registers to the service, the account service will sends user information to the message queue with newAccountEventInt. 
-The information will be forwarded to the share data service with pushAccountEventInt.
+Indeed, when a user registers to the service, the account service will sends user information to the message queue with UserEventPublisher. 
+The information will be forwarded to the share data service with UserEventListener.
 \item
 Another important message exchange is between spectator and race services: in particular, data that the spectator service is receiving must
-be matched with an active run, and thus it needs to know the status of the run: the changes will be communicated by pushRaceEventInt and
-newRaceEventInt.
+be matched with an active run, and thus it needs to know the status of the run: the changes will be communicated by 
+RaceEventListener and RaceEventPublisher.
 \end{itemize}

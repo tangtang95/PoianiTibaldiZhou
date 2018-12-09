@@ -23,6 +23,8 @@ public class UserEventListenerImpl implements UserEventListener {
     @Override
     public void onUserCreated(@Payload UserProtocolMessage userProtocol) {
         log.info("BEFORE: onUserCreated " + userProtocol.toString());
+        if(userRepository.existsById(userProtocol.getSsn()))
+            return;
         User user = new User();
         user.setSsn(userProtocol.getSsn());
         user.setFirstName(userProtocol.getFirstName());

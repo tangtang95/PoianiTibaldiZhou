@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
+import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.GroupRequestStatusProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisher;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
@@ -39,6 +40,10 @@ public class GroupRequestEventListenerImpl implements GroupRequestEventListener 
     @Override
     public void onGroupRequestCreated(@Payload GroupRequestProtocolMessage groupRequestProtocol) {
         log.info("BEFORE: onGroupRequestCreated " + groupRequestProtocol.toString());
+        if(!groupRequestProtocol.getStatus().equals(GroupRequestStatusProtocolMessage.UNDER_ANALYSIS)) {
+            log.info("GROUP REQUEST NOT UNDER ANALYSIS");
+            return;
+        }
         AggregatorOperator distinctCountOperator = AggregatorOperator.DISTINCT_COUNT;
         RequestType userSsnRequestType = RequestType.USER_SSN;
         List<FilterStatement> filterStatementList = groupRequestProtocol.getFilterStatements().stream().map(filterStatementProtocol->{
@@ -60,12 +65,17 @@ public class GroupRequestEventListenerImpl implements GroupRequestEventListener 
     @Override
     public void onGroupRequestAccepted(@Payload GroupRequestProtocolMessage groupRequestProtocol) {
         log.info("BEFORE: onGroupRequestAccepted " + groupRequestProtocol.toString());
+        if(!groupRequestProtocol.getStatus().equals(GroupRequestStatusProtocolMessage.ACCEPTED)) {
+            log.info("GROUP REQUEST NOT ACCEPTED");
+            return;
+        }
         GroupRequest groupRequest = new GroupRequest();
         groupRequest.setId(groupRequestProtocol.getId());
         groupRequest.setCreationTimestamp(groupRequestProtocol.getCreationTimestamp());
         groupRequest.setAggregatorOperator(AggregatorOperatorUtils
                 .getAggregatorOperator(groupRequestProtocol.getAggregatorOperator()));
         groupRequest.setRequestType(RequestTypeUtils.getRequestType(groupRequestProtocol.getRequestType()));
+        groupRequest.setThirdPartyId(groupRequestProtocol.getThirdPartyId());
         groupRequestRepository.save(groupRequest);
         groupRequestProtocol.getFilterStatements().forEach(filterStatementProtocol -> {
             FilterStatement filterStatement = new FilterStatement();

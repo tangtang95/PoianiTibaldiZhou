@@ -1,5 +1,6 @@
-package com.poianitibaldizhou.trackme.sharedataservice;
+package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
+import com.poianitibaldizhou.trackme.sharedataservice.ShareDataServiceApplication;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ActiveProfiles(profiles = {"test"})
 @Sql("classpath:sql/testAccessDataService.sql")
-public class AccessDataServiceIntegrationTest {
+public class AccessDataControllerIntegrationTest {
 
     @LocalServerPort
     private int port;

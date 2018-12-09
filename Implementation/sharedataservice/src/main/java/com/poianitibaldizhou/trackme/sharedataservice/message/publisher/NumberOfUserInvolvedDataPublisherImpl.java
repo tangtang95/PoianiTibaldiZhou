@@ -19,7 +19,6 @@ public class NumberOfUserInvolvedDataPublisherImpl implements NumberOfUserInvolv
 
     @Override
     public void publishNumberOfUserInvolvedData(Double numberOfUserInvolved) {
-        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
         rabbitTemplate.convertAndSend(numberOfUserInvolvedExchange.getName(),"double-data.event.generated", numberOfUserInvolved);
         log.info("PUBLISHED NumberOfUserInvolvedData: " + numberOfUserInvolved);
     }
