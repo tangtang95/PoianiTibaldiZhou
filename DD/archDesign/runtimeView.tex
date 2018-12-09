@@ -69,7 +69,7 @@ some time to serve and verify the request can be taken, but a non-desired behavi
 of the request can be checked in a second moment, always via the group request service. 
 Therefore, when a petitioner asks for some aggregated data, the group request service will delegate to the share data service the task of 
 analyzing the request: it will then reply with the number of user involved. If this number is greater than 1000, the group request service
-changes the status of the request from "in progress" to "accepted" and it will send this information to the share data service, that, thus,
+changes the status of the request from "under analysis" to "accepted" and it will send this information to the share data service, that, thus,
 will be able to provide correct access to the requested data. \\
 
 \subsubsection{Automated SOS call sequence diagram}

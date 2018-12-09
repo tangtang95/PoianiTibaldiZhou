@@ -23,10 +23,10 @@ To access these microservices one needs to use the mobile application which has 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{Images/deploymentdiagram.pdf}
-\caption{ Deployment diagram with Archimate }
+\caption{ Deployment diagram }
 \label{fig:deployment}
 \end{figure}
 
 The deployment diagram represents the system to-be which is based on the microservices "reference architecture". Even if 
 microservices offer the possibility to implement different services with different programming language or framework, what is simpler 
-is to keep using the same environment. In this case, Tomcat application server and MySQL DBMS are strongly used. 
+is to keep using the same environment. In this case, Tomcat application server and MySQL DBMS are strongly used. Furthermore the diagram shows the presence of a firewall that adds an additional layer of security to the LAN and also implement a DMZ in order to allow an external network node to access only what is exposed in the DMZ.

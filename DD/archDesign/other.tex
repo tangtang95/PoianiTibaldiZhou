@@ -11,7 +11,7 @@ RabbitMQ, that is a message broker server, is used to implement the exchange of 
 by the following facts: it enhances delivery and order guarantee, redundancy, decoupling and scalability. 
 Finally, it is well supported in Spring boot. 
 
-\subsubsection{Automated SOS encryption and data transfer}
+\subsubsection{Data transfer encryption}
 Another important issue is regarding the communication between the user hardware device and the user application. This is encrypted with
 AES-128. \\
 The communication happens by means of bluetooth: the version 4.0 + LE, that is available from 2010, provides some nice features for the
@@ -24,12 +24,6 @@ Note that this version ensures a good compatibility with a large set of devices.
 The user application will be developed for the Android operative system, at least in a first moment. This is due to the criticality of the
 automatedSOS service. Assuming that the application will be deployed with Italy as the first market target, this choice covers the biggest
 part of the market.
-
-\subsubsection{Choice of external services}
-Google maps platform is the choice adopted for the external service regarding the maps. This decision is motivated by its reliability;
-moreover, it is kept under update and it is well supported by the community. Furthermore, if in the client it is necessary to show some maps,
-as it is, the one provided by Google are thought to be the most trusted by the users. 
-
 
 \subsubsection{JSON}
 REST API will be implemented using JSON as a protocol for exchanging data. \\

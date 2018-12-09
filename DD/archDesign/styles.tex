@@ -90,9 +90,5 @@ benefits of the REST API which are relevant to the requirements of the project a
 \item Events/Choreography: each service subscribes and publishes to other service's events
 \item Command/Orchestration: there is a central coordinator service which is responsible about decision making and sequencing business logic 
 \end{itemize}
-In the project it is implemented the version of event transaction. Other than this implementation, Saga pattern defines also 
-the compensation action: an action to restore the original states if there are failures during a distributed transaction (e.g. in 
-the individual request service, if a third party sends a request regarding a non-existing social security number, then when 
-account service is triggered, it will send a compensation action to the individual request by saying that the request must be canceled).
-
+In the project it is implemented the version of event transaction. 
 \end{itemize}
