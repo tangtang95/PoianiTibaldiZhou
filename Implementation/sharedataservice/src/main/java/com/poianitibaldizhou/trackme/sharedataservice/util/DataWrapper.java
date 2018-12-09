@@ -1,8 +1,10 @@
 package com.poianitibaldizhou.trackme.sharedataservice.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import lombok.Data;
 
 import java.util.ArrayList;

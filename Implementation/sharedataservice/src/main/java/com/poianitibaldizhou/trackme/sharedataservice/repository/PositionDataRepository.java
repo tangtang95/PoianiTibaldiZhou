@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Repository for accessing data regarding the position data of a user
  */
-public interface PositionDataRepository extends JpaRepository<PositionData, Long>, JpaSpecificationExecutor<PositionData> {
+public interface PositionDataRepository extends JpaRepository<PositionData, Long> {
 
     /**
      * Retrieves all the position data regarding the user between startTimestamp and endTimestamp

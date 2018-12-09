@@ -16,7 +16,7 @@ public class FilterStatement {
 
     @JsonIgnore
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "filter_column", length = 20, nullable = false)

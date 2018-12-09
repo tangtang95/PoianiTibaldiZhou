@@ -1,12 +1,16 @@
 package com.poianitibaldizhou.trackme.sharedataservice.advice;
 
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Advice for managing errors about users not found
@@ -25,8 +29,12 @@ public class UserNotFoundAdvice {
      */
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public @ResponseBody String userNotFoundHandler(UserNotFoundException ex) {
-        return ex.getMessage();
+    public @ResponseBody ExceptionResponseBody userNotFoundHandler(UserNotFoundException ex) {
+        return new ExceptionResponseBody(
+                Timestamp.valueOf(LocalDateTime.now()),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage());
     }
 
 }

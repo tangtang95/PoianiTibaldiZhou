@@ -20,14 +20,6 @@ public interface UserRepositoryCustom {
      * @param filters the list of filters defining the constraints of the query
      * @return a number aggregated value of all the data regarding the group request
      */
-    Double getAggregateData(AggregatorOperator aggregatorOperator, RequestType requestType, List<FilterStatement> filters);
-
-    /**
-     * Retrieves the number of people involved based on a list of filters
-     *
-     * @param filters the list of filters defining the constraints of the query
-     * @return the number of people involved based on a list of filters
-     */
-    Double getNumberOfPeopleInvolved(List<FilterStatement> filters);
+    Double getAggregatedData(AggregatorOperator aggregatorOperator, RequestType requestType, List<FilterStatement> filters);
 
 }

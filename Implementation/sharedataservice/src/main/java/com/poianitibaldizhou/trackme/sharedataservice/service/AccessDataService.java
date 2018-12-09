@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.sharedataservice.service;
 
+import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 
 /**
@@ -29,5 +30,5 @@ public interface AccessDataService {
      * @param requestId the id of the group request which the third party wants to retrieve
      * @return the data regarding the group request
      */
-    Double getGroupRequestData(Long thirdPartyId, Long requestId);
+    AggregatedData getGroupRequestData(Long thirdPartyId, Long requestId);
 }

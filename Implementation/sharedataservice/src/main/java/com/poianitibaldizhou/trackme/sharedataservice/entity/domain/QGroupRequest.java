@@ -26,6 +26,8 @@ public class QGroupRequest extends com.querydsl.sql.RelationalPathBase<QGroupReq
 
     public final StringPath aggregatorOperator = createString("aggregatorOperator");
 
+    public final DateTimePath<java.sql.Timestamp> creationTimestamp = createDateTime("creationTimestamp", java.sql.Timestamp.class);
+
     public final NumberPath<Long> id = createNumber("id", Long.class);
 
     public final StringPath requestType = createString("requestType");
@@ -60,10 +62,11 @@ public class QGroupRequest extends com.querydsl.sql.RelationalPathBase<QGroupReq
     }
 
     public void addMetadata() {
-        addMetadata(aggregatorOperator, ColumnMetadata.named("aggregator_operator").withIndex(2).ofType(Types.VARCHAR).withSize(10).notNull());
+        addMetadata(aggregatorOperator, ColumnMetadata.named("aggregator_operator").withIndex(2).ofType(Types.VARCHAR).withSize(20).notNull());
+        addMetadata(creationTimestamp, ColumnMetadata.named("creation_timestamp").withIndex(3).ofType(Types.TIMESTAMP).withSize(19).notNull());
         addMetadata(id, ColumnMetadata.named("id").withIndex(1).ofType(Types.BIGINT).withSize(19).notNull());
-        addMetadata(requestType, ColumnMetadata.named("request_type").withIndex(3).ofType(Types.VARCHAR).withSize(20).notNull());
-        addMetadata(thirdPartyId, ColumnMetadata.named("third_party_id").withIndex(4).ofType(Types.BIGINT).withSize(19).notNull());
+        addMetadata(requestType, ColumnMetadata.named("request_type").withIndex(4).ofType(Types.VARCHAR).withSize(20).notNull());
+        addMetadata(thirdPartyId, ColumnMetadata.named("third_party_id").withIndex(5).ofType(Types.BIGINT).withSize(19).notNull());
     }
 
 }

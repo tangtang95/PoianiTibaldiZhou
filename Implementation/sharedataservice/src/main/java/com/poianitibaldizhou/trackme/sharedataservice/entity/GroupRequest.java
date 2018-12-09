@@ -3,10 +3,9 @@ package com.poianitibaldizhou.trackme.sharedataservice.entity;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.sharedataservice.util.RequestType;
 import lombok.Data;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.List;
+import java.sql.Timestamp;
 
 /**
  * JPA entity object regarding the group request
@@ -16,13 +15,15 @@ import java.util.List;
 public class GroupRequest {
 
     @Id
-    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
     private Long thirdPartyId;
 
-    @Column(length = 10, nullable = false)
+    @Column(nullable = false)
+    private Timestamp creationTimestamp;
+
+    @Column(length = 20, nullable = false)
     @Enumerated(value = EnumType.STRING)
     private AggregatorOperator aggregatorOperator = AggregatorOperator.COUNT;
 

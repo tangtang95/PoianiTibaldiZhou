@@ -83,8 +83,10 @@ public class GroupRequestController {
      * @throws URISyntaxException due to the creation of a new uri resource: this will throw some exception if the syntax
      * is not well expressed
      */
-    @PostMapping("/requests")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
+    @PostMapping("/requests/thirdparties/{thirdPartyId}")
+    public @ResponseBody ResponseEntity<?> newRequest(@PathVariable Long thirdPartyId, @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
+        // TODO maybe add check that position and health timestamp are actually timestamp
+        groupRequestWrapper.getGroupRequest().setThirdPartyId(thirdPartyId);
         groupRequestWrapper.getFilterStatementList().forEach(filterStatement -> filterStatement.setGroupRequest(groupRequestWrapper.getGroupRequest()));
 
         Resource<GroupRequestWrapper> resource = groupRequestWrapperAssembler.toResource(requestManagerService.addGroupRequest(groupRequestWrapper));

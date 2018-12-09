@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.sharedataservice.advice;
 
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Advice for managing errors about group requests not found
@@ -24,8 +28,12 @@ public class GroupRequestNotFoundAdvice {
      */
     @ExceptionHandler(GroupRequestNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public @ResponseBody String groupRequestNotFoundHandler(GroupRequestNotFoundException ex){
-        return ex.getMessage();
+    public @ResponseBody ExceptionResponseBody groupRequestNotFoundHandler(GroupRequestNotFoundException ex){
+        return new ExceptionResponseBody(
+                Timestamp.valueOf(LocalDateTime.now()),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage());
     }
 
 }

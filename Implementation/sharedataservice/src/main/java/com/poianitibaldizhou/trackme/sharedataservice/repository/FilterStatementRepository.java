@@ -14,8 +14,8 @@ public interface FilterStatementRepository extends JpaRepository<FilterStatement
     /**
      * Returns the list of all the filter statements that are related to a certain group request
      *
-     * @param groupRequest the specific group request
+     * @param requestId the id of the specific group request
      * @return list of all the filter statements of a certain group request
      */
-    List<FilterStatement> findAllByGroupRequest(GroupRequest groupRequest);
+    List<FilterStatement> findAllByGroupRequest_Id(Long requestId);
 }

@@ -8,8 +8,6 @@ import com.poianitibaldizhou.trackme.sharedataservice.util.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -49,9 +47,6 @@ public class AccessDataServiceImplUnitTest {
 
     @InjectMocks
     private AccessDataServiceImpl accessDataService;
-
-
-    private static final String USER_1 = "user1";
 
     private static final Long INDIVIDUAL_REQUEST_1_ID = 1L;
     private static final Long NOT_EXISTING_INDIVIDUAL_REQUEST_ID = 2L;
@@ -93,10 +88,11 @@ public class AccessDataServiceImplUnitTest {
     }
 
     private void setUpFilterStatementRepository() {
-        when(filterStatementRepository.findAllByGroupRequest(groupRequest1)).thenReturn(filterStatements);
+        when(filterStatementRepository.findAllByGroupRequest_Id(groupRequest1.getId())).thenReturn(filterStatements);
     }
 
     private void setUpGroupRequestRepository() {
+        when(groupRequest1.getId()).thenReturn(1L);
         when(groupRequest1.getAggregatorOperator()).thenReturn(AggregatorOperator.COUNT);
         when(groupRequest1.getRequestType()).thenReturn(RequestType.ALL);
 
@@ -112,8 +108,8 @@ public class AccessDataServiceImplUnitTest {
 
     private void setUpIndividualRequestRepository() {
         when(individualRequest1.getUser()).thenReturn(user1);
-        when(individualRequest1.getStartDate()).thenReturn(Date.valueOf(LocalDate.of(2010, 11, 10)));
-        when(individualRequest1.getEndDate()).thenReturn(Date.valueOf(LocalDate.of(2010, 12, 10)));
+        when(individualRequest1.getStartDate()).thenReturn(Date.valueOf(LocalDate.of(2014, 11, 10)));
+        when(individualRequest1.getEndDate()).thenReturn(Date.valueOf(LocalDate.of(2016, 12, 10)));
 
         when(individualRequestRepository.findByIdAndThirdPartyId(INDIVIDUAL_REQUEST_1_ID, THIRD_PARTY_ID_1))
                 .thenReturn(Optional.of(individualRequest1));
@@ -126,7 +122,7 @@ public class AccessDataServiceImplUnitTest {
     }
 
     private void setUpUserRepository() {
-        when(userRepository.getAggregateData(groupRequest1.getAggregatorOperator(), groupRequest1.getRequestType(),
+        when(userRepository.getAggregatedData(groupRequest1.getAggregatorOperator(), groupRequest1.getRequestType(),
                 filterStatements)).thenReturn(GROUP_REQUEST_RESULT);
     }
 
@@ -136,10 +132,16 @@ public class AccessDataServiceImplUnitTest {
         Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(
                 individualRequest1.getEndDate().toLocalDate(), LocalTime.MAX));
 
+        when(healthData1.getTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2015, 3, 2,10, 2)));
+        when(healthData2.getTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2015, 3, 2,10, 4)));
+        when(healthData3.getTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2018, 3, 2,10, 3)));
+
         List<HealthData> healthDataList = new ArrayList<>();
         healthDataList.add(healthData1);
         healthDataList.add(healthData2);
-        healthDataList.add(healthData3);
         when(healthDataRepository.findAllByUserAndTimestampBetween(user1, startTimestamp, endTimestamp))
                 .thenReturn(healthDataList);
     }
@@ -149,6 +151,11 @@ public class AccessDataServiceImplUnitTest {
                 individualRequest1.getStartDate().toLocalDate(), LocalTime.MIN));
         Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(
                 individualRequest1.getEndDate().toLocalDate(), LocalTime.MAX));
+
+        when(positionData1.getTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2015, 3, 2,10, 2)));
+        when(positionData2.getTimestamp())
+                .thenReturn(Timestamp.valueOf(LocalDateTime.of(2015, 3, 2,10, 2)));
 
         List<PositionData> positionDataList = new ArrayList<>();
         positionDataList.add(positionData1);
@@ -176,13 +183,14 @@ public class AccessDataServiceImplUnitTest {
         List<HealthData> healthDataList = new ArrayList<>();
         healthDataList.add(healthData1);
         healthDataList.add(healthData2);
-        healthDataList.add(healthData3);
 
         DataWrapper output = new DataWrapper();
         output.setHealthDataList(healthDataList);
         output.setPositionDataList(positionDataList);
 
-        assertEquals(output, accessDataService.getIndividualRequestData(THIRD_PARTY_ID_1, INDIVIDUAL_REQUEST_1_ID));
+        DataWrapper requestData = accessDataService.getIndividualRequestData(THIRD_PARTY_ID_1, INDIVIDUAL_REQUEST_1_ID);
+
+        assertEquals(output, requestData);
     }
 
     /**
@@ -222,7 +230,7 @@ public class AccessDataServiceImplUnitTest {
      */
     @Test
     public void getGroupRequestDataSuccessful() throws Exception {
-        assertEquals(GROUP_REQUEST_RESULT, accessDataService.getGroupRequestData(THIRD_PARTY_ID_1, GROUP_REQUEST_1_ID));
+        assertEquals(GROUP_REQUEST_RESULT, accessDataService.getGroupRequestData(THIRD_PARTY_ID_1, GROUP_REQUEST_1_ID).getValue());
     }
 
     /**

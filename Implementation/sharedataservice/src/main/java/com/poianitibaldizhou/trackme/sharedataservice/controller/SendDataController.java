@@ -1,17 +1,21 @@
 package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.poianitibaldizhou.trackme.sharedataservice.assembler.ResourceDataWrapperResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.assembler.HealthDataResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.assembler.PositionDataResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.service.SendDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
+import com.poianitibaldizhou.trackme.sharedataservice.util.ResourceDataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.stream.Collectors;
 
 /**
  * Entry point for accessing services regarding the sending of data
@@ -23,6 +27,7 @@ public class SendDataController {
     private SendDataService sendDataService;
     private HealthDataResourceAssembler healthDataAssembler;
     private PositionDataResourceAssembler positionDataAssembler;
+    private ResourceDataWrapperResourceAssembler dataWrapperResourceAssembler;
 
     /**
      * Constructor.
@@ -33,10 +38,12 @@ public class SendDataController {
      * @param positionDataAssembler the resource assembler of position data
      */
     public SendDataController(SendDataService sendDataService, HealthDataResourceAssembler healthDataAssembler,
-                              PositionDataResourceAssembler positionDataAssembler){
+                              PositionDataResourceAssembler positionDataAssembler,
+                              ResourceDataWrapperResourceAssembler dataWrapperResourceAssembler){
         this.sendDataService = sendDataService;
         this.healthDataAssembler = healthDataAssembler;
         this.positionDataAssembler = positionDataAssembler;
+        this.dataWrapperResourceAssembler = dataWrapperResourceAssembler;
     }
 
     /**
@@ -78,9 +85,17 @@ public class SendDataController {
      */
     @JsonView(Views.Public.class)
     @PostMapping("/clusterdata/{userId}")
-    public @ResponseBody ResponseEntity<DataWrapper> sendClusterOfData(@PathVariable(name = "userId") String userId,
+    public @ResponseBody ResponseEntity<Resource<ResourceDataWrapper>> sendClusterOfData(@PathVariable(name = "userId") String userId,
                                   @RequestBody DataWrapper data) {
-        return new ResponseEntity<>(sendDataService.sendClusterOfData(userId, data), HttpStatus.CREATED);
+        DataWrapper result = sendDataService.sendClusterOfData(userId, data);
+        ResourceDataWrapper resourceDataWrapper = new ResourceDataWrapper();
+        resourceDataWrapper.setHealthDataList(result.getHealthDataList().stream()
+                .map(healthDataAssembler::toResource).collect(Collectors.toList()));
+        resourceDataWrapper.setPositionDataList(result.getPositionDataList().stream()
+                .map(positionDataAssembler::toResource).collect(Collectors.toList()));
+        resourceDataWrapper.setUserSsn(userId);
+        return new ResponseEntity<>(dataWrapperResourceAssembler.toResource(resourceDataWrapper),
+                HttpStatus.CREATED);
     }
 
 }

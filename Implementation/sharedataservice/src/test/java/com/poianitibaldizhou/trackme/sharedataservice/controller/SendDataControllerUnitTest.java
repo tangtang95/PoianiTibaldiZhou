@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.sharedataservice.assembler.HealthDataResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.assembler.PositionDataResourceAssembler;
+import com.poianitibaldizhou.trackme.sharedataservice.assembler.ResourceDataWrapperResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
@@ -18,6 +19,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -33,7 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(SendDataController.class)
-@Import({HealthDataResourceAssembler.class, PositionDataResourceAssembler.class})
+@ActiveProfiles(profiles = {"test"})
+@Import({HealthDataResourceAssembler.class, PositionDataResourceAssembler.class, ResourceDataWrapperResourceAssembler.class})
 public class SendDataControllerUnitTest {
 
     @Autowired
@@ -62,36 +65,14 @@ public class SendDataControllerUnitTest {
         user = null;
     }
 
-    private HealthData newHealthData(Long id, Timestamp timestamp, User user, Integer healthValue){
-        HealthData healthData = new HealthData();
-        healthData.setId(id);
-        healthData.setTimestamp(timestamp);
-        healthData.setUser(user);
-        healthData.setHeartBeat(healthValue);
-        healthData.setPressureMin(healthValue);
-        healthData.setPressureMax(healthValue);
-        healthData.setBloodOxygenLevel(healthValue);
-        return healthData;
-    }
-
-    private PositionData newPositionData(Long id, Timestamp timestamp, User user, Double positionValue){
-        PositionData positionData = new PositionData();
-        positionData.setId(id);
-        positionData.setTimestamp(timestamp);
-        positionData.setUser(user);
-        positionData.setLatitude(positionValue);
-        positionData.setLongitude(positionValue);
-        return positionData;
-    }
-
     /**
      * Test of send health data when the user exists
      * @throws Exception no exception expected
      */
     @Test
     public void sendHealthDataWithExistingUser() throws Exception {
-        HealthData input = newHealthData(null, new Timestamp(0),null, 1);
-        HealthData output = newHealthData(1L, new Timestamp(0), user, 1);
+        HealthData input = HealthData.newHealthData(null, new Timestamp(0),null, 1, 1, 1, 1);
+        HealthData output = HealthData.newHealthData(1L, new Timestamp(0), user, 1, 1, 1, 1);
 
         given(service.sendHealthData(USER_1, input)).willReturn(output);
 
@@ -105,7 +86,9 @@ public class SendDataControllerUnitTest {
                 .andExpect(jsonPath("$.heartBeat", is(output.getHeartBeat())))
                 .andExpect(jsonPath("$.pressureMin", is(output.getPressureMin())))
                 .andExpect(jsonPath("$.pressureMax", is(output.getPressureMax())))
-                .andExpect(jsonPath("$.bloodOxygenLevel", is(output.getBloodOxygenLevel())));
+                .andExpect(jsonPath("$.bloodOxygenLevel", is(output.getBloodOxygenLevel())))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/senddata/healthdata/" + USER_1)));
+
     }
 
     /**
@@ -114,7 +97,7 @@ public class SendDataControllerUnitTest {
      */
     @Test
     public void sendHealthDataWithNotExistingUser() throws Exception {
-        HealthData input = newHealthData(null, new Timestamp(0), null, 1);
+        HealthData input = HealthData.newHealthData(null, new Timestamp(0), null, 1, 1, 1, 1);
 
         given(service.sendHealthData(USER_NOT_FOUND, input)).willThrow(new UserNotFoundException(USER_NOT_FOUND));
 
@@ -132,8 +115,8 @@ public class SendDataControllerUnitTest {
      */
     @Test
     public void sendPositionDataWithExistingUser() throws Exception {
-        PositionData input = newPositionData(null, new Timestamp(0), null, 1D);
-        PositionData output = newPositionData(1L, new Timestamp(0), user, 1D);
+        PositionData input = PositionData.newPositionData(null, new Timestamp(0), null, 1.0, 1.0);
+        PositionData output = PositionData.newPositionData(1L, new Timestamp(0), user, 1.0, 1.0);
 
         given(service.sendPositionData(USER_1, input)).willReturn(output);
 
@@ -145,7 +128,9 @@ public class SendDataControllerUnitTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.latitude", is(output.getLatitude())))
-                .andExpect(jsonPath("$.longitude", is(output.getLongitude())));
+                .andExpect(jsonPath("$.longitude", is(output.getLongitude())))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/senddata/positiondata/" + USER_1)));
+
     }
 
     /**
@@ -154,7 +139,7 @@ public class SendDataControllerUnitTest {
      */
     @Test
     public void sendPositionDataWithNotExistingUser() throws Exception {
-        PositionData input = newPositionData(1L, new Timestamp(0), null, 1D);
+        PositionData input = PositionData.newPositionData(1L, new Timestamp(0), null, 1.0, 1.0);
 
         given(service.sendPositionData(USER_NOT_FOUND, input)).willThrow(new UserNotFoundException(USER_NOT_FOUND));
 
@@ -173,18 +158,18 @@ public class SendDataControllerUnitTest {
     @Test
     public void sendClusterOfDataWithExistingUser() throws Exception {
         DataWrapper input = new DataWrapper();
-        PositionData inputPD1 = newPositionData(null, new Timestamp(0), null, 1D);
-        HealthData inputHD1 = newHealthData(null, new Timestamp(0), null, 1);
-        HealthData inputHD2 = newHealthData(null, new Timestamp(1), null, 2);
+        PositionData inputPD1 = PositionData.newPositionData(null, new Timestamp(0), null, 1.0, 1.0);
+        HealthData inputHD1 = HealthData.newHealthData(null, new Timestamp(0), null, 1, 1, 1, 1);
+        HealthData inputHD2 = HealthData.newHealthData(null, new Timestamp(1), null, 2, 1, 1, 1);
 
         input.addHealthData(inputHD1);
         input.addHealthData(inputHD2);
         input.addPositionData(inputPD1);
 
         DataWrapper output = new DataWrapper();
-        PositionData outputPD1 = newPositionData(1L, new Timestamp(0), user, 1D);
-        HealthData outputHD1 = newHealthData(1L, new Timestamp(0), user, 1);
-        HealthData outputHD2 = newHealthData(2L, new Timestamp(1), user, 2);
+        PositionData outputPD1 =PositionData.newPositionData(1L, new Timestamp(0), user, 1.0, 1.0);
+        HealthData outputHD1 = HealthData.newHealthData(1L, new Timestamp(0), user, 1, 1, 1, 1);
+        HealthData outputHD2 = HealthData.newHealthData(2L, new Timestamp(1), user, 2, 1, 1, 1);
 
         output.addHealthData(outputHD1);
         output.addHealthData(outputHD2);
@@ -195,13 +180,16 @@ public class SendDataControllerUnitTest {
 
         given(service.sendClusterOfData(USER_1, input)).willReturn(output);
 
-        mvc.perform(post("/senddata/clusterdata/" + USER_1).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
+        mvc.perform(post("/senddata/clusterdata/" + USER_1)
+                .contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/senddata/clusterdata/"+USER_1)))
                 .andExpect(jsonPath("$.positionDataList", hasSize(1)))
                 .andExpect(jsonPath("$.positionDataList[*].timestamp", contains("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.positionDataList[*].latitude", contains(outputPD1.getLatitude())))
                 .andExpect(jsonPath("$.positionDataList[*].longitude", contains(outputPD1.getLongitude())))
+                .andExpect(jsonPath("$.positionDataList[*]._links.self.href",
+                        contains("http://localhost/senddata/positiondata/" + USER_1)))
                 .andExpect(jsonPath("$.healthDataList", hasSize(2)))
                 .andExpect(jsonPath("$.healthDataList[*].timestamp",
                         containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.001+0000")))
@@ -212,7 +200,10 @@ public class SendDataControllerUnitTest {
                 .andExpect(jsonPath("$.healthDataList[*].pressureMax",
                         containsInAnyOrder(outputHD1.getPressureMax(), outputHD2.getPressureMax())))
                 .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
-                        containsInAnyOrder(outputHD1.getBloodOxygenLevel(), outputHD2.getBloodOxygenLevel())));
+                        containsInAnyOrder(outputHD1.getBloodOxygenLevel(), outputHD2.getBloodOxygenLevel())))
+                .andExpect(jsonPath("$.healthDataList[*]._links.self.href",
+                        containsInAnyOrder("http://localhost/senddata/healthdata/" + USER_1,
+                                "http://localhost/senddata/healthdata/" + USER_1)));
     }
 
     /**
@@ -222,9 +213,9 @@ public class SendDataControllerUnitTest {
     @Test
     public void sendClusterOfDataWithNotExistingUser() throws Exception {
         DataWrapper input = new DataWrapper();
-        PositionData inputPD1 = newPositionData(null, new Timestamp(0), null, 1D);
-        HealthData inputHD1 = newHealthData(null, new Timestamp(0), null, 1);
-        HealthData inputHD2 = newHealthData(null, new Timestamp(0), null, 1);
+        PositionData inputPD1 = PositionData.newPositionData(null, new Timestamp(0), null, 1.0, 1.0);
+        HealthData inputHD1 = HealthData.newHealthData(null, new Timestamp(0), null, 1, 1, 1, 1);
+        HealthData inputHD2 = HealthData.newHealthData(null, new Timestamp(0), null, 1, 1, 1, 1);
 
         input.addHealthData(inputHD1);
         input.addHealthData(inputHD2);

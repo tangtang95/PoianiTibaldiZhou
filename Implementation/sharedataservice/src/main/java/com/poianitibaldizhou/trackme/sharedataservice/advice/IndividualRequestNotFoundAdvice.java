@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.sharedataservice.advice;
 
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Advice for managing errors about individual requests not found
@@ -22,11 +26,14 @@ public class IndividualRequestNotFoundAdvice {
      * @param ex the error which triggers the advice
      * @return an http 404 response that contains the message of the exception
      */
-    @ResponseBody
     @ExceptionHandler(IndividualRequestNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public String requestNotFoundHandler(IndividualRequestNotFoundException ex) {
-        return ex.getMessage();
+    public @ResponseBody ExceptionResponseBody requestNotFoundHandler(IndividualRequestNotFoundException ex) {
+        return new ExceptionResponseBody(
+                Timestamp.valueOf(LocalDateTime.now()),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
+                ex.getMessage());
     }
 }
 

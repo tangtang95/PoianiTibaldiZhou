@@ -14,7 +14,7 @@ import javax.persistence.*;
 public class FilterStatement {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "filter_column", length = 20, nullable = false)
@@ -31,5 +31,16 @@ public class FilterStatement {
     @ManyToOne
     @JoinColumn(name = "group_request_id", nullable = false)
     private GroupRequest groupRequest;
+
+    public static FilterStatement newFilterStatement(Long id, FieldType fieldType, String value,
+                                                     ComparisonSymbol comparisonSymbol, GroupRequest groupRequest){
+        FilterStatement filterStatement = new FilterStatement();
+        filterStatement.setId(id);
+        filterStatement.setColumn(fieldType);
+        filterStatement.setComparisonSymbol(comparisonSymbol);
+        filterStatement.setValue(value);
+        filterStatement.setGroupRequest(groupRequest);
+        return filterStatement;
+    }
 
 }
