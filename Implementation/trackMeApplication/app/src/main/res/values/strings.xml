@@ -20,4 +20,6 @@
     <string name="toolbar_menu_home">HOME</string>
     <string name="toolbar_menu_request">REQUEST</string>
     <string name="menu_action_logout">Logout</string>
+    <string name="home_check_your_status">CHECK YOUR STATUS</string>
+    <string name="home_welcome_to_data4help">Welcome to Data4Help</string>
 </resources>
