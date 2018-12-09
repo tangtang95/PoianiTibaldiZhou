@@ -15,7 +15,7 @@ The following requirements are, principally, about identifying a specific person
 \item[{[R3]}] A person cannot register as a user by inserting a username that has already been used in another successful registration process
 \item[{[R4]}] A person cannot register as user by using the same social security number used in another successful registration process 
 \item[{[R5]}] A person cannot register as user by using the same credential used in another successful registration process 
-\item[{[R6]}] A person or company cannot register as third party into the system by using the same credentials used in another successful process
+\item \st{\item[{[R6]}] A person or company cannot register as third party into the system by using the same credentials used in another successful process}
 \item[{[R7]}] A person or company cannot register as third party by using the same e-mail used in another successful registration process
 \end{itemize}
 \par
@@ -77,12 +77,13 @@ The time experienced between the moment in which the health parameters of a subs
 	\begin{itemize}
 	\item[{[R25]}] Once the time elapsed from sending request is greater than 30 days, then the request will be deleted from the system
 	\end{itemize}
-\item[{[G8 \& G9]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party
+\item[{[G8 \& G9]}] Allow a user to accept or refuse a request from third parties. Allow a user to block requests made by a specific third party and all the pending requests will be refused.
 	\begin{itemize}
 	\item[{[R26]}] Allow a user to receive individual requests about data sharing from third parties
 	\item[{[R27]}] Allow a user to view a list of pending requests
 	\item[{[R28]}] Allow a user to accept or refuse a request from the list of pending request
 	\item[{[R29]}] Allow a user to block requests from a defined third party, after refusing it
+	\item[{[R46]}] When a request it is blocked, the other requests sent by the same Third party to the same user are refused.
 	\end{itemize}	
 \item[{[G10]}] Allow spectators and runners to see the leaderboard, when a run is completed
 	\begin{itemize}
