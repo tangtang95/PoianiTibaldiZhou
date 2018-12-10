@@ -21,9 +21,9 @@ import java.util.Optional;
 @Service
 public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountManagerService {
 
-    private final ThirdPartyRepository thirdPartyRepository;
-    private final CompanyDetailRepository companyDetailRepository;
-    private final PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository;
+    private ThirdPartyRepository thirdPartyRepository;
+    private CompanyDetailRepository companyDetailRepository;
+    private PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository;
 
     /**
      * Creates the manager of the services regarding the accounts of third party customers.
@@ -45,25 +45,35 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
     }
 
     @Override
-    public ThirdPartyWrapper getThirdPartyByEmail(String email) {
-        ThirdPartyCustomer thirdPartyCustomer = thirdPartyRepository.findByEmail(email).orElseThrow(()-> new ThirdPartyCustomerNotFoundException(email));
+    public Optional<ThirdPartyCompanyWrapper> getThirdPartyCompanyByEmail(String email) {
+        ThirdPartyCustomer thirdPartyCustomer = thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
 
         Optional<CompanyDetail> companyDetail = companyDetailRepository.findByThirdPartyCustomer(thirdPartyCustomer);
-        Optional<PrivateThirdPartyDetail> privateThirdPartyDetail = privateThirdPartyDetailRepository.findByThirdPartyCustomer(thirdPartyCustomer);
 
         if(companyDetail.isPresent()) {
-            ThirdPartyCompanyWrapper thirdPartyCompanyWrapper = new ThirdPartyCompanyWrapper();
-            thirdPartyCompanyWrapper.setThirdPartyCustomer(thirdPartyCustomer);
-            thirdPartyCompanyWrapper.setCompanyDetail(companyDetail.get());
-            return thirdPartyCompanyWrapper;
-        } else if(privateThirdPartyDetail.isPresent()) {
-            ThirdPartyPrivateWrapper thirdPartyPrivateWrapper = new ThirdPartyPrivateWrapper();
-            thirdPartyPrivateWrapper.setThirdPartyCustomer(thirdPartyCustomer);
-            thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail.get());
-            return thirdPartyPrivateWrapper;
+            ThirdPartyCompanyWrapper wrapper = new ThirdPartyCompanyWrapper();
+            wrapper.setThirdPartyCustomer(thirdPartyCustomer);
+            wrapper.setCompanyDetail(companyDetail.get());
+            return Optional.of(wrapper);
         }
 
-        throw new IllegalStateException();
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<ThirdPartyPrivateWrapper> getThirdPartyPrivateByEmail(String email) {
+        ThirdPartyCustomer thirdPartyCustomer = thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
+
+        Optional<PrivateThirdPartyDetail> privateThirdPartyDetail = privateThirdPartyDetailRepository.findByThirdPartyCustomer(thirdPartyCustomer);
+
+        if(privateThirdPartyDetail.isPresent()) {
+            ThirdPartyPrivateWrapper wrapper = new ThirdPartyPrivateWrapper();
+            wrapper.setThirdPartyCustomer(thirdPartyCustomer);
+            wrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail.get());
+            return Optional.of(wrapper);
+        }
+
+        return Optional.empty();
     }
 
     @Override

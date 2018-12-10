@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.Column;
@@ -13,6 +14,8 @@ import java.sql.Date;
 @Data
 @Entity
 public class User {
+
+    @JsonIgnore
     @Id
     @Column(length = 16)
     private String ssn;

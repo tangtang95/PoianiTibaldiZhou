@@ -4,20 +4,34 @@ import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyCompanyWrappe
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyPrivateWrapper;
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyWrapper;
 
+import java.util.Optional;
+
 /**
  * Interfaces provided to offer the services that manage the accounts of third party customers
  */
 public interface ThirdPartyAccountManagerService {
 
-
     /**
      * Retrieves a third party customer based on email, which is the id of the entity.
      * This requires, to be successful, that a customer with that email exists
+     * The third party has to be registered and releted to a company.
      *
      * @param email email that identifies the requested customer
      * @return customer identified by the email
      */
-    ThirdPartyWrapper getThirdPartyByEmail(String email);
+    Optional<ThirdPartyCompanyWrapper> getThirdPartyCompanyByEmail(String email);
+
+    /**
+     * Retrieves a third party customer based on email, which is the id of the entity.
+     * This requires, to be successful, that a customer with that email exists.
+     * The third party has to be registered as a private one
+     *
+     * @param email email that identifies the requested customer
+     * @return customer identified by the email
+     */
+    Optional<ThirdPartyPrivateWrapper> getThirdPartyPrivateByEmail(String email);
+
+
 
     /**
      * Register a third party customer that is a company. This requires information such as password,
