@@ -9,6 +9,8 @@ import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Date;
+
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 
@@ -56,5 +58,22 @@ public class AccessDataController {
     public @ResponseBody Resource<AggregatedData> getGroupRequestData(@PathVariable(name = "third_party_id") Long thirdPartyId ,
                                                  @PathVariable(name = "request_id") Long groupRequestId){
         return aggregatedDataResourceAssembler.toResource(accessDataService.getGroupRequestData(thirdPartyId, groupRequestId));
+    }
+
+    /**
+     * Retrieves all the health and position data of the user {user_id} between two dates: from and to
+     * @param userId the id of the user to retrieve data from
+     * @param from the lower bound of data
+     * @param to the upper bound of data
+     * @return a OK http response with all the data of the user between the two dates
+     */
+    @JsonView(Views.Public.class)
+    @GetMapping("/user/{user_id}")
+    public @ResponseBody Resource<DataWrapper> getOwnData(@PathVariable(name = "user_id") String userId,
+                                                          @RequestParam(name = "from") Date from,
+                                                          @RequestParam(name = "to") Date to){
+        return new Resource<>(accessDataService.getOwnData(userId, from, to),
+                linkTo(methodOn(AccessDataController.class).getOwnData(userId, from, to)).withSelfRel());
+
     }
 }

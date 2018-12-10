@@ -3,12 +3,14 @@ package com.poianitibaldizhou.trackme.sharedataservice.service;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -55,21 +57,8 @@ public class AccessDataServiceImpl implements AccessDataService {
         IndividualRequest individualRequest = individualRequestRepository.findByIdAndThirdPartyId(requestId, thirdPartyId)
                 .orElseThrow(() -> new IndividualRequestNotFoundException(requestId));
 
-        Timestamp startTimestamp = Timestamp.valueOf(LocalDateTime.of(
-                individualRequest.getStartDate().toLocalDate(), LocalTime.MIN));
-        Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(
-                individualRequest.getEndDate().toLocalDate(), LocalTime.MAX));
-        List<HealthData> healthDataList = healthDataRepository.findAllByUserAndTimestampBetween(
-                individualRequest.getUser(), startTimestamp, endTimestamp);
-        List<PositionData> positionDataList = positionDataRepository.findAllByUserAndTimestampBetween(
-                individualRequest.getUser(), startTimestamp, endTimestamp);
-
-        DataWrapper dataWrapper = new DataWrapper();
-        healthDataList.forEach(dataWrapper::addHealthData);
-        positionDataList.forEach(dataWrapper::addPositionData);
-        dataWrapper.setPositionDataList(positionDataList);
-        dataWrapper.setHealthDataList(healthDataList);
-        return dataWrapper;
+        return getDataFromUserBetweenDate(individualRequest.getUser(), individualRequest.getStartDate(),
+                individualRequest.getEndDate());
 
     }
 
@@ -85,5 +74,37 @@ public class AccessDataServiceImpl implements AccessDataService {
         result.setValue(userRepository.getAggregatedData(groupRequest.getAggregatorOperator(),
                 groupRequest.getRequestType(), filters));
         return result;
+    }
+
+    @Override
+    public DataWrapper getOwnData(String userId, Date from, Date to){
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return getDataFromUserBetweenDate(user, from, to);
+    }
+
+    /**
+     * Retrieves all the data about a user between two dates
+     *
+     * @param user the user from where to retrieve data
+     * @param from the lower bound of date
+     * @param to the upper bound of date
+     * @return the data wrapper containing all the list of data
+     */
+    private DataWrapper getDataFromUserBetweenDate(User user, Date from, Date to){
+        Timestamp startTimestamp = Timestamp.valueOf(LocalDateTime.of(
+                from.toLocalDate(), LocalTime.MIN));
+        Timestamp endTimestamp = Timestamp.valueOf(LocalDateTime.of(
+                to.toLocalDate(), LocalTime.MAX));
+        List<HealthData> healthDataList = healthDataRepository.findAllByUserAndTimestampBetween(
+                user, startTimestamp, endTimestamp);
+        List<PositionData> positionDataList = positionDataRepository.findAllByUserAndTimestampBetween(
+                user, startTimestamp, endTimestamp);
+
+        DataWrapper dataWrapper = new DataWrapper();
+        healthDataList.forEach(dataWrapper::addHealthData);
+        positionDataList.forEach(dataWrapper::addPositionData);
+        dataWrapper.setPositionDataList(positionDataList);
+        dataWrapper.setHealthDataList(healthDataList);
+        return dataWrapper;
     }
 }
