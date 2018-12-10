@@ -4,9 +4,76 @@
     android:layout_width="match_parent" android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark">
 
+    <EditText
+        android:id="@+id/editTextPulseValue"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="185dp"
+        android:layout_marginEnd="80dp"
+        android:background="#11000000"
+        android:ems="10"
+        android:enabled="false"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorWhite"
+        android:textSize="16sp"
+        android:alpha="0"/>
+
+    <EditText
+        android:id="@+id/editTextPulseText"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="185dp"
+        android:layout_marginEnd="190dp"
+        android:background="#11000000"
+        android:ems="10"
+        android:enabled="false"
+        android:text="@string/home_fragment_pulse"
+        android:textAlignment="textEnd"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorWhite"
+        android:textSize="16sp"
+        android:alpha="0"/>
+
+    <EditText
+        android:id="@+id/editTextPressureText"
+        android:layout_width="150dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="270dp"
+        android:layout_marginEnd="190dp"
+        android:background="#11000000"
+        android:ems="10"
+        android:enabled="false"
+        android:text="@string/home_fragment_blood_pressure"
+        android:textAlignment="textEnd"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorWhite"
+        android:textSize="16sp"
+        android:alpha="0"/>
+
+    <EditText
+        android:id="@+id/editTextBloodValue"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="270dp"
+        android:layout_marginEnd="80dp"
+        android:background="#11000000"
+        android:ems="10"
+        android:enabled="false"
+        android:textColor="@color/colorWhite"
+        android:textColorHint="@color/colorWhite"
+        android:textSize="16sp"
+        android:alpha="0"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewHeart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -15,6 +82,7 @@
         android:layout_marginTop="0dp"
         app:srcCompat="@drawable/heart_check"
         android:contentDescription="TODO" />
+
 
     <TextView
         android:id="@+id/welcome"

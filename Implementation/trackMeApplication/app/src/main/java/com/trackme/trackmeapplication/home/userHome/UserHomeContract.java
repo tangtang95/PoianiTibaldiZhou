@@ -25,5 +25,7 @@ public class UserHomeContract {
 
         void onSettingsSelected();
 
+        void onLogoutSelected();
+
     }
 }

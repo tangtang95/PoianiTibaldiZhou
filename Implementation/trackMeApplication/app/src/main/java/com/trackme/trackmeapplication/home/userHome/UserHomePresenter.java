@@ -14,4 +14,9 @@ public class UserHomePresenter extends BasePresenterImpl<
     public void onSettingsSelected() {
         mView.navigateToUserSettings();
     }
+
+    @Override
+    public void onLogoutSelected() {
+        mView.navigateToUserLogin();
+    }
 }
