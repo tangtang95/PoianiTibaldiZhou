@@ -1,4 +1,5 @@
 \section{Requirements traceability}
+\subsection{Functional requirements}
 In this section, the requirements and goals specified into the \textit{Requirements Analysis and Specification Document} are discussed. 
 The following list provides the design components that allows to satisfy the requirements and goals: 
 \begin{itemize}
@@ -114,32 +115,35 @@ The access to the data is provided with Share data service.
 	\item Group request service.
 	\item Share data service.
 	\end{enumerate}
+	
 Each request service allows to subscribe to non-existing data and then after the data is generated, the status of the request will be changed
 and the access to the data will be provided.
 \end{itemize}
-Other requirements like reliability, availability, security, maintainability and portability are now discussed in particular. \\
-\begin{enumerate}
-\item The system must be able to manage huge number of requests, as written also in the RASD, and for achieving this performance requirement TrackMe
+\subsection{Non-functional requirements}
+Other requirements like performance, reliability, availability, security, maintainability and portability are now discussed in particular. \\
+\subsubsection{Performance}
+The system must be able to manage huge number of requests, as written also in the RASD, and for achieving this performance requirement TrackMe
 uses a cloud database. 
 Furthermore, since the Spectator service and the Share data service requires a elevated throughput, these services are deployed in acluster.
 This, also, enhances scalability.
-The application has to be available 24/7, therefore TrackMe has duplicated server in different areas and the data, as already described, are
-stored in a cloud. 
-\item The other external services are also chosen in order to achieve full reliability, indeed, for example, maps are provided by Google maps
-service precisely for this reason. 
+\subsubsection{Reliability}
+The application has to be reliable as possible. To reach this requirement the application services are duplicated on several machines and all test are tested very carefully to reduce errors and bugs as much as possible. 
+\subsubsection{Availability}
 Note that the data are replicated among the services, that increases reliability and performance, but it introduces consistency problems
 (this problems and their solution are well discussed before in the \textit{Eventually consistency and compensation } section).
 For all these things, the reliability of the application is very high.
-\item Also the security and the privacy of data are requirements very
+\subsubsection{Security}
+Also the security and the privacy of data are requirements very
 important: each transactions between the user hardware device and the user application, and all temporary data store into the mobile device
 are encrypted with AES-128. Moreover, each exchange of data between the user application and the TrackMe server use HTTPS protocol for a high
 security communication: indeed, microservices expose REST API, which introduces also other benefits likes separation of concerns between
 client and server, reliability and scalability. 
 Furthermore, the use of the API Gateway and the access token pattern easiness the management of the security in the system, since it is the
 only way to interact with the application and the token certifies the action.
-\item The use of external services, framework and the microservices architecture allows to achieve an easy maintainability of the system. 
+\subsubsection{Maintainability}
+The use of external services, framework and the microservices architecture allows to achieve an easy maintainability of the system. 
 Also the use of specific patterns helps to achieve this scope.\\
 The portability is achieved by developing the application in Android. 
 Indeed, after an analysis of the Italy market, has resulted that Android is the most popular mobile system and the frameworks chosen are also
 well supported by the current market.
-\end{enumerate}
+

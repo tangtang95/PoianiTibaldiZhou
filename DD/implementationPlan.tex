@@ -3,9 +3,8 @@ First of all, since client and server can be developed at the same time: indeed,
 between them, and this is also enhanced by the REST API. To give some structure to the chapter, first the
 implementation of the server components are discussed, and than the ones regarding the client. \\ 
  \par 
-A great property of microservices structure is that microservices can be developed independently. 
-The implementation of each service will be done by starting from the set up of its DBMS system and then
-the main logic of the service. 
+A great property of microservices structure is that microservices can be developed independently. Before starting the implementation of each service, it is required to have defined the protocol message of the network and the ER diagram.
+Afterword it is possible to set up all the DBMS system and the main logic of the service. 
 Each service can be seen as a completely separate system with its memory stack, its logic and its user
 interface. 
 At the end, the user interfaces are merged and reachable from a single mobile application. 
@@ -15,7 +14,7 @@ In this sense, the components of the TrackMe server, could be developed in the f
  \begin{enumerate}
 \item Share data service.
 This service is one of the more important server side component. It takes the GPS data and the health data
-and it shares them through the two interfaces: download and upload data service. 
+and it shares them through the two interfaces: access and send data service. 
 This is the first module since it is the main core functionality of the whole project. 
 \item Individual request service and Group request service.
 The request services are the main modules for the interaction with the third party customer, and, also
@@ -43,7 +42,7 @@ particularity the components which are interested are:
 \begin{enumerate}
 \item API Gateway: this will be the first one among the remaining server components, since it gives the
 possibility to set up the connection with the clients
-\item Router and API gateway: this are strongly connected, since they are part of the same architectural
+\item Router and API gateway: these are strongly connected, since they are part of the same architectural
 design pattern, so they will be developed simultaneously
 \end{enumerate}
 \par
@@ -51,4 +50,4 @@ As already mentioned, the client side can be developed at the same time as the s
 A good approach at the beginning of the client side builds the skeleton of the user interface for each service, that helps the programmer to have clear ideas on the aspect of the complete application. This allows understanding if all the requirements are satisfied and if the user experience with the application is satisfactory. 
 Then the development of the user application proceeds with the set up of the communication with the hardware,
 like GPS sensor and Call service. \\
-On the mobile side, there are several features to implement. It is a good idea start the implementation from the AutomatedSOS, due to its dependency from external services, like GPS sensor, SIM service and the user HW device that made the service hard to be implemented. A benefit of this choice is that after this implementation the other results more easily and all the interface with the hardware are just built and ready to be integrated with Data4Help service. Furthermore, this service is only on the client side and it doesn't require the communication with the TrackMe servers. Note that the third party application is always the same application with a different user interface, which allows sending the data request message to other users or to TrackMe system, manages their answers and download data from the servers and it disables the other functionality available in the user application. The discrimination between the two GUI is the kind of account, indeed during the subscribing process, the user chooses the type of account (i.e. simple user or third party) and obviously provides different information. Now two application's features are developed and at the end, after having configured the maps API, there is time to implement the third feature (i.e. Track4Run), that result to be separate from the other two and it rather easy to develop client side.
+On the mobile side, there are several features to implement. It is a good idea start the implementation from the Data4Help, due to its dependency from external services, like GPS sensor and the user HW device that made the service hard to be implemented. A benefit of this choice is that after this implementation the other results easier and all the interfaces with the hardware are just built and ready to be integrated with AutomatedSOS service. Furthermore, this service is only on the client side and it doesn't require the communication with the TrackMe servers. Note that the third party application is always the same application with a different user interface, which allows sending the data request message to other users or to TrackMe system, manages their answers and download data from the servers and it disables the other functionality available in the user application. The discrimination between the two GUI is the kind of account, indeed during the subscribing process, the user chooses the type of account (i.e. simple user or third party) and obviously provides different information. Now two application's features are developed and at the end, after having configured the maps API, there is time to implement the third feature (i.e. Track4Run), that result to be separate from the other two and it rather easy to develop client side.

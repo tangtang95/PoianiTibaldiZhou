@@ -1,18 +1,18 @@
 \subsection{Test plan}
-Considering the implementation plan of the TrackMe system, the chosen strategy for the integration testing is bottom-up. Starting from the leaves of the hierarchy, it never needs the use of stubs. This kind of strategy requires, therefore a unit test for each module. A unit is the smallest possible testable software component. Usually, it performs a single cohesive function. This decision is supported by the fact that a unit is small, so it is easier to design, execute, record, and analyze test results for than larger chunks of code are. Defects revealed by a unit test are easy to locate and relatively easy to repair. Furthermore, since a lot of services have several features, units tests result from the perfect choice. Indeed, one of the main benefits of unit testing is that it makes the coding process more Agile and it improves the quality of the code. A unit test also helps to achieve a good line coverage, that for this project must be at least 90\% for each service and components, which has presented in the \textit{Component view} section. Note that for critical components, like message queue, router and API Gateway the coverage will be 100\% of lines. When the message queue component and two services are developed and the unit testing is performed, the integration testing can start. 
+Considering the implementation plan of the TrackMe system, the chosen strategy for the integration test is bottom-up. Starting from the leaves of the hierarchy, it never needs the use of stubs. This kind of strategy requires, therefore a unit test for each module. A unit is the smallest possible testable software component. Usually, it performs a single cohesive function. This decision is supported by the fact that a unit is small, so it is easier to design, execute, record, and analyze test results for than larger chunks of code are. Defects revealed by a unit test are easy to locate and relatively easy to repair. Furthermore, since a lot of services have several features, units tests result from the perfect choice. Indeed, one of the main benefits of unit testing is that it makes the coding process more agile and it improves the quality of the code. A unit test also helps to achieve a good line coverage, that for this project must be at least 90\% for each service and components, which has presented in the \textit{Component view} section. Note that for critical components, like message queue, router and API Gateway the coverage will be 100\% of lines. When the message queue component and two services are developed and their unit tests are performed, the integration test can start. 
 \subsubsection{Entry Criteria}
-As just described, the integration testing should start as soon as two components of the system and the message queue are released, but some preconditions should be satisfied:
+As just described, the integration test should start as soon as two components of the system and the message queue are released, but some preconditions should be satisfied:
 \begin{itemize}
 \item In order to test the system components, some low-level modules and external APIs should be available. In particular: 
 \begin{enumerate}
 \item For integration tests involving the AutomatedSOS feature, the user application with each one of its components (i.e. SIM service, GPS sensor, and User HW devices) should be fully implemented.
 \item For integration tests involving maps components, like Race service and Spectator service, the Maps API should be available and fully usable.
-\item The DBMS of the services, that should be tested, should be configured and operative in order to allow to test all the components which need access to the databases. The testing of the DBMS is particularity important with this type of design structure. Since the services are perfectly independent among them, also each DBMS is independent among them and that requires specific tests on consistency and compensation.
-\item For integration tests between server side and client side requires that API Gateway, Router and service registry components are fully developed.
+\item The DBMS of the services, that should be tested, should be configured and operative in order to allow to test all the components which need access to the databases.
+\item For integration tests between server side and client side requires the API Gateway.
 \end{enumerate}
-\item In order to test the integration of two components, the main features of both of them should have been developed and, as already mentions, the related unit tests should have been performed.
+\item In order to test the integration of two components, the main features of both of them should have been developed and, as already mentioned, the related unit tests should have been performed.
 \end{itemize}
-Note that the message queue component is fundamental for the integration testing, without it never communication between two services are available. For this reason, the message queue is the first component done and its line coverage is so high. A good testing of this module discriminates the possible causes of error in the debugging process during the integration testing.  
+Note that the message queue component is fundamental for the integration test, without it, communication between two services is not available. For this reason, the message queue is the first component done and its line coverage is so high. A good test of this module discriminates the possible causes of error in the debugging process during the integration test.  
 \subsubsection{Elements to be Integrated}
 Referring to the \textit{design document}, the system is composed of several components, that can be divided into three categories: 
 \begin{itemize}
@@ -20,12 +20,9 @@ Referring to the \textit{design document}, the system is composed of several com
 \item Back-end components: All services deployed on the server and the communication components.
 \item External components: all the components which refer to functionalities provided by external service and the DBMS.
 \end{itemize}
-There are three types of partial integration: back-end with external components, front-end with external components and front-end with the back-end. For the back-end components the integration can proceed in this way:
-\begin{enumerate}
-\item Integration of services with the DBMS.
+There are four types of partial integration: back-end with external components, back-end with itself, front-end with external components and front-end with the back-end. For the back-end components the integration can proceed in this way:
+\begin{itemize}
 \item Integration of the internal services with the external service.
-\item Integration among the services inside the server side.  
-\end{enumerate}
 The main integration of back-end components with external components are: 
 \begin{itemize}
 \item Account service
@@ -43,8 +40,8 @@ The main integration of back-end components with external components are:
 \end{enumerate}
 \item Share data service
 \begin{enumerate}
-\item Download data service, DBMS
-\item Upload data service, DBMS
+\item Access data service, DBMS
+\item Send data service, DBMS
 \end{enumerate}
 \item Group request service
 \begin{enumerate}
@@ -56,6 +53,15 @@ The main integration of back-end components with external components are:
 \item Upload response service, DBMS
 \end{enumerate}
 \end{itemize}
+\item Integration among the services inside the server side.  
+\begin{itemize}
+\item Account service, message queue, Individual request service
+\item Account service, message queue, Shared Data service
+\item Shared Data service, message queue, Individual request service
+\item Shared Data service, message queue, Group request service
+\item Race service, message queue, Spectator service
+\end{itemize}
+\end{itemize}
 The integration between front-end components and external components is:
 \begin{itemize}
 \item User application, SIM service, GPS sensor
@@ -66,11 +72,11 @@ Finally the main integration of front-end components with back-end components ar
 \item Third party application, API Gateway
 \end{itemize}
 \subsubsection{Integration testing strategy}
-Given that the entire development effort mainly follows a bottom-up strategy, we opted to use a similar approach with respect to the testing phase. Due to the complexity of the system for a better visibility a critical modules testing strategy should be performed on critical services.\\
-When all the component are made and the application is ready, for testing if the system satisfied the goals and the non-functional requirement describe into the RASD document, a system testing will be performed. For completeness, below is presented the three system testing strategy that will be used on the system: 
+Given that the entire development effort mainly follows a bottom-up strategy, it is better to opted to use a similar approach with respect to the testing phase. Due to the complexity of the system for a better visibility a critical modules testing strategy should be performed on critical services.\\
+When all the component are made and the application is ready for testing if the system satisfied the goals and the non-functional requirement described into the RASD document, a system test will be performed. For completeness, below it is presented the three system tests strategies that will be used on the system: 
 \begin{enumerate}
-\item Performance testing: what this test is possible to check if the TrackMe application respect the performance described. In this particularity case, it checks if the system performs a SOSCall within 5 seconds when the constraints are satisfied.
-\item Load Testing: the load testing exposes bugs such as memory leaks, mismanagement of memory and buffer overflows, excellent for application, as this, that takes data from the sensors and tries to manage them in a correct way.
-\item Stress Testing: finally this testing checks the availability and reliability of the system.
+\item Performance test: it checks if the TrackMe application respects the performance described. In this particular case, it checks if the system performs a SOSCall within 5 seconds when the constraints are satisfied.
+\item Load Testing: the load test exposes bugs such as memory leaks, mismanagement of memory and buffer overflows, excellent for application, as this, that takes data from the sensors and tries to manage them in a correct way.
+\item Stress Test: finally this test checks the availability, reliability, and scalability of the system.
 \end{enumerate}
-As well shown in this section of the document, the testing is taken into great consideration, because of the TrackMe application is responsible for the life of the people that use it. Indeed the security and the correctness of the software must be better as possible when a human's life is in danger. 
+As well shown in this section of the document, the test is taken into great consideration, because of the TrackMe application is responsible for the life of the people that use it. Indeed the security and the correctness of the software must be better as possible when a human's life is in danger. 
