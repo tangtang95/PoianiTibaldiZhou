@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.accountservice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ import java.sql.Date;
 @Entity
 public class PrivateThirdPartyDetail {
 
+    @JsonIgnore
     @Id
     private Long id;
 

@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
@@ -25,6 +26,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +39,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -56,6 +59,7 @@ public class AccessDataControllerUnitTest {
     private static final Long THIRD_PARTY_ID = 1L;
     private static final Long GROUP_REQUEST_ID = 3L;
     private static final Long INDIVIDUAL_REQUEST_ID = 2L;
+    private static final String USER_ID = "user1";
 
     @Before
     public void setUp() throws Exception {
@@ -151,5 +155,60 @@ public class AccessDataControllerUnitTest {
                 .andExpect(status().isNotFound());
     }
 
+
+    /**
+     * Test get own data when the it will return a data wrapper
+     *
+     * @throws Exception no exception expected
+     */
+    @Test
+    public void getOwnDataSuccessful() throws Exception {
+        DataWrapper dataWrapper = new DataWrapper();
+        List<HealthData> healthDataList = new ArrayList<>();
+        healthDataList.add(HealthData.newHealthData(1L, new Timestamp(0), new User(), 3, 1, 1, 1));
+        healthDataList.add(HealthData.newHealthData(2L, new Timestamp(0), new User(), 4, 1, 1, 1));
+        List<PositionData> positionDataList = new ArrayList<>();
+        positionDataList.add(PositionData.newPositionData(1L, new Timestamp(0), new User(), 1.0, 1.0));
+        positionDataList.add(PositionData.newPositionData(2L, new Timestamp(0), new User(), 3.0, 2.0));
+        dataWrapper.setHealthDataList(healthDataList);
+        dataWrapper.setPositionDataList(positionDataList);
+
+        given(service.getOwnData(USER_ID, Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02"))).willReturn(dataWrapper);
+
+        mvc.perform(get("/accessdata/user/" + USER_ID +"?from=1970-01-01&to=1970-01-02"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.positionDataList", hasSize(2)))
+                .andExpect(jsonPath("$.positionDataList[*].timestamp", containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
+                .andExpect(jsonPath("$.positionDataList[*].latitude", containsInAnyOrder(1.0, 3.0)))
+                .andExpect(jsonPath("$.positionDataList[*].longitude", containsInAnyOrder(1.0, 2.0)))
+                .andExpect(jsonPath("$.healthDataList", hasSize(2)))
+                .andExpect(jsonPath("$.healthDataList[*].timestamp",
+                        containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
+                .andExpect(jsonPath("$.healthDataList[*].heartBeat",
+                        containsInAnyOrder(3, 4)))
+                .andExpect(jsonPath("$.healthDataList[*].pressureMin",
+                        containsInAnyOrder(1, 1)))
+                .andExpect(jsonPath("$.healthDataList[*].pressureMax",
+                        containsInAnyOrder(1, 1)))
+                .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
+                        containsInAnyOrder(1, 1)))
+                .andExpect(jsonPath("$._links.self.href",
+                        is("http://localhost/accessdata/user/" + USER_ID + "?from=1970-01-01&to=1970-01-02")));
+    }
+
+    /**
+     * Test get own data when the service launch an exception
+     *
+     * @throws Exception UserNotFoundException
+     */
+    @Test
+    public void getOwnDataWhenThrowException() throws Exception{
+        given(service.getOwnData("user2", Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02")))
+                .willThrow(new UserNotFoundException("user2"));
+
+        mvc.perform(get("/accessdata/user/user2?from=1970-01-01&to=1970-01-02"))
+                .andExpect(status().isNotFound());
+
+    }
 
 }

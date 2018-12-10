@@ -28,6 +28,7 @@ import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -61,8 +62,9 @@ public class UserEventListenerImplTest {
         }
 
         /**
+         * Test onUserCreated method with a new user ssn in protocol message
          *
-         * @throws Exception
+         * @throws Exception no exception expected
          */
         @Test
         public void onUserCreatedWithNewSsn() throws Exception {
@@ -84,12 +86,41 @@ public class UserEventListenerImplTest {
             assertEquals(new Date(0), user.getBirthDate());
         }
 
+        /**
+         * Test onUserCreated method with a protocol message with user ssn already existing
+         *
+         * @throws Exception no exception expected
+         */
         @Test
         public void onUserCreatedWithExistingSsn() throws Exception {
             UserProtocolMessage userProtocolMessage = new UserProtocolMessage();
             userProtocolMessage.setSsn("user1");
             userProtocolMessage.setFirstName("tang");
             userProtocolMessage.setLastName("zhao");
+            userProtocolMessage.setBirthDate(new Date(0));
+            userProtocolMessage.setBirthCity("berlin");
+            userProtocolMessage.setBirthNation("germany");
+
+            userEventListener.onUserCreated(userProtocolMessage);
+
+            User user = userRepository.findById("user1").orElseThrow(() -> new UserNotFoundException("user1"));
+            assertNotEquals("tangtang", user.getFirstName());
+            assertNotEquals("berlin", user.getBirthCity());
+            assertNotEquals("germany", user.getBirthNation());
+            assertNotEquals(new Date(0), user.getBirthDate());
+        }
+
+        /**
+         * Test onUserCreated method with a protocol message with new user ssn but incomplete information
+         * (no last name)
+         *
+         * @throws Exception no exception expected
+         */
+        @Test
+        public void onUserCreatedWithIncompleteMessage() throws Exception {
+            UserProtocolMessage userProtocolMessage = new UserProtocolMessage();
+            userProtocolMessage.setSsn("user3");
+            userProtocolMessage.setFirstName("tang");
             userProtocolMessage.setBirthDate(new Date(0));
             userProtocolMessage.setBirthCity("berlin");
             userProtocolMessage.setBirthNation("germany");
@@ -143,8 +174,14 @@ public class UserEventListenerImplTest {
         }
 
 
+        /**
+         * Test to check if the method of onUserCreated will be called after sending the message when the
+         * routing key is correct
+         *
+         * @throws Exception no exception expected
+         */
         @Test
-        public void onUserCreatedWithNewSsn() throws Exception {
+        public void onUserCreatedWithCorrectRoutingKey() throws Exception {
             UserProtocolMessage userProtocolMessage = new UserProtocolMessage();
             userProtocolMessage.setSsn("user3");
             userProtocolMessage.setFirstName("tangtang");
@@ -154,22 +191,60 @@ public class UserEventListenerImplTest {
             userProtocolMessage.setBirthNation("italy");
             rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.created", userProtocolMessage);
 
-            verify(userEventListener, timeout(50000).times(1)).onUserCreated(userProtocolMessage);
-
+            verify(userEventListener, timeout(2000).times(1)).onUserCreated(userProtocolMessage);
         }
 
+        /**
+         * Test to check if the method of onUserCreated will not be called after sending the message when
+         * the routing key is incorrect w.r.t. to the topic exchange and binding
+         *
+         * @throws Exception no exception expected
+         */
         @Test
-        public void onUserCreatedWithAlreadyExistingSsn() throws Exception {
+        public void onUserCreatedWithIncorrectRoutingKey() throws Exception {
             UserProtocolMessage userProtocolMessage = new UserProtocolMessage();
-            userProtocolMessage.setSsn("user1");
-            userProtocolMessage.setFirstName("mattia");
+            userProtocolMessage.setSsn("user3");
+            userProtocolMessage.setFirstName("tangtang");
             userProtocolMessage.setLastName("zhao");
             userProtocolMessage.setBirthDate(new Date(0));
-            userProtocolMessage.setBirthCity("milan");
+            userProtocolMessage.setBirthCity("brescia");
             userProtocolMessage.setBirthNation("italy");
-            rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.created", userProtocolMessage);
+            rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.updated", userProtocolMessage);
 
-            verify(userEventListener, timeout(50000).times(1)).onUserCreated(userProtocolMessage);
+            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
+        }
+
+        /**
+         * Test to check if the method of onUserCreated will not be called after sending the message when
+         * the topic exchange is wrong
+         *
+         * @throws Exception no exception expected
+         */
+        @Test
+        public void onUserCreatedWithWrongExchange() throws Exception {
+            UserProtocolMessage userProtocolMessage = new UserProtocolMessage();
+            userProtocolMessage.setSsn("user3");
+            userProtocolMessage.setFirstName("tangtang");
+            userProtocolMessage.setLastName("zhao");
+            userProtocolMessage.setBirthDate(new Date(0));
+            userProtocolMessage.setBirthCity("brescia");
+            userProtocolMessage.setBirthNation("italy");
+            rabbitTemplate.convertAndSend("wrongExchange", "user.event.updated", userProtocolMessage);
+
+            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
+        }
+
+        /**
+         * Test to check if the method of onUserCreated will not be called after sending the message when
+         * the object of the message is incorrect
+         *
+         * @throws Exception no exception expected
+         */
+        @Test
+        public void onUserCreatedWithWrongObject() throws Exception {
+            rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.updated", new User());
+
+            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
         }
 
 
