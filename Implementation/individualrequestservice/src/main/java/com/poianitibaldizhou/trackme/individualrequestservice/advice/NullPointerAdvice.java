@@ -12,7 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Advice for handling exception regarding hibernate
+ * Advice for handling exception regarding null pointer exceptions
  */
 @ControllerAdvice
 public class NullPointerAdvice {
