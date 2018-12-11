@@ -1,8 +1,8 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.message.protocol;
 
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.AggregatorOperatorProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.GroupRequestStatusProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.RequestTypeProtocolMessage;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumerator.AggregatorOperatorProtocolMessage;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumerator.GroupRequestStatusProtocolMessage;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumerator.RequestTypeProtocolMessage;
 import lombok.Data;
 
 import java.sql.Timestamp;

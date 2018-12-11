@@ -1,7 +1,7 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.message.protocol;
 
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.ComparisonSymbolProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.FieldTypeProtocolMessage;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumerator.ComparisonSymbolProtocolMessage;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumerator.FieldTypeProtocolMessage;
 import lombok.Data;
 
 import java.util.Objects;
