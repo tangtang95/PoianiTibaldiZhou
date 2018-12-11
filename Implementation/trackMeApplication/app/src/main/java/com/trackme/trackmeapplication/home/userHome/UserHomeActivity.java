@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.login.UserLoginActivity;
@@ -43,7 +40,10 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
         sp = getSharedPreferences("login", MODE_PRIVATE);
         username = sp.getString("username", null);
+
         super.onCreate(savedInstanceState);
+
+        mDelegate.configureToolbar();
     }
 
     @Override
@@ -65,23 +65,6 @@ public class UserHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.list_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_logout) {
-            /*TODO*/
-            sp.edit().putBoolean("user_logged", false).apply();
-            navigateToUserLogin();
-        }
-        return true;
-    }
-
-    @Override
     public void navigateToUserProfile() {
         Intent intent = new Intent(this, UserProfileActivity.class);
         startActivity(intent);
@@ -96,6 +79,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
     @Override
     public void navigateToUserLogin() {
         Intent intent = new Intent(this, UserLoginActivity.class);
+        /*TODO*/
+        sp.edit().putBoolean("user_logged", false).apply();
         startActivity(intent);
         finish();
     }

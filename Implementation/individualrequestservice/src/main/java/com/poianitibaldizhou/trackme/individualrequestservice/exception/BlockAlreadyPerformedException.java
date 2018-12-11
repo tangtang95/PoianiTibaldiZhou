@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.exception;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 
 /**
  * Exception thrown when an user wants to block a third party he had already blocked

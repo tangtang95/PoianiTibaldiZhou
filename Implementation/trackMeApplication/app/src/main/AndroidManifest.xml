@@ -3,9 +3,11 @@
     package="com.trackme.trackmeapplication">
 
     <!-- To auto-complete the email text field in the userLogin form with the user's emails -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-feature android:name="android.hardware.location.gps" />
 
     <application
         android:allowBackup="true"
@@ -28,7 +30,7 @@
         <activity android:name=".account.register.UserRegisterActivity" />
         <activity android:name=".home.userHome.UserSettingsActivity" />
         <activity android:name=".account.register.UserProfileActivity" />
-        <activity android:name=".home.businessHome.BusinessHomeActivity"></activity>
+        <activity android:name=".home.businessHome.BusinessHomeActivity"/>
     </application>
 
 </manifest>

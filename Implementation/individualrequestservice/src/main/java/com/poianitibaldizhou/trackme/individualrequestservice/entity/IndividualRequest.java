@@ -38,9 +38,8 @@ public class IndividualRequest {
     @Column(nullable = false)
     private Long thirdPartyID;
 
-    //@OneToOne(cascade = CascadeType.REFRESH)
-    //@PrimaryKeyJoinColumn
-    //private Response response;
+    @Column(nullable = false)
+    private String motivation;
 
     /**
      * Empty constructor
@@ -65,5 +64,6 @@ public class IndividualRequest {
         this.endDate = endDate;
         this.user = user;
         this.thirdPartyID = thirdPartyID;
+        this.motivation = "";
     }
 }

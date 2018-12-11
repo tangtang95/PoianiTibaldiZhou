@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.exception;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 
 /**
  * Exception raised when an user is trying to accept the request of another user

@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.advice;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.exception.NonMatchingUserException;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,30 +12,28 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Advice for managing error about non matching user
+ * Advice for handling exception regarding null pointer exceptions
  */
 @ControllerAdvice
-public class NonMatchingUserAdvice {
+public class NullPointerAdvice {
 
     /**
      * An advice signaled into the body of the response that activates
-     * only when the exception NonMatchingUserException is thrown.
+     * only when the exception NullPointerException is thrown.
      * The issue is an HTTP 400.
      * The body of the advice contains the message of the exception
      *
      * @param e error that triggers the advice
      * @return http 400 that contains the message of the exception
      */
-    @ExceptionHandler(NonMatchingUserException.class)
+    @ExceptionHandler(NullPointerException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public @ResponseBody
-    ExceptionResponseBody nonMatchingUserHandler(NonMatchingUserException e) {
+    ExceptionResponseBody handleNullPointer(NullPointerException e) {
         return new ExceptionResponseBody(
                 Timestamp.valueOf(LocalDateTime.now()),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.toString(),
-                e.getMessage());
+                Constants.INVALID_OPERATION);
     }
-
 }
-

@@ -1,8 +1,14 @@
 package com.poianitibaldizhou.trackme.accountservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.accountservice.AccountServiceApplication;
 import com.poianitibaldizhou.trackme.accountservice.entity.User;
+import com.poianitibaldizhou.trackme.accountservice.exception.AlreadyPresentSsnException;
+import com.poianitibaldizhou.trackme.accountservice.exception.AlreadyPresentUsernameException;
+import com.poianitibaldizhou.trackme.accountservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.accountservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.accountservice.util.Constants;
+import com.poianitibaldizhou.trackme.accountservice.util.ExceptionResponseBody;
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +23,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -76,12 +83,19 @@ public class UserAccountManagerControllerIntegrationTest {
      * Test get of a user by means of his ssn when no user with that ssn is registered
      */
     @Test
-    public void testGetUserBySsnWhenNotPresent() {
+    public void testGetUserBySsnWhenNotPresent() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/useraccountservice/users/nonPresentSsn"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new UserNotFoundException("nonPresentSsn").getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -122,7 +136,7 @@ public class UserAccountManagerControllerIntegrationTest {
      * Test the registration of a user when a user with the specified username is already present
      */
     @Test
-    public void testRegisterUserWhenUserNameAlreadyPresent() {
+    public void testRegisterUserWhenUserNameAlreadyPresent() throws IOException {
         User user = new User();
         user.setUserName("username1");
         user.setPassword("xcasggv");
@@ -139,13 +153,20 @@ public class UserAccountManagerControllerIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new AlreadyPresentUsernameException("username1").getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
      * Test the registration of a user when a user with the specified ssn is already present
      */
     @Test
-    public void testRegisterUserWhenSsnAlreadyPresent() {
+    public void testRegisterUserWhenSsnAlreadyPresent() throws IOException {
         User user = new User();
         user.setUserName("newUsername");
         user.setPassword("xcasggv");
@@ -162,6 +183,41 @@ public class UserAccountManagerControllerIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new AlreadyPresentSsnException("user1").getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the registration of a user when not all of the necessary and mandatory parameters has been specified
+     */
+    @Test
+    public void testRegisterUserWrongParameters() throws IOException {
+        User user = new User();
+        user.setUserName("newUsername");
+        user.setPassword("xcasggv");
+        user.setLastName("Tiba");
+        user.setFirstName("Mattia");
+        user.setBirthNation("Italia");
+
+        HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/useraccountservice/users/user100"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
     }
 
     /**

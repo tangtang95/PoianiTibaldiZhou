@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.service;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -62,6 +63,10 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
         // Check if the request regards a registered user
         if(!userRepository.findById(newRequest.getUser().getSsn()).isPresent()) {
             throw new UserNotFoundException(newRequest.getUser());
+        }
+
+        if(newRequest.getStartDate().after(newRequest.getEndDate())) {
+            throw new IncompatibleDateException();
         }
 
         // Check if the request is blocked

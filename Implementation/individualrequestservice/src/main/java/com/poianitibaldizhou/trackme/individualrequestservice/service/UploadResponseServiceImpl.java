@@ -69,12 +69,11 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         individualResponse.setAcceptanceTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
 
         // Update the status of the request according to the type of resposne
-        switch(response) {
-            case ACCEPT:
-                request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-                break;
-            case REFUSE:
-                request.setStatus(IndividualRequestStatus.REFUSED);
+        if (response == ResponseType.ACCEPT) {
+            request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
+
+        } else if (response == ResponseType.REFUSE) {
+            request.setStatus(IndividualRequestStatus.REFUSED);
         }
 
         return responseRepository.saveAndFlush(individualResponse);
@@ -83,15 +82,20 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     @Transactional
     @Override
     public BlockedThirdParty addBlock(User user, Long thirdPartyID) {
-        // Check that the block is valid (i.e. user registerd, a request exist, and no other block exists
+        // Check that the block is valid (i.e. user registered, a request exist (and also a refused one), and no other block exists
         if(!userRepository.findById(user.getSsn()).isPresent())
             throw new UserNotFoundException(user);
         List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
 
-        if(!requestList.stream()
-                .anyMatch(individualRequest -> individualRequest.getUser().equals(user))) {
+        if(requestList.stream()
+                .noneMatch(individualRequest -> individualRequest.getUser().equals(user))) {
             throw new ThirdPartyNotFoundException(thirdPartyID);
         }
+        if(requestList.stream().noneMatch(individualRequest -> individualRequest.getUser().equals(user) &&
+                individualRequest.getStatus().equals(IndividualRequestStatus.REFUSED))) {
+            throw new ThirdPartyRefusedRequestNotFoundException(thirdPartyID);
+        }
+
         BlockedThirdPartyKey key = new BlockedThirdPartyKey(thirdPartyID, user);
         if(blockedThirdPartyRepository.findById(key).isPresent()) {
             throw new BlockAlreadyPerformedException(thirdPartyID);
@@ -106,8 +110,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         individualRequestRepository.findAllByThirdPartyID(thirdPartyID).stream().
                 filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING) &&
                         individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
-                        individualRequest -> {individualRequest.setStatus(IndividualRequestStatus.REFUSED);
-                        System.out.println("CHANGED REQUEST " + individualRequest);}
+                individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED)
         );
 
         return blockedThirdPartyRepository.saveAndFlush(blockedThirdParty);

@@ -10,6 +10,8 @@ public class Constants {
     public static final String USER_NOT_FOUND = "User with the following username is not registered";
     public static final String ALREADY_PRESENT_EMAIL = "Third party with the following email is already registered";
     public static final String THIRD_PARTY_NOT_FOUND = "Third party with the following email is not registered";
+    public static final String INVALID_OPERATION = "Error executing the operation requested. Please check that the" +
+            "format of the data provided is correct.";
 
     public static final String SPACE = " ";
 }

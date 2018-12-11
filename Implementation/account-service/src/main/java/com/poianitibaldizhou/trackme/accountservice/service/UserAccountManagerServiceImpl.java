@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.accountservice.exception.AlreadyPresentUser
 import com.poianitibaldizhou.trackme.accountservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.accountservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the services regarding the management user accounts
@@ -25,11 +26,13 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public User getUserBySsn(String ssn) {
         return userRepository.findById(ssn).orElseThrow(() -> new UserNotFoundException(ssn));
     }
 
+    @Transactional
     @Override
     public User registerUser(User user) {
         if(userRepository.findById(user.getSsn()).isPresent()) {
@@ -42,6 +45,7 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
         return userRepository.saveAndFlush(user);
     }
 
+    @Transactional
     @Override
     public boolean verifyUserCredential(String username, String password) {
         // TODO

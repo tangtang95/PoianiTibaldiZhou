@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.advice;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.exception.NonMatchingUserException;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.ThirdPartyRefusedRequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -12,30 +12,29 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Advice for managing error about non matching user
+ * Advice for managing error about not found third party
  */
 @ControllerAdvice
-public class NonMatchingUserAdvice {
+public class ThirdPartyRefusedRequestNotFoundAdvice {
 
     /**
      * An advice signaled into the body of the response that activates
-     * only when the exception NonMatchingUserException is thrown.
-     * The issue is an HTTP 400.
+     * only when the exception ThirdPartyRefusedRequestNotFoundException is thrown.
+     * The issue is an HTTP 404.
      * The body of the advice contains the message of the exception
      *
      * @param e error that triggers the advice
-     * @return http 400 that contains the message of the exception
+     * @return http 404 that contains the message of the exception
      */
-    @ExceptionHandler(NonMatchingUserException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ThirdPartyRefusedRequestNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public @ResponseBody
-    ExceptionResponseBody nonMatchingUserHandler(NonMatchingUserException e) {
+    ExceptionResponseBody thirdPartyRefusedRequestNotFoundHandler(ThirdPartyRefusedRequestNotFoundException e) {
         return new ExceptionResponseBody(
                 Timestamp.valueOf(LocalDateTime.now()),
-                HttpStatus.BAD_REQUEST.value(),
-                HttpStatus.BAD_REQUEST.toString(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.toString(),
                 e.getMessage());
     }
-
 }
 

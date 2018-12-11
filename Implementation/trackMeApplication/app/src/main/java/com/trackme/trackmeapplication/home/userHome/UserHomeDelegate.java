@@ -38,7 +38,6 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         super.onCreate(presenter);
 
         configureDrawer();
-        configureToolbar();
     }
 
     private void configureDrawer() {
@@ -76,6 +75,9 @@ public class UserHomeDelegate extends BaseActivityDelegate<
             case R.id.nav_settings:
                 mPresenter.onSettingsSelected();
                 break;
+            case R.id.nav_logout:
+                mPresenter.onLogoutSelected();
+                break;
         }
         closeDrawer();
         return true;
@@ -90,7 +92,7 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         }
     }
 
-    private void configureToolbar(){
+    public void configureToolbar(){
         UserPageAdapter pageAdapter = new UserPageAdapter(mPresenter.getView().getActivity().getSupportFragmentManager(),
                 tabLayout.getTabCount());
         viewPager.setAdapter(pageAdapter);
