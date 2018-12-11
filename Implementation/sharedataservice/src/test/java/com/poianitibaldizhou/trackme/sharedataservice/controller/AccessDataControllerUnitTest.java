@@ -131,13 +131,15 @@ public class AccessDataControllerUnitTest {
      */
     @Test
     public void getGroupRequestDataSuccessful() throws Exception {
-        AggregatedData output = AggregatedData.newAggregatedData(THIRD_PARTY_ID, GROUP_REQUEST_ID, 2.0);
+        AggregatedData output = AggregatedData.newAggregatedData(THIRD_PARTY_ID, GROUP_REQUEST_ID, 2.0,
+                new Timestamp(0));
 
         given(service.getGroupRequestData(THIRD_PARTY_ID, GROUP_REQUEST_ID)).willReturn(output);
 
         mvc.perform(get("/accessdata/grouprequest/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is(2.0)))
+                .andExpect(jsonPath("$.generatedTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$._links.self.href",
                         is("http://localhost/accessdata/grouprequest/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)));
     }

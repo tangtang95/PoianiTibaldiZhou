@@ -2,16 +2,15 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
 import com.poianitibaldizhou.trackme.sharedataservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.FilterStatementProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.*;
 import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisherImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbol;
 import com.poianitibaldizhou.trackme.sharedataservice.util.FieldType;
@@ -38,7 +37,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,9 +45,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @RunWith(Enclosed.class)
 public class GroupRequestEventListenerImplTest {
@@ -66,13 +62,13 @@ public class GroupRequestEventListenerImplTest {
     public static class IntegrationTestWithoutMessageBroker {
 
         @Autowired
-        private UserRepository userRepository;
-
-        @Autowired
         private GroupRequestRepository groupRequestRepository;
 
         @Autowired
         private FilterStatementRepository filterStatementRepository;
+
+        @Autowired
+        private InternalCommunicationService internalCommunicationService;
 
         @Mock
         private NumberOfUserInvolvedDataPublisherImpl numberOfUserInvolvedDataPublisher;
@@ -84,8 +80,7 @@ public class GroupRequestEventListenerImplTest {
         @Before
         public void setUp() throws Exception {
             MockitoAnnotations.initMocks(this);
-            groupRequestEventListener = new GroupRequestEventListenerImpl(userRepository, groupRequestRepository,
-                    filterStatementRepository, numberOfUserInvolvedDataPublisher);
+            groupRequestEventListener = new GroupRequestEventListenerImpl(internalCommunicationService);
         }
 
 
@@ -120,7 +115,8 @@ public class GroupRequestEventListenerImplTest {
 
             groupRequestEventListener.onGroupRequestCreated(groupRequestProtocolMessage);
 
-            verify(numberOfUserInvolvedDataPublisher, times(1)).publishNumberOfUserInvolvedData(1.0);
+            verify(numberOfUserInvolvedDataPublisher, times(1))
+                    .publishNumberOfUserInvolvedData(1L, 1.0);
         }
 
         /**
@@ -141,7 +137,7 @@ public class GroupRequestEventListenerImplTest {
             groupRequestEventListener.onGroupRequestCreated(groupRequestProtocolMessage);
 
             verify(numberOfUserInvolvedDataPublisher, times(0))
-                    .publishNumberOfUserInvolvedData(anyDouble());
+                    .publishNumberOfUserInvolvedData(anyLong(), anyDouble());
         }
 
         /**
@@ -228,7 +224,7 @@ public class GroupRequestEventListenerImplTest {
     }
 
     /**
-     * Integration test of group request event listener with the message broker
+     * Integration test of group request event listener with the message broker (w/o DB)
      */
     @Slf4j
     @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

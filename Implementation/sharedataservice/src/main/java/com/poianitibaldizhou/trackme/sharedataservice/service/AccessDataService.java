@@ -1,9 +1,12 @@
 package com.poianitibaldizhou.trackme.sharedataservice.service;
 
+import com.poianitibaldizhou.trackme.sharedataservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.sharedataservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  * Interface provided to offer the service that is necessary to the third party to access data

@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.exception;
 
-import com.poianitibaldizhou.trackme.grouprequestservice.Constants;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 
 /**
  * Exception thrown when a specific group request has not been found

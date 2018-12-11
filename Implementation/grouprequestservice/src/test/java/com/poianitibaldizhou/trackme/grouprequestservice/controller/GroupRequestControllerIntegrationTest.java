@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Filter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +36,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = GroupRequestServiceApplication.class,
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Sql({"classpath:integrationControllerTestDB"})
+@Sql({"classpath:integrationControllerTestDB.sql"})
 @Transactional
 public class GroupRequestControllerIntegrationTest {
 
@@ -70,7 +69,7 @@ public class GroupRequestControllerIntegrationTest {
 		String expectedBody =  "\n" +
 				"{\n" +
 				"   \"groupRequest\":{\n" +
-				"      \"date\":\"2011-06-06\",\n" +
+				"      \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"      \"aggregatorOperator\":\"COUNT\",\n" +
 				"      \"requestType\":\"ALL\",\n" +
 				"      \"status\":\"ACCEPTED\"\n" +
@@ -81,7 +80,7 @@ public class GroupRequestControllerIntegrationTest {
 				"         \"value\":\"200\",\n" +
 				"         \"comparisonSymbol\":\"GREATER\",\n" +
 				"         \"groupRequest\":{\n" +
-				"            \"date\":\"2011-06-06\",\n" +
+				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"            \"aggregatorOperator\":\"COUNT\",\n" +
 				"            \"requestType\":\"ALL\",\n" +
 				"            \"status\":\"ACCEPTED\"\n" +
@@ -92,7 +91,7 @@ public class GroupRequestControllerIntegrationTest {
 				"         \"value\":\"90\",\n" +
 				"         \"comparisonSymbol\":\"GREATER\",\n" +
 				"         \"groupRequest\":{\n" +
-				"            \"date\":\"2011-06-06\",\n" +
+				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"            \"aggregatorOperator\":\"COUNT\",\n" +
 				"            \"requestType\":\"ALL\",\n" +
 				"            \"status\":\"ACCEPTED\"\n" +
@@ -141,7 +140,7 @@ public class GroupRequestControllerIntegrationTest {
 				"      \"groupRequestWrapperList\":[\n" +
 				"         {\n" +
 				"            \"groupRequest\":{\n" +
-				"               \"date\":\"2005-11-03\",\n" +
+				"               \"creationTimestamp\":\"2005-11-03T00:00:00.000+0000\",\n" +
 				"               \"aggregatorOperator\":\"DISTINCT_COUNT\",\n" +
 				"               \"requestType\":\"ALL\",\n" +
 				"               \"status\":\"REFUSED\"\n" +

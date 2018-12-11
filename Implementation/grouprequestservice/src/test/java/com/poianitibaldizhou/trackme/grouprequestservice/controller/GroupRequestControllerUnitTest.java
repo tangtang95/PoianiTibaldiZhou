@@ -18,7 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -58,7 +58,7 @@ public class GroupRequestControllerUnitTest {
         groupRequest.setRequestType(RequestType.HEARTBEAT);
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
         groupRequest.setStatus(RequestStatus.UNDER_ANALYSIS);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         groupRequest.setThirdPartyId(1L);
 
         FilterStatement filterStatement = new FilterStatement();
@@ -75,7 +75,7 @@ public class GroupRequestControllerUnitTest {
         mvc.perform(get("/grouprequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.groupRequest.date", is(groupRequest.getDate().toString())))
+                .andExpect(jsonPath("$.groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("$.groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("$.groupRequest.status", is(groupRequest.getStatus().toString())))
@@ -114,7 +114,7 @@ public class GroupRequestControllerUnitTest {
         groupRequest1.setRequestType(RequestType.PRESSURE_MAX);
         groupRequest1.setAggregatorOperator(AggregatorOperator.MAX);
         groupRequest1.setStatus(RequestStatus.REFUSED);
-        groupRequest1.setDate(new Date(0));
+        groupRequest1.setCreationTimestamp(new Timestamp(0));
         groupRequest1.setThirdPartyId(1L);
 
         FilterStatement filterStatement1 = new FilterStatement();
@@ -129,7 +129,7 @@ public class GroupRequestControllerUnitTest {
         groupRequest2.setRequestType(RequestType.BIRTH_CITY);
         groupRequest2.setAggregatorOperator(AggregatorOperator.DISTINCT_COUNT);
         groupRequest2.setStatus(RequestStatus.REFUSED);
-        groupRequest2.setDate(new Date(0));
+        groupRequest2.setCreationTimestamp(new Timestamp(0));
         groupRequest2.setThirdPartyId(1L);
 
         FilterStatement filterStatement2 = new FilterStatement();
@@ -149,7 +149,7 @@ public class GroupRequestControllerUnitTest {
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.date", containsInAnyOrder(groupRequest1.getDate().toString(), groupRequest2.getDate().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.creationTimestamp", containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.aggregatorOperator", containsInAnyOrder(groupRequest1.getAggregatorOperator().toString(), groupRequest2.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.requestType", containsInAnyOrder(groupRequest1.getRequestType().toString(), groupRequest2.getRequestType().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.status", containsInAnyOrder(groupRequest1.getStatus().toString(), groupRequest2.getStatus().toString())))
@@ -170,7 +170,7 @@ public class GroupRequestControllerUnitTest {
         groupRequest.setRequestType(RequestType.PRESSURE_MAX);
         groupRequest.setAggregatorOperator(AggregatorOperator.MAX);
         groupRequest.setStatus(RequestStatus.REFUSED);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         groupRequest.setThirdPartyId(1L);
 
         FilterStatement filterStatement1 = new FilterStatement();
@@ -195,34 +195,34 @@ public class GroupRequestControllerUnitTest {
 
         given(service.addGroupRequest(any(GroupRequestWrapper.class))).willReturn(groupRequestWrapper);
 
-        String json = "{\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\"," +
+        String json = "{\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\"," +
                 "\"requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"},\"filterStatementList\":" +
                 "[{\"id\":1,\"column\":\"LATITUDE\",\"value\":\"100000\",\"comparisonSymbol\":\"LESS\"," +
-                "\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\",\"" +
+                "\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\",\"" +
                 "requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"}},{\"id\":2,\"column\":\"LATITUDE\",\"" +
                 "value\":\"50000\",\"comparisonSymbol\":\"GREATER\",\"groupRequest\":{\"id\":1," +
-                "\"thirdPartyId\":1,\"date\":0,\"aggregatorOperator\":\"MAX\",\"requestType\":" +
+                "\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\",\"requestType\":" +
                 "\"PRESSURE_MAX\",\"status\":\"REFUSED\"}}]}";
 
         mvc.perform(post("/grouprequestservice/requests/thirdparties/1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
                 content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("groupRequest.date", is("1970-01-01")))
+                .andExpect(jsonPath("groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("groupRequest.status", is(groupRequest.getStatus().toString())))
                 .andExpect(jsonPath("filterStatementList[0].column", is(filterStatement1.getColumn().toString())))
                 .andExpect(jsonPath("filterStatementList[0].value", is(filterStatement1.getValue())))
                 .andExpect(jsonPath("filterStatementList[0].comparisonSymbol", is(filterStatement1.getComparisonSymbol().toString())))
-                .andExpect(jsonPath("filterStatementList[0].groupRequest.date", is(groupRequest.getDate().toString())))
+                .andExpect(jsonPath("filterStatementList[0].groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("filterStatementList[0].groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("filterStatementList[0].groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("filterStatementList[0].groupRequest.status", is(groupRequest.getStatus().toString())))
                 .andExpect(jsonPath("filterStatementList[1].column", is(filterStatement2.getColumn().toString())))
                 .andExpect(jsonPath("filterStatementList[1].value", is(filterStatement2.getValue())))
                 .andExpect(jsonPath("filterStatementList[1].comparisonSymbol", is(filterStatement2.getComparisonSymbol().toString())))
-                .andExpect(jsonPath("filterStatementList[1].groupRequest.date", is(groupRequest.getDate().toString())))
+                .andExpect(jsonPath("filterStatementList[1].groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.status", is(groupRequest.getStatus().toString())))
@@ -239,7 +239,7 @@ public class GroupRequestControllerUnitTest {
         GroupRequest groupRequest = new GroupRequest();
         groupRequest.setThirdPartyId(1L);
         groupRequest.setId(1L);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         groupRequest.setAggregatorOperator(AggregatorOperator.AVG);
         groupRequest.setRequestType(RequestType.ALL);
 

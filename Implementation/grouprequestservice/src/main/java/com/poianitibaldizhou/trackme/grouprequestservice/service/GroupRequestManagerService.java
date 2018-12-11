@@ -34,4 +34,5 @@ public interface GroupRequestManagerService {
      * @return group request that has been added
      */
     GroupRequestWrapper addGroupRequest(GroupRequestWrapper groupRequestWrapper);
+
 }

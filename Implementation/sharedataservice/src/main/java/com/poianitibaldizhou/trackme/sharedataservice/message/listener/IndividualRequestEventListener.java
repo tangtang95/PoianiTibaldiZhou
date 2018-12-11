@@ -6,8 +6,7 @@ public interface IndividualRequestEventListener {
 
     /**
      * Called when a message regarding individual request accepted has been found on the message broker (rabbit-mq).
-     * Based on the individual request protocol message, it converts it into an individual request of this
-     * service and save it on the DBs
+     * Then it calls the internal communication service to handle the object
      *
      * @param individualRequestProtocol the individual request protocol message from the message broker
      */

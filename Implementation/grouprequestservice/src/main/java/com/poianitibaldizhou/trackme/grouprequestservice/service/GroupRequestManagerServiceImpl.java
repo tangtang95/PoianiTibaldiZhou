@@ -12,7 +12,9 @@ import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +54,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
         List<GroupRequest> groupRequestList = groupRequestRepository.findAllByThirdPartyId(thirdPartyId);
 
-        groupRequestList.stream().forEach(groupRequest ->
+        groupRequestList.forEach(groupRequest ->
             groupRequestWrappers.add(new GroupRequestWrapper(groupRequest, filterStatementRepository.findAllByGroupRequest_Id(groupRequest.getId())))
         );
 
@@ -67,7 +69,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
                     groupRequestWrapper.getGroupRequest().getRequestType());
         }
 
-        groupRequestWrapper.getGroupRequest().setDate(Date.valueOf(LocalDate.now()));
+        groupRequestWrapper.getGroupRequest().setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         groupRequestWrapper.getGroupRequest().setStatus(RequestStatus.UNDER_ANALYSIS);
 
         GroupRequest savedRequest = groupRequestRepository.saveAndFlush(groupRequestWrapper.getGroupRequest());

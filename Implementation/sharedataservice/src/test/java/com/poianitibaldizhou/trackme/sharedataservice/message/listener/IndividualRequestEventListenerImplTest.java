@@ -5,10 +5,10 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.IndividualRequestStatusProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -59,12 +59,14 @@ public class IndividualRequestEventListenerImplTest {
         @Autowired
         private IndividualRequestRepository individualRequestRepository;
 
+        @Autowired
+        private InternalCommunicationService internalCommunicationService;
+
         private IndividualRequestEventListener individualRequestEventListener;
 
         @Before
         public void setUp() throws Exception {
-            individualRequestEventListener = new IndividualRequestEventListenerImpl(userRepository,
-                    individualRequestRepository);
+            individualRequestEventListener = new IndividualRequestEventListenerImpl(internalCommunicationService);
         }
 
         @After
@@ -147,7 +149,7 @@ public class IndividualRequestEventListenerImplTest {
     }
 
     /**
-     * Integration test of individual event listener with the message broker
+     * Integration test of individual event listener with the message broker (w/o DB)
      */
     @Slf4j
     @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

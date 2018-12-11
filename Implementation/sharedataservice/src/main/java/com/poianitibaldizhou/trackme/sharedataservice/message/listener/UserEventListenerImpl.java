@@ -1,8 +1,7 @@
 package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
-import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -12,10 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserEventListenerImpl implements UserEventListener {
 
-    private final UserRepository userRepository;
+    private final InternalCommunicationService internalCommunicationService;
 
-    public UserEventListenerImpl(UserRepository userRepository){
-        this.userRepository = userRepository;
+    public UserEventListenerImpl(InternalCommunicationService internalCommunicationService) {
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @RabbitListener(queues = Constants.USER_CREATED_SHARE_DATA_QUEUE_NAME)
@@ -27,18 +26,7 @@ public class UserEventListenerImpl implements UserEventListener {
             log.error("FATAL ERROR: Received a user which has not all attributes non-null " + userProtocol);
             return;
         }
-        if(userRepository.existsById(userProtocol.getSsn())) {
-            log.error("FATAL ERROR: " + userProtocol + "already existing");
-            return;
-        }
-        User user = new User();
-        user.setSsn(userProtocol.getSsn());
-        user.setFirstName(userProtocol.getFirstName());
-        user.setLastName(userProtocol.getLastName());
-        user.setBirthDate(userProtocol.getBirthDate());
-        user.setBirthCity(userProtocol.getBirthCity());
-        user.setBirthNation(userProtocol.getBirthNation());
-        userRepository.save(user);
+        internalCommunicationService.handleUserCreated(userProtocol);
         log.info("AFTER: onUserCreated");
     }
 }

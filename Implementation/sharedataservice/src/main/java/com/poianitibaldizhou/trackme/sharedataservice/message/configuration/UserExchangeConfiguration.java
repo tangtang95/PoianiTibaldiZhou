@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.configuration;
 import com.poianitibaldizhou.trackme.sharedataservice.message.listener.UserEventListener;
 import com.poianitibaldizhou.trackme.sharedataservice.message.listener.UserEventListenerImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -71,12 +72,12 @@ public class UserExchangeConfiguration {
 
     /**
      * Create the user queue listener to receive messages regarding the user exchange's queues
-     * @param userRepository the user repository
+     * @param internalCommunicationService the service handling the internal communication message from other services
      * @return the user queue listener
      */
     @Bean
-    public UserEventListener userEventListener(UserRepository userRepository){
-        return new UserEventListenerImpl(userRepository);
+    public UserEventListener userEventListener(InternalCommunicationService internalCommunicationService){
+        return new UserEventListenerImpl(internalCommunicationService);
     }
 
 }

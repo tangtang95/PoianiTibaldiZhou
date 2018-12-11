@@ -4,6 +4,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
@@ -47,13 +48,16 @@ public class UserEventListenerImplTest {
     public static class IntegrationTestWithoutMessageBroker{
 
         @Autowired
+        private InternalCommunicationService internalCommunicationService;
+
+        @Autowired
         private UserRepository userRepository;
 
         private UserEventListener userEventListener;
 
         @Before
         public void setUp() throws Exception {
-            userEventListener = new UserEventListenerImpl(userRepository);
+            userEventListener = new UserEventListenerImpl(internalCommunicationService);
         }
 
         @After
@@ -136,7 +140,7 @@ public class UserEventListenerImplTest {
     }
 
     /**
-     * Integration test of user event listener with the message broker
+     * Integration test of user event listener with the message broker (w/o DB)
      */
     @Slf4j
     @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)

@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOf
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -91,19 +92,12 @@ public class GroupRequestExchangeConfiguration {
     /**
      * Create the group request queue listener to receive messages regarding the group request exchange's queue
      *
-     * @param userRepository the user repository
-     * @param groupRequestRepository the group request repository
-     * @param filterStatementRepository the filter statement repository
-     * @param numberOfUserInvolvedDataPublisher the publisher of number of user involved data
+     * @param internalCommunicationService the service handling the internal communication message from other services
      * @return the group request queue listener
      */
     @Bean
-    public GroupRequestEventListener groupRequestEventListener(UserRepository userRepository,
-                                                               GroupRequestRepository groupRequestRepository,
-                                                               FilterStatementRepository filterStatementRepository,
-                                                               NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher){
-        return new GroupRequestEventListenerImpl(userRepository, groupRequestRepository,
-                filterStatementRepository, numberOfUserInvolvedDataPublisher);
+    public GroupRequestEventListener groupRequestEventListener(InternalCommunicationService internalCommunicationService){
+        return new GroupRequestEventListenerImpl(internalCommunicationService);
     }
 
 }

@@ -73,6 +73,7 @@ public class AccessDataServiceImpl implements AccessDataService {
         result.setGroupRequestId(requestId);
         result.setValue(userRepository.getAggregatedData(groupRequest.getAggregatorOperator(),
                 groupRequest.getRequestType(), filters));
+        result.setGeneratedTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         return result;
     }
 

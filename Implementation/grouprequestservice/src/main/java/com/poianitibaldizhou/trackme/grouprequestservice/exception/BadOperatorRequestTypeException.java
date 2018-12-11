@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.exception;
 
-import com.poianitibaldizhou.trackme.grouprequestservice.Constants;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestType;
 
