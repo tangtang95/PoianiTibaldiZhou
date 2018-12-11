@@ -32,4 +32,11 @@ public class ExceptionResponseBody {
         this.error = error;
         this.message = message;
     }
+
+    /**
+     * Empty constructor
+     */
+    public ExceptionResponseBody() {
+
+    }
 }

@@ -1,12 +1,17 @@
 package com.poianitibaldizhou.trackme.accountservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.accountservice.AccountServiceApplication;
 import com.poianitibaldizhou.trackme.accountservice.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.accountservice.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.accountservice.entity.ThirdPartyCustomer;
+import com.poianitibaldizhou.trackme.accountservice.exception.AlreadyPresentEmailException;
+import com.poianitibaldizhou.trackme.accountservice.exception.ThirdPartyCustomerNotFoundException;
 import com.poianitibaldizhou.trackme.accountservice.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.accountservice.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.accountservice.repository.ThirdPartyRepository;
+import com.poianitibaldizhou.trackme.accountservice.util.Constants;
+import com.poianitibaldizhou.trackme.accountservice.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyPrivateWrapper;
 import org.json.JSONException;
@@ -23,6 +28,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -134,12 +140,19 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
      * Test the get of information of a third party, when no third party with the specified email is present
      */
     @Test
-    public void testGetTPWhenNotRegistered() {
+    public void testGetTPWhenNotRegistered() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/tpaccountservice/thirdparties/nonPresentMail@provider.com"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new ThirdPartyCustomerNotFoundException("nonPresentMail@provider.com").getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -184,7 +197,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
      * with the specified email is already registered into the system
      */
     @Test
-    public void testCompanyRegisterThirdPartyWhenEmailAlreadyPresent() {
+    public void testCompanyRegisterThirdPartyWhenEmailAlreadyPresent() throws IOException {
         ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
         thirdPartyCustomer.setEmail("tp1@provider.com");
         thirdPartyCustomer.setPassword("newPassword");
@@ -207,6 +220,13 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
 
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new AlreadyPresentEmailException("tp1@provider.com").getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -255,7 +275,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
      * with the specified email is already registered into the system
      */
     @Test
-    public void testPrivateRegisterThirdPartyWhenEmailAlreadyPresent() {
+    public void testPrivateRegisterThirdPartyWhenEmailAlreadyPresent() throws IOException {
         ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
         thirdPartyCustomer.setEmail("tp1@provider.com");
         thirdPartyCustomer.setPassword("newPassword");
@@ -280,6 +300,49 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
 
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new AlreadyPresentEmailException("tp1@provider.com").getMessage(), exceptionResponseBody.getMessage());
+
+    }
+
+    /**
+     * Test when not all the parameters required are set
+     */
+    @Test
+    public void testNotAllParameterSpecified() throws IOException {
+        ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
+        thirdPartyCustomer.setEmail("tp121@provider.com");
+        thirdPartyCustomer.setPassword("newPassword");
+
+        PrivateThirdPartyDetail privateThirdPartyDetail = new PrivateThirdPartyDetail();
+        privateThirdPartyDetail.setThirdPartyCustomer(new ThirdPartyCustomer());
+        privateThirdPartyDetail.setSsn("newSsn");
+        privateThirdPartyDetail.setBirthCity("Verona");
+        privateThirdPartyDetail.setBirthDate(new Date(0));
+
+        ThirdPartyPrivateWrapper thirdPartyPrivateWrapper  = new ThirdPartyPrivateWrapper();
+        thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
+        thirdPartyPrivateWrapper.setThirdPartyCustomer(thirdPartyCustomer);
+
+        HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/tpaccountservice/thirdparties/privates"),
+                HttpMethod.POST, entity, String.class);
+
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
     }
 
 

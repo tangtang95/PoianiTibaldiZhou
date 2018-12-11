@@ -12,6 +12,7 @@ import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyCompanyWrappe
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyPrivateWrapper;
 import com.poianitibaldizhou.trackme.accountservice.util.ThirdPartyWrapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -60,6 +61,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return Optional.empty();
     }
 
+    @Transactional
     @Override
     public Optional<ThirdPartyPrivateWrapper> getThirdPartyPrivateByEmail(String email) {
         ThirdPartyCustomer thirdPartyCustomer = thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
@@ -76,6 +78,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return Optional.empty();
     }
 
+    @Transactional
     @Override
     public ThirdPartyCompanyWrapper registerThirdPartyCompany(ThirdPartyCompanyWrapper thirdPartyCompanyWrapper) {
         // Check registration condition
@@ -97,6 +100,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return savedWrapper;
     }
 
+    @Transactional
     @Override
     public ThirdPartyPrivateWrapper registerThirdPartyPrivate(ThirdPartyPrivateWrapper thirdPartyPrivateWrapper) {
         // Check registration condition
@@ -118,6 +122,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return savedWrapper;
     }
 
+    @Transactional
     @Override
     public boolean verifyThirdPartyCredential(String email, String password) {
         // TODO
