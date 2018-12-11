@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.exception;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 
 /**
  * Exception thrown when a user is providing a type of response not allowed
