@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.service;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.*;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualRequestNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.*;
 import com.poianitibaldizhou.trackme.sharedataservice.util.*;
 import org.junit.After;
@@ -58,6 +59,8 @@ public class AccessDataServiceImplUnitTest {
     private static final Long NOT_EXISTING_THIRD_PARTY_ID = 2L;
 
     private static final Double GROUP_REQUEST_RESULT = 1D;
+
+    private static final String USER_1_ID = "user1";
 
     @Mock
     private User user1;
@@ -124,6 +127,8 @@ public class AccessDataServiceImplUnitTest {
     private void setUpUserRepository() {
         when(userRepository.getAggregatedData(groupRequest1.getAggregatorOperator(), groupRequest1.getRequestType(),
                 filterStatements)).thenReturn(GROUP_REQUEST_RESULT);
+        when(user1.getSsn()).thenReturn(USER_1_ID);
+        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.of(user1));
     }
 
     private void setUpHealthDataRepository() {
@@ -261,6 +266,44 @@ public class AccessDataServiceImplUnitTest {
     @Test(expected = GroupRequestNotFoundException.class)
     public void getGroupRequestDataNotExistingGroupRequestAndThirdParty() throws Exception {
         accessDataService.getGroupRequestData(NOT_EXISTING_THIRD_PARTY_ID, NOT_EXISTING_GROUP_REQUEST_ID);
+    }
+
+    /**
+     * Test get own data with existing user
+     *
+     * @throws Exception no exception expected
+     */
+    @Test
+    public void getOwnDataWithExistingUser() throws Exception{
+        List<PositionData> positionDataList = new ArrayList<>();
+        positionDataList.add(positionData1);
+        positionDataList.add(positionData2);
+
+        List<HealthData> healthDataList = new ArrayList<>();
+        healthDataList.add(healthData1);
+        healthDataList.add(healthData2);
+
+        DataWrapper output = new DataWrapper();
+        output.setHealthDataList(healthDataList);
+        output.setPositionDataList(positionDataList);
+
+        DataWrapper requestData = accessDataService.getOwnData(USER_1_ID,
+                Date.valueOf(LocalDate.of(2014, 11, 10)),
+                Date.valueOf(LocalDate.of(2016, 12, 10)));
+
+        assertEquals(output, requestData);
+    }
+
+    /**
+     * Test get own data with not existing user
+     *
+     * @throws Exception UserNotFoundException
+     */
+    @Test(expected = UserNotFoundException.class)
+    public void getOwnDataWithNotExistingUser() throws Exception{
+        accessDataService.getOwnData("notExistingUser",
+                Date.valueOf(LocalDate.of(2014, 11, 10)),
+                Date.valueOf(LocalDate.of(2016, 12, 10)));
     }
 
 }

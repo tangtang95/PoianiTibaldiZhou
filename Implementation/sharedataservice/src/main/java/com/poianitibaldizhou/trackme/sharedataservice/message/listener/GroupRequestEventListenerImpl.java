@@ -40,8 +40,12 @@ public class GroupRequestEventListenerImpl implements GroupRequestEventListener 
     @Override
     public void onGroupRequestCreated(@Payload GroupRequestProtocolMessage groupRequestProtocol) {
         log.info("BEFORE: onGroupRequestCreated " + groupRequestProtocol.toString());
+        if(!GroupRequestProtocolMessage.validateMessage(groupRequestProtocol)){
+            log.error("FATAL ERROR: Received a group request which has not all attributes non-null " + groupRequestProtocol);
+            return;
+        }
         if(!groupRequestProtocol.getStatus().equals(GroupRequestStatusProtocolMessage.UNDER_ANALYSIS)) {
-            log.info("GROUP REQUEST NOT UNDER ANALYSIS");
+            log.error("FATAL ERROR: Received a group request which is not UNDER_ANALYSIS " + groupRequestProtocol);
             return;
         }
         AggregatorOperator distinctCountOperator = AggregatorOperator.DISTINCT_COUNT;
@@ -65,8 +69,12 @@ public class GroupRequestEventListenerImpl implements GroupRequestEventListener 
     @Override
     public void onGroupRequestAccepted(@Payload GroupRequestProtocolMessage groupRequestProtocol) {
         log.info("BEFORE: onGroupRequestAccepted " + groupRequestProtocol.toString());
+        if(!GroupRequestProtocolMessage.validateMessage(groupRequestProtocol)){
+            log.error("FATAL ERROR: Received a group request which has not all attributes non-null " + groupRequestProtocol);
+            return;
+        }
         if(!groupRequestProtocol.getStatus().equals(GroupRequestStatusProtocolMessage.ACCEPTED)) {
-            log.info("GROUP REQUEST NOT ACCEPTED");
+            log.error("FATAL ERROR: Received a group request which is not ACCEPTED " + groupRequestProtocol);
             return;
         }
         GroupRequest groupRequest = new GroupRequest();

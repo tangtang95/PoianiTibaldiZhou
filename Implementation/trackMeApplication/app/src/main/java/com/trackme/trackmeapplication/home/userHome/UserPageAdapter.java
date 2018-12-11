@@ -21,6 +21,8 @@ public class UserPageAdapter extends FragmentPagerAdapter {
             case 0:
                 return new UserHomeFragment();
             case 1:
+                return new UserHistoryFragment();
+            case 2:
                 return new IndividualMessageFragment();
             default:
                 return null;

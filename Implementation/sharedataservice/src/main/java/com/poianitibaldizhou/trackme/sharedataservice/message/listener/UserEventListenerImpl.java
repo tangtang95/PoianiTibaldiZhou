@@ -23,8 +23,14 @@ public class UserEventListenerImpl implements UserEventListener {
     @Override
     public void onUserCreated(@Payload UserProtocolMessage userProtocol) {
         log.info("BEFORE: onUserCreated " + userProtocol.toString());
-        if(userRepository.existsById(userProtocol.getSsn()))
+        if(!UserProtocolMessage.validateMessage(userProtocol)){
+            log.error("FATAL ERROR: Received a user which has not all attributes non-null " + userProtocol);
             return;
+        }
+        if(userRepository.existsById(userProtocol.getSsn())) {
+            log.error("FATAL ERROR: " + userProtocol + "already existing");
+            return;
+        }
         User user = new User();
         user.setSsn(userProtocol.getSsn());
         user.setFirstName(userProtocol.getFirstName());

@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
+import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.IndividualRequestStatusProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
@@ -30,8 +31,13 @@ public class IndividualRequestEventListenerImpl implements IndividualRequestEven
     @Override
     public void onIndividualRequestAccepted(@Payload IndividualRequestProtocolMessage individualRequestProtocol) {
         log.info("BEFORE: onIndividualRequestAccepted " + individualRequestProtocol.toString());
+        if(!IndividualRequestProtocolMessage.validateMessage(individualRequestProtocol)){
+            log.error("FATAL ERROR: Received am individual request which has not all attributes non-null "
+                    + individualRequestProtocol);
+            return;
+        }
         if(!individualRequestProtocol.getStatus().equals(IndividualRequestStatusProtocolMessage.ACCEPTED)) {
-            log.info("INDIVIDUAL REQUEST NOT ACCEPTED");
+            log.error("FATAL ERROR: Received an individual request which is not ACCEPTED" + individualRequestProtocol);
             return;
         }
         User user = userRepository.findById(individualRequestProtocol.getUserSsn())

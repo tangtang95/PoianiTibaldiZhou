@@ -145,7 +145,7 @@ public class AccessDataControllerIntegrationTest {
     // TEST GET INDIVIDUAL REQUEST DATA METHOD
 
     /**
-     * Test the get group request data
+     * Test the get group request data when it is successful
      *
      * @throws Exception due to json assertEquals method
      */
@@ -169,7 +169,7 @@ public class AccessDataControllerIntegrationTest {
     }
 
     /**
-     * Test the get group request data
+     * Test the get group request data with a not existing third party
      *
      * @throws Exception due to json assertEquals method
      */
@@ -183,7 +183,7 @@ public class AccessDataControllerIntegrationTest {
     }
 
     /**
-     * Test the get group request data
+     * Test the get group request data with a non matching request id and existing third party
      *
      * @throws Exception due to json assertEquals method
      */
@@ -195,6 +195,113 @@ public class AccessDataControllerIntegrationTest {
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
+
+    /**
+     * Test the get own data with existing user
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getOwnDataWithExistingUser() throws Exception{
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate
+                .exchange(createURLWithPort("/accessdata/user/user1?from=2010-01-01&to=2010-01-01"),
+                HttpMethod.GET, entity, String.class);
+
+        String expectedBody = "{\n" +
+                "  \"positionDataList\": [\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T06:00:00.000+0000\",\n" +
+                "      \"longitude\": 60.0,\n" +
+                "      \"latitude\": 50.0\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T08:00:00.000+0000\",\n" +
+                "      \"longitude\": 68.2,\n" +
+                "      \"latitude\": 70.0\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T10:00:00.000+0000\",\n" +
+                "      \"longitude\": 65.42,\n" +
+                "      \"latitude\": -10.0\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"healthDataList\": [\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T06:00:00.000+0000\",\n" +
+                "      \"heartBeat\": 50,\n" +
+                "      \"bloodOxygenLevel\": 75,\n" +
+                "      \"pressureMin\": 60,\n" +
+                "      \"pressureMax\": 100\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T08:00:00.000+0000\",\n" +
+                "      \"heartBeat\": 70,\n" +
+                "      \"bloodOxygenLevel\": 90,\n" +
+                "      \"pressureMin\": 68,\n" +
+                "      \"pressureMax\": 101\n" +
+                "    },\n" +
+                "    {\n" +
+                "      \"timestamp\": \"2010-01-01T10:00:00.000+0000\",\n" +
+                "      \"heartBeat\": 120,\n" +
+                "      \"bloodOxygenLevel\": 79,\n" +
+                "      \"pressureMin\": 65,\n" +
+                "      \"pressureMax\": 110\n" +
+                "    }\n" +
+                "  ],\n" +
+                "  \"_links\": {\n" +
+                "    \"self\": {\n" +
+                "      \"href\": \"http://localhost:" + port + "/accessdata/user/user1?from=2010-01-01&to=2010-01-01\"\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
+    }
+
+    /**
+     * Test the get own data method with not existing user
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getOwnDataWithNotExistingUser() throws Exception{
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate
+                .exchange(createURLWithPort("/accessdata/user/user3?from=2010-01-01&to=2010-01-01"),
+                        HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    /**
+     * Test the get own data method when there is no upper bound date
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getOwnDataWithExistingUserButNoDateAboutUpperBound() throws Exception{
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate
+                .exchange(createURLWithPort("/accessdata/user/user1?from=2010-01-01"),
+                        HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
+    /**
+     * Test the get own data method when there is no lower bound date
+     *
+     * @throws Exception due to json assertEquals method
+     */
+    @Test
+    public void getOwnDataWithExistingUserButNoDateAboutLowerBound() throws Exception{
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate
+                .exchange(createURLWithPort("/accessdata/user/user1?to=2010-01-01"),
+                        HttpMethod.GET, entity, String.class);
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+    }
+
     // UTILITY FUNCTIONS
 
     /**

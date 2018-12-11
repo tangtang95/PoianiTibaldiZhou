@@ -22,4 +22,7 @@
     <string name="menu_action_logout">Logout</string>
     <string name="home_check_your_status">CHECK YOUR STATUS</string>
     <string name="home_welcome_to_data4help">Welcome to Data4Help</string>
+    <string name="home_fragment_pulse">Pulse:</string>
+    <string name="home_fragment_blood_pressure">Blood Pressure:</string>
+    <string name="toolbar_menu_history">HISTORY</string>
 </resources>
