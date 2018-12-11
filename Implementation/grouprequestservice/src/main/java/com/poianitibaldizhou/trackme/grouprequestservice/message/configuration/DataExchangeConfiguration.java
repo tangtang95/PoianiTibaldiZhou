@@ -1,5 +1,8 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.message.configuration;
 
+import com.poianitibaldizhou.trackme.grouprequestservice.message.listener.NumberOfUserInvolvedDataEventListener;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.listener.NumberOfUserInvolvedDataEventListenerImpl;
+import com.poianitibaldizhou.trackme.grouprequestservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -51,6 +54,19 @@ public class DataExchangeConfiguration {
                                                                                 Queue numberOfUserInvolvedGeneratedToGroupRequestServiceQueue){
         return BindingBuilder.bind(numberOfUserInvolvedGeneratedToGroupRequestServiceQueue).to(numberOfUserInvolvedExchange)
                 .with("number-of-user.*.generated");
+    }
+
+    /**
+     * Create the number of user involved data queue listener to receive messages regarding the generation of
+     * number of user involved data
+     *
+     * @param internalCommunicationService the service handling the internal communication message from other services
+     * @return the number of user involved data queue listener
+     */
+    @Bean
+    public NumberOfUserInvolvedDataEventListener numberOfUserInvolvedDataEventListener(
+            InternalCommunicationService internalCommunicationService){
+        return new NumberOfUserInvolvedDataEventListenerImpl(internalCommunicationService);
     }
 
 

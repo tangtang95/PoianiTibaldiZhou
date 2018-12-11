@@ -14,19 +14,19 @@ public class AggregatorOperatorUtils {
     private AggregatorOperatorUtils(){}
 
     /**
-     * Returns the aggregator operator of share data service w.r.t. the one of the protocol
+     * Returns the aggregator operator of the protocol w.r.t. the aggregator operator of this service
      *
-     * @param aggregatorOperatorProtocol the aggregator operator of the protocol to be mapped
-     * @return the counterpart aggregator operator of the aggregator operator of the protocol
+     * @param aggregatorOperator the aggregator operator of this service
+     * @return the counterpart aggregator operator of the protocol
      */
-    public static AggregatorOperator getAggregatorOperator(AggregatorOperatorProtocolMessage aggregatorOperatorProtocol){
-        Map<String, AggregatorOperator> operators = ImmutableMap.<String, AggregatorOperator>builder()
-                .put(AggregatorOperatorProtocolMessage.COUNT.name(), AggregatorOperator.COUNT)
-                .put(AggregatorOperatorProtocolMessage.DISTINCT_COUNT.name(), AggregatorOperator.DISTINCT_COUNT)
-                .put(AggregatorOperatorProtocolMessage.AVG.name(), AggregatorOperator.AVG)
-                .put(AggregatorOperatorProtocolMessage.MAX.name(), AggregatorOperator.MAX)
-                .put(AggregatorOperatorProtocolMessage.MIN.name(), AggregatorOperator.MIN)
+    public static AggregatorOperatorProtocolMessage getAggregatorOperatorOfProtocol(AggregatorOperator aggregatorOperator){
+        Map<AggregatorOperator, AggregatorOperatorProtocolMessage> operators = ImmutableMap.<AggregatorOperator, AggregatorOperatorProtocolMessage>builder()
+                .put(AggregatorOperator.COUNT, AggregatorOperatorProtocolMessage.COUNT)
+                .put(AggregatorOperator.DISTINCT_COUNT, AggregatorOperatorProtocolMessage.DISTINCT_COUNT)
+                .put(AggregatorOperator.AVG, AggregatorOperatorProtocolMessage.AVG)
+                .put(AggregatorOperator.MAX, AggregatorOperatorProtocolMessage.MAX)
+                .put(AggregatorOperator.MIN, AggregatorOperatorProtocolMessage.MIN)
                 .build();
-        return operators.get(aggregatorOperatorProtocol.name());
+        return operators.get(aggregatorOperator.name());
     }
 }

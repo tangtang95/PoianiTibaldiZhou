@@ -6,27 +6,33 @@ import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumer
 import java.util.Map;
 
 /**
- * The utility class regarding FieldType
+ * The utility class regarding FieldTypeProtocolMessage
  */
 public class FieldTypeUtils {
 
     private FieldTypeUtils() {}
 
-    public static FieldType getFieldType(FieldTypeProtocolMessage fieldTypeProtocol){
-        Map<FieldTypeProtocolMessage, FieldType> fieldTypeMap =
-                ImmutableMap.<FieldTypeProtocolMessage, FieldType>builder()
-                .put(FieldTypeProtocolMessage.BIRTH_CITY, FieldType.BIRTH_CITY)
-                .put(FieldTypeProtocolMessage.BIRTH_YEAR, FieldType.BIRTH_YEAR)
-                .put(FieldTypeProtocolMessage.BLOOD_OXYGEN_LEVEL, FieldType.BLOOD_OXYGEN_LEVEL)
-                .put(FieldTypeProtocolMessage.HEART_BEAT, FieldType.HEART_BEAT)
-                .put(FieldTypeProtocolMessage.HEALTH_TIMESTAMP, FieldType.HEALTH_TIMESTAMP)
-                .put(FieldTypeProtocolMessage.LATITUDE, FieldType.LATITUDE)
-                .put(FieldTypeProtocolMessage.LONGITUDE, FieldType.LONGITUDE)
-                .put(FieldTypeProtocolMessage.POSITION_TIMESTAMP, FieldType.POSITION_TIMESTAMP)
-                .put(FieldTypeProtocolMessage.PRESSURE_MAX, FieldType.PRESSURE_MAX)
-                .put(FieldTypeProtocolMessage.PRESSURE_MIN, FieldType.PRESSURE_MIN)
-                .put(FieldTypeProtocolMessage.BIRTH_NATION, FieldType.BIRTH_NATION)
+    /**
+     * Returns the field type of the protocol w.r.t. the field type of this service
+     *
+     * @param fieldType the field type of this service
+     * @return the counterpart field type of the protocol
+     */
+    public static FieldTypeProtocolMessage getFieldTypeOfProtocol(FieldType fieldType){
+        Map<FieldType, FieldTypeProtocolMessage> fieldTypeMap =
+                ImmutableMap.<FieldType, FieldTypeProtocolMessage>builder()
+                .put(FieldType.BIRTH_CITY, FieldTypeProtocolMessage.BIRTH_CITY)
+                .put(FieldType.BIRTH_YEAR, FieldTypeProtocolMessage.BIRTH_YEAR)
+                .put(FieldType.BLOOD_OXYGEN_LEVEL, FieldTypeProtocolMessage.BLOOD_OXYGEN_LEVEL)
+                .put(FieldType.HEART_BEAT, FieldTypeProtocolMessage.HEART_BEAT)
+                .put(FieldType.HEALTH_TIMESTAMP, FieldTypeProtocolMessage.HEALTH_TIMESTAMP)
+                .put(FieldType.LATITUDE, FieldTypeProtocolMessage.LATITUDE)
+                .put(FieldType.LONGITUDE, FieldTypeProtocolMessage.LONGITUDE)
+                .put(FieldType.POSITION_TIMESTAMP, FieldTypeProtocolMessage.POSITION_TIMESTAMP)
+                .put(FieldType.PRESSURE_MAX, FieldTypeProtocolMessage.PRESSURE_MAX)
+                .put(FieldType.PRESSURE_MIN, FieldTypeProtocolMessage.PRESSURE_MIN)
+                .put(FieldType.BIRTH_NATION, FieldTypeProtocolMessage.BIRTH_NATION)
                 .build();
-        return fieldTypeMap.get(fieldTypeProtocol);
+        return fieldTypeMap.get(fieldType);
     }
 }

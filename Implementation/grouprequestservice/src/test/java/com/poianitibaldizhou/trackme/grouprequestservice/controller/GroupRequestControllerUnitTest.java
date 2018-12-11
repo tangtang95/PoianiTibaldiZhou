@@ -55,7 +55,7 @@ public class GroupRequestControllerUnitTest {
     public void getRequestById() throws Exception {
         GroupRequest groupRequest = new GroupRequest();
         groupRequest.setId(1L);
-        groupRequest.setRequestType(RequestType.HEARTBEAT);
+        groupRequest.setRequestType(RequestType.HEART_BEAT);
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
         groupRequest.setStatus(RequestStatus.UNDER_ANALYSIS);
         groupRequest.setCreationTimestamp(new Timestamp(0));

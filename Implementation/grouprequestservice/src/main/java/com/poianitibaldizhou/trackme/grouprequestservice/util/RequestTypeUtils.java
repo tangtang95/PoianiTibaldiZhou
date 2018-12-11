@@ -6,24 +6,30 @@ import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumer
 import java.util.Map;
 
 /**
- * The utility class regarding RequestType
+ * The utility class regarding RequestTypeProtocolMessage
  */
 public class RequestTypeUtils {
 
     private RequestTypeUtils() {}
 
-    public static RequestType getRequestType(RequestTypeProtocolMessage requestTypeProtocol){
-        Map<RequestTypeProtocolMessage, RequestType> requestTypeMap = ImmutableMap.<RequestTypeProtocolMessage, RequestType>builder()
-                .put(RequestTypeProtocolMessage.ALL, RequestType.ALL)
-                .put(RequestTypeProtocolMessage.BIRTH_CITY, RequestType.BIRTH_CITY)
-                .put(RequestTypeProtocolMessage.BIRTH_YEAR, RequestType.BIRTH_YEAR)
-                .put(RequestTypeProtocolMessage.BLOOD_OXYGEN_LEVEL, RequestType.BLOOD_OXYGEN_LEVEL)
-                .put(RequestTypeProtocolMessage.HEART_BEAT, RequestType.HEARTBEAT)
-                .put(RequestTypeProtocolMessage.PRESSURE_MAX, RequestType.PRESSURE_MAX)
-                .put(RequestTypeProtocolMessage.PRESSURE_MIN, RequestType.PRESSURE_MIN)
-                .put(RequestTypeProtocolMessage.USER_SSN, RequestType.USER_SSN)
+    /**
+     * Returns the request type of the protocol w.r.t. the request type of this service
+     *
+     * @param requestType the request type of this service
+     * @return the counterpart request type of the protocol
+     */
+    public static RequestTypeProtocolMessage getRequestTypeOfProtocol(RequestType requestType){
+        Map<RequestType, RequestTypeProtocolMessage> requestTypeMap = ImmutableMap.<RequestType, RequestTypeProtocolMessage>builder()
+                .put(RequestType.ALL, RequestTypeProtocolMessage.ALL)
+                .put(RequestType.BIRTH_CITY, RequestTypeProtocolMessage.BIRTH_CITY)
+                .put(RequestType.BIRTH_YEAR, RequestTypeProtocolMessage.BIRTH_YEAR)
+                .put(RequestType.BLOOD_OXYGEN_LEVEL, RequestTypeProtocolMessage.BLOOD_OXYGEN_LEVEL)
+                .put(RequestType.HEART_BEAT, RequestTypeProtocolMessage.HEART_BEAT)
+                .put(RequestType.PRESSURE_MAX, RequestTypeProtocolMessage.PRESSURE_MAX)
+                .put(RequestType.PRESSURE_MIN, RequestTypeProtocolMessage.PRESSURE_MIN)
+                .put(RequestType.USER_SSN, RequestTypeProtocolMessage.USER_SSN)
                 .build();
-        return requestTypeMap.get(requestTypeProtocol);
+        return requestTypeMap.get(requestType);
     }
 
 }

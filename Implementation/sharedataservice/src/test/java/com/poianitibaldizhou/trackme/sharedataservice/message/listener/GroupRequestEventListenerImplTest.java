@@ -6,11 +6,13 @@ import com.poianitibaldizhou.trackme.sharedataservice.exception.GroupRequestNotF
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.FilterStatementProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.*;
-import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisherImpl;
+import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisher;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationServiceImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ComparisonSymbol;
 import com.poianitibaldizhou.trackme.sharedataservice.util.FieldType;
@@ -45,7 +47,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @RunWith(Enclosed.class)
 public class GroupRequestEventListenerImplTest {
@@ -68,34 +73,40 @@ public class GroupRequestEventListenerImplTest {
         private FilterStatementRepository filterStatementRepository;
 
         @Autowired
+        private UserRepository userRepository;
+
+        @Autowired
+        private IndividualRequestRepository individualRequestRepository;
+
+        private GroupRequestEventListenerImpl groupRequestEventListener;
+
         private InternalCommunicationService internalCommunicationService;
 
-        @Mock
-        private NumberOfUserInvolvedDataPublisherImpl numberOfUserInvolvedDataPublisher;
-
-        private GroupRequestEventListener groupRequestEventListener;
-
         private GroupRequestProtocolMessage groupRequestProtocolMessage;
+
+        @Mock
+        private NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher;
 
         @Before
         public void setUp() throws Exception {
             MockitoAnnotations.initMocks(this);
+            internalCommunicationService = new InternalCommunicationServiceImpl(userRepository, filterStatementRepository,
+                    groupRequestRepository, individualRequestRepository, numberOfUserInvolvedDataPublisher);
             groupRequestEventListener = new GroupRequestEventListenerImpl(internalCommunicationService);
         }
 
 
         @After
         public void tearDown() throws Exception {
-            numberOfUserInvolvedDataPublisher = null;
         }
 
         /**
-         * Test on group request created when the group request protocol message is correct
+         * Test handle group request created when the group request protocol message is correct
          *
          * @throws Exception no exception expected
          */
         @Test
-        public void onGroupRequestCreatedSuccessful() throws Exception {
+        public void handleGroupRequestCreatedSuccessful() throws Exception {
             groupRequestProtocolMessage = new GroupRequestProtocolMessage();
             groupRequestProtocolMessage.setAggregatorOperator(AggregatorOperatorProtocolMessage.AVG);
             groupRequestProtocolMessage.setId(1L);

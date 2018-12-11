@@ -8,7 +8,7 @@ public enum  RequestType {
     USER_SSN(false),
     BIRTH_YEAR(true),
     BIRTH_CITY(false),
-    HEARTBEAT(true),
+    HEART_BEAT(true),
     PRESSURE_MIN(true),
     PRESSURE_MAX(true),
     BLOOD_OXYGEN_LEVEL(true);

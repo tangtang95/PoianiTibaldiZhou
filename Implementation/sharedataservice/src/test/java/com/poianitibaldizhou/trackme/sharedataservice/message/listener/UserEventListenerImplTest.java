@@ -3,14 +3,20 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
+import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisher;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
@@ -48,15 +54,28 @@ public class UserEventListenerImplTest {
     public static class IntegrationTestWithoutMessageBroker{
 
         @Autowired
-        private InternalCommunicationService internalCommunicationService;
+        private GroupRequestRepository groupRequestRepository;
+
+        @Autowired
+        private FilterStatementRepository filterStatementRepository;
 
         @Autowired
         private UserRepository userRepository;
+
+        @Autowired
+        private IndividualRequestRepository individualRequestRepository;
+
+        @Mock
+        private NumberOfUserInvolvedDataPublisher numberOfUserInvolvedDataPublisher;
+
+        private InternalCommunicationService internalCommunicationService;
 
         private UserEventListener userEventListener;
 
         @Before
         public void setUp() throws Exception {
+            internalCommunicationService = new InternalCommunicationServiceImpl(userRepository, filterStatementRepository,
+                    groupRequestRepository, individualRequestRepository, numberOfUserInvolvedDataPublisher);
             userEventListener = new UserEventListenerImpl(internalCommunicationService);
         }
 
