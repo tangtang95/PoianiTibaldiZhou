@@ -48,8 +48,11 @@ public class InternalCommunicationServiceImpl implements InternalCommunicationSe
     public void handleGroupRequestAccepted(GroupRequestProtocolMessage groupRequestProtocolMessage) {
         GroupRequest groupRequest = convertToGroupRequest(groupRequestProtocolMessage);
         List<FilterStatement> filterStatementList = convertToFilterStatementList(groupRequestProtocolMessage);
-        groupRequestRepository.save(groupRequest);
-        filterStatementRepository.saveAll(filterStatementList);
+        GroupRequest groupRequestSaved = groupRequestRepository.save(groupRequest);
+        filterStatementList.forEach(filterStatement ->{
+            filterStatement.setGroupRequest(groupRequestSaved);
+            filterStatementRepository.save(filterStatement);
+        });
     }
 
     @Override

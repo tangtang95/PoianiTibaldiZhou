@@ -83,7 +83,7 @@ public class GroupRequestManagerServiceImplUnitTest {
         request3.setCreationTimestamp(new Timestamp(0));
         request3.setStatus(RequestStatus.REFUSED);
         request3.setAggregatorOperator(AggregatorOperator.AVG);
-        request3.setRequestType(RequestType.HEARTBEAT);
+        request3.setRequestType(RequestType.HEART_BEAT);
 
         List<GroupRequest> groupRequestList1 = new ArrayList<>();
         groupRequestList1.add(request1);
@@ -280,4 +280,5 @@ public class GroupRequestManagerServiceImplUnitTest {
             }
         }
     }
+
 }

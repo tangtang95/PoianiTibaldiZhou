@@ -1,11 +1,14 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.message.configuration;
 
 
+import com.poianitibaldizhou.trackme.grouprequestservice.message.publisher.GroupRequestPublisher;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.publisher.GroupRequestPublisherImpl;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -80,6 +83,11 @@ public class GroupRequestExchangeConfiguration {
                                                        Queue groupRequestAcceptedToShareDataServiceQueue){
         return BindingBuilder.bind(groupRequestAcceptedToShareDataServiceQueue).to(groupRequestExchange)
                 .with("grouprequest.*.accepted");
+    }
+
+    @Bean
+    public GroupRequestPublisher groupRequestPublisher(RabbitTemplate rabbitTemplate, TopicExchange groupRequestExchange){
+        return new GroupRequestPublisherImpl(rabbitTemplate, groupRequestExchange);
     }
 
 }

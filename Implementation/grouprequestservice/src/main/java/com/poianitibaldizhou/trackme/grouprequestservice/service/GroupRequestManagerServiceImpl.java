@@ -4,11 +4,13 @@ import com.poianitibaldizhou.trackme.grouprequestservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.BadOperatorRequestTypeException;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.GroupRequestNotFoundException;
+import com.poianitibaldizhou.trackme.grouprequestservice.message.publisher.GroupRequestPublisher;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -17,6 +19,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the interface that provides the services for the management of the group request
@@ -26,6 +29,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
     private GroupRequestRepository groupRequestRepository;
     private FilterStatementRepository filterStatementRepository;
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates the manager of the group request service.
@@ -39,6 +43,10 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
                                           FilterStatementRepository filterStatementRepository) {
         this.groupRequestRepository = groupRequestRepository;
         this.filterStatementRepository = filterStatementRepository;
+    }
+
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService) {
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @Override
@@ -80,6 +88,12 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
         filterStatementRepository.flush();
 
+        if(Objects.nonNull(internalCommunicationService)) {
+            Objects.requireNonNull(internalCommunicationService).sendGroupRequestCreatedMessage(savedRequest,
+                    groupRequestWrapper.getFilterStatementList());
+        }
+
         return new GroupRequestWrapper(savedRequest, filterStatementRepository.findAllByGroupRequest_Id(savedRequest.getId()));
     }
+
 }

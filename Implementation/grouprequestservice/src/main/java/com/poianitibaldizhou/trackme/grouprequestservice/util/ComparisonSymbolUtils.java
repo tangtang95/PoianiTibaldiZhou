@@ -13,22 +13,22 @@ public class ComparisonSymbolUtils {
     private ComparisonSymbolUtils(){}
 
     /**
-     * Returns the counterpart comparison symbols of this service about the comparisonSymbol of the protocol
+     * Returns the counterpart comparison symbols of the protocol about the comparisonSymbol of this service
      *
-     * @param comparisonSymbolProtocol the comparison symbol of the protocol to be mapped
-     * @return the counterpart comparison symbol from a comparison symbol of the protocol
+     * @param comparisonSymbol the comparison symbol of this service
+     * @return the counterpart comparison symbol of the protocol
      */
-    public static ComparisonSymbol getComparisonSymbol(ComparisonSymbolProtocolMessage comparisonSymbolProtocol){
-        Map<ComparisonSymbolProtocolMessage, ComparisonSymbol> comparisonSymbolsMap =
-                ImmutableMap.<ComparisonSymbolProtocolMessage, ComparisonSymbol>builder()
-                .put(ComparisonSymbolProtocolMessage.EQUALS, ComparisonSymbol.EQUALS)
-                .put(ComparisonSymbolProtocolMessage.NOT_EQUALS, ComparisonSymbol.NOT_EQUALS)
-                .put(ComparisonSymbolProtocolMessage.LESS, ComparisonSymbol.LESS)
-                .put(ComparisonSymbolProtocolMessage.GREATER, ComparisonSymbol.GREATER)
-                .put(ComparisonSymbolProtocolMessage.LIKE, ComparisonSymbol.LIKE)
+    public static ComparisonSymbolProtocolMessage getComparisonSymbolOfProtocol(ComparisonSymbol comparisonSymbol){
+        Map<ComparisonSymbol, ComparisonSymbolProtocolMessage> comparisonSymbolsMap =
+                ImmutableMap.<ComparisonSymbol, ComparisonSymbolProtocolMessage>builder()
+                .put(ComparisonSymbol.EQUALS, ComparisonSymbolProtocolMessage.EQUALS)
+                .put(ComparisonSymbol.NOT_EQUALS, ComparisonSymbolProtocolMessage.NOT_EQUALS)
+                .put(ComparisonSymbol.LESS, ComparisonSymbolProtocolMessage.LESS)
+                .put(ComparisonSymbol.GREATER, ComparisonSymbolProtocolMessage.GREATER)
+                .put(ComparisonSymbol.LIKE, ComparisonSymbolProtocolMessage.LIKE)
                 .build();
 
-        return comparisonSymbolsMap.get(comparisonSymbolProtocol);
+        return comparisonSymbolsMap.get(comparisonSymbol);
     }
 
 }
