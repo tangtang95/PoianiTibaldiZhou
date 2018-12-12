@@ -15,8 +15,6 @@ import android.widget.TextView;
 import com.trackme.trackmeapplication.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,16 +23,22 @@ import butterknife.ButterKnife;
 
 public class UserHistoryFragment extends Fragment {
 
-    public class Item {
-        private Date date;
+    @BindView(R.id.listView)
+    protected ListView listView;
+
+    private CustomListView customListView;
+    private List<HistoryItem> historyItems = new ArrayList<>();
+
+    public class HistoryItem {
+        private String date;
         private String info;
 
-        public Item(Date date, String info) {
+        public HistoryItem(String date, String info) {
             this.date = date;
             this.info = info;
         }
 
-        public Date getDate() {
+        public String getDate() {
             return date;
         }
 
@@ -43,7 +47,7 @@ public class UserHistoryFragment extends Fragment {
         }
     }
 
-    private class CustomListView extends ArrayAdapter<Item> {
+    private class CustomListView extends ArrayAdapter<HistoryItem> {
 
         private class ViewHolder {
             private TextView date;
@@ -55,16 +59,11 @@ public class UserHistoryFragment extends Fragment {
             }
         }
 
-        private List<Item> items = new ArrayList<>();
         private Activity context;
 
-        public CustomListView(@NonNull Activity context) {
-            super(context, R.layout.history_listview_layout);
+        public CustomListView(@NonNull Activity context, List<HistoryItem> historyItems) {
+            super(context, R.layout.history_listview_layout, historyItems);
             this.context = context;
-        }
-
-        public void addItem(Item item) {
-            items.add(item);
         }
 
         @NonNull
@@ -80,18 +79,11 @@ public class UserHistoryFragment extends Fragment {
             } else
                 viewHolder = (ViewHolder) r.getTag();
 
-            viewHolder.date.setText(items.get(position).getDate().toString());
-            viewHolder.info.setText(items.get(position).getInfo());
+            viewHolder.date.setText(historyItems.get(position).getDate());
+            viewHolder.info.setText(historyItems.get(position).getInfo());
             return r;
         }
-
-
     }
-
-    @BindView(R.id.listView)
-    protected ListView listView;
-
-    private CustomListView customListView;
 
     @Nullable
     @Override
@@ -100,16 +92,16 @@ public class UserHistoryFragment extends Fragment {
         ButterKnife.bind(this, userHistoryFragment);
 
         /*TODO*/
-        customListView = new CustomListView(Objects.requireNonNull(getActivity()));
+        customListView = new CustomListView(Objects.requireNonNull(getActivity()), historyItems);
         listView.setAdapter(customListView);
 
-        addItem(new Item(Calendar.getInstance().getTime(),"Pulse 100 bpm - Pressure: 120/80"));
+        addHistoryItem(new HistoryItem("12/08/1222","Pulse 100 bpm - Pressure: 120/80"));
 
         return userHistoryFragment;
     }
 
-    public void addItem(Item item) {
-        customListView.addItem(item);
+    public void addHistoryItem(HistoryItem historyItem) {
+        historyItems.add(0, historyItem);
         customListView.notifyDataSetChanged();
         listView.post(new Runnable() {
             @Override

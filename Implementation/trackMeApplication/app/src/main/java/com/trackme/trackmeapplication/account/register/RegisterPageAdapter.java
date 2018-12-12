@@ -1,16 +1,14 @@
-package com.trackme.trackmeapplication.home.userHome;
+package com.trackme.trackmeapplication.account.register;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.trackme.trackmeapplication.individualRequest.IndividualMessageFragment;
-
-public class UserPageAdapter extends FragmentPagerAdapter {
+public class RegisterPageAdapter extends FragmentPagerAdapter {
 
     private int numOfTabs;
 
-    UserPageAdapter(FragmentManager fm, int numOfTabs) {
+    RegisterPageAdapter(FragmentManager fm, int numOfTabs) {
         super(fm);
         this.numOfTabs = numOfTabs;
     }
@@ -19,11 +17,11 @@ public class UserPageAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position) {
             case 0:
-                return new UserHomeFragment();
+                return new UserRegisterFragment();
             case 1:
-                return new UserHistoryFragment();
+                return new ThirdPartyRegisterFragment();
             case 2:
-                return new IndividualMessageFragment();
+                return new CompanyRegisterFragment();
             default:
                 return null;
         }

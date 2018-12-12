@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.home.userHome;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -22,10 +21,6 @@ public class UserHomeActivity extends BaseDelegationActivity<
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     private SharedPreferences sp;
     private String username;
-
-    public static Intent newIntent(Context context) {
-        return new Intent(context, UserHomeActivity.class);
-    }
 
     @NonNull
     @Override
