@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Respons
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,10 +17,12 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the upload response service.
  */
+@Slf4j
 @Service
 public class UploadResponseServiceImpl implements UploadResponseService {
 
@@ -27,6 +30,8 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final IndividualRequestRepository individualRequestRepository;
     private final ResponseRepository responseRepository;
+
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates an individual request manager service.
@@ -44,6 +49,10 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.individualRequestRepository = individualRequestRepository;
         this.responseRepository = individualResponseRepository;
+    }
+
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService){
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @Transactional
@@ -69,29 +78,43 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         individualResponse.setAcceptanceTimeStamp(Timestamp.valueOf(LocalDateTime.now()));
 
         // Update the status of the request according to the type of resposne
-        switch(response) {
-            case ACCEPT:
-                request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-                break;
-            case REFUSE:
-                request.setStatus(IndividualRequestStatus.REFUSED);
+        if (response == ResponseType.ACCEPT) {
+            request.setStatus(IndividualRequestStatus.ACCEPTED);
+        } else if (response == ResponseType.REFUSE) {
+            request.setStatus(IndividualRequestStatus.REFUSED);
         }
 
-        return responseRepository.saveAndFlush(individualResponse);
+        Response savedResponse = responseRepository.saveAndFlush(individualResponse);
+
+        if(request.getStatus().equals(IndividualRequestStatus.ACCEPTED)) {
+            if (Objects.nonNull(internalCommunicationService)) {
+                Objects.requireNonNull(internalCommunicationService).sendIndividualRequest(request);
+            }
+            else{
+                log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+            }
+        }
+
+        return savedResponse;
     }
 
     @Transactional
     @Override
     public BlockedThirdParty addBlock(User user, Long thirdPartyID) {
-        // Check that the block is valid (i.e. user registerd, a request exist, and no other block exists
+        // Check that the block is valid (i.e. user registered, a request exist (and also a refused one), and no other block exists
         if(!userRepository.findById(user.getSsn()).isPresent())
             throw new UserNotFoundException(user);
         List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
 
-        if(!requestList.stream()
-                .anyMatch(individualRequest -> individualRequest.getUser().equals(user))) {
+        if(requestList.stream()
+                .noneMatch(individualRequest -> individualRequest.getUser().equals(user))) {
             throw new ThirdPartyNotFoundException(thirdPartyID);
         }
+        if(requestList.stream().noneMatch(individualRequest -> individualRequest.getUser().equals(user) &&
+                individualRequest.getStatus().equals(IndividualRequestStatus.REFUSED))) {
+            throw new ThirdPartyRefusedRequestNotFoundException(thirdPartyID);
+        }
+
         BlockedThirdPartyKey key = new BlockedThirdPartyKey(thirdPartyID, user);
         if(blockedThirdPartyRepository.findById(key).isPresent()) {
             throw new BlockAlreadyPerformedException(thirdPartyID);
@@ -106,8 +129,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         individualRequestRepository.findAllByThirdPartyID(thirdPartyID).stream().
                 filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING) &&
                         individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
-                        individualRequest -> {individualRequest.setStatus(IndividualRequestStatus.REFUSED);
-                        System.out.println("CHANGED REQUEST " + individualRequest);}
+                individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED)
         );
 
         return blockedThirdPartyRepository.saveAndFlush(blockedThirdParty);

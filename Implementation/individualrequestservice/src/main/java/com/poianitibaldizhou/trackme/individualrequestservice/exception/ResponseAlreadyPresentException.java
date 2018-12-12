@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.exception;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 
 /**
  * Exception thrown when an user is trying to add a response to a request that as already a response associated

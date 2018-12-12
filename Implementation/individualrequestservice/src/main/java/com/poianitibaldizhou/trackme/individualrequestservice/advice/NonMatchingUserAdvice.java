@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.advice;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.NonMatchingUserException;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Advice for managing error about non matching user
@@ -22,11 +26,15 @@ public class NonMatchingUserAdvice {
      * @param e error that triggers the advice
      * @return http 400 that contains the message of the exception
      */
-    @ResponseBody
     @ExceptionHandler(NonMatchingUserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String nonMatchingUserHandler(NonMatchingUserException e) {
-        return e.getMessage();
+    public @ResponseBody
+    ExceptionResponseBody nonMatchingUserHandler(NonMatchingUserException e) {
+        return new ExceptionResponseBody(
+                Timestamp.valueOf(LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(),
+                e.getMessage());
     }
 
 }

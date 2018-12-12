@@ -1,8 +1,10 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.grouprequestservice.GroupRequestServiceApplication;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.grouprequestservice.exception.BadOperatorRequestTypeException;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.GroupRequestNotFoundException;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
@@ -21,10 +23,10 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Filter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = GroupRequestServiceApplication.class,
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@Sql({"classpath:integrationControllerTestDB"})
+@Sql({"classpath:integrationControllerTestDB.sql"})
 @Transactional
 public class GroupRequestControllerIntegrationTest {
 
@@ -70,7 +72,7 @@ public class GroupRequestControllerIntegrationTest {
 		String expectedBody =  "\n" +
 				"{\n" +
 				"   \"groupRequest\":{\n" +
-				"      \"date\":\"2011-06-06\",\n" +
+				"      \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"      \"aggregatorOperator\":\"COUNT\",\n" +
 				"      \"requestType\":\"ALL\",\n" +
 				"      \"status\":\"ACCEPTED\"\n" +
@@ -81,7 +83,7 @@ public class GroupRequestControllerIntegrationTest {
 				"         \"value\":\"200\",\n" +
 				"         \"comparisonSymbol\":\"GREATER\",\n" +
 				"         \"groupRequest\":{\n" +
-				"            \"date\":\"2011-06-06\",\n" +
+				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"            \"aggregatorOperator\":\"COUNT\",\n" +
 				"            \"requestType\":\"ALL\",\n" +
 				"            \"status\":\"ACCEPTED\"\n" +
@@ -92,7 +94,7 @@ public class GroupRequestControllerIntegrationTest {
 				"         \"value\":\"90\",\n" +
 				"         \"comparisonSymbol\":\"GREATER\",\n" +
 				"         \"groupRequest\":{\n" +
-				"            \"date\":\"2011-06-06\",\n" +
+				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
 				"            \"aggregatorOperator\":\"COUNT\",\n" +
 				"            \"requestType\":\"ALL\",\n" +
 				"            \"status\":\"ACCEPTED\"\n" +
@@ -114,13 +116,19 @@ public class GroupRequestControllerIntegrationTest {
 	 * Test the get of single group request when that request is not present
 	 */
 	@Test
-	public void testGetNonExistingGroupRequest() {
+	public void testGetNonExistingGroupRequest() throws IOException {
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/grouprequestservice/requests/1000"),
 				HttpMethod.GET, entity, String.class);
 
 		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-		assertEquals(new GroupRequestNotFoundException(1000L).getMessage(), responseEntity.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new GroupRequestNotFoundException(1000L).getMessage(), exceptionResponseBody.getMessage());
 	}
 
 	// TEST GET REQUEST BY THIRD PARTY ID
@@ -141,7 +149,7 @@ public class GroupRequestControllerIntegrationTest {
 				"      \"groupRequestWrapperList\":[\n" +
 				"         {\n" +
 				"            \"groupRequest\":{\n" +
-				"               \"date\":\"2005-11-03\",\n" +
+				"               \"creationTimestamp\":\"2005-11-03T00:00:00.000+0000\",\n" +
 				"               \"aggregatorOperator\":\"DISTINCT_COUNT\",\n" +
 				"               \"requestType\":\"ALL\",\n" +
 				"               \"status\":\"REFUSED\"\n" +
@@ -322,7 +330,7 @@ public class GroupRequestControllerIntegrationTest {
 	 *
 	 */
 	@Test
-	public void testAddRequestWithNonMatchingOperatorAndRequestType() {
+	public void testAddRequestWithNonMatchingOperatorAndRequestType() throws IOException {
 		// Set up the request
 		GroupRequest groupRequest = new GroupRequest();
 		groupRequest.setRequestType(RequestType.BIRTH_CITY);
@@ -339,7 +347,47 @@ public class GroupRequestControllerIntegrationTest {
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new BadOperatorRequestTypeException(AggregatorOperator.AVG, RequestType.BIRTH_CITY).getMessage(), exceptionResponseBody.getMessage());
 	}
+
+    /**
+     * Test the add of a new group requests when some fields are missing
+     */
+	@Test
+    public void testAddRequestWhenMissingFields() throws IOException {
+        // Set up the request
+        GroupRequest groupRequest = new GroupRequest();
+        groupRequest.setRequestType(RequestType.PRESSURE_MIN);
+
+        FilterStatement filterStatement = new FilterStatement();
+        filterStatement.setComparisonSymbol(ComparisonSymbol.NOT_EQUALS);
+        filterStatement.setValue("100");
+
+        GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper();
+        groupRequestWrapper.setGroupRequest(groupRequest);
+        groupRequestWrapper.setFilterStatementList(Collections.singletonList(filterStatement));
+
+        // Access the API
+
+        HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/grouprequestservice/requests/thirdparties/2"),
+                HttpMethod.POST, entity, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
+    }
 
 	// UTILITY METHOD
 

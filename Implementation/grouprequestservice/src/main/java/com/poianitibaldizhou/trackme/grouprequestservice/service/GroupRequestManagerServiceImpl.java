@@ -9,21 +9,26 @@ import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequest
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Date;
-import java.time.LocalDate;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the interface that provides the services for the management of the group request
  */
+@Slf4j
 @Service
 public class GroupRequestManagerServiceImpl implements GroupRequestManagerService {
 
     private GroupRequestRepository groupRequestRepository;
     private FilterStatementRepository filterStatementRepository;
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates the manager of the group request service.
@@ -39,6 +44,10 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
         this.filterStatementRepository = filterStatementRepository;
     }
 
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService) {
+        this.internalCommunicationService = internalCommunicationService;
+    }
+
     @Override
     public GroupRequestWrapper getById(Long id) {
         GroupRequest groupRequest = groupRequestRepository.findById(id).orElseThrow(() -> new GroupRequestNotFoundException(id));
@@ -52,13 +61,14 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
         List<GroupRequest> groupRequestList = groupRequestRepository.findAllByThirdPartyId(thirdPartyId);
 
-        groupRequestList.stream().forEach(groupRequest ->
+        groupRequestList.forEach(groupRequest ->
             groupRequestWrappers.add(new GroupRequestWrapper(groupRequest, filterStatementRepository.findAllByGroupRequest_Id(groupRequest.getId())))
         );
 
         return groupRequestWrappers;
     }
 
+    @Transactional
     @Override
     public GroupRequestWrapper addGroupRequest(GroupRequestWrapper groupRequestWrapper) {
         if(!AggregatorOperator.isValidOperator(groupRequestWrapper.getGroupRequest().getAggregatorOperator(),
@@ -67,7 +77,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
                     groupRequestWrapper.getGroupRequest().getRequestType());
         }
 
-        groupRequestWrapper.getGroupRequest().setDate(Date.valueOf(LocalDate.now()));
+        groupRequestWrapper.getGroupRequest().setCreationTimestamp(Timestamp.valueOf(LocalDateTime.now()));
         groupRequestWrapper.getGroupRequest().setStatus(RequestStatus.UNDER_ANALYSIS);
 
         GroupRequest savedRequest = groupRequestRepository.saveAndFlush(groupRequestWrapper.getGroupRequest());
@@ -78,6 +88,15 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
         filterStatementRepository.flush();
 
+        if(Objects.nonNull(internalCommunicationService)) {
+            Objects.requireNonNull(internalCommunicationService).sendGroupRequestMessage(savedRequest,
+                    groupRequestWrapper.getFilterStatementList());
+        }
+        else{
+            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+        }
+
         return new GroupRequestWrapper(savedRequest, filterStatementRepository.findAllByGroupRequest_Id(savedRequest.getId()));
     }
+
 }

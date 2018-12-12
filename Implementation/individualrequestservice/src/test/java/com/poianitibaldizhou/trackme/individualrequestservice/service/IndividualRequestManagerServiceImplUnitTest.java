@@ -1,6 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.*;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -166,7 +167,7 @@ public class IndividualRequestManagerServiceImplUnitTest {
         IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 4);
         requestManagerService.addRequest(newRequest);
 
-        assertEquals(IndividualRequestStatus.PENDING, newRequest.getStatus());
+        verify(individualRequestRepository, times(1)).save(any(IndividualRequest.class));
     }
 
     /**
@@ -188,6 +189,16 @@ public class IndividualRequestManagerServiceImplUnitTest {
         requestManagerService.addRequest(newRequest);
 
         verify(individualRequestRepository, times(1)).save(any(IndividualRequest.class));
+    }
+
+    /**
+     * Test the add of a new request when the dates specified are incompatibles
+     */
+    @Test(expected = IncompatibleDateException.class)
+    public void addRequestIncompatibleDates() {
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(1), new Date(0), new User("user3"), (long) 4);
+
+        requestManagerService.addRequest(request);
     }
 
     /**

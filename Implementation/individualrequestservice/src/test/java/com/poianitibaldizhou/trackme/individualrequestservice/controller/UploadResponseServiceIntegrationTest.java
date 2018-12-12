@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
@@ -7,6 +8,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.exception.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import org.junit.Test;
@@ -17,9 +19,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -32,6 +36,7 @@ import static org.junit.Assert.assertEquals;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
+@Sql("classpath:ControllerIntegrationTest.sql")
 public class UploadResponseServiceIntegrationTest {
 
     @LocalServerPort
@@ -46,9 +51,9 @@ public class UploadResponseServiceIntegrationTest {
     @Autowired
     private BlockedThirdPartyRepository blockedThirdPartyRepository;
 
-    TestRestTemplate restTemplate = new TestRestTemplate();
+    private TestRestTemplate restTemplate = new TestRestTemplate();
 
-    HttpHeaders httpHeaders = new HttpHeaders();
+    private HttpHeaders httpHeaders = new HttpHeaders();
 
     // TEST ADD RESPONSE METHOD
 
@@ -69,7 +74,7 @@ public class UploadResponseServiceIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(responseRepository.findById(1L).isPresent());
         assertTrue(responseRepository.findById(1L).orElseThrow(Exception::new).getResponse().equals(ResponseType.ACCEPT));
-        assertTrue(requestRepository.findById(1L).orElseThrow(Exception::new).getStatus().equals(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS));
+        assertTrue(requestRepository.findById(1L).orElseThrow(Exception::new).getStatus().equals(IndividualRequestStatus.ACCEPTED));
     }
 
     /**
@@ -96,7 +101,7 @@ public class UploadResponseServiceIntegrationTest {
      * Test the add of a response to a non existing individual request
      */
     @Test
-    public void testAddResponseOfNonExistingRequest() {
+    public void testAddResponseOfNonExistingRequest() throws IOException {
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -106,7 +111,13 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(new RequestNotFoundException(100L).getMessage(), response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new RequestNotFoundException(100L).getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -126,15 +137,20 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(new NonMatchingUserException("user2").getMessage(), response.getBody());
 
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new NonMatchingUserException("user2").getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
      * Test the add of a response when it is performed by a non registered suer
      */
     @Test
-    public void testAddResponseWhenTheUserIsNotRegistered() {
+    public void testAddResponseWhenTheUserIsNotRegistered() throws IOException {
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -144,9 +160,14 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(new UserNotFoundException(new User("nonRegisteredUser")).getMessage(), response.getBody());
-    }
 
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new UserNotFoundException(new User("nonRegisteredUser")).getMessage(), exceptionResponseBody.getMessage());
+    }
 
     // TEST BLOCK THIRD PARTY METHOD
 
@@ -155,7 +176,7 @@ public class UploadResponseServiceIntegrationTest {
      * registered
      */
     @Test
-    public void testAddBlockWhenUserNotFound() {
+    public void testAddBlockWhenUserNotFound() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -163,7 +184,13 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(new UserNotFoundException(new User("nonRegisteredUser")).getMessage(), response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new UserNotFoundException(new User("nonRegisteredUser")).getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -171,7 +198,7 @@ public class UploadResponseServiceIntegrationTest {
      * never sent a request toward that user
      */
     @Test
-    public void testAddBlockWhenNoRequest() {
+    public void testAddBlockWhenNoRequest() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -179,7 +206,13 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals(new ThirdPartyNotFoundException(10L).getMessage(), response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new ThirdPartyNotFoundException(10L).getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
@@ -187,7 +220,7 @@ public class UploadResponseServiceIntegrationTest {
      * blocked the specified third party customer
      */
     @Test
-    public void testAddBlockWhenBlockAlreadyPresent() {
+    public void testAddBlockWhenBlockAlreadyPresent() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -195,26 +228,56 @@ public class UploadResponseServiceIntegrationTest {
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals(new BlockAlreadyPerformedException(4L).getMessage(), response.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new BlockAlreadyPerformedException(4L).getMessage(), exceptionResponseBody.getMessage());
     }
 
     /**
-     * Test the add of a block by a certian user for a certain third party customer
+     * Test the add of a block by a certain user for a certain third party customer when no refused
+     * request of that user performed by the customer is present
      */
     @Test
-    public void testAddBlock() {
+    public void testAddBlockWhenNoRefusedRequestPresent() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
                 createURLWithPort("/uploadresponseservice/blockedThirdParty/user1/1"),
                 HttpMethod.POST, entity, String.class);
 
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new ThirdPartyRefusedRequestNotFoundException(1L).getMessage(), exceptionResponseBody.getMessage());
+
+    }
+
+    /**
+     * Test the add of a block
+     */
+    @Test
+    public void testAddBlock() {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/uploadresponseservice/blockedThirdParty/user17/17"),
+                HttpMethod.POST, entity, String.class);
+
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        BlockedThirdPartyKey newItemKey = new BlockedThirdPartyKey(1L, new User("user1"));
+
+        BlockedThirdPartyKey newItemKey = new BlockedThirdPartyKey(17L, new User("user17"));
         assertTrue(blockedThirdPartyRepository.findById(newItemKey).isPresent());
 
         requestRepository.flush();
-        requestRepository.findAllByThirdPartyID(1L).forEach(individualRequest -> assertEquals(IndividualRequestStatus.REFUSED,
+        requestRepository.findAllByThirdPartyID(17L).forEach(individualRequest -> assertEquals(IndividualRequestStatus.REFUSED,
                 individualRequest.getStatus()));
     }
 

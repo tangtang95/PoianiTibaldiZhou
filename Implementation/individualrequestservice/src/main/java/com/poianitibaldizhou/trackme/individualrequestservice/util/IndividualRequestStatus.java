@@ -8,6 +8,5 @@ import java.io.Serializable;
 public enum IndividualRequestStatus implements Serializable {
     PENDING,
     REFUSED,
-    ACCEPTED,
-    ACCEPTED_UNDER_ANALYSIS
+    ACCEPTED
 }

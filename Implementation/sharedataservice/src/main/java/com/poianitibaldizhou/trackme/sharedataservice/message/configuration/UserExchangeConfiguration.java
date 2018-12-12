@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.sharedataservice.message.configuration;
 import com.poianitibaldizhou.trackme.sharedataservice.message.listener.UserEventListener;
 import com.poianitibaldizhou.trackme.sharedataservice.message.listener.UserEventListenerImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -40,12 +41,6 @@ public class UserExchangeConfiguration {
         return new Queue(Constants.USER_CREATED_SHARE_DATA_QUEUE_NAME);
     }
 
-    /* Useless for this service //TODO remember to move it on individual request
-    @Bean
-    public Queue userCreatedToIndividualRequestServiceQueue(){
-        return new Queue(Constants.USER_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME);
-    }*/
-
     /**
      * Declare a new binding between userExchange and the queue of created user for share data service.
      * If it already exists, it does nothing
@@ -61,22 +56,14 @@ public class UserExchangeConfiguration {
                 .with("user.*.created");
     }
 
-    /* USELESS
-    @Bean
-    public Binding bindUserExchangeToAcceptedShareDataQueue(TopicExchange userExchange,
-                                                               Queue userCreatedToIndividualRequestServiceQueue){
-        return BindingBuilder.bind(userCreatedToIndividualRequestServiceQueue).to(userExchange)
-                .with("user.*.created");
-    }*/
-
     /**
      * Create the user queue listener to receive messages regarding the user exchange's queues
-     * @param userRepository the user repository
+     * @param internalCommunicationService the service handling the internal communication message from other services
      * @return the user queue listener
      */
     @Bean
-    public UserEventListener userEventListener(UserRepository userRepository){
-        return new UserEventListenerImpl(userRepository);
+    public UserEventListener userEventListener(InternalCommunicationService internalCommunicationService){
+        return new UserEventListenerImpl(internalCommunicationService);
     }
 
 }

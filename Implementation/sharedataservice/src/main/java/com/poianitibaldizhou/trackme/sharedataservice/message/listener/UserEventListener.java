@@ -6,7 +6,7 @@ public interface UserEventListener {
 
     /**
      * Called when a message regarding user created has been found on the message broker (rabbit-mq).
-     * Based on the user protocol message, it converts it into a user of this service and save it on the DBs
+     * Then it calls the internal communication service to handle the object
      *
      * @param userProtocol the user protocol message from the message broker
      */

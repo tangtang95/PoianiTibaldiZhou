@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.sharedataservice.message.publisher;
 
+import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.NumberOfUserInvolvedProtocolMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -12,14 +13,18 @@ public class NumberOfUserInvolvedDataPublisherImpl implements NumberOfUserInvolv
 
     private TopicExchange numberOfUserInvolvedExchange;
 
-    public NumberOfUserInvolvedDataPublisherImpl(RabbitTemplate rabbitTemplate, TopicExchange doubleDataExchange){
+    public NumberOfUserInvolvedDataPublisherImpl(RabbitTemplate rabbitTemplate,
+                                                 TopicExchange numberOfUserInvolvedExchange){
         this.rabbitTemplate = rabbitTemplate;
-        this.numberOfUserInvolvedExchange = doubleDataExchange;
+        this.numberOfUserInvolvedExchange = numberOfUserInvolvedExchange;
     }
 
     @Override
-    public void publishNumberOfUserInvolvedData(Double numberOfUserInvolved) {
-        rabbitTemplate.convertAndSend(numberOfUserInvolvedExchange.getName(),"double-data.event.generated", numberOfUserInvolved);
-        log.info("PUBLISHED NumberOfUserInvolvedData: " + numberOfUserInvolved);
+    public void publishNumberOfUserInvolvedData(Long groupRequestId, Double numberOfUserInvolved) {
+        NumberOfUserInvolvedProtocolMessage protocolMessage = new NumberOfUserInvolvedProtocolMessage();
+        protocolMessage.setNumberOfUserInvolved(numberOfUserInvolved);
+        protocolMessage.setGroupRequestId(groupRequestId);
+        rabbitTemplate.convertAndSend(numberOfUserInvolvedExchange.getName(),"number-of-user.event.generated", protocolMessage);
+        log.info("PUBLISHED NumberOfUserInvolvedData: " + protocolMessage);
     }
 }

@@ -18,7 +18,6 @@ public class Constants {
     // EXCHANGE AND QUEUES NAMES
     public static final String USER_EXCHANGE_NAME = "trackme.user-exchange";
     public static final String USER_CREATED_SHARE_DATA_QUEUE_NAME = "trackme.user.created.share-data-queue";
-    public static final String USER_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME = "trackme.user.created.individual-request-queue";
 
     public static final String GROUP_REQUEST_EXCHANGE_NAME = "trackme.grouprequest-exchange";
     public static final String GROUP_REQUEST_CREATED_SHARE_DATA_QUEUE_NAME = "trackme.grouprequest.created.share-data-queue";

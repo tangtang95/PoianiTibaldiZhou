@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.advice;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.ResponseAlreadyPresentException;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 /**
  * Advice for managing error about response already given to a certain individual request
@@ -22,11 +26,15 @@ public class ResponseAlreadyPresentAdvice {
      * @param e error that triggers the advice
      * @return http 400 that contains the message of the exception
      */
-    @ResponseBody
     @ExceptionHandler(ResponseAlreadyPresentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String responseAlreadyPresentHandler(ResponseAlreadyPresentException e) {
-        return e.getMessage();
+    public @ResponseBody
+    ExceptionResponseBody responseAlreadyPresentHandler(ResponseAlreadyPresentException e) {
+        return new ExceptionResponseBody(
+                Timestamp.valueOf(LocalDateTime.now()),
+                HttpStatus.BAD_REQUEST.value(),
+                HttpStatus.BAD_REQUEST.toString(),
+                e.getMessage());
     }
 
 }

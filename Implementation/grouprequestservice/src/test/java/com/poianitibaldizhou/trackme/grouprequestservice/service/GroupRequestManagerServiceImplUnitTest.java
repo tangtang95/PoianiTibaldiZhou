@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -66,24 +66,24 @@ public class GroupRequestManagerServiceImplUnitTest {
 
         request1.setId(1L);
         request1.setThirdPartyId(1L);
-        request1.setDate(new Date(0));
+        request1.setCreationTimestamp(new Timestamp(0));
         request1.setStatus(RequestStatus.ACCEPTED);
         request1.setAggregatorOperator(AggregatorOperator.COUNT);
         request1.setRequestType(RequestType.ALL);
 
         request2.setId(2L);
         request2.setThirdPartyId(1L);
-        request2.setDate(new Date(0));
+        request2.setCreationTimestamp(new Timestamp(0));
         request2.setStatus(RequestStatus.UNDER_ANALYSIS);
         request2.setAggregatorOperator(AggregatorOperator.MAX);
         request2.setRequestType(RequestType.PRESSURE_MIN);
 
         request3.setId(3L);
         request3.setThirdPartyId(2L);
-        request3.setDate(new Date(0));
+        request3.setCreationTimestamp(new Timestamp(0));
         request3.setStatus(RequestStatus.REFUSED);
         request3.setAggregatorOperator(AggregatorOperator.AVG);
-        request3.setRequestType(RequestType.HEARTBEAT);
+        request3.setRequestType(RequestType.HEART_BEAT);
 
         List<GroupRequest> groupRequestList1 = new ArrayList<>();
         groupRequestList1.add(request1);
@@ -180,7 +180,7 @@ public class GroupRequestManagerServiceImplUnitTest {
         GroupRequest groupRequest = new GroupRequest();
         groupRequest.setId(4L);
         groupRequest.setThirdPartyId(2L);
-        groupRequest.setDate(new Date(0));
+        groupRequest.setCreationTimestamp(new Timestamp(0));
         groupRequest.setStatus(RequestStatus.REFUSED);
         groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
         groupRequest.setRequestType(RequestType.ALL);
@@ -229,7 +229,7 @@ public class GroupRequestManagerServiceImplUnitTest {
                     GroupRequest groupRequest = new GroupRequest();
                     groupRequest.setId(4L);
                     groupRequest.setThirdPartyId(2L);
-                    groupRequest.setDate(new Date(0));
+                    groupRequest.setCreationTimestamp(new Timestamp(0));
                     groupRequest.setStatus(RequestStatus.REFUSED);
                     groupRequest.setAggregatorOperator(AggregatorOperator.COUNT);
                     groupRequest.setRequestType(RequestType.ALL);
@@ -266,7 +266,7 @@ public class GroupRequestManagerServiceImplUnitTest {
                 groupRequest = new GroupRequest();
                 groupRequest.setId(4L);
                 groupRequest.setThirdPartyId(2L);
-                groupRequest.setDate(new Date(0));
+                groupRequest.setCreationTimestamp(new Timestamp(0));
                 groupRequest.setStatus(RequestStatus.REFUSED);
                 groupRequest.setAggregatorOperator(aggregatorOperator);
                 groupRequest.setRequestType(requestType);
@@ -280,4 +280,5 @@ public class GroupRequestManagerServiceImplUnitTest {
             }
         }
     }
+
 }

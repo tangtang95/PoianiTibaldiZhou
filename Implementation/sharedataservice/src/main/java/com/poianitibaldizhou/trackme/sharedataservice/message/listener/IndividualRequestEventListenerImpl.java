@@ -1,13 +1,8 @@
 package com.poianitibaldizhou.trackme.sharedataservice.message.listener;
 
-import com.poianitibaldizhou.trackme.sharedataservice.entity.IndividualRequest;
-import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
-import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
-import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.IndividualRequestStatusProtocolMessage;
-import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
-import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -17,13 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class IndividualRequestEventListenerImpl implements IndividualRequestEventListener {
 
-    private final UserRepository userRepository;
-    private final IndividualRequestRepository individualRequestRepository;
+    private final InternalCommunicationService internalCommunicationService;
 
-    public IndividualRequestEventListenerImpl(UserRepository userRepository,
-                                              IndividualRequestRepository individualRequestRepository){
-        this.userRepository = userRepository;
-        this.individualRequestRepository = individualRequestRepository;
+    public IndividualRequestEventListenerImpl(InternalCommunicationService internalCommunicationService) {
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @RabbitListener(queues = Constants.INDIVIDUAL_REQUEST_ACCEPTED_SHARE_DATA_QUEUE_NAME)
@@ -40,16 +32,7 @@ public class IndividualRequestEventListenerImpl implements IndividualRequestEven
             log.error("FATAL ERROR: Received an individual request which is not ACCEPTED" + individualRequestProtocol);
             return;
         }
-        User user = userRepository.findById(individualRequestProtocol.getUserSsn())
-                .orElseThrow(() -> new UserNotFoundException(individualRequestProtocol.getUserSsn()));
-        IndividualRequest individualRequest = new IndividualRequest();
-        individualRequest.setId(individualRequestProtocol.getId());
-        individualRequest.setThirdPartyId(individualRequestProtocol.getThirdPartyId());
-        individualRequest.setUser(user);
-        individualRequest.setStartDate(individualRequestProtocol.getStartDate());
-        individualRequest.setEndDate(individualRequestProtocol.getEndDate());
-        individualRequest.setCreationTimestamp(individualRequestProtocol.getCreationTimestamp());
-        individualRequestRepository.save(individualRequest);
+        internalCommunicationService.handleIndividualRequestAccepted(individualRequestProtocol);
         log.info("AFTER: onIndividualRequestAccepted");
     }
 }

@@ -7,7 +7,7 @@ import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestType;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.sql.Timestamp;
 
 /**
  * JPA entity object regarding the group request
@@ -26,7 +26,7 @@ public class GroupRequest {
     private Long thirdPartyId;
 
     @Column(nullable = false)
-    private Date date;
+    private Timestamp creationTimestamp;
 
     @Column(length = 20, nullable = false)
     @Enumerated(value = EnumType.STRING)

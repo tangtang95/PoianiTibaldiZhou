@@ -4,6 +4,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.message.listener.Individua
 import com.poianitibaldizhou.trackme.sharedataservice.message.listener.IndividualRequestEventListenerImpl;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.IndividualRequestRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.sharedataservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
@@ -62,14 +63,12 @@ public class IndividualRequestExchangeConfiguration {
 
     /**
      * Create the individual request queue listener to receive messages regarding the individual request exchange's queue
-     * @param userRepository the user repository
-     * @param individualRequestRepository the individual request repository
+     * @param internalCommunicationService the service handling the internal communication message from other services
      * @return the individual request queue listener
      */
     @Bean
-    public IndividualRequestEventListener individualRequestEventListener(UserRepository userRepository,
-                                                                         IndividualRequestRepository individualRequestRepository){
-        return new IndividualRequestEventListenerImpl(userRepository, individualRequestRepository);
+    public IndividualRequestEventListener individualRequestEventListener(InternalCommunicationService internalCommunicationService){
+        return new IndividualRequestEventListenerImpl(internalCommunicationService);
     }
 
 }

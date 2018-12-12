@@ -1,11 +1,15 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.json.JSONException;
 import org.junit.Test;
@@ -17,9 +21,11 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.regex.Matcher;
@@ -36,6 +42,7 @@ import static org.junit.Assert.assertTrue;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
+@Sql("classpath:ControllerIntegrationTest.sql")
 public class IndividualRequestServiceManagerIntegrationTest {
 
     @LocalServerPort
@@ -44,14 +51,14 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Autowired
     private IndividualRequestRepository requestRepository;
 
-    TestRestTemplate restTemplate = new TestRestTemplate();
+    private TestRestTemplate restTemplate = new TestRestTemplate();
 
-    HttpHeaders httpHeaders = new HttpHeaders();
+    private HttpHeaders httpHeaders = new HttpHeaders();
 
     // TEST GET SINGLE REQUEST METHOD
 
     /**
-     * Test the get of a single request with id 1 (this is present, since it is loaded with data.sql with the loading
+     * Test the get of a single request with id 1 (this is present, since it is loaded with sql script with the loading
      * of the whole application)
      *
      * @throws Exception due to json assertEquals method
@@ -90,13 +97,18 @@ public class IndividualRequestServiceManagerIntegrationTest {
      * Test the get of a single request when it is not present
      */
     @Test
-    public void testGetSingleRequestWhenNotPresent() {
+    public void testGetSingleRequestWhenNotPresent() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/1000"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals(new RequestNotFoundException(1000L).getMessage(), responseEntity.getBody());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new RequestNotFoundException(1000L).getMessage(), exceptionResponseBody.getMessage());
     }
 
     // TEST GET BY THIRD PARTY ID METHOD
@@ -239,16 +251,46 @@ public class IndividualRequestServiceManagerIntegrationTest {
      * Test the get of all the pending request of a certain user that is not registered
      */
     @Test
-    public void testGetPendingRequestWhenUserNotRegistered() {
+    public void testGetPendingRequestWhenUserNotRegistered() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/users/notregistered"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals(new UserNotFoundException(new User("notregistered")).getMessage(), responseEntity.getBody());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
+        assertEquals(new UserNotFoundException(new User("notregistered")).getMessage(), exceptionResponseBody.getMessage());
     }
 
     // TEST THE ADD OF A NEW REQUEST
+
+    /**
+     * Test the add of a new individual request when not all the necessary parameters have been specified
+     */
+    @Test
+    public void testAddRequestWrongParameters() throws IOException {
+        IndividualRequest individualRequest = new IndividualRequest();
+        individualRequest.setThirdPartyID(1L);
+        individualRequest.setEndDate(new Date(0));
+        HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/individualrequestservice/requests/user1"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the add of a new individual request on an existing user that is non blocked
@@ -286,6 +328,28 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 orElseThrow(Exception::new).getStartDate().equals(individualRequest.getEndDate()));
     }
 
+    /**
+     * Test the add of a new request when the specified dates are not compatible
+     */
+    @Test
+    public void testAddRequestWhenIncompatibleDates() throws IOException {
+        IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(100), new Date(0),
+                new User("user1"), 1L);
+        HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort("/individualrequestservice/requests/user1"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(new IncompatibleDateException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the add of a request on a user that is not registered
@@ -339,7 +403,6 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 orElseThrow(Exception::new).getStartDate().equals(individualRequest.getEndDate()));
 
     }
-
 
     // UTILITY FUNCTIONS
 

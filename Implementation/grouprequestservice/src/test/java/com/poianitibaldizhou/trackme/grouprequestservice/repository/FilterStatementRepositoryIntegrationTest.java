@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-@Sql({"classpath:testRepositoryDB"})
+@Sql({"classpath:testRepositoryDB.sql"})
 public class FilterStatementRepositoryIntegrationTest {
 
     @Autowired

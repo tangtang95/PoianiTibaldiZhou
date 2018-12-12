@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.repository.HealthDataRepos
 import com.poianitibaldizhou.trackme.sharedataservice.repository.PositionDataRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Implementation of the send data service.
@@ -34,6 +35,7 @@ public class SendDataServiceImpl implements SendDataService{
         this.positionDataRepository = positionDataRepository;
     }
 
+    @Transactional
     @Override
     public HealthData sendHealthData(String userId, HealthData healthData) {
         return userRepository.findById(userId).map(user -> {
@@ -42,6 +44,7 @@ public class SendDataServiceImpl implements SendDataService{
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
+    @Transactional
     @Override
     public PositionData sendPositionData(String userId, PositionData positionData) {
         return userRepository.findById(userId).map(user ->{
@@ -50,6 +53,7 @@ public class SendDataServiceImpl implements SendDataService{
         }).orElseThrow(() -> new UserNotFoundException(userId));
     }
 
+    @Transactional
     @Override
     public DataWrapper sendClusterOfData(String userId, DataWrapper data) {
         return userRepository.findById(userId).map(user -> {

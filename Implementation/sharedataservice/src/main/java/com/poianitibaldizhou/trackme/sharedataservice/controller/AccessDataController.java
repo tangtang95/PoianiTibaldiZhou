@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import org.springframework.hateoas.Resource;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Date;

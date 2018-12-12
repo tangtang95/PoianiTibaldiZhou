@@ -67,7 +67,7 @@ public class UploadResponseServiceImplUnitTest {
         response.setResponse(ResponseType.REFUSE);
         response.setAcceptanceTimeStamp(new Timestamp(0));
 
-        when(responseRepository.findById((long) 2)).thenReturn(java.util.Optional.ofNullable(response));
+        when(responseRepository.findById((long) 2)).thenReturn(java.util.Optional.of(response));
     }
 
     private void setUpRequestRepository() {
@@ -77,11 +77,13 @@ public class UploadResponseServiceImplUnitTest {
         IndividualRequest request2 = new IndividualRequest(
                 new Timestamp(10000), new Date(10000), new Date(10000), new User("user1"), (long) 2);
         request2.setId((long) 2);
+        request2.setStatus(IndividualRequestStatus.REFUSED);
         IndividualRequest request3 = new IndividualRequest(
                 new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 3);
         request3.setId((long) 3);
         IndividualRequest request4 = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user4"), (long) 1);
         request4.setId((long) 4);
+        request4.setStatus(IndividualRequestStatus.REFUSED);
 
         when(individualRequestRepository.findById((long)1)).thenReturn(java.util.Optional.of(request1));
         when(individualRequestRepository.findById((long)2)).thenReturn(java.util.Optional.of(request2));
@@ -103,7 +105,7 @@ public class UploadResponseServiceImplUnitTest {
         blockedThirdParty.setKey(blockedThirdPartyKey);
         blockedThirdParty.setBlockDate(new Date(0));
 
-        when(blockedThirdPartyRepository.findById(blockedThirdPartyKey)).thenReturn(java.util.Optional.ofNullable(blockedThirdParty));
+        when(blockedThirdPartyRepository.findById(blockedThirdPartyKey)).thenReturn(java.util.Optional.of(blockedThirdParty));
     }
 
     /**
@@ -116,15 +118,15 @@ public class UploadResponseServiceImplUnitTest {
 
         user = new User();
         user.setSsn("user2");
-        when(userRepository.findById("user2")).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.findById("user2")).thenReturn(java.util.Optional.of(user));
 
         user = new User();
         user.setSsn("user3");
-        when(userRepository.findById("user3")).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.findById("user3")).thenReturn(java.util.Optional.of(user));
 
         user = new User();
         user.setSsn("user4");
-        when(userRepository.findById("user4")).thenReturn(java.util.Optional.ofNullable(user));
+        when(userRepository.findById("user4")).thenReturn(java.util.Optional.of(user));
     }
     
 
@@ -142,7 +144,7 @@ public class UploadResponseServiceImplUnitTest {
     public void testAddResponseWithAccept() throws Exception{
         uploadResponseService.addResponse((long) 1, ResponseType.ACCEPT, new User("user1"));
 
-        assertEquals(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
+        assertEquals(IndividualRequestStatus.ACCEPTED, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
         verify(responseRepository, times(1)).saveAndFlush(any(Response.class));
     }
 
@@ -224,8 +226,6 @@ public class UploadResponseServiceImplUnitTest {
         List<Long> idOfPendingRequest = requestList.stream().
                 filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING))
                 .map(IndividualRequest::getId).collect(Collectors.toList());
-
-        System.out.println("ID OF LIST: " + idOfPendingRequest);
 
         uploadResponseService.addBlock(new User("user4"), (long)1);
 

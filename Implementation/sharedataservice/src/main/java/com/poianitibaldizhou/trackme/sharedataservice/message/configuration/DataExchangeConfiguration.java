@@ -53,7 +53,7 @@ public class DataExchangeConfiguration {
     public Binding bindNumberOfUserInvolvedExchangeToGeneratedGroupRequestQueue(TopicExchange numberOfUserInvolvedExchange,
                                                                                 Queue numberOfUserInvolvedGeneratedToGroupRequestServiceQueue){
         return BindingBuilder.bind(numberOfUserInvolvedGeneratedToGroupRequestServiceQueue).to(numberOfUserInvolvedExchange)
-                .with("double-data.*.generated");
+                .with("number-of-user.*.generated");
     }
 
     /**
