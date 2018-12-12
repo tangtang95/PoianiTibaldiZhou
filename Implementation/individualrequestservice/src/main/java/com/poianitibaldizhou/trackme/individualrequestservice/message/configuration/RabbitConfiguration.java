@@ -1,5 +1,7 @@
-package com.poianitibaldizhou.trackme.sharedataservice.message.configuration;
+package com.poianitibaldizhou.trackme.individualrequestservice.message.configuration;
 
+import com.poianitibaldizhou.trackme.individualrequestservice.service.InternalCommunicationService;
+import com.poianitibaldizhou.trackme.individualrequestservice.service.UploadResponseServiceImpl;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -10,6 +12,7 @@ import org.springframework.boot.autoconfigure.amqp.SimpleRabbitListenerContainer
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+
 
 /**
  * The class configuration of the message broker rabbitmq
@@ -43,6 +46,20 @@ public class RabbitConfiguration {
         configurer.configure(factory, connectionFactory);
         factory.setMessageConverter(jsonMessageConverter());
         return factory;
+    }
+
+    /**
+     * Set the InternalCommunicationService object to UploadResponseService @Service only when the active profile is
+     * usage-message-broker
+     *
+     * @param uploadResponseService the bean service of upload response
+     * @param internalCommunicationService the internal communication service bean
+     * @return the command line runner which sets the internalCommunicationService
+     */
+    @Bean
+    public CommandLineRunner setInternalCommunicationService(UploadResponseServiceImpl uploadResponseService,
+                                                             InternalCommunicationService internalCommunicationService){
+        return args -> uploadResponseService.setInternalCommunicationService(internalCommunicationService);
     }
 
     /**

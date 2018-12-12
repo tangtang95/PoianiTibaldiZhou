@@ -27,6 +27,6 @@ public class AggregatorOperatorUtils {
                 .put(AggregatorOperator.MAX, AggregatorOperatorProtocolMessage.MAX)
                 .put(AggregatorOperator.MIN, AggregatorOperatorProtocolMessage.MIN)
                 .build();
-        return operators.get(aggregatorOperator.name());
+        return operators.get(aggregatorOperator);
     }
 }

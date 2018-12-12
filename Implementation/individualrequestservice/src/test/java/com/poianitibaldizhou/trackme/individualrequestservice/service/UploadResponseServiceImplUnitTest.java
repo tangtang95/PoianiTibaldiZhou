@@ -144,7 +144,7 @@ public class UploadResponseServiceImplUnitTest {
     public void testAddResponseWithAccept() throws Exception{
         uploadResponseService.addResponse((long) 1, ResponseType.ACCEPT, new User("user1"));
 
-        assertEquals(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
+        assertEquals(IndividualRequestStatus.ACCEPTED, individualRequestRepository.findById(1L).orElseThrow(Exception::new).getStatus());
         verify(responseRepository, times(1)).saveAndFlush(any(Response.class));
     }
 

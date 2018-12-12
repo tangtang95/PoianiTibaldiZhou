@@ -1,19 +1,15 @@
 package com.poianitibaldizhou.trackme.grouprequestservice.service;
 
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
-import com.poianitibaldizhou.trackme.grouprequestservice.message.publisher.GroupRequestPublisher;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
-import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.annotation.DirtiesContext;
@@ -25,7 +21,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -64,7 +59,7 @@ public class GroupRequestManagerServiceImplIntegrationTest {
 
         groupRequestManagerService.addGroupRequest(groupRequestWrapper);
 
-        verify(internalCommunicationService, times(1)).sendGroupRequestCreatedMessage(any(), any());
+        verify(internalCommunicationService, times(1)).sendGroupRequestMessage(any(), any());
     }
 
 }

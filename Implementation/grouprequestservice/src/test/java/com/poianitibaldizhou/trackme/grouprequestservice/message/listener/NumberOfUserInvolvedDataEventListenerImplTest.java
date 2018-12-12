@@ -110,7 +110,7 @@ public class NumberOfUserInvolvedDataEventListenerImplTest {
             assertEquals(RequestStatus.ACCEPTED, groupRequest.getStatus());
             List<FilterStatement> filterStatementList = filterStatementRepository.findAllByGroupRequest_Id(2L);
             GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper(groupRequest, filterStatementList);
-            verify(groupRequestPublisher, times(1)).publishGroupRequestAccepted(groupRequestWrapper);
+            verify(groupRequestPublisher, times(1)).publishGroupRequest(groupRequestWrapper);
         }
 
         /**

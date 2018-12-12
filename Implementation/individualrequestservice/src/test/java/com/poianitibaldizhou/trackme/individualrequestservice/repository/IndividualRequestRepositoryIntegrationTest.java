@@ -29,7 +29,7 @@ import static org.junit.Assert.assertEquals;
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-@Sql("classpath:RepositoryTest")
+@Sql("classpath:RepositoryTest.sql")
 public class IndividualRequestRepositoryIntegrationTest {
 
     @Autowired

@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Respons
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -16,10 +17,12 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the upload response service.
  */
+@Slf4j
 @Service
 public class UploadResponseServiceImpl implements UploadResponseService {
 
@@ -27,6 +30,8 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final IndividualRequestRepository individualRequestRepository;
     private final ResponseRepository responseRepository;
+
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates an individual request manager service.
@@ -44,6 +49,10 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.individualRequestRepository = individualRequestRepository;
         this.responseRepository = individualResponseRepository;
+    }
+
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService){
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @Transactional
@@ -70,13 +79,23 @@ public class UploadResponseServiceImpl implements UploadResponseService {
 
         // Update the status of the request according to the type of resposne
         if (response == ResponseType.ACCEPT) {
-            request.setStatus(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS);
-
+            request.setStatus(IndividualRequestStatus.ACCEPTED);
         } else if (response == ResponseType.REFUSE) {
             request.setStatus(IndividualRequestStatus.REFUSED);
         }
 
-        return responseRepository.saveAndFlush(individualResponse);
+        Response savedResponse = responseRepository.saveAndFlush(individualResponse);
+
+        if(request.getStatus().equals(IndividualRequestStatus.ACCEPTED)) {
+            if (Objects.nonNull(internalCommunicationService)) {
+                Objects.requireNonNull(internalCommunicationService).sendIndividualRequest(request);
+            }
+            else{
+                log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+            }
+        }
+
+        return savedResponse;
     }
 
     @Transactional
