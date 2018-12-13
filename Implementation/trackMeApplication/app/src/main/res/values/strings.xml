@@ -47,4 +47,8 @@
     <string name="register_company_name">Company name</string>
     <string name="ssn_example_aaa_gg_ssss">AAA-GG-SSSS</string>
     <string name="date_example_mm_gg_yyyy">MM/GG/YYYY</string>
+    <string name="request_form_motive">Motive</string>
+    <string name="request_form_end_date">End date:</string>
+    <string name="request_form_start_date">Start date:</string>
+    <string name="request_form_to">To:</string>
 </resources>

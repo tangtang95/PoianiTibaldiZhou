@@ -7,7 +7,6 @@ import com.trackme.trackmeapplication.baseUtility.Constant;
 
 public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,LoginPresenter> {
 
-
     public void userLogin(final String username, final String password) {
         /*TODO*/
         if (username.isEmpty() || password.isEmpty())

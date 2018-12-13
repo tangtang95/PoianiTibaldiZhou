@@ -61,7 +61,7 @@
         android:textStyle="italic"/>
 
     <TextView
-        android:id="@+id/textViewRequestBodyName"
+        android:id="@+id/textViewThirdPartyName"
         android:layout_width="220dp"
         android:layout_height="20dp"
         android:layout_marginStart="32dp"

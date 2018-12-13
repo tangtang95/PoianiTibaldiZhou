@@ -32,7 +32,8 @@
         <activity android:name=".home.userHome.UserSettingsActivity" />
         <activity android:name=".account.register.UserProfileActivity" />
         <activity android:name=".home.businessHome.BusinessHomeActivity" />
-        <activity android:name=".individualRequest.RequestBodyActivity"></activity>
+        <activity android:name=".individualRequest.RequestBodyActivity" />
+        <activity android:name=".individualRequest.RequestFormActivity"></activity>
     </application>
 
 </manifest>

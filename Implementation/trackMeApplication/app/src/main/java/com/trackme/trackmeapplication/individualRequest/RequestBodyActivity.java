@@ -14,7 +14,7 @@ import butterknife.OnClick;
 
 public class RequestBodyActivity extends AppCompatActivity {
 
-    @BindView(R.id.textViewRequestBodyName)
+    @BindView(R.id.textViewThirdPartyName)
     protected TextView thirdPartyName;
     @BindView(R.id.textViewRequestBodyPeriod)
     protected TextView period;

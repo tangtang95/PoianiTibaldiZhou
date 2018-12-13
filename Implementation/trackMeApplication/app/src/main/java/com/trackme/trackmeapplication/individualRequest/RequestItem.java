@@ -8,12 +8,14 @@ public class RequestItem implements Serializable {
     private String startDate;
     private String endDate;
     private String motive;
+    private String ssn;
 
-    public RequestItem(String thirdPartyName, String startDate, String endDate, String motive) {
+    public RequestItem(String ssn, String thirdPartyName, String startDate, String endDate, String motive) {
         this.thirdPartyName = thirdPartyName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.motive = motive;
+        this.ssn = ssn;
     }
 
     public String getThirdPartyName() {
@@ -30,5 +32,9 @@ public class RequestItem implements Serializable {
 
     public String getMotive() {
         return motive;
+    }
+
+    public String getSsn() {
+        return ssn;
     }
 }

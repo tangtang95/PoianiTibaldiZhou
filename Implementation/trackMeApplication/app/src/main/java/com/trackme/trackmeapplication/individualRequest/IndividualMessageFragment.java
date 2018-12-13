@@ -128,11 +128,11 @@ public class IndividualMessageFragment extends Fragment {
 
         /*TODO*/
 
-        requestItems.add(new RequestItem("TangTangEmperor", "12/12/2018", "01/01/3018",
+        requestItems.add(new RequestItem("","TangTangEmperor", "12/12/2018", "01/01/3018",
                 "Controlling that the slaves are doing something when i'm at university "));
-        requestItems.add(new RequestItem("TangTangEmperor", "12/12/2018", "01/01/3018",
+        requestItems.add(new RequestItem("","TangTangEmperor", "12/12/2018", "01/01/3018",
                 "Controlling that the slaves are doing something when i'm at university "));
-        requestItems.add(new RequestItem("TangTangEmperor", "12/12/2018", "01/01/3018",
+        requestItems.add(new RequestItem("","TangTangEmperor", "12/12/2018", "01/01/3018",
                 "Controlling that the slaves are doing something when i'm at university "));
 
         recyclerView.setHasFixedSize(true);
