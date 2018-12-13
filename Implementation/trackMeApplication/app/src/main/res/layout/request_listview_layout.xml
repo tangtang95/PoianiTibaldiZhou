@@ -34,7 +34,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="180dp"
         app:cardBackgroundColor="@color/colorAccent"
-        app:cardCornerRadius="25dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="10dp">
 
         <RelativeLayout
@@ -59,7 +59,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="60dp"
         app:cardBackgroundColor="@color/colorAccent"
-        app:cardCornerRadius="25dp"
+        app:cardCornerRadius="15dp"
         app:cardElevation="10dp">
 
         <RelativeLayout

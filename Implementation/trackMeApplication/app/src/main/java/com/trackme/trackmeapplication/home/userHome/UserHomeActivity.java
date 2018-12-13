@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
 
 import com.trackme.trackmeapplication.R;
@@ -19,6 +20,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
         UserHomeDelegate> implements UserHomeContract.UserHomeView {
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
+    @BindView(R.id.tab_layout)protected TabLayout tabLayout;
     private SharedPreferences sp;
     private String username;
 
@@ -32,6 +34,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
     protected void onCreate(Bundle savedInstanceState) {
         setContentView(R.layout.activity_user_home);
         setSupportActionBar(toolbar);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         sp = getSharedPreferences("login", MODE_PRIVATE);
         username = sp.getString("username", null);

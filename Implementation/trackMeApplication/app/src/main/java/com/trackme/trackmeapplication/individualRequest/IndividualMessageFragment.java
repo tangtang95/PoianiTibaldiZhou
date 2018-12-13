@@ -8,12 +8,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -29,19 +28,19 @@ import butterknife.ButterKnife;
 public class IndividualMessageFragment extends Fragment {
 
     @BindView(R.id.listView)
-    protected ListView listView;
+    protected RecyclerView recyclerView;
 
-    private CustomListView customListView;
+    private CustomRecyclerView customRecyclerView;
     private List<RequestItem> requestItems = new ArrayList<>();
 
-    private class CustomListView extends ArrayAdapter<RequestItem> {
+    private class CustomRecyclerView extends RecyclerView.Adapter<CustomRecyclerView.MyViewHolder> {
 
-        private class ViewHolder extends RecyclerView.ViewHolder{
+        public class MyViewHolder extends RecyclerView.ViewHolder {
             private TextView name;
             private RelativeLayout accept;
             private RelativeLayout refuse;
 
-            ViewHolder(View view) {
+            MyViewHolder(View view) {
                 super(view);
                 name = view.findViewById(R.id.textViewThirdPartyName);
                 accept = view.findViewById(R.id.button_accept);
@@ -50,28 +49,25 @@ public class IndividualMessageFragment extends Fragment {
         }
 
         private Activity context;
+        private List<RequestItem> items;
 
-        public CustomListView(@NonNull Activity context, List<RequestItem> requestItems) {
-            super(context, R.layout.request_listview_layout,requestItems);
+        public CustomRecyclerView(@NonNull Activity context, List<RequestItem> requestItems) {
             this.context = context;
+            this.items = requestItems;
         }
 
         @NonNull
         @Override
-        public View getView(final int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View r = convertView;
-            ViewHolder viewHolder;
-            if (r == null) {
-                LayoutInflater layoutInflater = context.getLayoutInflater();
-                r = layoutInflater.inflate(R.layout.request_listview_layout, parent, false);
-                viewHolder = new ViewHolder(r);
-                r.setTag(viewHolder);
-            } else
-                viewHolder = (ViewHolder) r.getTag();
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.request_listview_layout, parent, false);
+            return new MyViewHolder(v);
+        }
 
-            viewHolder.name.setText(requestItems.get(position).getThirdPartyName());
+        @Override
+        public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
+            holder.name.setText(items.get(position).getThirdPartyName());
 
-            viewHolder.accept.setOnClickListener(new View.OnClickListener() {
+            holder.accept.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     /*TODO*/
@@ -79,14 +75,14 @@ public class IndividualMessageFragment extends Fragment {
                 }
             });
 
-            viewHolder.refuse.setOnClickListener(new View.OnClickListener() {
+            holder.refuse.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
+                            switch (which) {
                                 case DialogInterface.BUTTON_POSITIVE:
                                     /*TODO*/
                                     removeRequestItem(position);
@@ -108,16 +104,19 @@ public class IndividualMessageFragment extends Fragment {
                 }
             });
 
-            viewHolder.name.setOnClickListener(new View.OnClickListener() {
+            holder.name.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, RequestBodyActivity.class);
-                    intent.putExtra("item", requestItems.get(position));
+                    intent.putExtra("item", items.get(position));
                     startActivity(intent);
                 }
             });
+        }
 
-            return r;
+        @Override
+        public int getItemCount() {
+            return items.size();
         }
     }
 
@@ -133,31 +132,36 @@ public class IndividualMessageFragment extends Fragment {
                 "Controlling that the slaves are doing something when i'm at university "));
         requestItems.add(new RequestItem("TangTangEmperor", "12/12/2018", "01/01/3018",
                 "Controlling that the slaves are doing something when i'm at university "));
+        requestItems.add(new RequestItem("TangTangEmperor", "12/12/2018", "01/01/3018",
+                "Controlling that the slaves are doing something when i'm at university "));
 
-        customListView = new CustomListView(Objects.requireNonNull(getActivity()), requestItems);
-        listView.setAdapter(customListView);
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
 
+        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), requestItems);
+        recyclerView.setAdapter(customRecyclerView);
 
         return individualMessageFragment;
     }
 
 
     public void addRequestItem(RequestItem requestItem) {
-        requestItems.add(0,requestItem);
+        requestItems.add(0, requestItem);
         refreshList();
     }
 
-    public void removeRequestItem(int j){
+    public void removeRequestItem(int j) {
         requestItems.remove(j);
         refreshList();
     }
 
     private void refreshList() {
-        customListView.notifyDataSetChanged();
-        listView.post(new Runnable() {
+        customRecyclerView.notifyDataSetChanged();
+        recyclerView.post(new Runnable() {
             @Override
             public void run() {
-                listView.smoothScrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
             }
         });
     }

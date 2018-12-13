@@ -1,15 +1,16 @@
 package com.trackme.trackmeapplication.home.userHome;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
@@ -24,9 +25,9 @@ import butterknife.ButterKnife;
 public class UserHistoryFragment extends Fragment {
 
     @BindView(R.id.listView)
-    protected ListView listView;
+    protected RecyclerView recyclerView;
 
-    private CustomListView customListView;
+    private CustomRecyclerView customRecyclerView;
     private List<HistoryItem> historyItems = new ArrayList<>();
 
     public class HistoryItem {
@@ -47,41 +48,43 @@ public class UserHistoryFragment extends Fragment {
         }
     }
 
-    private class CustomListView extends ArrayAdapter<HistoryItem> {
+    private class CustomRecyclerView extends RecyclerView.Adapter<CustomRecyclerView.MyViewHolder> {
 
-        private class ViewHolder {
+        public class MyViewHolder extends RecyclerView.ViewHolder{
             private TextView date;
             private TextView info;
 
-            ViewHolder(View view) {
+            MyViewHolder(View view) {
+                super(view);
                 date = view.findViewById(R.id.textViewDate);
                 info = view.findViewById(R.id.textViewInfo);
             }
         }
 
-        private Activity context;
+        private Context context;
+        private List<HistoryItem> items;
 
-        public CustomListView(@NonNull Activity context, List<HistoryItem> historyItems) {
-            super(context, R.layout.history_listview_layout, historyItems);
+        public CustomRecyclerView(@NonNull Activity context, List<HistoryItem> historyItems) {
             this.context = context;
+            this.items = historyItems;
         }
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View r = convertView;
-            ViewHolder viewHolder;
-            if (r == null) {
-                LayoutInflater layoutInflater = context.getLayoutInflater();
-                r = layoutInflater.inflate(R.layout.history_listview_layout, null, true);
-                viewHolder = new ViewHolder(r);
-                r.setTag(viewHolder);
-            } else
-                viewHolder = (ViewHolder) r.getTag();
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_listview_layout, parent, false);
+            return new MyViewHolder(v);
+        }
 
-            viewHolder.date.setText(historyItems.get(position).getDate());
-            viewHolder.info.setText(historyItems.get(position).getInfo());
-            return r;
+        @Override
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            holder.date.setText(historyItems.get(position).getDate());
+            holder.info.setText(historyItems.get(position).getInfo());
+        }
+
+        @Override
+        public int getItemCount() {
+            return items.size();
         }
     }
 
@@ -92,8 +95,13 @@ public class UserHistoryFragment extends Fragment {
         ButterKnife.bind(this, userHistoryFragment);
 
         /*TODO*/
-        customListView = new CustomListView(Objects.requireNonNull(getActivity()), historyItems);
-        listView.setAdapter(customListView);
+
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), historyItems);
+        recyclerView.setAdapter(customRecyclerView);
 
         addHistoryItem(new HistoryItem("12/08/1222","Pulse 100 bpm - Pressure: 120/80"));
 
@@ -102,11 +110,11 @@ public class UserHistoryFragment extends Fragment {
 
     public void addHistoryItem(HistoryItem historyItem) {
         historyItems.add(0, historyItem);
-        customListView.notifyDataSetChanged();
-        listView.post(new Runnable() {
+        customRecyclerView.notifyDataSetChanged();
+        recyclerView.post(new Runnable() {
             @Override
             public void run() {
-                listView.smoothScrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
             }
         });
     }
