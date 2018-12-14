@@ -1,7 +1,5 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
-import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
-import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
@@ -41,6 +39,9 @@ public class PublicUserControllerUnitTest {
 
     @MockBean
     private UserAccountManagerService service;
+
+
+    // unused but needed to set up the context application by Spring
 
     @MockBean
     private UserAuthenticationService authenticationService;

@@ -2,7 +2,6 @@ package com.poianitibaldizhou.trackme.apigateway.controller;
 
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
-import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;

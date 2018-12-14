@@ -1,10 +1,13 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
+import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
 import org.json.JSONException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -17,6 +20,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -45,7 +53,17 @@ public class SecuredThirdPartyControllerIntegrationTest {
 
     private HttpHeaders httpHeaders = new HttpHeaders();
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    private RestTemplate restTemplate;
+
+    @Before
+    public void setUp() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        restTemplate = TestUtils.getRestTemplate();
+    }
+
+    @After
+    public void tearDown() {
+        restTemplate = null;
+    }
 
     /**
      * Test the get of information of a third party that has provided company detail while registering
@@ -79,7 +97,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
                 "   },\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/thirdparties/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+"/thirdparties/info\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -122,7 +140,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
                 "   },\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/thirdparties/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+"/thirdparties/info\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -132,6 +150,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
     }
 
     // UTILS METHOD
+
     /**
      * Perform the login and return the token
      *
@@ -151,6 +170,6 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return "https://localhost:" + port + uri;
     }
 }
