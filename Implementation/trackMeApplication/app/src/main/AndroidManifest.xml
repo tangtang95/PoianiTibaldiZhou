@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+
     <uses-feature android:name="android.hardware.location.gps" />
 
     <application
@@ -27,10 +28,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".account.login.BusinessLoginActivity" />
-        <activity android:name=".account.register.UserRegisterActivity" />
+        <activity android:name=".account.register.RegisterActivity" />
         <activity android:name=".home.userHome.UserSettingsActivity" />
         <activity android:name=".account.register.UserProfileActivity" />
-        <activity android:name=".home.businessHome.BusinessHomeActivity"/>
+        <activity android:name=".home.businessHome.BusinessHomeActivity" />
+        <activity android:name=".individualRequest.RequestBodyActivity" />
+        <activity android:name=".individualRequest.RequestFormActivity"></activity>
     </application>
 
 </manifest>

@@ -4,8 +4,11 @@ import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrappe
 
 public interface GroupRequestPublisher {
 
-    void publishGroupRequestCreated(GroupRequestWrapper groupRequestWrapper);
-
-    void publishGroupRequestAccepted(GroupRequestWrapper groupRequestWrapper);
+    /**
+     * Send the group request wrapper to the message broker (rabbit-mq)
+     *
+     * @param groupRequestWrapper the group request wrapper containing also the list of filter statements
+     */
+    void publishGroupRequest(GroupRequestWrapper groupRequestWrapper);
 
 }

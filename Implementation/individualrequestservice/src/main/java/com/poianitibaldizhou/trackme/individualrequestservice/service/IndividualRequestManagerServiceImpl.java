@@ -12,6 +12,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRep
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.springframework.stereotype.Service;
 
+import javax.validation.constraints.Null;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;

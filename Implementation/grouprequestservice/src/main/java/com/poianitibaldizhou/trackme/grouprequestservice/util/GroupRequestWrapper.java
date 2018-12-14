@@ -12,7 +12,7 @@ import java.util.List;
  * and all the filter statement associated with it are present
  */
 @EqualsAndHashCode
-public class GroupRequestWrapper implements Serializable {
+public class GroupRequestWrapper{
 
     private GroupRequest groupRequest;
     private List<FilterStatement> filterStatementList;

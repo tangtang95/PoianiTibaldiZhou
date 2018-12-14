@@ -1,22 +1,21 @@
 package com.trackme.trackmeapplication.home.userHome;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -25,16 +24,22 @@ import butterknife.ButterKnife;
 
 public class UserHistoryFragment extends Fragment {
 
-    public class Item {
-        private Date date;
+    @BindView(R.id.listView)
+    protected RecyclerView recyclerView;
+
+    private CustomRecyclerView customRecyclerView;
+    private List<HistoryItem> historyItems = new ArrayList<>();
+
+    public class HistoryItem {
+        private String date;
         private String info;
 
-        public Item(Date date, String info) {
+        public HistoryItem(String date, String info) {
             this.date = date;
             this.info = info;
         }
 
-        public Date getDate() {
+        public String getDate() {
             return date;
         }
 
@@ -43,55 +48,45 @@ public class UserHistoryFragment extends Fragment {
         }
     }
 
-    private class CustomListView extends ArrayAdapter<Item> {
+    private class CustomRecyclerView extends RecyclerView.Adapter<CustomRecyclerView.MyViewHolder> {
 
-        private class ViewHolder {
+        public class MyViewHolder extends RecyclerView.ViewHolder{
             private TextView date;
             private TextView info;
 
-            ViewHolder(View view) {
+            MyViewHolder(View view) {
+                super(view);
                 date = view.findViewById(R.id.textViewDate);
                 info = view.findViewById(R.id.textViewInfo);
             }
         }
 
-        private List<Item> items = new ArrayList<>();
-        private Activity context;
+        private Context context;
+        private List<HistoryItem> items;
 
-        public CustomListView(@NonNull Activity context) {
-            super(context, R.layout.history_listview_layout);
+        public CustomRecyclerView(@NonNull Activity context, List<HistoryItem> historyItems) {
             this.context = context;
-        }
-
-        public void addItem(Item item) {
-            items.add(item);
+            this.items = historyItems;
         }
 
         @NonNull
         @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-            View r = convertView;
-            ViewHolder viewHolder;
-            if (r == null) {
-                LayoutInflater layoutInflater = context.getLayoutInflater();
-                r = layoutInflater.inflate(R.layout.history_listview_layout, null, true);
-                viewHolder = new ViewHolder(r);
-                r.setTag(viewHolder);
-            } else
-                viewHolder = (ViewHolder) r.getTag();
-
-            viewHolder.date.setText(items.get(position).getDate().toString());
-            viewHolder.info.setText(items.get(position).getInfo());
-            return r;
+        public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.history_listview_layout, parent, false);
+            return new MyViewHolder(v);
         }
 
+        @Override
+        public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+            holder.date.setText(historyItems.get(position).getDate());
+            holder.info.setText(historyItems.get(position).getInfo());
+        }
 
+        @Override
+        public int getItemCount() {
+            return items.size();
+        }
     }
-
-    @BindView(R.id.listView)
-    protected ListView listView;
-
-    private CustomListView customListView;
 
     @Nullable
     @Override
@@ -100,21 +95,26 @@ public class UserHistoryFragment extends Fragment {
         ButterKnife.bind(this, userHistoryFragment);
 
         /*TODO*/
-        customListView = new CustomListView(Objects.requireNonNull(getActivity()));
-        listView.setAdapter(customListView);
 
-        addItem(new Item(Calendar.getInstance().getTime(),"Pulse 100 bpm - Pressure: 120/80"));
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
+
+        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), historyItems);
+        recyclerView.setAdapter(customRecyclerView);
+
+        addHistoryItem(new HistoryItem("12/08/1222","Pulse 100 bpm - Pressure: 120/80"));
 
         return userHistoryFragment;
     }
 
-    public void addItem(Item item) {
-        customListView.addItem(item);
-        customListView.notifyDataSetChanged();
-        listView.post(new Runnable() {
+    public void addHistoryItem(HistoryItem historyItem) {
+        historyItems.add(0, historyItem);
+        customRecyclerView.notifyDataSetChanged();
+        recyclerView.post(new Runnable() {
             @Override
             public void run() {
-                listView.smoothScrollToPosition(0);
+                recyclerView.smoothScrollToPosition(0);
             }
         });
     }

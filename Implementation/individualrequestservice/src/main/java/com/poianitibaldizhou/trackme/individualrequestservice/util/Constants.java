@@ -27,4 +27,12 @@ public class Constants {
             "format of the data provided is correct.";
 
     public static final String SPACE = " ";
+
+    // EXCHANGE AND QUEUES NAMES
+    public static final String USER_EXCHANGE_NAME = "trackme.user-exchange";
+    public static final String USER_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME = "trackme.user.created.individual-request-queue";
+
+    public static final String INDIVIDUAL_REQUEST_EXCHANGE_NAME = "trackme.individualrequest-exchange";
+    public static final String INDIVIDUAL_REQUEST_ACCEPTED_SHARE_DATA_QUEUE_NAME = "trackme.individualrequest.accepted.share-data-queue";
+
 }

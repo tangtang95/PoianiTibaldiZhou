@@ -19,6 +19,8 @@ public class BusinessLoginActivity extends LoginActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business_login);
+
+        sp = getSharedPreferences("login",MODE_PRIVATE);
     }
 
     @Override

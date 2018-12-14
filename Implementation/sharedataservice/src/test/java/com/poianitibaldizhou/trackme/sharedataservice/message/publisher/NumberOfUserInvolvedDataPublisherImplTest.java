@@ -62,6 +62,7 @@ public class NumberOfUserInvolvedDataPublisherImplTest {
         numberOfUserInvolvedDataPublisher.publishNumberOfUserInvolvedData(1L, 100.0);
         NumberOfUserInvolvedProtocolMessage protocolMessage = (NumberOfUserInvolvedProtocolMessage) rabbitTemplate.receiveAndConvert(
                 numberOfUserInvolvedGeneratedToGroupRequestServiceQueue.getName(), 2000);
+        assertTrue(NumberOfUserInvolvedProtocolMessage.validateMessage(protocolMessage));
         assertEquals(new Double(100), protocolMessage.getNumberOfUserInvolved());
         assertEquals(new Long(1), protocolMessage.getGroupRequestId());
         Integer numberOfMessages = (Integer) rabbitAdmin

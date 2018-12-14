@@ -57,8 +57,7 @@ public class InternalCommunicationServiceImpl implements InternalCommunicationSe
             groupRequest.setStatus(RequestStatus.ACCEPTED);
             groupRequestRepository.save(groupRequest);
             List<FilterStatement> filterStatementList = filterStatementRepository.findAllByGroupRequest_Id(groupRequest.getId());
-            GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper(groupRequest, filterStatementList);
-            groupRequestPublisher.publishGroupRequestAccepted(groupRequestWrapper);
+            sendGroupRequestMessage(groupRequest, filterStatementList);
         }
         else{
             groupRequest.setStatus(RequestStatus.REFUSED);
@@ -67,9 +66,9 @@ public class InternalCommunicationServiceImpl implements InternalCommunicationSe
     }
 
     @Override
-    public void sendGroupRequestCreatedMessage(GroupRequest groupRequest, List<FilterStatement> filterStatementList) {
+    public void sendGroupRequestMessage(GroupRequest groupRequest, List<FilterStatement> filterStatementList) {
         GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper(groupRequest, filterStatementList);
-        groupRequestPublisher.publishGroupRequestAccepted(groupRequestWrapper);
+        groupRequestPublisher.publishGroupRequest(groupRequestWrapper);
     }
 
 }

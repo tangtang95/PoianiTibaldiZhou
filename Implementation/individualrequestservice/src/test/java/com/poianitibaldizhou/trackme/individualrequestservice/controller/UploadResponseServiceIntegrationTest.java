@@ -36,7 +36,7 @@ import static org.junit.Assert.assertEquals;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
-@Sql("classpath:ControllerIntegrationTest")
+@Sql("classpath:ControllerIntegrationTest.sql")
 public class UploadResponseServiceIntegrationTest {
 
     @LocalServerPort
@@ -74,7 +74,7 @@ public class UploadResponseServiceIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertTrue(responseRepository.findById(1L).isPresent());
         assertTrue(responseRepository.findById(1L).orElseThrow(Exception::new).getResponse().equals(ResponseType.ACCEPT));
-        assertTrue(requestRepository.findById(1L).orElseThrow(Exception::new).getStatus().equals(IndividualRequestStatus.ACCEPTED_UNDER_ANALYSIS));
+        assertTrue(requestRepository.findById(1L).orElseThrow(Exception::new).getStatus().equals(IndividualRequestStatus.ACCEPTED));
     }
 
     /**

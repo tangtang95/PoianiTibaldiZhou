@@ -6,7 +6,7 @@ import com.poianitibaldizhou.trackme.grouprequestservice.message.protocol.enumer
 import java.util.Map;
 
 /**
- * The utility class regarding RequestTypeProtocolMessage
+ * The utility class regarding RequestType
  */
 public class RequestTypeUtils {
 

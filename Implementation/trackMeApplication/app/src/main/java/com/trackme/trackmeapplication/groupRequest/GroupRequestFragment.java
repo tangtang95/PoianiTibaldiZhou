@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.idividualRequest;
+package com.trackme.trackmeapplication.groupRequest;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,11 +10,15 @@ import android.view.ViewGroup;
 
 import com.trackme.trackmeapplication.R;
 
-public class IndividualMessageFragment extends Fragment {
+import butterknife.ButterKnife;
+
+public class GroupRequestFragment extends Fragment {
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_user_message, container, false);
+        View groupRequestFragment = inflater.inflate(R.layout.fragment_group_request, container, false);
+        ButterKnife.bind(this, groupRequestFragment);
+        return groupRequestFragment;
     }
 }

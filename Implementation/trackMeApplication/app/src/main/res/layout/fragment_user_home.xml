@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark">
+    android:background="@drawable/gradient_background">
 
     <EditText
         android:id="@+id/editTextPulseValue"
@@ -15,10 +15,11 @@
         android:background="#11000000"
         android:ems="10"
         android:enabled="false"
+        android:focusable="false"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         android:textSize="16sp"
-        android:alpha="0"/>
+        android:alpha="0" />
 
     <EditText
         android:id="@+id/editTextPulseText"
@@ -31,6 +32,7 @@
         android:background="#11000000"
         android:ems="10"
         android:enabled="false"
+        android:focusable="false"
         android:text="@string/home_fragment_pulse"
         android:textAlignment="textEnd"
         android:textColor="@color/colorWhite"
@@ -49,6 +51,7 @@
         android:background="#11000000"
         android:ems="10"
         android:enabled="false"
+        android:focusable="false"
         android:text="@string/home_fragment_blood_pressure"
         android:textAlignment="textEnd"
         android:textColor="@color/colorWhite"
@@ -67,6 +70,7 @@
         android:background="#11000000"
         android:ems="10"
         android:enabled="false"
+        android:focusable="false"
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         android:textSize="16sp"
@@ -85,12 +89,12 @@
 
 
     <TextView
-        android:id="@+id/welcome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="50dp"
+        android:enabled="true"
         android:textColor="@color/colorWhite"
         android:textSize="20sp"
         android:text="@string/home_welcome_to_data4help" />

@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.account.register.UserRegisterActivity;
+import com.trackme.trackmeapplication.account.register.RegisterActivity;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 
 import butterknife.BindView;
@@ -47,7 +47,7 @@ public abstract class LoginActivity extends BaseDelegationActivity<
 
     @Override
     public void navigateToRegister() {
-        Intent intent = new Intent(this, UserRegisterActivity.class);
+        Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 

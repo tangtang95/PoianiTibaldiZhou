@@ -48,7 +48,7 @@ public class UserHomeFragment extends Fragment {
     private static final int MAX_PRESSURE_Y = 190;
     private static final int MIN_PRESSURE_Y = 70;
 
-    private static final int ANIMATION_DURATION = 3000;
+    private static final int ANIMATION_DURATION = 2000;
 
     // Acquire a reference to the system Location Manager
     LocationManager locationManager;
