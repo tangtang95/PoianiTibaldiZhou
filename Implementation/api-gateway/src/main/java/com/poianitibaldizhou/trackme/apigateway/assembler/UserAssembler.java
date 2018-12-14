@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.assembler;
 
-import com.poianitibaldizhou.trackme.apigateway.controller.UserAccountManagerController;
+import com.poianitibaldizhou.trackme.apigateway.controller.SecuredUserController;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
@@ -19,6 +19,6 @@ public class UserAssembler implements ResourceAssembler<User, Resource<User>>{
     @Override
     public Resource<User> toResource(User user) {
         return new Resource<>(user,
-                linkTo(methodOn(UserAccountManagerController.class).getUserBySsn(user.getSsn())).withSelfRel());
+                linkTo(methodOn(SecuredUserController.class).getUser(user)).withSelfRel());
     }
 }

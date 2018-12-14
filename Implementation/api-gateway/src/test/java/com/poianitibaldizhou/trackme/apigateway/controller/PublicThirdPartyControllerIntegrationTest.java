@@ -1,11 +1,11 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentEmailException;
-import com.poianitibaldizhou.trackme.apigateway.exception.ThirdPartyCustomerNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
@@ -13,11 +13,8 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -34,7 +31,7 @@ import java.sql.Date;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Integration test for the controller that manages the third party accounts
+ * Integration test for the public part of the controller that manages the third party accounts
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiGatewayApplication.class,
@@ -42,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"classpath:IntegrationTPControllerTestData"})
 @Transactional
-public class ThirdPartyCustomerManagerControllerIntegrationTest {
+public class PublicThirdPartyControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -59,101 +56,6 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
     private HttpHeaders httpHeaders = new HttpHeaders();
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
-
-    /**
-     * Test the get of information of a third party that has provided company detail while registering
-     *
-     * @throws JSONException due to json assert equals method
-     */
-    @Test
-    public void testGetTPWhenCompany() throws JSONException {
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/tpaccountservice/thirdparties/tp1@provider.com"),
-                HttpMethod.GET, entity, String.class);
-
-        String expectedBody = "\n" +
-                "{\n" +
-                "   \"thirdPartyCustomer\":{\n" +
-                "      \"email\":\"tp1@provider.com\",\n" +
-                "      \"password\":\"tp1pass\"\n" +
-                "   },\n" +
-                "   \"companyDetail\":{\n" +
-                "      \"thirdPartyCustomer\":{\n" +
-                "         \"email\":\"tp1@provider.com\",\n" +
-                "         \"password\":\"tp1pass\"\n" +
-                "      },\n" +
-                "      \"companyName\":\"company1\",\n" +
-                "      \"address\":\"address1\",\n" +
-                "      \"dunsNumber\":\"555\"\n" +
-                "   },\n" +
-                "   \"_links\":{\n" +
-                "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/tpaccountservice/thirdparties/tp1@provider.com\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
-    }
-
-    /**
-     * Test the get of information of a third party that has provided private detail while registering
-     *
-     * @throws JSONException due to json assert equals method
-     */
-    @Test
-    public void testGetTPWhenPrivate() throws JSONException {
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/tpaccountservice/thirdparties/tp3@provider.com"),
-                HttpMethod.GET, entity, String.class);
-
-        String expectedBody = "\n" +
-                "{\n" +
-                "   \"thirdPartyCustomer\":{\n" +
-                "      \"email\":\"tp3@provider.com\",\n" +
-                "      \"password\":\"tp3pass\"\n" +
-                "   },\n" +
-                "   \"privateThirdPartyDetail\":{\n" +
-                "      \"thirdPartyCustomer\":{\n" +
-                "         \"email\":\"tp3@provider.com\",\n" +
-                "         \"password\":\"tp3pass\"\n" +
-                "      },\n" +
-                "      \"ssn\":\"tp3ssn\",\n" +
-                "      \"name\":\"Jack\",\n" +
-                "      \"surname\":\"Jones\",\n" +
-                "      \"birthDate\":\"2000-01-01\",\n" +
-                "      \"birthCity\":\"Roma\"\n" +
-                "   },\n" +
-                "   \"_links\":{\n" +
-                "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/tpaccountservice/thirdparties/tp3@provider.com\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
-    }
-
-    /**
-     * Test the get of information of a third party, when no third party with the specified email is present
-     */
-    @Test
-    public void testGetTPWhenNotRegistered() throws IOException {
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/tpaccountservice/thirdparties/nonPresentMail@provider.com"),
-                HttpMethod.GET, entity, String.class);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
-        assertEquals(new ThirdPartyCustomerNotFoundException("nonPresentMail@provider.com").getMessage(), exceptionResponseBody.getMessage());
-    }
 
     /**
      * Test the registration of a third party providing company details
@@ -177,7 +79,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/tpaccountservice/thirdparties/companies"),
+                createURLWithPort("/public/thirdparties/companies"),
                 HttpMethod.POST, entity, String.class);
 
         ThirdPartyCustomer insertedTp = thirdPartyRepository.findByEmail(thirdPartyCustomer.getEmail()).orElseThrow(Error::new);
@@ -215,7 +117,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/tpaccountservice/thirdparties/companies"),
+                createURLWithPort("/public/thirdparties/companies"),
                 HttpMethod.POST, entity, String.class);
 
 
@@ -253,7 +155,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/tpaccountservice/thirdparties/privates"),
+                createURLWithPort("/public/thirdparties/privates"),
                 HttpMethod.POST, entity, String.class);
 
         ThirdPartyCustomer insertedTp = thirdPartyRepository.findByEmail(thirdPartyCustomer.getEmail()).orElseThrow(Error::new);
@@ -295,7 +197,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/tpaccountservice/thirdparties/privates"),
+                createURLWithPort("/public/thirdparties/privates"),
                 HttpMethod.POST, entity, String.class);
 
 
@@ -332,7 +234,7 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/tpaccountservice/thirdparties/privates"),
+                createURLWithPort("/public/thirdparties/privates"),
                 HttpMethod.POST, entity, String.class);
 
 
@@ -344,7 +246,6 @@ public class ThirdPartyCustomerManagerControllerIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
         assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
     }
-
 
     /**
      * Utility method to form the url with the injected port for a certain uri

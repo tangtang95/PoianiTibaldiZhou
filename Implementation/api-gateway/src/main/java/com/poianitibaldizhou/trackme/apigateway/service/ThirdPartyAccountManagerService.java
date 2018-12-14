@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.service;
 
+import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyWrapper;
@@ -31,7 +32,16 @@ public interface ThirdPartyAccountManagerService {
      */
     Optional<ThirdPartyPrivateWrapper> getThirdPartyPrivateByEmail(String email);
 
-
+    /**
+     * Retrieves a third party customer based on email, which is the id of the entity.
+     * This requires, to be successful, that a customer with that email exists.
+     * This method does not distinguish between company and private third parties: these pieces of information
+     * won't be, thus, returned.
+     *
+     * @param email email that identifies the requested customer
+     * @return customer identified by the email
+     */
+    ThirdPartyCustomer getThirdPartyByEmail(String email);
 
     /**
      * Register a third party customer that is a company. This requires information such as password,

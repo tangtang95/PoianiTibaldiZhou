@@ -8,13 +8,22 @@ import com.poianitibaldizhou.trackme.apigateway.entity.User;
 public interface UserAccountManagerService {
 
     /**
-     * Retrieves an user based on a ssn, which is the id of the entity.
+     * Retrieves a user based on a ssn, which is the id of the entity.
      * This requires, to be successful, that an user with a certain ssn exists
      *
      * @param ssn ssn that identifies the requested user
      * @return user identified by the ssn
      */
     User getUserBySsn(String ssn);
+
+    /**
+     * Retrieves a user based on a username.
+     * This requires, to be successful, that a user with a certain username exists
+     *
+     * @param username username that identifies the requested user
+     * @return user identified by username
+     */
+    User getUserByUserName(String username);
 
     /**
      * Adds an user to the system: a person is allowed to register into the system as a user by providing
@@ -25,12 +34,4 @@ public interface UserAccountManagerService {
      */
     User registerUser(User user);
 
-    /**
-     * Verify that the parameters provided math a user who has registered to the system
-     *
-     * @param username username of the user
-     * @param password password for the user identified by the username
-     * @return true if the credential are matched with a registered user, false otherwise
-     */
-    boolean verifyUserCredential(String username, String password);
 }

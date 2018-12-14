@@ -3,8 +3,9 @@ package com.poianitibaldizhou.trackme.apigateway.service;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
-import com.poianitibaldizhou.trackme.apigateway.exception.UserNotFoundException;
+import com.poianitibaldizhou.trackme.apigateway.exception.SsnNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +30,12 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
     @Transactional
     @Override
     public User getUserBySsn(String ssn) {
-        return userRepository.findById(ssn).orElseThrow(() -> new UserNotFoundException(ssn));
+        return userRepository.findById(ssn).orElseThrow(() -> new SsnNotFoundException(ssn));
+    }
+
+    @Override
+    public User getUserByUserName(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
     }
 
     @Transactional
@@ -38,18 +44,11 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
         if(userRepository.findById(user.getSsn()).isPresent()) {
             throw new AlreadyPresentSsnException(user.getSsn());
         }
-        if(userRepository.findByUserName(user.getUserName()).isPresent()) {
-            throw new AlreadyPresentUsernameException(user.getUserName());
+        if(userRepository.findByUsername(user.getUsername()).isPresent()) {
+            throw new AlreadyPresentUsernameException(user.getUsername());
         }
 
         return userRepository.saveAndFlush(user);
     }
 
-    @Transactional
-    @Override
-    public boolean verifyUserCredential(String username, String password) {
-        // TODO FIX EXCEPTION
-        User user = userRepository.findByUserName(username).orElseThrow(() -> new UserNotFoundException(username));
-        return user.getPassword().equals(password);
-    }
 }

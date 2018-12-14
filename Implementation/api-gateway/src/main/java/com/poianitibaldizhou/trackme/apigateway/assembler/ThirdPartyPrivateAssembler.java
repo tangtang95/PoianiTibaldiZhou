@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.assembler;
 
-import com.poianitibaldizhou.trackme.apigateway.controller.ThirdPartyCustomerManagerController;
+import com.poianitibaldizhou.trackme.apigateway.controller.SecuredThirdPartyController;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
@@ -18,7 +18,7 @@ public class ThirdPartyPrivateAssembler implements ResourceAssembler<ThirdPartyP
     @Override
     public Resource<ThirdPartyPrivateWrapper> toResource(ThirdPartyPrivateWrapper thirdPartyPrivateWrapper) {
         return new Resource<>(thirdPartyPrivateWrapper,
-                linkTo(methodOn(ThirdPartyCustomerManagerController.class).
-                        getThirdParty(thirdPartyPrivateWrapper.getThirdPartyCustomer().getEmail())).withSelfRel());
+                linkTo(methodOn(SecuredThirdPartyController.class).
+                        getThirdParty(thirdPartyPrivateWrapper.getThirdPartyCustomer())).withSelfRel());
     }
 }

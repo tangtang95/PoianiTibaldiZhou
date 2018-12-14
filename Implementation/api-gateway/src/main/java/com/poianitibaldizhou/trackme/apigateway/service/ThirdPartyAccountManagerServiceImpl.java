@@ -78,6 +78,11 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return Optional.empty();
     }
 
+    @Override
+    public ThirdPartyCustomer getThirdPartyByEmail(String email) {
+        return thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
+    }
+
     @Transactional
     @Override
     public ThirdPartyCompanyWrapper registerThirdPartyCompany(ThirdPartyCompanyWrapper thirdPartyCompanyWrapper) {

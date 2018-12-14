@@ -1,18 +1,15 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
-import com.poianitibaldizhou.trackme.apigateway.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ExceptionResponseBody;
-import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
-import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -29,7 +26,7 @@ import java.sql.Date;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Integration test for the controller that manages the user accounts
+ * Integration test for the public controller that manages the user accounts
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ApiGatewayApplication.class,
@@ -37,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"classpath:IntegrationUserControllerTestData.sql"})
 @Transactional
-public class UserAccountManagerControllerIntegrationTest {
+public class PublicUserControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -50,55 +47,6 @@ public class UserAccountManagerControllerIntegrationTest {
     private TestRestTemplate restTemplate = new TestRestTemplate();
 
     /**
-     * Test the get of a user by means of his ssn
-     *
-     * @throws Exception due to json assert equals
-     */
-    @Test
-    public void testGetUserBySsn() throws JSONException {
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/useraccountservice/users/user1"),
-                HttpMethod.GET, entity, String.class);
-
-        String expectedBody = "{\n" +
-                "   \"password\":\"password1\",\n" +
-                "   \"userName\":\"username1\",\n" +
-                "   \"firstName\":\"Frank\",\n" +
-                "   \"lastName\":\"Rossi\",\n" +
-                "   \"birthDate\":\"1999-01-01\",\n" +
-                "   \"birthCity\":\"Verona\",\n" +
-                "   \"birthNation\":\"ITALY\",\n" +
-                "   \"_links\":{\n" +
-                "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/useraccountservice/users/user1\"\n" +
-                "      }\n" +
-                "   }\n" +
-                "}";
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
-    }
-
-    /**
-     * Test get of a user by means of his ssn when no user with that ssn is registered
-     */
-    @Test
-    public void testGetUserBySsnWhenNotPresent() throws IOException {
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/useraccountservice/users/nonPresentSsn"),
-                HttpMethod.GET, entity, String.class);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.NOT_FOUND.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.NOT_FOUND.toString(), exceptionResponseBody.getError());
-        assertEquals(new UserNotFoundException("nonPresentSsn").getMessage(), exceptionResponseBody.getMessage());
-    }
-
-    /**
      * Test the registration of a user
      *
      * @throws Exception user already present in the data set
@@ -106,7 +54,7 @@ public class UserAccountManagerControllerIntegrationTest {
     @Test
     public void testRegisterUser() throws Exception {
         User user = new User();
-        user.setUserName("newUserName");
+        user.setUsername("newUserName");
         user.setPassword("xcasggv");
         user.setLastName("Tiba");
         user.setFirstName("Mattia");
@@ -117,13 +65,13 @@ public class UserAccountManagerControllerIntegrationTest {
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/useraccountservice/users/newSsn"),
+                createURLWithPort("/public/users/newSsn"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
         User insertedUser = userRepository.findById("newSsn").orElseThrow(Exception::new);
-        assertEquals(user.getUserName(), insertedUser.getUserName());
+        assertEquals(user.getUsername(), insertedUser.getUsername());
         assertEquals(user.getLastName(), insertedUser.getLastName());
         assertEquals(user.getFirstName(), insertedUser.getFirstName());
         assertEquals(user.getBirthCity(), insertedUser.getBirthCity());
@@ -138,7 +86,7 @@ public class UserAccountManagerControllerIntegrationTest {
     @Test
     public void testRegisterUserWhenUserNameAlreadyPresent() throws IOException {
         User user = new User();
-        user.setUserName("username1");
+        user.setUsername("username1");
         user.setPassword("xcasggv");
         user.setLastName("Tiba");
         user.setFirstName("Mattia");
@@ -149,7 +97,7 @@ public class UserAccountManagerControllerIntegrationTest {
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/useraccountservice/users/newSsn"),
+                createURLWithPort("/public/users/newSsn"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -168,7 +116,7 @@ public class UserAccountManagerControllerIntegrationTest {
     @Test
     public void testRegisterUserWhenSsnAlreadyPresent() throws IOException {
         User user = new User();
-        user.setUserName("newUsername");
+        user.setUsername("newUsername");
         user.setPassword("xcasggv");
         user.setLastName("Tiba");
         user.setFirstName("Mattia");
@@ -179,7 +127,7 @@ public class UserAccountManagerControllerIntegrationTest {
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/useraccountservice/users/user1"),
+                createURLWithPort("/public/users/user1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -198,7 +146,7 @@ public class UserAccountManagerControllerIntegrationTest {
     @Test
     public void testRegisterUserWrongParameters() throws IOException {
         User user = new User();
-        user.setUserName("newUsername");
+        user.setUsername("newUsername");
         user.setPassword("xcasggv");
         user.setLastName("Tiba");
         user.setFirstName("Mattia");
@@ -207,7 +155,7 @@ public class UserAccountManagerControllerIntegrationTest {
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/useraccountservice/users/user100"),
+                createURLWithPort("/public/users/user100"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
