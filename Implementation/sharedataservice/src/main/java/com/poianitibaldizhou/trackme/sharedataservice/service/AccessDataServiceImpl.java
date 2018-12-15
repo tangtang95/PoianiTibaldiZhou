@@ -52,6 +52,7 @@ public class AccessDataServiceImpl implements AccessDataService {
         this.filterStatementRepository = filterStatementRepository;
     }
 
+    @Transactional
     @Override
     public DataWrapper getIndividualRequestData(Long thirdPartyId, Long requestId) {
         IndividualRequest individualRequest = individualRequestRepository.findByIdAndThirdPartyId(requestId, thirdPartyId)
@@ -77,6 +78,7 @@ public class AccessDataServiceImpl implements AccessDataService {
         return result;
     }
 
+    @Transactional
     @Override
     public DataWrapper getOwnData(String userId, Date from, Date to){
         User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));

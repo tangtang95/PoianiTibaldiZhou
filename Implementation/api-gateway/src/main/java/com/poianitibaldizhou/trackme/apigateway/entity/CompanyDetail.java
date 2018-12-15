@@ -14,6 +14,7 @@ public class CompanyDetail {
 
     @JsonIgnore
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @MapsId

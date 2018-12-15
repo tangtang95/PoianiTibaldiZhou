@@ -9,7 +9,6 @@ import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequest
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +20,7 @@ import java.util.Optional;
 @Profile("usage-message-broker")
 public class InternalCommunicationServiceImpl implements InternalCommunicationService {
 
-    @Value("${trackme.group-request.minimum-number-of-user-involved}")
-    private Integer minNumberOfUserInvolved = 5;
+    private Integer minNumberOfUserInvolved;
 
     private final GroupRequestRepository groupRequestRepository;
     private final FilterStatementRepository filterStatementRepository;
@@ -34,6 +32,11 @@ public class InternalCommunicationServiceImpl implements InternalCommunicationSe
         this.groupRequestRepository = groupRequestRepository;
         this.filterStatementRepository = filterStatementRepository;
         this.groupRequestPublisher = groupRequestPublisher;
+    }
+
+    public void setMinNumberOfUserInvolved(Integer minNumberOfUserInvolved){
+        this.minNumberOfUserInvolved = minNumberOfUserInvolved;
+        log.info("numberOfUserInvolved: " + minNumberOfUserInvolved);
     }
 
     @Override

@@ -4,9 +4,12 @@
 
     <!-- To auto-complete the email text field in the userLogin form with the user's emails -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <uses-permission android:name="android.permission.READ_CALL_LOG" />
 
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -34,7 +37,9 @@
         <activity android:name=".home.businessHome.BusinessHomeActivity" />
         <activity android:name=".individualRequest.RequestBodyActivity" />
         <activity android:name=".individualRequest.RequestFormActivity" />
-        <activity android:name=".groupRequest.GroupRequestBodyActivity"></activity>
+        <activity android:name=".groupRequest.GroupRequestBodyActivity"/>
+
+        <service android:name=".automatedsos.SosServiceImpl" />
     </application>
 
 </manifest>

@@ -60,13 +60,14 @@ public class NumberOfUserInvolvedDataEventListenerImplTest {
 
         private NumberOfUserInvolvedDataEventListener numberOfUserInvolvedDataEventListener;
 
-        private InternalCommunicationService internalCommunicationService;
+        private InternalCommunicationServiceImpl internalCommunicationService;
 
         @Before
         public void setUp() throws Exception {
             MockitoAnnotations.initMocks(this);
             internalCommunicationService = new InternalCommunicationServiceImpl(groupRequestRepository,
                     filterStatementRepository, groupRequestPublisher);
+            internalCommunicationService.setMinNumberOfUserInvolved(5);
             numberOfUserInvolvedDataEventListener = new NumberOfUserInvolvedDataEventListenerImpl(internalCommunicationService);
         }
 

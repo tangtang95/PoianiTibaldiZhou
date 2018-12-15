@@ -35,7 +35,7 @@ public class UserRepositoryIntegrationTest {
      */
     @Test
     public void testGetByUsernameWhenPresent() throws Exception {
-        assertEquals("username1", userRepository.findByUserName("username1").orElseThrow(Exception::new).getUserName());
+        assertEquals("username1", userRepository.findByUsername("username1").orElseThrow(Exception::new).getUsername());
     }
 
     /**
@@ -43,6 +43,6 @@ public class UserRepositoryIntegrationTest {
      */
     @Test
     public void testGetByUsernameWhenNotPresent() {
-        assertTrue(!userRepository.findByUserName("notPresentUsername").isPresent());
+        assertTrue(!userRepository.findByUsername("notPresentUsername").isPresent());
     }
 }

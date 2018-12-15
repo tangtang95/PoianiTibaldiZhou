@@ -59,11 +59,11 @@ public class NumberOfUserInvolvedDataPublisherImplTest {
      */
     @Test
     public void publishNumberOfUserInvolvedData() throws Exception {
-        numberOfUserInvolvedDataPublisher.publishNumberOfUserInvolvedData(1L, 100.0);
+        numberOfUserInvolvedDataPublisher.publishNumberOfUserInvolvedData(1L, 100);
         NumberOfUserInvolvedProtocolMessage protocolMessage = (NumberOfUserInvolvedProtocolMessage) rabbitTemplate.receiveAndConvert(
                 numberOfUserInvolvedGeneratedToGroupRequestServiceQueue.getName(), 2000);
         assertTrue(NumberOfUserInvolvedProtocolMessage.validateMessage(protocolMessage));
-        assertEquals(new Double(100), protocolMessage.getNumberOfUserInvolved());
+        assertEquals(new Integer(100), protocolMessage.getNumberOfUserInvolved());
         assertEquals(new Long(1), protocolMessage.getGroupRequestId());
         Integer numberOfMessages = (Integer) rabbitAdmin
                 .getQueueProperties(numberOfUserInvolvedGeneratedToGroupRequestServiceQueue.getName())

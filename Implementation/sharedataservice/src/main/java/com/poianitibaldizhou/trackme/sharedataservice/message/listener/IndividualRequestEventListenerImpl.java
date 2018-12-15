@@ -21,7 +21,7 @@ public class IndividualRequestEventListenerImpl implements IndividualRequestEven
     @RabbitListener(queues = Constants.INDIVIDUAL_REQUEST_ACCEPTED_SHARE_DATA_QUEUE_NAME)
     @Transactional
     @Override
-    public void onIndividualRequestAccepted(@Payload IndividualRequestProtocolMessage individualRequestProtocol) {
+    public void onIndividualRequestAccepted(IndividualRequestProtocolMessage individualRequestProtocol) {
         log.info("BEFORE: onIndividualRequestAccepted " + individualRequestProtocol.toString());
         if(!IndividualRequestProtocolMessage.validateMessage(individualRequestProtocol)){
             log.error("FATAL ERROR: Received am individual request which has not all attributes non-null "
