@@ -21,10 +21,13 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.automatedsos.exception.EmergencyNumberNotFoundException;
+import com.trackme.trackmeapplication.automatedsos.exception.NoPermissionException;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 
 import java.io.IOException;
@@ -61,7 +64,7 @@ public class SosServiceImpl extends SosService {
         }
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        if(bluetoothAdapter != null) {
+        if (bluetoothAdapter != null) {
             Log.d(getString(R.string.debug_tag), "Bluetooth adapter existing");
             if (bluetoothAdapter.isEnabled()) {
                 Log.d(getString(R.string.debug_tag), "Bluetooth is enabled");
@@ -73,8 +76,7 @@ public class SosServiceImpl extends SosService {
         Log.d(getString(R.string.debug_tag), "Start notification");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             startNotificationForegroundWithChannel();
-        }
-        else{
+        } else {
             startNotificationForegroundWithoutChannel();
         }
 
@@ -82,7 +84,7 @@ public class SosServiceImpl extends SosService {
     }
 
     @Override
-    public String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException {
+    public String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException, NoPermissionException {
         // For the prototype
         // return "+393384967148";
 
@@ -91,8 +93,8 @@ public class SosServiceImpl extends SosService {
         ReadContext ctx = JsonPath.parse(getEmergencyRoomJson());
         String jsonPath = "$.data[?(@.Country.Name == '{0}')]..All";
         List<String> numbers = ctx.read(String.format(jsonPath, countryName), List.class);
-        for (String number: numbers) {
-            if(number.isEmpty())
+        for (String number : numbers) {
+            if (number.isEmpty())
                 return number;
         }
         throw new EmergencyNumberNotFoundException();
@@ -106,7 +108,7 @@ public class SosServiceImpl extends SosService {
     /**
      * @return the string containing all the json from the resources/raw/emergency_number.json
      */
-    private String getEmergencyRoomJson(){
+    private String getEmergencyRoomJson() {
         InputStream is = getResources().openRawResource(R.raw.emergency_number);
         int size;
         String emergencyJson;
@@ -114,7 +116,7 @@ public class SosServiceImpl extends SosService {
             size = is.available();
             byte[] buffer = new byte[size];
             int numBytes = is.read(buffer);
-            if(numBytes != size){
+            if (numBytes != size) {
                 Log.d(getString(R.string.debug_tag), "Cannot read every bytes of the file");
                 return "";
             }
@@ -130,8 +132,16 @@ public class SosServiceImpl extends SosService {
     /**
      * @return the location of the user using GPS (need ACCESS_LOCATION permission)
      */
-    private Location getUserLocation(){
-        return new Location("dasd");
+    private Location getUserLocation() throws NoPermissionException {
+        FusedLocationProviderClient fusedLocationClient = LocationServices
+                .getFusedLocationProviderClient(this.getApplicationContext());
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                        != PackageManager.PERMISSION_GRANTED) {
+            throw new NoPermissionException();
+        }
+        return fusedLocationClient.getLastLocation().getResult();
     }
 
     /**

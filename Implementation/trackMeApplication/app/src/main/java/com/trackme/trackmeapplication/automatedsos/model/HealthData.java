@@ -1,23 +1,24 @@
 package com.trackme.trackmeapplication.automatedsos.model;
 
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 public class HealthData {
 
-    private LocalDateTime timestamp;
+    private Timestamp timestamp;
     private Integer heartbeat;
     private Integer pressureMin;
     private Integer pressureMax;
     private Integer bloodOxygenLevel;
 
     public HealthData() {
+
     }
 
-    public LocalDateTime getTimestamp() {
+    public Timestamp getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDateTime timestamp) {
+    public void setTimestamp(Timestamp timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -51,5 +52,33 @@ public class HealthData {
 
     public void setBloodOxygenLevel(Integer bloodOxygenLevel) {
         this.bloodOxygenLevel = bloodOxygenLevel;
+    }
+
+    public boolean isValidData(){
+        return allFieldNotNull() && isBloodOxygenLevelPercentage() && isPressureMaxGreaterThanPressureMin();
+    }
+
+    private boolean allFieldNotNull(){
+        return timestamp != null && heartbeat != null && pressureMin != null && pressureMax != null
+                && bloodOxygenLevel != null;
+    }
+
+    private boolean isBloodOxygenLevelPercentage(){
+        return bloodOxygenLevel<=100 && bloodOxygenLevel > 0;
+    }
+
+    private boolean isPressureMaxGreaterThanPressureMin(){
+        return pressureMax >= pressureMin;
+    }
+
+    @Override
+    public String toString() {
+        return "HealthData{" +
+                "timestamp=" + timestamp +
+                ", heartbeat=" + heartbeat +
+                ", pressureMin=" + pressureMin +
+                ", pressureMax=" + pressureMax +
+                ", bloodOxygenLevel=" + bloodOxygenLevel +
+                '}';
     }
 }
