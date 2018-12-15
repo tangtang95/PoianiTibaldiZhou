@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -25,6 +26,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Integration test for the public controller that manages the user accounts
@@ -39,6 +41,9 @@ public class PublicUserControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private UserRepository userRepository;
@@ -87,7 +92,7 @@ public class PublicUserControllerIntegrationTest {
         assertEquals(user.getFirstName(), insertedUser.getFirstName());
         assertEquals(user.getBirthCity(), insertedUser.getBirthCity());
         assertEquals(user.getBirthNation(), insertedUser.getBirthNation());
-        assertEquals(user.getPassword(), insertedUser.getPassword());
+        assertTrue(passwordEncoder.matches(user.getPassword(), insertedUser.getPassword()));
         assertEquals(user.getBirthDate(), insertedUser.getBirthDate());
     }
 

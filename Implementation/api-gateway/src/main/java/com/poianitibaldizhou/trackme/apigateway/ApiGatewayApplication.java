@@ -1,5 +1,7 @@
 package com.poianitibaldizhou.trackme.apigateway;
 
+import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
+import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
@@ -13,4 +15,13 @@ public class ApiGatewayApplication {
 		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 
+	@Bean
+	public AccessControlFilter accessControlFilter() {
+		return new AccessControlFilter();
+	}
+
+	@Bean
+	public TranslationFilter translationFilter() {
+		return new TranslationFilter();
+	}
 }

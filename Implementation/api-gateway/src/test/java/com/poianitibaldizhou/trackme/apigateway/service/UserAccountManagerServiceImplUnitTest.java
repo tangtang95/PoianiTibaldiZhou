@@ -10,7 +10,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Date;
@@ -23,10 +26,14 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
  * Unit test for the implementation of the user account manager service
  */
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class UserAccountManagerServiceImplUnitTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private UserAccountManagerServiceImpl service;
 
@@ -76,7 +83,7 @@ public class UserAccountManagerServiceImplUnitTest {
         Mockito.when(userRepository.findByUsername("username3")).thenReturn(java.util.Optional.of(user3));
 
         // Create the service
-        service = new UserAccountManagerServiceImpl(userRepository);
+        service = new UserAccountManagerServiceImpl(userRepository, passwordEncoder);
     }
 
     @After

@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -28,6 +28,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -55,12 +56,14 @@ public class IndividualRequestControllerUnitTest {
         IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)2);
         request.setId((long) 3);
 
-        List<IndividualRequest> allRequests = Arrays.asList(request);
+        List<IndividualRequest> allRequests = Collections.singletonList(request);
         given(service.getUserPendingRequests(new User("user1"))).willReturn(allRequests);
 
-        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE).
+                header("ssn", "user1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
                 .andExpect(jsonPath("$._embedded.individualRequests[0].thirdPartyID", is(2)))
                 .andExpect(jsonPath("$._embedded.individualRequests[0].status", is(IndividualRequestStatus.PENDING.toString())))
@@ -80,7 +83,7 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getUserRequestTestWhenTheListIsEmpty() throws Exception {
-        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE).header("ssn", "user1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/users/user1")));
@@ -95,7 +98,7 @@ public class IndividualRequestControllerUnitTest {
     public void getUserRequestTestWhenUserNotRegistered() throws Exception {
         given(service.getUserPendingRequests(new User("user1"))).willThrow(new UserNotFoundException(new User("user1")));
 
-        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/users/user1").accept(MediaTypes.HAL_JSON_VALUE).header("ssn", "user1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isNotFound());
     }
@@ -112,11 +115,11 @@ public class IndividualRequestControllerUnitTest {
         IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
         request.setId((long)1);
 
-        List<IndividualRequest> allRequests = Arrays.asList(request);
+        List<IndividualRequest> allRequests = Collections.singletonList(request);
         given(service.getThirdPartyRequests((long) 1)).willReturn(allRequests);
 
         // TODO: fix timestamp format issue (here, but also in other methods of this test, when the timestamp is needed)
-        mvc.perform(get("/individualrequestservice/requests/thirdparty/1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/thirdparty/1").accept(MediaTypes.HAL_JSON_VALUE).header("id", "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
@@ -140,7 +143,7 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getThirdPartyRequestWhenNoRequestPerformedTest() throws Exception {
-        mvc.perform(get("/individualrequestservice/requests/thirdparty/2").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/thirdparty/2").accept(MediaTypes.HAL_JSON_VALUE).header("id", "2"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/individualrequestservice/requests/thirdparty/2")));
@@ -157,7 +160,8 @@ public class IndividualRequestControllerUnitTest {
     public void getRequestByIdTestWhenRequestNotFound() throws Exception {
         given(service.getRequestById((long) 1)).willThrow(new RequestNotFoundException((long)1));
 
-        mvc.perform(get("/individualrequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE).header("id", "1")
+        .header("ssn", "user1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isNotFound());
     }
@@ -176,7 +180,8 @@ public class IndividualRequestControllerUnitTest {
 
         given(service.getRequestById((long) 1)).willReturn(request);
 
-        mvc.perform(get("/individualrequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/individualrequestservice/requests/1").accept(MediaTypes.HAL_JSON_VALUE).header("ssn", "user1")
+        .header("id", ""))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", is(request.getStatus().toString())))
@@ -226,7 +231,8 @@ public class IndividualRequestControllerUnitTest {
 
         mvc.perform(post("/individualrequestservice/requests/user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
-                content(json))
+                content(json)
+                .header("id", "1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status", is(IndividualRequestStatus.PENDING.toString())))
                 .andExpect(jsonPath("$.id", is(1)))
@@ -252,7 +258,7 @@ public class IndividualRequestControllerUnitTest {
 
         given(service.addRequest(request)).willThrow(new UserNotFoundException(new User("user1")));
 
-        mvc.perform(post("/individualrequestservice/requests"))
+        mvc.perform(post("/individualrequestservice/requests").header("id", 1))
                 .andExpect(status().isNotFound());
     }
 }

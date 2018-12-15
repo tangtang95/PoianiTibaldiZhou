@@ -11,6 +11,8 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Respons
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +55,17 @@ public class UploadResponseServiceIntegrationTest {
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
 
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private HttpHeaders httpHeaders;
+
+    @Before
+    public void setUp() {
+        httpHeaders = new HttpHeaders();
+    }
+
+    @After
+    public void tearDown() {
+        httpHeaders = null;
+    }
 
     // TEST ADD RESPONSE METHOD
 
@@ -63,6 +75,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddAcceptResponse() throws Exception {
+        httpHeaders.set("ssn", "user1");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -83,6 +96,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddRefuseResponse() throws Exception {
+        httpHeaders.set("ssn", "user1");
         String responseType = ResponseType.REFUSE.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -102,6 +116,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseOfNonExistingRequest() throws IOException {
+        httpHeaders.set("ssn", "user1");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -128,6 +143,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseWhenNonMatchingUser() throws Exception {
+        httpHeaders.set("ssn", "user2");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -151,6 +167,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseWhenTheUserIsNotRegistered() throws IOException {
+        httpHeaders.set("ssn", "nonRegisteredUser");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
@@ -177,6 +194,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenUserNotFound() throws IOException {
+        httpHeaders.set("ssn","nonRegisteredUser");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -199,6 +217,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenNoRequest() throws IOException {
+        httpHeaders.set("ssn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -221,6 +240,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenBlockAlreadyPresent() throws IOException {
+        httpHeaders.set("ssn","user5");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -243,6 +263,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenNoRefusedRequestPresent() throws IOException {
+        httpHeaders.set("ssn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -265,6 +286,7 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlock() {
+        httpHeaders.set("ssn", "user17");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(

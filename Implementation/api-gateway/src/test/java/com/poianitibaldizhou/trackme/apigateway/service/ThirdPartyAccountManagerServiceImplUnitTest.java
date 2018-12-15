@@ -15,7 +15,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Date;
@@ -27,7 +30,11 @@ import static org.junit.Assert.assertTrue;
  * Unit test for the implementation of the user account manager service
  */
 @RunWith(SpringRunner.class)
+@SpringBootTest
 public class ThirdPartyAccountManagerServiceImplUnitTest {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @MockBean
     private ThirdPartyRepository thirdPartyRepository;
@@ -57,7 +64,8 @@ public class ThirdPartyAccountManagerServiceImplUnitTest {
         setUpCompanyDetailRepository();
         setUpPrivateDetailRepository();
 
-        service = new ThirdPartyAccountManagerServiceImpl(thirdPartyRepository, companyDetailRepository, privateThirdPartyDetailRepository);
+        service = new ThirdPartyAccountManagerServiceImpl(thirdPartyRepository, companyDetailRepository,
+                privateThirdPartyDetailRepository, passwordEncoder);
     }
 
     public void setUpThirdPartyRepository() {

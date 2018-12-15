@@ -12,6 +12,8 @@ import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.json.JSONException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -53,9 +55,20 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
     private TestRestTemplate restTemplate = new TestRestTemplate();
 
-    private HttpHeaders httpHeaders = new HttpHeaders();
+    private HttpHeaders httpHeaders;
+
+    @Before
+    public void setUp() {
+        httpHeaders = new HttpHeaders();
+    }
+
+    @After
+    public void tearDown() {
+        httpHeaders = null;
+    }
 
     // TEST GET SINGLE REQUEST METHOD
+
 
     /**
      * Test the get of a single request with id 1 (this is present, since it is loaded with sql script with the loading
@@ -65,6 +78,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetSingleRequest() throws Exception {
+        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("id", "");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/1"),
                 HttpMethod.GET, entity, String.class);
@@ -98,6 +113,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetSingleRequestWhenNotPresent() throws IOException {
+        httpHeaders.set("id", "1");
+        httpHeaders.set("ssn", "");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/1000"),
                 HttpMethod.GET, entity, String.class);
@@ -120,6 +137,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetByThirdPartyIDWhenNoRequestArePresent() throws JSONException {
+        httpHeaders.set("id", "1000");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/thirdparty/1000"),
                 HttpMethod.GET, entity, String.class);
@@ -143,6 +161,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetByThirdPartyID() throws JSONException {
+        httpHeaders.set("id", "2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/thirdparty/2"),
                 HttpMethod.GET, entity, String.class);
@@ -208,6 +227,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetPendingRequest() throws JSONException {
+        httpHeaders.set("ssn", "user2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/users/user2"),
                 HttpMethod.GET, entity, String.class);
@@ -252,6 +272,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetPendingRequestWhenUserNotRegistered() throws IOException {
+        httpHeaders.set("ssn", "notregistered");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/users/notregistered"),
                 HttpMethod.GET, entity, String.class);
@@ -273,6 +294,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWrongParameters() throws IOException {
+        httpHeaders.set("id", "1");
         IndividualRequest individualRequest = new IndividualRequest();
         individualRequest.setThirdPartyID(1L);
         individualRequest.setEndDate(new Date(0));
@@ -299,6 +321,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequest() throws Exception {
+        httpHeaders.set("id", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
@@ -333,6 +356,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWhenIncompatibleDates() throws IOException {
+        httpHeaders.set("id", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(100), new Date(0),
                 new User("user1"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
@@ -356,6 +380,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestOnNonRegisteredUser() {
+        httpHeaders.set("id", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
                 new User("nonRegisteredUser"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
@@ -374,6 +399,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWhenBlocked() throws Exception {
+        httpHeaders.set("id", "4");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), 4L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 

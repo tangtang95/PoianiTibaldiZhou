@@ -11,21 +11,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.sql.Date;
 
 @Configuration
 @Slf4j
 public class LoadDatabase {
-/*
+
     @Bean
     CommandLineRunner initDatabase(UserRepository repository, ThirdPartyRepository thirdPartyRepository,
-                                   CompanyDetailRepository companyDetailRepository) {
+                                   CompanyDetailRepository companyDetailRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             User user = new User();
             user.setSsn("user1");
             user.setUsername("username1");
-            user.setPassword("password1");
+            user.setPassword(passwordEncoder.encode("password1"));
             user.setBirthNation("Italy");
             user.setBirthDate(new Date(0));
             user.setLastName("cordero");
@@ -34,7 +35,7 @@ public class LoadDatabase {
 
             ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
             thirdPartyCustomer.setEmail("email1");
-            thirdPartyCustomer.setPassword("passwordtp");
+            thirdPartyCustomer.setPassword(passwordEncoder.encode("passwordtp"));
 
             CompanyDetail companyDetail = new CompanyDetail();
             companyDetail.setAddress("addresstp");
@@ -46,5 +47,5 @@ public class LoadDatabase {
             log.info("Preloading " + repository.saveAndFlush(user));
             log.info("Preloading " + companyDetailRepository.saveAndFlush(companyDetail));
         };
-    }*/
+    }
 }

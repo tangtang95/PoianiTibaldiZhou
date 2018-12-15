@@ -80,7 +80,6 @@ public class SecuredUserControllerIntegrationTest {
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
-                "   \"password\":\"password1\",\n" +
                 "   \"username\":\"username1\",\n" +
                 "   \"firstName\":\"Frank\",\n" +
                 "   \"lastName\":\"Rossi\",\n" +

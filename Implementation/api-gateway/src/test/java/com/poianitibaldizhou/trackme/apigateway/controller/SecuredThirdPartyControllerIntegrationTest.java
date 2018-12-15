@@ -80,16 +80,13 @@ public class SecuredThirdPartyControllerIntegrationTest {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/thirdparties/info"),
                 HttpMethod.GET, entity, String.class);
 
-        String expectedBody = "\n" +
-                "{\n" +
+        String expectedBody = "{\n" +
                 "   \"thirdPartyCustomer\":{\n" +
-                "      \"email\":\"tp1@provider.com\",\n" +
-                "      \"password\":\"tp1pass\"\n" +
+                "      \"email\":\"tp1@provider.com\"\n" +
                 "   },\n" +
                 "   \"companyDetail\":{\n" +
                 "      \"thirdPartyCustomer\":{\n" +
-                "         \"email\":\"tp1@provider.com\",\n" +
-                "         \"password\":\"tp1pass\"\n" +
+                "         \"email\":\"tp1@provider.com\"\n" +
                 "      },\n" +
                 "      \"companyName\":\"company1\",\n" +
                 "      \"address\":\"address1\",\n" +
@@ -124,13 +121,11 @@ public class SecuredThirdPartyControllerIntegrationTest {
         String expectedBody = "\n" +
                 "{\n" +
                 "   \"thirdPartyCustomer\":{\n" +
-                "      \"email\":\"tp3@provider.com\",\n" +
-                "      \"password\":\"tp3pass\"\n" +
+                "      \"email\":\"tp3@provider.com\"\n" +
                 "   },\n" +
                 "   \"privateThirdPartyDetail\":{\n" +
                 "      \"thirdPartyCustomer\":{\n" +
-                "         \"email\":\"tp3@provider.com\",\n" +
-                "         \"password\":\"tp3pass\"\n" +
+                "         \"email\":\"tp3@provider.com\"\n" +
                 "      },\n" +
                 "      \"ssn\":\"tp3ssn\",\n" +
                 "      \"name\":\"Jack\",\n" +

@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerServic
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +21,8 @@ import java.util.UUID;
 @Service
 public class UUIDAuthenticationService implements UserAuthenticationService, ThirdPartyAuthenticationService {
 
+    private final PasswordEncoder passwordEncoder;
+
     private final UserAccountManagerService userAccountManagerService;
     private final HashMap<String, User> mapUserByToken = new HashMap<>();
     private final HashMap<String, String> mapTokenByUsername = new HashMap<>();
@@ -32,26 +35,29 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
      * Creates a new authentication service based on UUID tokens
      *
      * @param userAccountManagerService account manager service for accessing persistent data regarding the accounts
-     * @param thirdPartyAccountManagerService account manager service for accessing persistend data regarding the accounts
+     * @param thirdPartyAccountManagerService account manager service for accessing persisted data regarding the accounts
+     * @param passwordEncoder password encoder for encoding password when authentication
      */
     public UUIDAuthenticationService(UserAccountManagerService userAccountManagerService,
-                                     ThirdPartyAccountManagerService thirdPartyAccountManagerService) {
+                                     ThirdPartyAccountManagerService thirdPartyAccountManagerService,
+                                     PasswordEncoder passwordEncoder) {
         this.userAccountManagerService = userAccountManagerService;
         this.thirdPartyAccountManagerService = thirdPartyAccountManagerService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // USER AUTHENTICATION METHODS
 
     @Transactional
     @Override
-    public Optional<String> userLogin(final String username, final String password) {
+    public Optional<String> userLogin(String username, String password) {
         // Generates the token
         final String uuid = UUID.randomUUID().toString();
 
         // Check credentials and if the user is already logged
         User user = userAccountManagerService.getUserByUserName(username);
 
-        if(user.getPassword().equals(password) && !mapUserByToken.values().contains(user)) {
+        if(passwordEncoder.matches(password, user.getPassword()) && !mapUserByToken.values().contains(user)) {
             mapUserByToken.put(uuid, user);
             mapTokenByUsername.put(username, uuid);
         } else {
@@ -87,7 +93,7 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
         // Check credentials and if the third party customer is already logged
         ThirdPartyCustomer thirdPartyCustomer = thirdPartyAccountManagerService.getThirdPartyByEmail(email);
 
-        if(thirdPartyCustomer.getPassword().equals(password) && !mapThirdPartyByToken.values().contains(thirdPartyCustomer)) {
+        if(passwordEncoder.matches(password, thirdPartyCustomer.getPassword()) && !mapThirdPartyByToken.values().contains(thirdPartyCustomer)) {
             mapThirdPartyByToken.put(uuid, thirdPartyCustomer);
             mapTokenByEmail.put(email, uuid);
         } else {

@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestResourceAssembler;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -45,11 +46,24 @@ public class IndividualRequestController {
     /**
      * This method will return a request identified with a certain id, provided with some useful links
      *
+     * @param requestingThirdParty third party customer that is accessing this method
+     * @param requestingUser user that is accessing this method
      * @param id id of the demanded request
      * @return resource containing the individual request
      */
     @GetMapping("/requests/{id}")
-    public @ResponseBody Resource<IndividualRequest> getRequestById(@PathVariable Long id) {
+    public @ResponseBody Resource<IndividualRequest> getRequestById(@RequestHeader(value = "id") String requestingThirdParty,
+                                                                    @RequestHeader(value = "ssn") String requestingUser,
+                                                                    @PathVariable Long id) {
+        IndividualRequest request = requestManagerService.getRequestById(id);
+
+        if(!requestingThirdParty.isEmpty() && request.getThirdPartyID() != Long.parseLong(requestingThirdParty)) {
+                throw new ImpossibleAccessException();
+        }
+
+        if(!requestingUser.isEmpty() && !request.getUser().getSsn().equals(requestingUser))
+                throw new ImpossibleAccessException();
+
         return assembler.toResource(requestManagerService.getRequestById(id));
     }
 
@@ -59,18 +73,22 @@ public class IndividualRequestController {
     /**
      * This method will return the requests of a certain user, that are marked with status PENDING
      *
+     * @param requestingUser user that is accessing this method
      * @param ssn the set of pending regards the user specified with this ssn
      * @return set of resources of size 2: the first item is the set of pending requests, embedded with
      * their own link. The second one provides a self reference to this method.
      */
     @GetMapping("requests/users/{ssn}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@PathVariable String ssn) {
+    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@RequestHeader(value = "ssn") String requestingUser, @PathVariable String ssn) {
+        if(!requestingUser.equals(ssn))
+            throw new ImpossibleAccessException();
+
         User user = new User(ssn);
         List<Resource<IndividualRequest>> pendingRequests = requestManagerService.getUserPendingRequests(user).stream()
                 .map(assembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(pendingRequests,
-                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(ssn)).withSelfRel());
+                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(requestingUser, ssn)).withSelfRel());
     }
 
     // Third party customer access point to the service
@@ -78,32 +96,38 @@ public class IndividualRequestController {
     /**
      * This method will return the requests performed by a certain third party customer
      *
+     * @param requestingThirdParty third party that requests the access to this method
      * @param thirdPartyID the set of requests are performed by the third party customer identified with this number
      * @return set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
     @GetMapping("/requests/thirdparty/{thirdPartyID}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@PathVariable Long thirdPartyID) {
+    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@RequestHeader(value = "id") String requestingThirdParty, @PathVariable Long thirdPartyID) {
+        if(Long.parseLong(requestingThirdParty) != thirdPartyID)
+            throw new ImpossibleAccessException();
+
         List<Resource<IndividualRequest>> requests = requestManagerService.getThirdPartyRequests(thirdPartyID).stream()
                 .map(assembler::toResource)
                 .collect(Collectors.toList());
 
         return new Resources<>(requests,
-                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(thirdPartyID)).withSelfRel());
+                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(requestingThirdParty, thirdPartyID)).withSelfRel());
     }
 
     /**
      * Add a new request to the set of individual request.
      * The request will not be added in the case in which it is performed on a non existing user.
      *
+     * @param requestingThirdParty id of the third party that is requesting this method
      * @param ssn the request regards the user identified by this field
      * @param newRequest request that will be added to the system
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
     @PostMapping("/requests/{ssn}")
-    public @ResponseBody ResponseEntity<?> newRequest(@PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = "id") String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
         newRequest.setUser(new User(ssn));
+        newRequest.setThirdPartyID(Long.parseLong(requestingThirdParty));
 
         Resource<IndividualRequest> resource = assembler.toResource(requestManagerService.addRequest(newRequest));
 
