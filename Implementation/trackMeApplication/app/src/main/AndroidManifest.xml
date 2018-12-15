@@ -33,7 +33,8 @@
         <activity android:name=".account.register.UserProfileActivity" />
         <activity android:name=".home.businessHome.BusinessHomeActivity" />
         <activity android:name=".individualRequest.RequestBodyActivity" />
-        <activity android:name=".individualRequest.RequestFormActivity"></activity>
+        <activity android:name=".individualRequest.RequestFormActivity" />
+        <activity android:name=".groupRequest.GroupRequestBodyActivity"></activity>
     </application>
 
 </manifest>

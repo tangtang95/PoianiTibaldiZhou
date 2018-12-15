@@ -9,8 +9,6 @@ import android.widget.Toast;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -52,15 +50,15 @@ public class RequestFormActivity extends AppCompatActivity {
             Toast.makeText(this,"No field must be empty", Toast.LENGTH_LONG).show();
             return false;
         }
-        if (ssn.getText().toString().matches(Constant.SSN_PATTERN)) {
+        if (!ssn.getText().toString().matches(Constant.SSN_PATTERN)) {
             ssn.setError("Ssn is not valid");
             return false;
         }
-        if (startDate.getText().toString().matches(Constant.DATE_PATTERN)) {
+        if (!startDate.getText().toString().matches(Constant.DATE_PATTERN)) {
             startDate.setError("Date is not valid");
             return false;
         }
-        if (endDate.getText().toString().matches(Constant.DATE_PATTERN)) {
+        if (!endDate.getText().toString().matches(Constant.DATE_PATTERN)) {
             endDate.setError("Date is not valid");
             return false;
         }
