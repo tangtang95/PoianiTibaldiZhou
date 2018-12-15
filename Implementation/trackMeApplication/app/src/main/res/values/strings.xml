@@ -37,7 +37,7 @@
     <string name="register_ssn">SSN</string>
     <string name="register_first_name">First name</string>
     <string name="register_last_name">Last name</string>
-    <string name="register_birth_day">Birth day</string>
+    <string name="register_birth_date">Birth date</string>
     <string name="register_birth_city">Birth city</string>
     <string name="register_birth_nation">Birth nation</string>
     <string name="register_button">REGISTER</string>
@@ -51,4 +51,7 @@
     <string name="request_form_end_date">End date:</string>
     <string name="request_form_start_date">Start date:</string>
     <string name="request_form_to">To:</string>
+    <string name="notification_title">Automated SOS</string>
+    <string name="ticker_text">ticker_text</string>
+    <string name="debug_tag">SOS_DEBUG</string>
 </resources>

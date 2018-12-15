@@ -4,7 +4,6 @@ import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.NumberOfU
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 
 @Slf4j
 public class NumberOfUserInvolvedDataPublisherImpl implements NumberOfUserInvolvedDataPublisher {
@@ -20,7 +19,7 @@ public class NumberOfUserInvolvedDataPublisherImpl implements NumberOfUserInvolv
     }
 
     @Override
-    public void publishNumberOfUserInvolvedData(Long groupRequestId, Double numberOfUserInvolved) {
+    public void publishNumberOfUserInvolvedData(Long groupRequestId, Integer numberOfUserInvolved) {
         NumberOfUserInvolvedProtocolMessage protocolMessage = new NumberOfUserInvolvedProtocolMessage();
         protocolMessage.setNumberOfUserInvolved(numberOfUserInvolved);
         protocolMessage.setGroupRequestId(groupRequestId);
