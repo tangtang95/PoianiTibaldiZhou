@@ -1,30 +1,35 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
-import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
-import com.poianitibaldizhou.trackme.apigateway.exception.SsnNotFoundException;
-import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
-import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.ExceptionResponseBody;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
-import org.json.JSONException;
+import com.poianitibaldizhou.trackme.apigateway.TestUtils;
+import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
-import java.sql.Date;
+import javax.net.ssl.SSLContext;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 import static org.junit.Assert.assertEquals;
 
@@ -47,7 +52,17 @@ public class SecuredUserControllerIntegrationTest {
 
     private HttpHeaders httpHeaders = new HttpHeaders();
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    private RestTemplate restTemplate;
+
+    @Before
+    public void setUp() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        restTemplate = TestUtils.getRestTemplate();
+    }
+
+    @After
+    public void tearDown() {
+        restTemplate = null;
+    }
 
     /**
      * Test the get of information of a user
@@ -55,7 +70,7 @@ public class SecuredUserControllerIntegrationTest {
      * @throws Exception due to json assert equals
      */
     @Test
-    public void testGetUserBySsn() throws JSONException {
+    public void testGetUserBySsn() throws Exception {
         String token = login();
 
         httpHeaders.setBearerAuth(token);
@@ -74,13 +89,14 @@ public class SecuredUserControllerIntegrationTest {
                 "   \"birthNation\":\"ITALY\",\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"http://localhost:"+port+"/users/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+"/users/info\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         JSONAssert.assertEquals(expectedBody, response.getBody(), false);
+
     }
 
 
@@ -91,7 +107,7 @@ public class SecuredUserControllerIntegrationTest {
      *
      * @return token
      */
-    private String login() {
+    private String login() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/public/users/authenticate?username=username1&password=password1"),
                 HttpMethod.POST, entity, String.class);
@@ -104,6 +120,7 @@ public class SecuredUserControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return "https://localhost:" + port + uri;
     }
+
 }

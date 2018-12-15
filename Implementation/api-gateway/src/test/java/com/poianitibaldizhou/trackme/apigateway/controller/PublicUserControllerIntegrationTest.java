@@ -1,26 +1,27 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
+import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
-import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
-import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.ExceptionResponseBody;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
@@ -44,7 +45,17 @@ public class PublicUserControllerIntegrationTest {
 
     private HttpHeaders httpHeaders = new HttpHeaders();
 
-    private TestRestTemplate restTemplate = new TestRestTemplate();
+    private RestTemplate restTemplate;
+
+    @Before
+    public void setUp() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+        restTemplate = TestUtils.getRestTemplate();
+    }
+
+    @After
+    public void tearDown() {
+        restTemplate = null;
+    }
 
     /**
      * Test the registration of a user
@@ -84,7 +95,7 @@ public class PublicUserControllerIntegrationTest {
      * Test the registration of a user when a user with the specified username is already present
      */
     @Test
-    public void testRegisterUserWhenUserNameAlreadyPresent() throws IOException {
+    public void testRegisterUserWhenUserNameAlreadyPresent() {
         User user = new User();
         user.setUsername("username1");
         user.setPassword("xcasggv");
@@ -96,25 +107,20 @@ public class PublicUserControllerIntegrationTest {
 
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/public/users/newSsn"),
-                HttpMethod.POST, entity, String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
-        assertEquals(new AlreadyPresentUsernameException("username1").getMessage(), exceptionResponseBody.getMessage());
+        try {
+            restTemplate.exchange(
+                    createURLWithPort("/public/users/newSsn"),
+                    HttpMethod.POST, entity, String.class);
+        } catch(RestClientException e) {
+            assertEquals("400 ", e.getMessage());
+        }
     }
 
     /**
      * Test the registration of a user when a user with the specified ssn is already present
      */
     @Test
-    public void testRegisterUserWhenSsnAlreadyPresent() throws IOException {
+    public void testRegisterUserWhenSsnAlreadyPresent() {
         User user = new User();
         user.setUsername("newUsername");
         user.setPassword("xcasggv");
@@ -126,25 +132,20 @@ public class PublicUserControllerIntegrationTest {
 
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/public/users/user1"),
-                HttpMethod.POST, entity, String.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
-        assertEquals(new AlreadyPresentSsnException("user1").getMessage(), exceptionResponseBody.getMessage());
+        try {
+            restTemplate.exchange(
+                    createURLWithPort("/public/users/user1"),
+                    HttpMethod.POST, entity, String.class);
+        } catch(RestClientException e) {
+            assertEquals("400 ", e.getMessage());
+        }
     }
 
     /**
      * Test the registration of a user when not all of the necessary and mandatory parameters has been specified
      */
     @Test
-    public void testRegisterUserWrongParameters() throws IOException {
+    public void testRegisterUserWrongParameters() {
         User user = new User();
         user.setUsername("newUsername");
         user.setPassword("xcasggv");
@@ -154,18 +155,14 @@ public class PublicUserControllerIntegrationTest {
 
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
-        ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/public/users/user100"),
-                HttpMethod.POST, entity, String.class);
+        try {
+            restTemplate.exchange(
+                    createURLWithPort("/public/users/user100"),
+                    HttpMethod.POST, entity, String.class);
+        }catch(RestClientException e) {
+            assertEquals("400 ", e.getMessage());
+        }
 
-        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
-        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
     }
 
     /**
@@ -174,6 +171,6 @@ public class PublicUserControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "http://localhost:" + port + uri;
+        return "https://localhost:" + port + uri;
     }
 }
