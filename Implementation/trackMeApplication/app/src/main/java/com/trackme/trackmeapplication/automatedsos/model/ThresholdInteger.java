@@ -6,6 +6,8 @@ public final class ThresholdInteger {
     public final Integer min;
 
     public ThresholdInteger(Integer max, Integer min) {
+        if(max < min)
+            throw new IllegalStateException("impossible to have max less than min");
         this.max = max;
         this.min = min;
     }

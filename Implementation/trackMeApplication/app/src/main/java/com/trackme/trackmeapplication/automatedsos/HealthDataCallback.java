@@ -14,6 +14,8 @@ import android.util.Log;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.automatedsos.exception.EmergencyNumberNotFoundException;
+import com.trackme.trackmeapplication.automatedsos.exception.InvalidHealthDataException;
+import com.trackme.trackmeapplication.automatedsos.exception.NoPermissionException;
 import com.trackme.trackmeapplication.automatedsos.model.HealthData;
 import com.trackme.trackmeapplication.automatedsos.model.HealthDataInspector;
 import com.trackme.trackmeapplication.automatedsos.model.HealthDataInspectorImpl;
@@ -44,14 +46,18 @@ public class HealthDataCallback implements Callback {
                 HealthData healthData = (HealthData) message.obj;
 
                 HealthDataInspector healthDataInspector = new HealthDataInspectorImpl(service.getUserBirthDate());
-                if (healthDataInspector.isGraveCondition(healthData)) {
-                    try {
+                try {
+                    if (healthDataInspector.isGraveCondition(healthData)) {
                         if (!hasRecentEmergencyCall()) {
                             success = makeEmergencyCall();
                         }
-                    } catch (EmergencyNumberNotFoundException e) {
-                        Log.d(service.getString(R.string.debug_tag), "Cannot make call due to no number avaialable");
                     }
+                } catch (InvalidHealthDataException e) {
+                    Log.d(service.getString(R.string.debug_tag), "Cannot make call due to invalid health data");
+                } catch (EmergencyNumberNotFoundException e) {
+                    Log.d(service.getString(R.string.debug_tag), "Cannot make call due to no number avaialable");
+                } catch (NoPermissionException e) {
+                    Log.d(service.getString(R.string.debug_tag), "Cannot make call due to no permission (GPS)");
                 }
                 // TODO save data on a file/DB
                 return success;
@@ -68,7 +74,7 @@ public class HealthDataCallback implements Callback {
      * @return true if successful, false otherwise
      * @throws EmergencyNumberNotFoundException when there is no emergency number available in the actual country
      */
-    private boolean makeEmergencyCall() throws EmergencyNumberNotFoundException {
+    private boolean makeEmergencyCall() throws EmergencyNumberNotFoundException, NoPermissionException {
         if (ActivityCompat.checkSelfPermission(service.getApplicationContext(), Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d(service.getString(R.string.debug_tag), "no permission");
@@ -88,7 +94,7 @@ public class HealthDataCallback implements Callback {
      * @return true if there are recent emergency calls, false otherwise
      * @throws EmergencyNumberNotFoundException when there is no emergency number available in the actual country
      */
-    private boolean hasRecentEmergencyCall() throws EmergencyNumberNotFoundException {
+    private boolean hasRecentEmergencyCall() throws EmergencyNumberNotFoundException, NoPermissionException {
         if (ActivityCompat.checkSelfPermission(service, Manifest.permission.READ_CALL_LOG) != PackageManager.PERMISSION_GRANTED) {
             // If permission not granted, return true so that the call is not going to be done.
             return true;

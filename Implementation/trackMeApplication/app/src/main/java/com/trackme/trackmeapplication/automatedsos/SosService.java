@@ -3,6 +3,7 @@ package com.trackme.trackmeapplication.automatedsos;
 import android.app.Service;
 
 import com.trackme.trackmeapplication.automatedsos.exception.EmergencyNumberNotFoundException;
+import com.trackme.trackmeapplication.automatedsos.exception.NoPermissionException;
 
 import java.util.Date;
 
@@ -15,7 +16,7 @@ public abstract class SosService extends Service {
      * @return the string emergency number of user own country
      * @throws EmergencyNumberNotFoundException if no numbers are found, then this exception is thrown
      */
-    public abstract String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException;
+    public abstract String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException, NoPermissionException;
 
     /**
      * Retrieves the birth date of the user of the service
