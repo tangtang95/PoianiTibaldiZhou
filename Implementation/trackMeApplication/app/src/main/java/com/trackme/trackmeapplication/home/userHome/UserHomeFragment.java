@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.home.UserLocationListener;
@@ -57,14 +58,14 @@ public class UserHomeFragment extends Fragment {
     LocationListener locationListener = new UserLocationListener();
 
     View userHomeFragment;
-    @BindView(R.id.editTextPulseValue)
-    protected EditText pulseValue;
-    @BindView(R.id.editTextBloodValue)
-    protected EditText bloodPressureValue;
-    @BindView(R.id.editTextPulseText)
-    protected EditText pulseText;
-    @BindView(R.id.editTextPressureText)
-    protected EditText bloodPressureText;
+    @BindView(R.id.textViewPulseValue)
+    protected TextView pulseValue;
+    @BindView(R.id.textViewBloodValue)
+    protected TextView bloodPressureValue;
+    @BindView(R.id.textViewPulseText)
+    protected TextView pulseText;
+    @BindView(R.id.textViewPressureText)
+    protected TextView bloodPressureText;
     @BindView(R.id.imageViewHeart)
     protected ImageView image;
 

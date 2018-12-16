@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:orientation="vertical"
     tools:context=".home.userHome.UserHomeActivity"
     tools:openDrawer="start">
 
@@ -24,7 +23,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#404040"
+            android:background="@color/colorPrimary"
             android:elevation="8dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -35,7 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            android:background="#404040"
+            android:background="@color/colorPrimary"
             app:tabSelectedTextColor="@color/colorBusinessGrey"
             app:tabTextColor="@color/colorWhite">
 
@@ -43,13 +42,13 @@
                 android:id="@+id/toolbar_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="INDIVIDUAL REQUEST" />
+                android:text="@string/individual_request" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/toolbar_history"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GROUP REQUEST" />
+                android:text="@string/group_request" />
 
         </android.support.design.widget.TabLayout>
 
@@ -62,7 +61,7 @@
 
     <android.support.design.widget.NavigationView
         android:id="@+id/nav_view"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:layout_marginTop="?attr/actionBarSize"

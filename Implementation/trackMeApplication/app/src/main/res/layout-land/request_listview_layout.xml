@@ -71,7 +71,7 @@
         android:layout_height="30dp"
         android:layout_below="@+id/textViewThirdPartyName"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="40dp"
+        android:layout_marginEnd="128dp"
         app:cardBackgroundColor="@color/colorAccent"
         app:cardCornerRadius="15dp"
         app:cardElevation="10dp"

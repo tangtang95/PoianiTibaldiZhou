@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="match_parent"
-        android:layout_height="450dp"
-        android:fillViewport="true"
-        android:layout_marginTop="20dp">
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -32,8 +33,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="44dp"
+                android:hint="@string/ssn_example_aaa_gg_ssss"
                 android:inputType="text"
-                android:hint="@string/ssn_example_aaa_gg_ssss"/>
+                tools:ignore="Autofill" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -52,7 +54,8 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
-                android:inputType="textEmailAddress"/>
+                android:inputType="textEmailAddress"
+                tools:ignore="Autofill,LabelFor" />
 
             <TextView
                 android:id="@+id/textView3"
@@ -70,7 +73,10 @@
                 android:layout_height="40dp"
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="46dp" />
+                android:layout_marginEnd="46dp"
+                android:drawableEnd="@drawable/ic_visibility_off"
+                android:inputType="textPassword"
+                tools:ignore="Autofill,LabelFor" />
 
             <TextView
                 android:id="@+id/textView4"
@@ -89,7 +95,8 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName"
+                tools:ignore="Autofill,LabelFor" />
 
             <TextView
                 android:id="@+id/textView5"
@@ -108,7 +115,8 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
-                android:inputType="textPersonName"/>
+                android:inputType="textPersonName"
+                tools:ignore="Autofill,LabelFor" />
 
             <TextView
                 android:id="@+id/textView6"
@@ -127,8 +135,9 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
+                android:hint="@string/date_example_mm_gg_yyyy"
                 android:inputType="date"
-                android:hint="@string/date_example_mm_gg_yyyy"/>
+                tools:ignore="Autofill" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -147,7 +156,8 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
-                android:inputType="text"/>
+                android:inputType="text"
+                tools:ignore="Autofill,LabelFor" />
 
             <TextView
                 android:id="@+id/textView8"
@@ -166,37 +176,37 @@
                 android:layout_marginStart="30dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
-                android:inputType="text"/>
+                android:inputType="text"
+                tools:ignore="Autofill,LabelFor" />
+
+            <android.support.v7.widget.CardView
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                app:cardBackgroundColor="@color/colorPrimary"
+                app:cardCornerRadius="25dp"
+                app:cardElevation="10dp"
+                android:layout_marginTop="30dp">
+
+                <RelativeLayout
+                    android:id="@+id/register_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:text="@string/register_button"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
+
         </TableLayout>
 
     </ScrollView>
 
-    <android.support.v7.widget.CardView
-        android:layout_width="300dp"
-        android:layout_height="50dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="480dp"
-        app:cardBackgroundColor="@color/colorPrimary"
-        app:cardCornerRadius="25dp"
-        app:cardElevation="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <RelativeLayout
-            android:id="@+id/register_button"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/register_button"
-                android:textColor="@color/colorWhite"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-    </android.support.v7.widget.CardView>
-
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
