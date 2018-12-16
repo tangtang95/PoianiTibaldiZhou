@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway;
 
+import com.poianitibaldizhou.trackme.apigateway.filter.post.HrefFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
 import org.springframework.boot.SpringApplication;
@@ -28,4 +29,7 @@ public class ApiGatewayApplication {
 	public TranslationFilter translationFilter() {
 		return new TranslationFilter();
 	}
+
+	@Bean
+	public HrefFilter hrefFilter() { return new HrefFilter(); }
 }
