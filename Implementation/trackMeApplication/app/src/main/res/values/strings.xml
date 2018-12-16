@@ -54,4 +54,5 @@
     <string name="notification_title">Automated SOS</string>
     <string name="ticker_text">ticker_text</string>
     <string name="debug_tag">SOS_DEBUG</string>
+    <string name="birth_date_key">birth_date_key</string>
 </resources>
