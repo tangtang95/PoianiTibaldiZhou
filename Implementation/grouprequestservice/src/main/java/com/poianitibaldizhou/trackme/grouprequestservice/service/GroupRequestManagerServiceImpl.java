@@ -48,6 +48,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
         this.internalCommunicationService = internalCommunicationService;
     }
 
+    @Transactional
     @Override
     public GroupRequestWrapper getById(Long id) {
         GroupRequest groupRequest = groupRequestRepository.findById(id).orElseThrow(() -> new GroupRequestNotFoundException(id));
@@ -55,6 +56,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
         return new GroupRequestWrapper(groupRequest, filterStatements);
     }
 
+    @Transactional
     @Override
     public List<GroupRequestWrapper> getByThirdPartyId(Long thirdPartyId) {
         List<GroupRequestWrapper> groupRequestWrappers = new ArrayList<>();

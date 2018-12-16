@@ -11,6 +11,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Individ
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.Null;
 import java.sql.Timestamp;
@@ -45,11 +46,13 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
         this.userRepository = userRepository;
     }
 
+    @Transactional
     @Override
     public List<IndividualRequest> getThirdPartyRequests(Long thirdPartyID) {
         return individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
     }
 
+    @Transactional
     @Override
     public List<IndividualRequest> getUserPendingRequests(User user) {
         // Check if the request regards a registered user
@@ -59,6 +62,7 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
         return individualRequestRepository.findAllByUserAndStatus(user, IndividualRequestStatus.PENDING);
     }
 
+    @Transactional
     @Override
     public IndividualRequest addRequest(IndividualRequest newRequest) {
         // Check if the request regards a registered user
@@ -84,6 +88,7 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
         return individualRequestRepository.save(newRequest);
     }
 
+    @Transactional
     @Override
     public IndividualRequest getRequestById(Long id) {
         return individualRequestRepository.findById(id)

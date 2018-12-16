@@ -45,9 +45,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyDouble;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -127,7 +125,7 @@ public class GroupRequestEventListenerImplTest {
             groupRequestEventListener.onGroupRequestCreated(groupRequestProtocolMessage);
 
             verify(numberOfUserInvolvedDataPublisher, times(1))
-                    .publishNumberOfUserInvolvedData(1L, 1.0);
+                    .publishNumberOfUserInvolvedData(1L, 1);
         }
 
         /**
@@ -148,7 +146,7 @@ public class GroupRequestEventListenerImplTest {
             groupRequestEventListener.onGroupRequestCreated(groupRequestProtocolMessage);
 
             verify(numberOfUserInvolvedDataPublisher, times(0))
-                    .publishNumberOfUserInvolvedData(anyLong(), anyDouble());
+                    .publishNumberOfUserInvolvedData(anyLong(), anyInt());
         }
 
         /**

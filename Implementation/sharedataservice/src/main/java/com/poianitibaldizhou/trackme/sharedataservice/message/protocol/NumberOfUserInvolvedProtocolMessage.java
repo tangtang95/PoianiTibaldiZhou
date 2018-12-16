@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class NumberOfUserInvolvedProtocolMessage {
 
     private Long groupRequestId;
-    private Double numberOfUserInvolved;
+    private Integer numberOfUserInvolved;
 
     /**
      * Check if the protocol message is a valid one: all the attribute of the class should be non-null

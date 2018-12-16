@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundExce
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.GroupRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.IndividualRequestProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.UserProtocolMessage;
+import com.poianitibaldizhou.trackme.sharedataservice.message.protocol.enumerator.IndividualRequestStatusProtocolMessage;
 import com.poianitibaldizhou.trackme.sharedataservice.message.publisher.NumberOfUserInvolvedDataPublisher;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.sharedataservice.repository.GroupRequestRepository;
@@ -94,7 +95,8 @@ public class InternalCommunicationServiceImpl implements InternalCommunicationSe
         Double numberOfUserInvolved = userRepository.getAggregatedData(distinctCountOperator,
                 userSsnRequestType, filterStatementList);
 
-        numberOfUserInvolvedDataPublisher.publishNumberOfUserInvolvedData(groupRequest.getId(), numberOfUserInvolved);
+        numberOfUserInvolvedDataPublisher.publishNumberOfUserInvolvedData(groupRequest.getId(),
+                numberOfUserInvolved.intValue());
     }
 
     /**

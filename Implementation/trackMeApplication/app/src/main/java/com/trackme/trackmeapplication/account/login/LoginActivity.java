@@ -3,9 +3,7 @@ package com.trackme.trackmeapplication.account.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.register.RegisterActivity;
@@ -20,7 +18,6 @@ public abstract class LoginActivity extends BaseDelegationActivity<
         LoginDelegate>
         implements LoginContract.LoginView {
 
-    @BindView(R.id.progressBar) protected ProgressBar progressBar;
     @BindView(R.id.editTextPass) protected EditText password;
     protected SharedPreferences sp;
 
@@ -33,16 +30,6 @@ public abstract class LoginActivity extends BaseDelegationActivity<
     @Override
     protected LoginDelegate instantiateDelegateInstance() {
         return new LoginDelegate();
-    }
-
-    @Override
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
     }
 
     @Override

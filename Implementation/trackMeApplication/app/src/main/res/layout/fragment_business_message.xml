@@ -24,6 +24,6 @@
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="TODO" />
+        android:contentDescription="@string/add_item_to_list_button" />
 
 </android.support.constraint.ConstraintLayout>

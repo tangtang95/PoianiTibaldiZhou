@@ -323,6 +323,10 @@ public class IndividualRequestServiceManagerIntegrationTest {
     public void testAddRequest() throws Exception {
         httpHeaders.set("thirdPartyId", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), 1L);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println(objectMapper.writeValueAsString(individualRequest));
+
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(

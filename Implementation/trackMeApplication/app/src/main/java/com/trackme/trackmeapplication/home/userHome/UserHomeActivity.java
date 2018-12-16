@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.account.register.UserProfileActivity;
+import com.trackme.trackmeapplication.automatedsos.SosServiceImpl;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 
 import butterknife.BindView;
@@ -38,6 +39,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
         sp = getSharedPreferences("login", MODE_PRIVATE);
         username = sp.getString("username", null);
+
+        startService(new Intent(this, SosServiceImpl.class));
 
         super.onCreate(savedInstanceState);
 
