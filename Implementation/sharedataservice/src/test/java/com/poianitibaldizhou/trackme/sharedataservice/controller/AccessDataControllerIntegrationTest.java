@@ -36,7 +36,7 @@ public class AccessDataControllerIntegrationTest {
     private HttpHeaders httpHeaders;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         restTemplate = new TestRestTemplate();
         httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.ALL));
@@ -44,7 +44,7 @@ public class AccessDataControllerIntegrationTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         restTemplate = null;
         httpHeaders = null;
     }
@@ -58,8 +58,9 @@ public class AccessDataControllerIntegrationTest {
      */
     @Test
     public void getIndividualRequestDataSuccessful() throws Exception {
+        httpHeaders.set("thirdPartyId", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/individualrequest/1/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/individualrequests/1/1"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
@@ -105,7 +106,7 @@ public class AccessDataControllerIntegrationTest {
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/accessdata/individualrequest/1/1\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/dataretrieval/individualrequests/1/1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -116,13 +117,13 @@ public class AccessDataControllerIntegrationTest {
 
     /**
      * Test the get individual request data with a third party not existing
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getIndividualDataWithNotExistingThirdPartyId() throws Exception {
+    public void getIndividualDataWithNotExistingThirdPartyId() {
+        httpHeaders.set("thirdPartyId", "3");
+
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/individualrequest/3/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/individualrequests/3/1"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -130,13 +131,12 @@ public class AccessDataControllerIntegrationTest {
 
     /**
      * Test the get individual request data with an existing third party but not matching individual request id
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getIndividualDataWithNotMatchingRequestId() throws Exception {
+    public void getIndividualDataWithNotMatchingRequestId() {
+        httpHeaders.set("thirdPartyId", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/individualrequest/1/4"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/individualrequests/1/4"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -151,15 +151,16 @@ public class AccessDataControllerIntegrationTest {
      */
     @Test
     public void getGroupRequestDataSuccessful() throws Exception {
+        httpHeaders.set("thirdPartyId", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/1/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/grouprequests/1/1"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
                 "  \"value\": 8.0,\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/accessdata/grouprequest/1/1\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/dataretrieval/grouprequests/1/1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -170,13 +171,12 @@ public class AccessDataControllerIntegrationTest {
 
     /**
      * Test the get group request data with a not existing third party
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getGroupRequestDataWithNotExistingThirdParty() throws Exception {
+    public void getGroupRequestDataWithNotExistingThirdParty()  {
+        httpHeaders.set("thirdPartyId", "4");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/4/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/grouprequests/4/1"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -184,13 +184,12 @@ public class AccessDataControllerIntegrationTest {
 
     /**
      * Test the get group request data with a non matching request id and existing third party
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getGroupRequestDataWithNotMatchingRequestId() throws Exception {
+    public void getGroupRequestDataWithNotMatchingRequestId()  {
+        httpHeaders.set("thirdPartyId", "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/accessdata/grouprequest/1/2"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/dataretrieval/grouprequests/1/2"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -203,9 +202,10 @@ public class AccessDataControllerIntegrationTest {
      */
     @Test
     public void getOwnDataWithExistingUser() throws Exception{
+        httpHeaders.set("userSsn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort("/accessdata/user/user1?from=2010-01-01&to=2010-01-01"),
+                .exchange(createURLWithPort("/dataretrieval/users/user1?from=2010-01-01&to=2010-01-01"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
@@ -251,7 +251,7 @@ public class AccessDataControllerIntegrationTest {
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/accessdata/user/user1?from=2010-01-01&to=2010-01-01\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/dataretrieval/users/user1?from=2010-01-01&to=2010-01-01\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -262,42 +262,39 @@ public class AccessDataControllerIntegrationTest {
 
     /**
      * Test the get own data method with not existing user
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getOwnDataWithNotExistingUser() throws Exception{
+    public void getOwnDataWithNotExistingUser() {
+        httpHeaders.set("userSsn", "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort("/accessdata/user/user3?from=2010-01-01&to=2010-01-01"),
+                .exchange(createURLWithPort("/dataretrieval/users/user3?from=2010-01-01&to=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     /**
      * Test the get own data method when there is no upper bound date
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getOwnDataWithExistingUserButNoDateAboutUpperBound() throws Exception{
+    public void getOwnDataWithExistingUserButNoDateAboutUpperBound() {
+        httpHeaders.set("userSsn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort("/accessdata/user/user1?from=2010-01-01"),
+                .exchange(createURLWithPort("/dataretrieval/users/user1?from=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     /**
      * Test the get own data method when there is no lower bound date
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void getOwnDataWithExistingUserButNoDateAboutLowerBound() throws Exception{
+    public void getOwnDataWithExistingUserButNoDateAboutLowerBound() {
+        httpHeaders.set("userSsn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort("/accessdata/user/user1?to=2010-01-01"),
+                .exchange(createURLWithPort("/dataretrieval/users/user1?to=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

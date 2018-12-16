@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
  * Entry point for accessing the service that regards the responses to individual request
  */
 @RestController
-@RequestMapping(path="/uploadresponseservice")
+@RequestMapping(path="/responses")
 public class ResponseController {
 
     private final UploadResponseService uploadResponseService;
@@ -50,10 +50,9 @@ public class ResponseController {
      * @param response type of response (e.g. accept the request)
      * @return an http 201 created message that contains the newly formed link
      */
-    @PostMapping("/response/{ssn}/{requestID}")
-    public @ResponseBody ResponseEntity<?> newResponse(@RequestHeader(value = "ssn") String requestingUser, @PathVariable Long requestID, @PathVariable
+    @PostMapping("/users/{ssn}/requests/{requestID}")
+    public @ResponseBody ResponseEntity<?> newResponse(@RequestHeader(value = "userSsn") String requestingUser, @PathVariable Long requestID, @PathVariable
             String ssn, @RequestBody String response) {
-        System.out.println("HERE");
         if(!requestingUser.equals(ssn))
             throw new ImpossibleAccessException();
 
@@ -80,8 +79,8 @@ public class ResponseController {
      * @param thirdPartyID identified of the third party that will be blocked
      * @return an http 201 created message that contains the newly formed link
      */
-    @PostMapping("/blockedThirdParty/{ssn}/{thirdPartyID}")
-    public @ResponseBody ResponseEntity<?> blockThirdParty(@RequestHeader(value = "ssn") String requestingUser, @PathVariable String ssn, @PathVariable Long thirdPartyID) {
+    @PostMapping("/blockedThirdParty/users/{ssn}/thirdparties/{thirdPartyID}")
+    public @ResponseBody ResponseEntity<?> blockThirdParty(@RequestHeader(value = "userSsn") String requestingUser, @PathVariable String ssn, @PathVariable Long thirdPartyID) {
         if(!ssn.equals(requestingUser))
             throw new ImpossibleAccessException();
 

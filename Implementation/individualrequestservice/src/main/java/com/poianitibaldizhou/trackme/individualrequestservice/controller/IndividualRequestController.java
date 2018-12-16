@@ -22,7 +22,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Entry point for accessing the service that regards the individual request
  */
 @RestController
-@RequestMapping(path = "/individualrequestservice")
+@RequestMapping(path = "/requests")
 public class IndividualRequestController {
 
     private final IndividualRequestManagerService requestManagerService;
@@ -51,9 +51,9 @@ public class IndividualRequestController {
      * @param id id of the demanded request
      * @return resource containing the individual request
      */
-    @GetMapping("/requests/{id}")
-    public @ResponseBody Resource<IndividualRequest> getRequestById(@RequestHeader(value = "id") String requestingThirdParty,
-                                                                    @RequestHeader(value = "ssn") String requestingUser,
+    @GetMapping("/id/{id}")
+    public @ResponseBody Resource<IndividualRequest> getRequestById(@RequestHeader(value = "thirdPartyId") String requestingThirdParty,
+                                                                    @RequestHeader(value = "userSsn") String requestingUser,
                                                                     @PathVariable Long id) {
         IndividualRequest request = requestManagerService.getRequestById(id);
 
@@ -78,8 +78,8 @@ public class IndividualRequestController {
      * @return set of resources of size 2: the first item is the set of pending requests, embedded with
      * their own link. The second one provides a self reference to this method.
      */
-    @GetMapping("requests/users/{ssn}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@RequestHeader(value = "ssn") String requestingUser, @PathVariable String ssn) {
+    @GetMapping("/users/{ssn}")
+    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@RequestHeader(value = "userSsn") String requestingUser, @PathVariable String ssn) {
         if(!requestingUser.equals(ssn))
             throw new ImpossibleAccessException();
 
@@ -101,8 +101,8 @@ public class IndividualRequestController {
      * @return set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
-    @GetMapping("/requests/thirdparty/{thirdPartyID}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@RequestHeader(value = "id") String requestingThirdParty, @PathVariable Long thirdPartyID) {
+    @GetMapping("/thirdparties/{thirdPartyID}")
+    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable Long thirdPartyID) {
         if(Long.parseLong(requestingThirdParty) != thirdPartyID)
             throw new ImpossibleAccessException();
 
@@ -124,8 +124,8 @@ public class IndividualRequestController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @PostMapping("/requests/{ssn}")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = "id") String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+    @PostMapping("/{ssn}")
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
         newRequest.setUser(new User(ssn));
         newRequest.setThirdPartyID(Long.parseLong(requestingThirdParty));
 

@@ -5,11 +5,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+/**
+ * Configuration of the beans used for the encryption operations
+ */
 @Configuration
 public class Encryption {
 
     /**
-     * Password encoder bean that allows to store crypted password in the database
+     * Password encoder bean that allows to store encrypted password in the database
      *
      * @return BCrypt encoder
      */

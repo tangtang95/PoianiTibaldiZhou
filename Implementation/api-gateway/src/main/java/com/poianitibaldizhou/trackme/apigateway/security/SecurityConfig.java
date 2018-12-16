@@ -1,9 +1,11 @@
 package com.poianitibaldizhou.trackme.apigateway.security;
 
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import lombok.experimental.FieldDefaults;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,7 +27,8 @@ import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 /**
- * Configuring spring boot security
+ * Configuring spring boot security: this is configured in order to provide authentication by means
+ * of token, instead of cookies, that is the default behaviour
  */
 @Configuration
 @EnableWebSecurity
@@ -37,7 +40,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
      * URLs starting with public are excluded from security, which means that any url specified here is not secured
      */
     private static final RequestMatcher PUBLIC_URLS = new OrRequestMatcher(
-            new AntPathRequestMatcher("/public/**")
+            new AntPathRequestMatcher(Constants.PUBLIC_API)
     );
 
     /**
@@ -100,9 +103,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return successHandler;
     }
 
-    /**
-     * Disable Spring boot automatic filter registration.
-     */
     @Bean
     FilterRegistrationBean disableAutoRegistration(final TokenAuthenticationFilter filter) {
         final FilterRegistrationBean registration = new FilterRegistrationBean(filter);

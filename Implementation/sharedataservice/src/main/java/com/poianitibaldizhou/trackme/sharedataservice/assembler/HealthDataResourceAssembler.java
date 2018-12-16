@@ -20,7 +20,7 @@ public class HealthDataResourceAssembler implements ResourceAssembler<HealthData
     @Override
     public Resource<HealthData> toResource(HealthData healthData) {
         return new Resource<>(healthData,
-                linkTo(methodOn(SendDataController.class).sendHealthData(healthData.getUser().getSsn(),
+                linkTo(methodOn(SendDataController.class).sendHealthData(healthData.getUser().getSsn(),healthData.getUser().getSsn(),
                         healthData)).withSelfRel());
     }
 }

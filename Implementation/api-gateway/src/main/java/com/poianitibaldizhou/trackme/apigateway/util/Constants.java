@@ -14,9 +14,20 @@ public class Constants {
             "format of the data provided is correct.";
     public static final String USER_BAD_CREDENTIAL = "Invalid username or password";
     public static final String THIRD_PARTY_BAD_CREDENTIAL = "Invalid email or password";
-
     public static final String AUTHENTICATION_FILTER_MISSING_TOKEN = "Missing authentication token";
     public static final String LOGGED_USER_NOT_FOUND = "Cannot find user with the following token ";
+    public static final String ACCESS_CONTROL_EXCEPTION_USER = "Users can't access api reserved to third party customers";
+    public static final String ACCESS_CONTROL_EXCEPTION_TP = "Third parties can't access api reserved to users";
+    public static final String API_NOT_FOUND_EXCEPTION = "Api not found";
 
+    // Utiles
     public static final String SPACE = " ";
+
+    // Headers
+    public static final String EMPTY_HEADER = "";
+    public static final String THIRD_PARTY_ID_HEADER_KEY = "thirdPartyId";
+    public static final String USER_SSN_HEADER_KEY = "userSsn";
+
+    public static final String PUBLIC_API = "/public/**";
 }
+

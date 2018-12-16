@@ -37,7 +37,7 @@ public class SendDataControllerIntegrationTest {
     private HttpHeaders httpHeaders;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         restTemplate = new TestRestTemplate();
         httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Collections.singletonList(MediaType.ALL));
@@ -45,7 +45,7 @@ public class SendDataControllerIntegrationTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         restTemplate = null;
         httpHeaders = null;
     }
@@ -59,6 +59,8 @@ public class SendDataControllerIntegrationTest {
      */
     @Test
     public void sendPositionDataSuccessful() throws Exception {
+        httpHeaders.set("userSsn", "user1");
+
         String requestBody = "{\n" +
                 "\t\"timestamp\": 1543422758573,\n" +
                 "\t\"latitude\": 20,\n" +
@@ -66,7 +68,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/positiondata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/positiondata/user1"),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -75,7 +77,7 @@ public class SendDataControllerIntegrationTest {
                 "  \"latitude\": 20.0,\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/senddata/positiondata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/datacollection/positiondata/user1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -86,11 +88,10 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the position data with a request body which is correct but the user ssn does not exist
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendPositionDataNotExistingUser() throws Exception {
+    public void sendPositionDataNotExistingUser(){
+        httpHeaders.set("userSsn", "user3");
         String requestBody = "{\n" +
                 "\t\"timestamp\": 1543422758573,\n" +
                 "\t\"latitude\": 20,\n" +
@@ -98,7 +99,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/positiondata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/positiondata/user3"),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -109,13 +110,12 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the position data with a request body empty
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendPositionDataNotExistingUserWithRequestBodyEmpty() throws Exception {
+    public void sendPositionDataNotExistingUserWithRequestBodyEmpty() {
+        httpHeaders.set("userSsn", "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/positiondata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/positiondata/user3"),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -129,6 +129,7 @@ public class SendDataControllerIntegrationTest {
      */
     @Test
     public void sendHealthDataSuccessful() throws Exception {
+        httpHeaders.set("userSsn", "user1");
         String requestBody = "{\n" +
                 "\t\"timestamp\": 1543422758573,\n" +
                 "\t\"heartBeat\": 60,\n" +
@@ -138,7 +139,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/healthdata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/healthdata/user1"),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -149,7 +150,7 @@ public class SendDataControllerIntegrationTest {
                 "  \"pressureMax\": 80,\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/senddata/healthdata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/datacollection/healthdata/user1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -160,11 +161,10 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the health data with a request body which is correct but the user ssn does not exist
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendHealthDataNotExistingUser() throws Exception {
+    public void sendHealthDataNotExistingUser() {
+        httpHeaders.set("userSsn", "user3");
         String requestBody = "{\n" +
                 "\t\"timestamp\": 1543422758573,\n" +
                 "\t\"heartBeat\": 60,\n" +
@@ -174,7 +174,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/healthdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/healthdata/user3"),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -185,13 +185,12 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the health data with a request body empty
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendHealthDataNotExistingUserWithRequestBodyEmpty() throws Exception {
+    public void sendHealthDataNotExistingUserWithRequestBodyEmpty() {
+        httpHeaders.set("userSsn", "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/healthdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/healthdata/user3"),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -200,11 +199,10 @@ public class SendDataControllerIntegrationTest {
 
     /**
      * Test the send cluster of data with a request body which is correct and a user ssn which exists
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
     public void sendClusterDataSuccessful() throws Exception {
+        httpHeaders.set("userSsn", "user1");
         String requestBody = "{\n" +
                 "\t\"positionDataList\": [\n" +
                 "\t\t{\n" +
@@ -232,7 +230,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/clusterdata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/clusterdata/user1"),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -243,7 +241,7 @@ public class SendDataControllerIntegrationTest {
                 "      \"latitude\": 20.0,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port +"/senddata/positiondata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port +"/datacollection/positiondata/user1\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +
@@ -257,7 +255,7 @@ public class SendDataControllerIntegrationTest {
                 "      \"pressureMax\": 80,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port + "/senddata/healthdata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port + "/datacollection/healthdata/user1\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    },\n" +
@@ -269,14 +267,14 @@ public class SendDataControllerIntegrationTest {
                 "      \"pressureMax\": 80,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port + "/senddata/healthdata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port + "/datacollection/healthdata/user1\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + "/senddata/clusterdata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + "/datacollection/clusterdata/user1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -287,11 +285,10 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the send cluster of data with a request body which is correct but the user ssn does not exist
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendClusterDataNotExistingUser() throws Exception {
+    public void sendClusterDataNotExistingUser()  {
+        httpHeaders.set("userSsn", "user3");
         String requestBody = "{\n" +
                 "\t\"positionDataList\": [\n" +
                 "\t\t{\n" +
@@ -319,7 +316,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/clusterdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/clusterdata/user3"),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -330,13 +327,12 @@ public class SendDataControllerIntegrationTest {
 
     /**
      Test the send cluster of data with a request body empty
-     *
-     * @throws Exception due to json assertEquals method
      */
     @Test
-    public void sendClusterDataNotExistingUserWithRequestBodyEmpty() throws Exception {
+    public void sendClusterDataNotExistingUserWithRequestBodyEmpty()  {
+        httpHeaders.set("userSsn", "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/senddata/clusterdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort("/datacollection/clusterdata/user3"),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

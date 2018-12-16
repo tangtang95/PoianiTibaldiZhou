@@ -25,6 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Unit test for the controller of the responses
+ */
 @RunWith(SpringRunner.class)
 @WebMvcTest(ResponseController.class)
 @Import({ResponseResourceAssembler.class, BlockedThirdPartyResourceAssembler.class})
@@ -55,14 +58,14 @@ public class ResponseControllerUnitTest {
 
         String json = "ACCEPT";
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("ssn", "user1"))
+        mvc.perform(post("/responses/users/user1/requests/1").
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", "user1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.response", is(ResponseType.ACCEPT.toString())))
                 .andExpect(jsonPath("$.requestID", is(1)))
                 .andExpect(jsonPath("$.acceptanceTimeStamp", is("1970-01-01T00:00:00.000+0000")))
-                .andExpect(jsonPath("$._links.userPendingRequest.href", is("http://localhost/individualrequestservice/requests/users/user1")))
-                .andExpect(jsonPath("$._links.request.href", is("http://localhost/individualrequestservice/requests/1")));
+                .andExpect(jsonPath("$._links.userPendingRequest.href", is("http://localhost/requests/users/user1")))
+                .andExpect(jsonPath("$._links.request.href", is("http://localhost/requests/id/1")));
     }
 
     /**
@@ -84,14 +87,14 @@ public class ResponseControllerUnitTest {
 
         String json = "REFUSE";
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("ssn", "user1"))
+        mvc.perform(post("/responses/users/user1/requests/1").
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", "user1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.response", is(ResponseType.REFUSE.toString())))
                 .andExpect(jsonPath("$.requestID", is(1)))
                 .andExpect(jsonPath("$.acceptanceTimeStamp", is("1970-01-01T00:00:00.000+0000")))
-                .andExpect(jsonPath("$._links.userPendingRequest.href", is("http://localhost/individualrequestservice/requests/users/user1")))
-                .andExpect(jsonPath("$._links.request.href", is("http://localhost/individualrequestservice/requests/1")));
+                .andExpect(jsonPath("$._links.userPendingRequest.href", is("http://localhost/requests/users/user1")))
+                .andExpect(jsonPath("$._links.request.href", is("http://localhost/requests/id/1")));
     }
 
     /**
@@ -101,7 +104,7 @@ public class ResponseControllerUnitTest {
     public void testAddResponseWithInvalidResponseType() throws Exception {
         String json = "invalidtype";
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/users/user1/requests/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -115,7 +118,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addResponse((long)1, ResponseType.REFUSE, new User("user1"))).willThrow(NonMatchingUserException.class);
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/users/user1/requests/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -129,7 +132,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addResponse((long)1, ResponseType.REFUSE, new User("user1"))).willThrow(ResponseAlreadyPresentException.class);
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/users/user1/requests/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -144,7 +147,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addResponse((long)1, ResponseType.REFUSE, new User("user1"))).willThrow(ThirdPartyNotFoundException.class);
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/users/user1/requests/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isNotFound());
     }
@@ -159,7 +162,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addResponse((long)1, ResponseType.REFUSE, new User("user1"))).willThrow(UserNotFoundException.class);
 
-        mvc.perform(post("/uploadresponseservice/response/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/users/user1/requests/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isNotFound());
     }
@@ -176,7 +179,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addBlock(new User("user1"), (long) 1)).willReturn(blockedThirdParty);
 
-        mvc.perform(post("/uploadresponseservice/blockedThirdParty/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/blockedThirdParty/users/user1/thirdparties/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isCreated());
     }
@@ -194,7 +197,7 @@ public class ResponseControllerUnitTest {
 
         given(service.addBlock(new User("user1"), (long) 1)).willThrow(new BlockAlreadyPerformedException((long)1));
 
-        mvc.perform(post("/uploadresponseservice/blockedThirdParty/user1/1").header("ssn", "user1").
+        mvc.perform(post("/responses/blockedThirdParty/users/user1/thirdparties/1").header("userSsn", "user1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isBadRequest());
     }

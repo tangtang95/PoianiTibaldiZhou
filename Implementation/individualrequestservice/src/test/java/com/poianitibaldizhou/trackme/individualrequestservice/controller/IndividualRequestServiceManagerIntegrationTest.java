@@ -78,10 +78,10 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetSingleRequest() throws Exception {
-        httpHeaders.set("ssn", "user1");
-        httpHeaders.set("id", "");
+        httpHeaders.set("userSsn", "user1");
+        httpHeaders.set("thirdPartyId", "");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/requests/id/1"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody  = "{\n" +
@@ -92,13 +92,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  \"thirdPartyID\" : 1,\n" +
                 "  \"_links\" : {\n" +
                 "    \"self\" : {\n" +
-                "      \"href\" : \"http://localhost:"+port+"/individualrequestservice/requests/1\"\n" +
+                "      \"href\" : \"http://localhost:"+port+"/requests/id/1\"\n" +
                 "    },\n" +
                 "    \"thirdPartyRequest\" : {\n" +
-                "      \"href\" : \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/1\"\n" +
+                "      \"href\" : \"http://localhost:"+port+"/requests/thirdparties/1\"\n" +
                 "    },\n" +
                 "    \"userPendingRequest\" : {\n" +
-                "      \"href\" : \"http://localhost:"+port+"/individualrequestservice/requests/users/user1\"\n" +
+                "      \"href\" : \"http://localhost:"+port+"/requests/users/user1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -113,10 +113,10 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetSingleRequestWhenNotPresent() throws IOException {
-        httpHeaders.set("id", "1");
-        httpHeaders.set("ssn", "");
+        httpHeaders.set("thirdPartyId", "1");
+        httpHeaders.set("userSsn", "");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/1000"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/requests/id/1000"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -137,15 +137,15 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetByThirdPartyIDWhenNoRequestArePresent() throws JSONException {
-        httpHeaders.set("id", "1000");
+        httpHeaders.set("thirdPartyId", "1000");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/thirdparty/1000"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/requests/thirdparties/1000"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/1000\"\n" +
+                "      \"href\": \"http://localhost:"+port+"/requests/thirdparties/1000\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -161,9 +161,9 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetByThirdPartyID() throws JSONException {
-        httpHeaders.set("id", "2");
+        httpHeaders.set("thirdPartyId", "2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/thirdparty/2"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/requests/thirdparties/2"),
                 HttpMethod.GET, entity, String.class);
 
 
@@ -178,13 +178,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "        \"thirdPartyID\": 2,\n" +
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/4\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/id/4\"\n" +
                 "          },\n" +
                 "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/2\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/thirdparties/2\"\n" +
                 "          },\n" +
                 "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/users/user1\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/users/user1\"\n" +
                 "          }\n" +
                 "        }\n" +
                 "      },\n" +
@@ -196,13 +196,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "        \"thirdPartyID\": 2,\n" +
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/5\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/id/5\"\n" +
                 "          },\n" +
                 "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/2\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/thirdparties/2\"\n" +
                 "          },\n" +
                 "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/users/user2\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/users/user2\"\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
@@ -210,7 +210,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  },\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/2\"\n" +
+                "      \"href\": \"http://localhost:"+port+"/requests/thirdparties/2\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -227,9 +227,9 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetPendingRequest() throws JSONException {
-        httpHeaders.set("ssn", "user2");
+        httpHeaders.set("userSsn", "user2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/users/user2"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/requests/users/user2"),
                 HttpMethod.GET, entity, String.class);
 
 
@@ -244,13 +244,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "        \"thirdPartyID\": 2,\n" +
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/5\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/id/5\"\n" +
                 "          },\n" +
                 "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/thirdparty/2\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/thirdparties/2\"\n" +
                 "          },\n" +
                 "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/users/user2\"\n" +
+                "            \"href\": \"http://localhost:"+port+"/requests/users/user2\"\n" +
                 "          }\n" +
                 "        }\n" +
                 "      }\n" +
@@ -258,7 +258,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  },\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+"/individualrequestservice/requests/users/user2\"\n" +
+                "      \"href\": \"http://localhost:"+port+"/requests/users/user2\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -272,9 +272,9 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testGetPendingRequestWhenUserNotRegistered() throws IOException {
-        httpHeaders.set("ssn", "notregistered");
+        httpHeaders.set("userSsn", "notregistered");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/individualrequestservice/requests/users/notregistered"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/requests/users/notregistered"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -294,14 +294,14 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWrongParameters() throws IOException {
-        httpHeaders.set("id", "1");
+        httpHeaders.set("thirdPartyId", "1");
         IndividualRequest individualRequest = new IndividualRequest();
         individualRequest.setThirdPartyID(1L);
         individualRequest.setEndDate(new Date(0));
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/individualrequestservice/requests/user1"),
+                createURLWithPort("/requests/user1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -321,12 +321,12 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequest() throws Exception {
-        httpHeaders.set("id", "1");
+        httpHeaders.set("thirdPartyId", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/individualrequestservice/requests/user1"),
+                createURLWithPort("/requests/user1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -356,13 +356,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWhenIncompatibleDates() throws IOException {
-        httpHeaders.set("id", "1");
+        httpHeaders.set("thirdPartyId", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(100), new Date(0),
                 new User("user1"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/individualrequestservice/requests/user1"),
+                createURLWithPort("/requests/user1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -380,13 +380,13 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestOnNonRegisteredUser() {
-        httpHeaders.set("id", "1");
+        httpHeaders.set("thirdPartyId", "1");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
                 new User("nonRegisteredUser"), 1L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/individualrequestservice/requests/nonRegisteredUser"),
+                createURLWithPort("/requests/nonRegisteredUser"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -399,12 +399,12 @@ public class IndividualRequestServiceManagerIntegrationTest {
      */
     @Test
     public void testAddRequestWhenBlocked() throws Exception {
-        httpHeaders.set("id", "4");
+        httpHeaders.set("thirdPartyId", "4");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), 4L);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/individualrequestservice/requests/user5"),
+                createURLWithPort("/requests/user5"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());

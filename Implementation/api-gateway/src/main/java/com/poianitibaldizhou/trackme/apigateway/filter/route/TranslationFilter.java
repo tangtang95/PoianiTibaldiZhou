@@ -6,9 +6,15 @@ import com.netflix.zuul.exception.ZuulException;
 import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationFilter;
 import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 
+/**
+ * This filters add the necessary headers to a request. Indeed, it add the third party customer id, if the client
+ * that called the api is logged as third party customer, or adds the user ssn if the client that called the api
+ * is logged as a user.
+ */
 public class TranslationFilter extends ZuulFilter {
 
     @Autowired
@@ -42,11 +48,13 @@ public class TranslationFilter extends ZuulFilter {
         final String token = tokenAuthenticationFilter.getToken(ctx.getRequest());
 
         if (thirdPartyAuthenticationService.findThirdPartyByToken(token).isPresent()) {
-            ctx.addZuulRequestHeader("id",
+            ctx.addZuulRequestHeader(Constants.THIRD_PARTY_ID_HEADER_KEY,
                     thirdPartyAuthenticationService.findThirdPartyByToken(token).orElseThrow(IllegalStateException::new).getId().toString());
+            ctx.addZuulRequestHeader(Constants.USER_SSN_HEADER_KEY, Constants.EMPTY_HEADER);
         } else if (userAuthenticationService.findUserByToken(token).isPresent()) {
-            ctx.addZuulRequestHeader("ssn",
+            ctx.addZuulRequestHeader(Constants.USER_SSN_HEADER_KEY,
                     userAuthenticationService.findUserByToken(token).orElseThrow(IllegalStateException::new).getSsn());
+            ctx.addZuulRequestHeader(Constants.THIRD_PARTY_ID_HEADER_KEY, Constants.EMPTY_HEADER);
         } else {
             throw new IllegalStateException();
         }

@@ -14,6 +14,7 @@ public class Constants {
     public static final String USER_NOT_FOUND_EXCEPTION_KEY = "userNotFoundException";
     public static final String GROUP_REQUEST_NOT_FOUND_EXCEPTION_KEY = "groupRequestNotFoundException";
     public static final String INDIVIDUAL_REQUEST_NOT_FOUND_EXCEPTION_KEY = "individualRequestNotFoundException";
+    public static final String IMPOSSIBLE_ACCESS_EXCEPTION_KEY ="impossibleAccessException";
 
     // EXCHANGE AND QUEUES NAMES
     public static final String USER_EXCHANGE_NAME = "trackme.user-exchange";

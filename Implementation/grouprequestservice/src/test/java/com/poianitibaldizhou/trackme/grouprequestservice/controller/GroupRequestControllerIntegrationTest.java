@@ -10,6 +10,8 @@ import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatem
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.*;
 import org.json.JSONException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -52,9 +54,19 @@ public class GroupRequestControllerIntegrationTest {
 	@Autowired
 	private FilterStatementRepository filterStatementRepository;
 
-	private HttpHeaders httpHeaders = new HttpHeaders();
+	private HttpHeaders httpHeaders;
 
 	private TestRestTemplate restTemplate = new TestRestTemplate();
+
+	@Before
+	public void setUp() {
+		httpHeaders = new HttpHeaders();
+	}
+
+	@After
+	public void tearDown() {
+		httpHeaders = null;
+	}
 
 	// TEST GET SINGLE REQUEST
 
@@ -65,8 +77,9 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testGetSingleRequest() throws Exception{
+		httpHeaders.set("thirdPartyId", "1");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequestservice/requests/1"),
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequests/id/1"),
 				HttpMethod.GET, entity, String.class);
 
 		String expectedBody =  "\n" +
@@ -103,7 +116,7 @@ public class GroupRequestControllerIntegrationTest {
 				"   ],\n" +
 				"   \"_links\":{\n" +
 				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+"/grouprequestservice/requests/1\"\n" +
+				"         \"href\":\"http://localhost:"+port+"/grouprequests/id/1\"\n" +
 				"      }\n" +
 				"   }\n" +
 				"}";
@@ -117,8 +130,9 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testGetNonExistingGroupRequest() throws IOException {
+		httpHeaders.set("thirdPartyId", "1000");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/grouprequestservice/requests/1000"),
+		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort("/grouprequests/id/1000"),
 				HttpMethod.GET, entity, String.class);
 
 		assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
@@ -140,11 +154,13 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testGetRequestByThirdPartyId() throws JSONException {
+		httpHeaders.set("thirdPartyId", "5");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequestservice/requests/thirdparties/5"),
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequests/thirdparties/5"),
 				HttpMethod.GET, entity, String.class);
 
-		String expectedBody =  "{\n" +
+		String expectedBody =  "\n" +
+				"{\n" +
 				"   \"_embedded\":{\n" +
 				"      \"groupRequestWrapperList\":[\n" +
 				"         {\n" +
@@ -159,7 +175,7 @@ public class GroupRequestControllerIntegrationTest {
 				"            ],\n" +
 				"            \"_links\":{\n" +
 				"               \"self\":{\n" +
-				"                  \"href\":\"http://localhost:"+port+"/grouprequestservice/requests/4\"\n" +
+				"                  \"href\":\"http://localhost:"+port+"/grouprequests/id/4\"\n" +
 				"               }\n" +
 				"            }\n" +
 				"         }\n" +
@@ -167,7 +183,7 @@ public class GroupRequestControllerIntegrationTest {
 				"   },\n" +
 				"   \"_links\":{\n" +
 				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+"/grouprequestservice/requests/thirdparties/5\"\n" +
+				"         \"href\":\"http://localhost:"+port+"/grouprequests/thirdparties/5\"\n" +
 				"      }\n" +
 				"   }\n" +
 				"}";
@@ -176,21 +192,22 @@ public class GroupRequestControllerIntegrationTest {
 	}
 
 	/**
-	 * Test the get of group request performed by a third party customer, when the speficied third party customer
+	 * Test the get of group request performed by a third party customer, when the specified third party customer
 	 * have not performed any request yet
 	 *
 	 * @throws JSONException due to json comparison
 	 */
 	@Test
 	public void testGetRequestByThirdPartyIdWhenNoRequest() throws JSONException {
+		httpHeaders.set("thirdPartyId", "1000");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequestservice/requests/thirdparties/1000"),
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/grouprequests/thirdparties/1000"),
 				HttpMethod.GET, entity, String.class);
 
 		String expectedBody =  "{\n" +
 				"   \"_links\":{\n" +
 				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+"/grouprequestservice/requests/thirdparties/1000\"\n" +
+				"         \"href\":\"http://localhost:"+port+"/grouprequests/thirdparties/1000\"\n" +
 				"      }\n" +
 				"   }\n" +
 				"}";
@@ -208,6 +225,8 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testAddOfNewRequestTwoFilterStatements() throws Exception {
+		httpHeaders.set("thirdPartyId", "1");
+
 		// Set up the request
 		GroupRequest groupRequest = new GroupRequest();
 		groupRequest.setRequestType(RequestType.ALL);
@@ -236,7 +255,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort("/grouprequestservice/requests/thirdparties/1"),
+				createURLWithPort("/grouprequests/thirdparties/1"),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -274,6 +293,8 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testAddOfNewRequestOneFilterStatements() throws Exception {
+		httpHeaders.set("thirdPartyId", "2");
+
 		// Set up the request
 		GroupRequest groupRequest = new GroupRequest();
 		groupRequest.setRequestType(RequestType.PRESSURE_MIN);
@@ -293,7 +314,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort("/grouprequestservice/requests/thirdparties/2"),
+				createURLWithPort("/grouprequests/thirdparties/2"),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -331,6 +352,8 @@ public class GroupRequestControllerIntegrationTest {
 	 */
 	@Test
 	public void testAddRequestWithNonMatchingOperatorAndRequestType() throws IOException {
+		httpHeaders.set("thirdPartyId", "2");
+
 		// Set up the request
 		GroupRequest groupRequest = new GroupRequest();
 		groupRequest.setRequestType(RequestType.BIRTH_CITY);
@@ -343,7 +366,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort("/grouprequestservice/requests/thirdparties/2"),
+				createURLWithPort("/grouprequests/thirdparties/2"),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -361,6 +384,8 @@ public class GroupRequestControllerIntegrationTest {
      */
 	@Test
     public void testAddRequestWhenMissingFields() throws IOException {
+		httpHeaders.set("thirdPartyId", "2");
+
         // Set up the request
         GroupRequest groupRequest = new GroupRequest();
         groupRequest.setRequestType(RequestType.PRESSURE_MIN);
@@ -378,7 +403,7 @@ public class GroupRequestControllerIntegrationTest {
         HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/grouprequestservice/requests/thirdparties/2"),
+                createURLWithPort("/grouprequests/thirdparties/2"),
                 HttpMethod.POST, entity, String.class);
 
         ObjectMapper mapper = new ObjectMapper();

@@ -46,6 +46,12 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
         chain.doFilter(request, response);
     }
 
+    /**
+     * Returns the token of a given http requests
+     *
+     * @param request token related with this request will be returned
+     * @return token present in request
+     */
     public String getToken(final HttpServletRequest request) {
         final String param = ofNullable(request.getHeader(AUTHORIZATION))
                 .orElse(request.getParameter("t"));

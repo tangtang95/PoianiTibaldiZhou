@@ -1,6 +1,5 @@
 package com.poianitibaldizhou.trackme.apigateway.security;
 
-import com.netflix.zuul.context.RequestContext;
 import com.poianitibaldizhou.trackme.apigateway.security.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;

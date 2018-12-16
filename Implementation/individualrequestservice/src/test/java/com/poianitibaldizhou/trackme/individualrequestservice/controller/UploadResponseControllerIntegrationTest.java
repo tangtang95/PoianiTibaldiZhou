@@ -39,7 +39,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 @Sql("classpath:ControllerIntegrationTest.sql")
-public class UploadResponseServiceIntegrationTest {
+public class UploadResponseControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
@@ -75,13 +75,13 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddAcceptResponse() throws Exception {
-        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("userSsn", "user1");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/response/user1/1"),
+                createURLWithPort("/responses/users/user1/requests/1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -96,13 +96,13 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddRefuseResponse() throws Exception {
-        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("userSsn", "user1");
         String responseType = ResponseType.REFUSE.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/response/user1/1"),
+                createURLWithPort("/responses/users/user1/requests/1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -116,13 +116,13 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseOfNonExistingRequest() throws IOException {
-        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("userSsn", "user1");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/response/user1/100"),
+                createURLWithPort("/responses/users/user1/requests/100"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -143,13 +143,13 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseWhenNonMatchingUser() throws Exception {
-        httpHeaders.set("ssn", "user2");
+        httpHeaders.set("userSsn", "user2");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/response/user2/1"),
+                createURLWithPort("/responses/users/user2/requests/1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -167,13 +167,13 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddResponseWhenTheUserIsNotRegistered() throws IOException {
-        httpHeaders.set("ssn", "nonRegisteredUser");
+        httpHeaders.set("userSsn", "nonRegisteredUser");
         String responseType = ResponseType.ACCEPT.toString();
 
         HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/response/nonRegisteredUser/100"),
+                createURLWithPort("/responses/users/nonRegisteredUser/requests/100"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -194,11 +194,11 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenUserNotFound() throws IOException {
-        httpHeaders.set("ssn","nonRegisteredUser");
+        httpHeaders.set("userSsn","nonRegisteredUser");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/blockedThirdParty/nonRegisteredUser/100"),
+                createURLWithPort("/responses/blockedThirdParty/users/nonRegisteredUser/thirdparties/100"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -217,11 +217,11 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenNoRequest() throws IOException {
-        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("userSsn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/blockedThirdParty/user1/10"),
+                createURLWithPort("/responses/blockedThirdParty/users/user1/thirdparties/10"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -240,11 +240,11 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenBlockAlreadyPresent() throws IOException {
-        httpHeaders.set("ssn","user5");
+        httpHeaders.set("userSsn","user5");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/blockedThirdParty/user5/4"),
+                createURLWithPort("/responses/blockedThirdParty/users/user5/thirdparties/4"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -263,11 +263,11 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlockWhenNoRefusedRequestPresent() throws IOException {
-        httpHeaders.set("ssn", "user1");
+        httpHeaders.set("userSsn", "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/blockedThirdParty/user1/1"),
+                createURLWithPort("/responses/blockedThirdParty/users/user1/thirdparties/1"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -286,11 +286,11 @@ public class UploadResponseServiceIntegrationTest {
      */
     @Test
     public void testAddBlock() {
-        httpHeaders.set("ssn", "user17");
+        httpHeaders.set("userSsn", "user17");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/uploadresponseservice/blockedThirdParty/user17/17"),
+                createURLWithPort("/responses/blockedThirdParty/users/user17/thirdparties/17"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
