@@ -32,7 +32,6 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         super.onCreate(savedInstanceState);
         mPresenter = getPresenterInstance();
         mPresenter.attachView(this);
-        progressBar = findViewById(R.id.progressBar);
     }
 
     @Override

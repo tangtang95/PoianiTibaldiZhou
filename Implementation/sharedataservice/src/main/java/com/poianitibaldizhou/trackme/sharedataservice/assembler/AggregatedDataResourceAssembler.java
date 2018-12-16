@@ -18,7 +18,8 @@ public class AggregatedDataResourceAssembler implements ResourceAssembler<Aggreg
     @Override
     public Resource<AggregatedData> toResource(AggregatedData aggregatedData) {
         return new Resource<>(aggregatedData,
-                linkTo(methodOn(AccessDataController.class).getGroupRequestData(aggregatedData.getThirdPartyId(),
+                linkTo(methodOn(AccessDataController.class).getGroupRequestData(aggregatedData.getThirdPartyId().toString()
+                        ,aggregatedData.getThirdPartyId(),
                         aggregatedData.getGroupRequestId())).withSelfRel());
     }
 }

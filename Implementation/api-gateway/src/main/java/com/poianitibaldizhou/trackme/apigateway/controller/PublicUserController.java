@@ -1,10 +1,12 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -48,6 +50,7 @@ public class PublicUserController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
+    @JsonView(Views.Secured.class)
     @PostMapping("/{ssn}")
     public @ResponseBody
     ResponseEntity<?> registerUser(@PathVariable String ssn, @RequestBody User user) throws URISyntaxException {

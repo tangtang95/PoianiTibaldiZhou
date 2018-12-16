@@ -3,7 +3,6 @@ package com.poianitibaldizhou.trackme.apigateway.service;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyWrapper;
 
 import java.util.Optional;
 
@@ -66,13 +65,4 @@ public interface ThirdPartyAccountManagerService {
      */
     ThirdPartyPrivateWrapper registerThirdPartyPrivate(ThirdPartyPrivateWrapper thirdPartyPrivateWrapper);
 
-    /**
-     * Verify that the parameters provided math a third party who has registered to the system. No distinction between
-     * company third party and private third party is applied here
-     *
-     * @param email username of the user
-     * @param password password for the user identified by the username
-     * @return true if the credential are matched with a registered user, false otherwise
-     */
-    boolean verifyThirdPartyCredential(String email, String password);
 }

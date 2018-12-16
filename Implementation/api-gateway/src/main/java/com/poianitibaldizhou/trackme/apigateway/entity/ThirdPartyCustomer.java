@@ -1,6 +1,8 @@
 package com.poianitibaldizhou.trackme.apigateway.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,12 +24,15 @@ public class ThirdPartyCustomer implements UserDetails {
     @Column
     private Long id;
 
+    @JsonView(Views.Public.class)
     @Column(length = 254, unique = true)
     private String email;
 
+    @JsonView(Views.Secured.class)
     @Column(nullable = false, length = 64)
     private String password;
 
+    @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return new ArrayList<>();
@@ -38,21 +43,25 @@ public class ThirdPartyCustomer implements UserDetails {
         return email;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isAccountNonLocked() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
+    @JsonIgnore
     @Override
     public boolean isEnabled() {
         return true;

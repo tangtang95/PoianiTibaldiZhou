@@ -1,5 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
@@ -8,6 +9,7 @@ import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthe
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
+import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -62,6 +64,7 @@ public class SecuredThirdPartyController {
      * @return contains information regarding the third party customer and, either its company details or
      * its private detail (note that both is impossible)
      */
+    @JsonView(Views.Public.class)
     @GetMapping("/info")
     public @ResponseBody
     Resource<Object> getThirdParty(@NotNull @AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {

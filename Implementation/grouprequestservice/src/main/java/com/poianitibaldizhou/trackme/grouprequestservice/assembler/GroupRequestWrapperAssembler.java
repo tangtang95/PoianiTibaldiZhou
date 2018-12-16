@@ -19,7 +19,7 @@ public class GroupRequestWrapperAssembler implements ResourceAssembler<GroupRequ
     @Override
     public Resource<GroupRequestWrapper> toResource(GroupRequestWrapper groupRequestWrapper) {
         return new Resource<>(groupRequestWrapper,
-                linkTo(methodOn(GroupRequestController.class).getRequest(groupRequestWrapper.getGroupRequest().getId())).withSelfRel()
+                linkTo(methodOn(GroupRequestController.class).getRequest(groupRequestWrapper.getGroupRequest().getThirdPartyId().toString(), groupRequestWrapper.getGroupRequest().getId())).withSelfRel()
                 );
     }
 }

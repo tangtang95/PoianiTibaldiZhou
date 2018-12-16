@@ -10,10 +10,6 @@ import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundExce
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
-import net.minidev.json.JSONArray;
-import org.hamcrest.Matchers;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +25,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(AccessDataController.class)
@@ -60,16 +50,6 @@ public class AccessDataControllerUnitTest {
     private static final Long GROUP_REQUEST_ID = 3L;
     private static final Long INDIVIDUAL_REQUEST_ID = 2L;
     private static final String USER_ID = "user1";
-
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
-    @After
-    public void tearDown() throws Exception {
-
-    }
 
     /**
      * Test get individual request data when it will return a data wrapper
@@ -89,8 +69,8 @@ public class AccessDataControllerUnitTest {
 
         given(service.getIndividualRequestData(THIRD_PARTY_ID, INDIVIDUAL_REQUEST_ID)).willReturn(dataWrapper);
 
-        mvc.perform(get("/accessdata/individualrequest/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)
-                .accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get("/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)
+                .accept(MediaTypes.HAL_JSON_VALUE).header("thirdPartyId", THIRD_PARTY_ID.toString()))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.positionDataList", hasSize(2)))
@@ -109,7 +89,7 @@ public class AccessDataControllerUnitTest {
                 .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
                         containsInAnyOrder(1, 1)))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost/accessdata/individualrequest/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)));
+                        is("http://localhost/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)));
     }
 
     /**
@@ -121,7 +101,8 @@ public class AccessDataControllerUnitTest {
         given(service.getIndividualRequestData(THIRD_PARTY_ID, INDIVIDUAL_REQUEST_ID))
                 .willThrow(new IndividualRequestNotFoundException(INDIVIDUAL_REQUEST_ID));
 
-        mvc.perform(get("/accessdata/individualrequest/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID))
+        mvc.perform(get("/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)
+                .header("thirdPartyId", THIRD_PARTY_ID.toString()))
                 .andExpect(status().isNotFound());
     }
 
@@ -136,12 +117,13 @@ public class AccessDataControllerUnitTest {
 
         given(service.getGroupRequestData(THIRD_PARTY_ID, GROUP_REQUEST_ID)).willReturn(output);
 
-        mvc.perform(get("/accessdata/grouprequest/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID))
+        mvc.perform(get("/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID).
+                header("thirdPartyId", THIRD_PARTY_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is(2.0)))
                 .andExpect(jsonPath("$.generatedTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost/accessdata/grouprequest/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)));
+                        is("http://localhost/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)));
     }
 
     /**
@@ -153,7 +135,8 @@ public class AccessDataControllerUnitTest {
         given(service.getGroupRequestData(THIRD_PARTY_ID, GROUP_REQUEST_ID))
                 .willThrow(new GroupRequestNotFoundException(GROUP_REQUEST_ID));
 
-        mvc.perform(get("/accessdata/grouprequest/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID))
+        mvc.perform(get("/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)
+                .header("thirdPartyId", THIRD_PARTY_ID.toString()))
                 .andExpect(status().isNotFound());
     }
 
@@ -177,7 +160,8 @@ public class AccessDataControllerUnitTest {
 
         given(service.getOwnData(USER_ID, Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02"))).willReturn(dataWrapper);
 
-        mvc.perform(get("/accessdata/user/" + USER_ID +"?from=1970-01-01&to=1970-01-02"))
+        mvc.perform(get("/dataretrieval/users/" + USER_ID +"?from=1970-01-01&to=1970-01-02")
+                .header("userSsn", USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.positionDataList", hasSize(2)))
                 .andExpect(jsonPath("$.positionDataList[*].timestamp", containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
@@ -195,7 +179,7 @@ public class AccessDataControllerUnitTest {
                 .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
                         containsInAnyOrder(1, 1)))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost/accessdata/user/" + USER_ID + "?from=1970-01-01&to=1970-01-02")));
+                        is("http://localhost/dataretrieval/users/" + USER_ID + "?from=1970-01-01&to=1970-01-02")));
     }
 
     /**
@@ -208,7 +192,7 @@ public class AccessDataControllerUnitTest {
         given(service.getOwnData("user2", Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02")))
                 .willThrow(new UserNotFoundException("user2"));
 
-        mvc.perform(get("/accessdata/user/user2?from=1970-01-01&to=1970-01-02"))
+        mvc.perform(get("/dataretrieval/users/user2?from=1970-01-01&to=1970-01-02").header("userSsn", "user2"))
                 .andExpect(status().isNotFound());
 
     }

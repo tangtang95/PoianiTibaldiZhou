@@ -17,8 +17,18 @@ public class IndividualRequestResourceAssembler implements ResourceAssembler<Ind
     @Override
     public Resource<IndividualRequest> toResource(IndividualRequest individualRequest) {
         return new Resource<>(individualRequest,
-                linkTo(methodOn(IndividualRequestController.class).getRequestById(individualRequest.getId())).withSelfRel(),
-                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(individualRequest.getThirdPartyID())).withRel("thirdPartyRequest"),
-                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(individualRequest.getUser().getSsn())).withRel("userPendingRequest"));
+                linkTo(methodOn(IndividualRequestController.class).getRequestById(
+                        individualRequest.getThirdPartyID().toString(),
+                        individualRequest.getUser().getSsn() ,
+                        individualRequest.getId()))
+                        .withSelfRel(),
+                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(
+                        individualRequest.getThirdPartyID().toString(),
+                        individualRequest.getThirdPartyID()))
+                        .withRel("thirdPartyRequest"),
+                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
+                        individualRequest.getUser().getSsn(),
+                        individualRequest.getUser().getSsn()))
+                        .withRel("userPendingRequest"));
     }
 }

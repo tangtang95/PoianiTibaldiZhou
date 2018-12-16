@@ -55,4 +55,17 @@
     <string name="ticker_text">ticker_text</string>
     <string name="debug_tag">SOS_DEBUG</string>
     <string name="birth_date_key">birth_date_key</string>
+    <string name="individual_request">INDIVIDUAL REQUEST</string>
+    <string name="group_request">GROUP REQUEST</string>
+    <string name="filter">Filter</string>
+    <string name="aggregator">Aggregator:</string>
+    <string name="type">type:</string>
+    <string name="send_button">Send button</string>
+    <string name="plus_button">Plus Button</string>
+    <string name="remove_button">Remove button</string>
+    <string name="message_image_list">Message image list</string>
+    <string name="status">Status:</string>
+    <string name="add_item_to_list_button">Add item to list button</string>
+    <string name="heart_image">Heart image</string>
+    <string name="history_item_image">history item image</string>
 </resources>

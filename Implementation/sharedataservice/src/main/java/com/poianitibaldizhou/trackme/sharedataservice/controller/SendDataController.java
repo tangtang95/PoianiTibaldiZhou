@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.assembler.HealthDataResour
 import com.poianitibaldizhou.trackme.sharedataservice.assembler.PositionDataResourceAssembler;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
+import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.SendDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ResourceDataWrapper;
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
  * Entry point for accessing services regarding the sending of data
  */
 @RestController
-@RequestMapping("/senddata")
+@RequestMapping("/datacollection")
 public class SendDataController {
 
     private SendDataService sendDataService;
@@ -49,14 +50,19 @@ public class SendDataController {
     /**
      * Adds a new health data of the user {userId} contains the database
      *
+     * @param requestingUser user that is trying to access the controller method
      * @param userId the social security number of the user
      * @param healthData the new health data
      * @return a CREATED http response with the health data added inside a resource
      */
     @JsonView(Views.Public.class)
     @PostMapping("/healthdata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<HealthData>> sendHealthData(@PathVariable(name = "userId") String userId,
+    public @ResponseBody ResponseEntity<Resource<HealthData>> sendHealthData(@RequestHeader(value= "userSsn") String requestingUser,
+                                                                             @PathVariable(name = "userId") String userId,
                                         @RequestBody HealthData healthData){
+        if(!requestingUser.equals(userId))
+            throw new ImpossibleAccessException();
+
         return new ResponseEntity<>(healthDataAssembler
                 .toResource(sendDataService.sendHealthData(userId, healthData)), HttpStatus.CREATED);
     }
@@ -64,14 +70,18 @@ public class SendDataController {
     /**
      * Adds a new position data of the user {userId} contains the database
      *
+     * @param requestingUser user that is trying to access this method
      * @param userId the social security number of the user
      * @param positionData the new position data
      * @return a CREATED http response with the position data added inside a resource
      */
     @JsonView(Views.Public.class)
     @PostMapping("/positiondata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<PositionData>> sendPositionData(@PathVariable(name="userId") String userId,
-                                                   @RequestBody PositionData positionData){
+    public @ResponseBody ResponseEntity<Resource<PositionData>> sendPositionData(@RequestHeader(value = "userSsn") String requestingUser,
+                                                                                 @PathVariable(name="userId") String userId,
+                                                                                 @RequestBody PositionData positionData){
+        if(!requestingUser.equals(userId))
+            throw new ImpossibleAccessException();
         return new ResponseEntity<>(positionDataAssembler
                 .toResource(sendDataService.sendPositionData(userId, positionData)), HttpStatus.CREATED);
     }
@@ -79,14 +89,19 @@ public class SendDataController {
     /**
      * Adds a list of new position data and a list of health position data of the user {userId} contains the database
      *
+     * @param requestingUser user that is trying to access this method
      * @param userId the social security number of the user
      * @param data the data wrapper containing a list of health data and a list of position data
      * @return a CREATED http response with the list of data added
      */
     @JsonView(Views.Public.class)
     @PostMapping("/clusterdata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<ResourceDataWrapper>> sendClusterOfData(@PathVariable(name = "userId") String userId,
-                                  @RequestBody DataWrapper data) {
+    public @ResponseBody ResponseEntity<Resource<ResourceDataWrapper>> sendClusterOfData(@RequestHeader(value = "userSsn") String requestingUser,
+                                                                                         @PathVariable(name = "userId") String userId,
+                                                                                         @RequestBody DataWrapper data) {
+        if(!requestingUser.equals(userId))
+            throw new ImpossibleAccessException();
+
         DataWrapper result = sendDataService.sendClusterOfData(userId, data);
         ResourceDataWrapper resourceDataWrapper = new ResourceDataWrapper();
         resourceDataWrapper.setHealthDataList(result.getHealthDataList().stream()

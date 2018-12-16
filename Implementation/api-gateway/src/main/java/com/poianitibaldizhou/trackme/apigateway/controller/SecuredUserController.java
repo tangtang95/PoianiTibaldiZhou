@@ -1,9 +1,11 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
+import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -47,9 +49,9 @@ public class SecuredUserController {
      * @param user user that will be returned
      * @return resource containing the user and useful links
      */
+    @JsonView(Views.Public.class)
     @GetMapping("/info")
     public @ResponseBody Resource<User> getUser(@NotNull @AuthenticationPrincipal final User user) {
-        System.out.println("HERE: " + user);
         return userAssembler.toResource(service.getUserBySsn(user.getSsn()));
     }
 

@@ -54,7 +54,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:padding="5dp"
-            android:text="GROUP REQUEST"
+            android:text="@string/group_request"
             android:textAlignment="center"
             android:textColor="@color/colorWhite" />
     </RelativeLayout>
@@ -66,8 +66,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="52dp"
         android:layout_marginEnd="8dp"
-        android:text="Filter:"
-        android:textAlignment="textEnd"
+        android:text="@string/filter"
         android:textSize="18sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -79,13 +78,14 @@
     <TextView
         android:id="@+id/textViewFilterData"
         android:layout_width="318dp"
-        android:layout_height="32dp"
+        android:layout_height="20dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:background="@color/colorPrimary"
         android:textColor="@color/colorWhite"
         android:text=""
+        android:scrollbars="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewFilter" />
@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="84dp"
-        android:text="Aggregator:"
+        android:text="@string/aggregator"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="italic"
@@ -110,7 +110,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="48dp"
-        android:text="type:"
+        android:text="@string/type"
         android:textAlignment="textEnd"
         android:textSize="18sp"
         android:textStyle="italic"
@@ -124,7 +124,7 @@
         android:layout_height="61dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="16dp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/send_button"
         android:src="@drawable/ic_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -144,15 +144,16 @@
     <EditText
         android:id="@+id/editTextNumber"
         android:layout_width="231dp"
-        android:layout_height="30dp"
+        android:layout_height="49dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
+        android:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.19"
-        android:inputType="number"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerOperator" />
+        app:layout_constraintTop_toBottomOf="@+id/spinnerOperator"
+        tools:ignore="Autofill,LabelFor" />
 
     <ImageView
         android:id="@+id/imageViewPlus"
@@ -162,7 +163,8 @@
         android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@android:drawable/ic_input_add"
+        android:contentDescription="@string/plus_button" />
 
     <ImageView
         android:id="@+id/imageViewMin"
@@ -175,6 +177,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/imageViewPlus"
-        app:layout_constraintTop_toBottomOf="@+id/editTextNumber" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextNumber"
+        android:contentDescription="@string/remove_button" />
 
 </android.support.constraint.ConstraintLayout>
