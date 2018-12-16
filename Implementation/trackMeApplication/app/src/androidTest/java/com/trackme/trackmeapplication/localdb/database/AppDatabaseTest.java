@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 
 import static org.junit.Assert.*;
 
@@ -207,8 +208,8 @@ public class AppDatabaseTest {
     public void getNumberOfRecentCalls() throws Exception {
         EmergencyCall input1 = new EmergencyCall();
         input1.setPhoneNumber("911");
-        Calendar calendar1 = new GregorianCalendar();
-        calendar1.roll(Calendar.HOUR, 10);
+        Calendar calendar1 = new GregorianCalendar(TimeZone.getTimeZone("GMT+0"));
+        calendar1.add(Calendar.HOUR, -2);
         calendar1.add(Calendar.MINUTE, 1);
         input1.setTimestamp(new Timestamp(calendar1.getTime().getTime()));
         emergencyCallDao.insert(input1);
@@ -225,11 +226,13 @@ public class AppDatabaseTest {
 
         EmergencyCall input4 = new EmergencyCall();
         input4.setPhoneNumber("911");
-        Calendar calendar2 = new GregorianCalendar();
-        calendar2.roll(Calendar.HOUR, 10);
+        Calendar calendar2 = new GregorianCalendar(TimeZone.getTimeZone("GMT+0"));
+        calendar2.add(Calendar.HOUR, -2);
         calendar2.add(Calendar.MINUTE, -1);
         input4.setTimestamp(new Timestamp(calendar2.getTime().getTime()));
         emergencyCallDao.insert(input4);
+
+        List<Double> diff = emergencyCallDao.getDifference();
 
         assertEquals(1L, emergencyCallDao.getNumberOfRecentCalls());
     }
@@ -244,7 +247,7 @@ public class AppDatabaseTest {
         EmergencyCall input1 = new EmergencyCall();
         input1.setPhoneNumber("911");
         Calendar calendar = Calendar.getInstance();
-        calendar.roll(Calendar.HOUR, 10);
+        calendar.add(Calendar.HOUR, -2);
         calendar.add(Calendar.MINUTE, 1);
         Date now = calendar.getTime();
         input1.setTimestamp(new Timestamp(now.getTime()));

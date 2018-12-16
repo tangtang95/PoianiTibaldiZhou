@@ -14,13 +14,16 @@ public interface EmergencyCallDao {
     @Query("SELECT * FROM `emergency-calls`")
     List<EmergencyCall> getAll();
 
-    @Query("SELECT COUNT(*) FROM `emergency-calls` WHERE (julianday('now') - julianday(timestamp)) * 24 * 60 < 60")
+    @Query("SELECT COUNT(*) FROM `emergency-calls` WHERE (julianday('now') - julianday(timestamp)) * 24 * 60 BETWEEN 0 AND 60")
     long getNumberOfRecentCalls();
+
+    @Query("SELECT (julianday('now') - julianday(timestamp)) * 24 * 60 FROM `emergency-calls`")
+    List<Double> getDifference();
 
     @Insert
     void insert(EmergencyCall emergencyCall);
 
-    @Query("DELETE FROM `emergency-calls` WHERE (julianday('now') - julianday(timestamp)) * 24 * 60 < 60")
+    @Query("DELETE FROM `emergency-calls` WHERE (julianday('now') - julianday(timestamp)) * 24 * 60 BETWEEN 0 AND 60")
     void deleteAllRecentCalls();
 
 }

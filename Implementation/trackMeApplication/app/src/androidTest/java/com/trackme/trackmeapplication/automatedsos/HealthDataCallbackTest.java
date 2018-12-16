@@ -44,12 +44,6 @@ public class HealthDataCallbackTest {
     private HealthDataCallback healthDataCallback;
 
     @Rule
-    public GrantPermissionRule accessFineLocationPermission = GrantPermissionRule.grant(Manifest.permission.ACCESS_FINE_LOCATION);
-
-    @Rule
-    public GrantPermissionRule accessCoarseLocationPermission = GrantPermissionRule.grant(Manifest.permission.ACCESS_COARSE_LOCATION);
-
-    @Rule
     public ServiceTestRule mServiceTestRule = new ServiceTestRule();
 
     @Before

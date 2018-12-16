@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
@@ -33,8 +34,8 @@ public class SOSServiceHelperImpl implements SOSServiceHelper {
 
     public SOSServiceHelperImpl(SOSAndroidService service) {
         this.service = service;
-        this.appDatabase = Room.inMemoryDatabaseBuilder(service.getApplicationContext(),
-                AppDatabase.class).build();
+        this.appDatabase = Room.databaseBuilder(service.getApplicationContext(),
+                AppDatabase.class, service.getString(R.string.persistent_database_name)).build();
     }
 
     @Override
@@ -72,7 +73,7 @@ public class SOSServiceHelperImpl implements SOSServiceHelper {
         if (ActivityCompat.checkSelfPermission(service.getApplicationContext(), Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             Log.d(service.getString(R.string.debug_tag), "no permission");
-            return false;
+            throw new NoPermissionException();
         }
 
         // Make call
@@ -86,7 +87,7 @@ public class SOSServiceHelperImpl implements SOSServiceHelper {
         // Save Emergency call in the DB
         EmergencyCall emergencyCall = new EmergencyCall();
         emergencyCall.setPhoneNumber(phoneNumber);
-        Calendar calendar = new GregorianCalendar();
+        Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
         emergencyCall.setTimestamp(new Timestamp(calendar.getTime().getTime()));
         appDatabase.getEmergencyCallDao().insert(emergencyCall);
         return true;
