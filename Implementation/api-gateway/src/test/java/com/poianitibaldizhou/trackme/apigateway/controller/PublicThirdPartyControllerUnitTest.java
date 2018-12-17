@@ -8,7 +8,10 @@ import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentEmailException;
 import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationProvider;
 import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
+import com.poianitibaldizhou.trackme.apigateway.util.ApiUtils;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.junit.Test;
@@ -46,6 +49,12 @@ public class PublicThirdPartyControllerUnitTest {
 
     @MockBean
     private ThirdPartyAuthenticationService authenticationService;
+
+    @MockBean
+    private UserAuthenticationService userAuthenticationService;
+
+    @MockBean
+    private ApiUtils apiUtils;
 
     @MockBean
     private TokenAuthenticationProvider tokenAuthenticationProvider;
@@ -91,7 +100,7 @@ public class PublicThirdPartyControllerUnitTest {
                 "   }\n" +
                 "}";
 
-        mvc.perform(post("/public/thirdparties/companies").
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_COMPANY_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
@@ -101,7 +110,8 @@ public class PublicThirdPartyControllerUnitTest {
                 .andExpect(jsonPath("companyDetail.companyName", is(companyDetail.getCompanyName())))
                 .andExpect(jsonPath("companyDetail.address", is(companyDetail.getAddress())))
                 .andExpect(jsonPath("companyDetail.dunsNumber", is(companyDetail.getDunsNumber())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/thirdparties/info")));
+                .andExpect(jsonPath("_links.self.href",
+                        is("http://localhost" + Constants.SECURED_TP_API + Constants.GET_TP_INFO_API)));
     }
 
     /**
@@ -130,7 +140,7 @@ public class PublicThirdPartyControllerUnitTest {
                 "   }\n" +
                 "}";
 
-        mvc.perform(post("/public/thirdparties/companies").
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_COMPANY_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -182,7 +192,7 @@ public class PublicThirdPartyControllerUnitTest {
                 "   }"+
                 "}";
 
-        mvc.perform(post("/public/thirdparties/privates").
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
@@ -193,7 +203,8 @@ public class PublicThirdPartyControllerUnitTest {
                 .andExpect(jsonPath("privateThirdPartyDetail.name", is(privateThirdPartyDetail.getName())))
                 .andExpect(jsonPath("privateThirdPartyDetail.surname", is(privateThirdPartyDetail.getSurname())))
                 .andExpect(jsonPath("privateThirdPartyDetail.birthDate", is(privateThirdPartyDetail.getBirthDate().toString())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/thirdparties/info")));
+                .andExpect(jsonPath("_links.self.href", is("http://localhost"
+                        + Constants.SECURED_TP_API + Constants.GET_TP_INFO_API)));
     }
 
     /**
@@ -225,7 +236,7 @@ public class PublicThirdPartyControllerUnitTest {
                 "   }"+
                 "}";
 
-        mvc.perform(post("/public/thirdparties/privates").
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
     }

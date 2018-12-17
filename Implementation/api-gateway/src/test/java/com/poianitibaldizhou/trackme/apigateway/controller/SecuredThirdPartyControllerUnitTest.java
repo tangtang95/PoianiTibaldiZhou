@@ -4,11 +4,12 @@ import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssem
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
-import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentEmailException;
 import com.poianitibaldizhou.trackme.apigateway.exception.ThirdPartyCustomerNotFoundException;
-import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationProvider;
+import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
+import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
 import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerServiceImpl;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.junit.Test;
@@ -26,10 +27,9 @@ import java.sql.Date;
 import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -52,7 +52,10 @@ public class SecuredThirdPartyControllerUnitTest {
     private ThirdPartyAuthenticationService authenticationService;
 
     @MockBean
-    private TokenAuthenticationProvider tokenAuthenticationProvider;
+    private AccessControlFilter accessControlFilter;
+
+    @MockBean
+    private TranslationFilter translationFilter;
 
 
     /**
@@ -80,15 +83,17 @@ public class SecuredThirdPartyControllerUnitTest {
 
         given(service.getThirdPartyCompanyByEmail(null)).willReturn(java.util.Optional.of(thirdPartyCompanyWrapper));
 
-        mvc.perform(get("/thirdparties/info").accept(MediaTypes.HAL_JSON_VALUE))
-                .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
+        mvc.perform(get(Constants.SECURED_TP_API+Constants.GET_TP_INFO_API).accept(MediaTypes.HAL_JSON_VALUE))
+                //.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
                 .andExpect(jsonPath("companyDetail.thirdPartyCustomer.email", is(customer.getEmail())))
                 .andExpect(jsonPath("companyDetail.companyName", is(companyDetail.getCompanyName())))
                 .andExpect(jsonPath("companyDetail.address", is(companyDetail.getAddress())))
                 .andExpect(jsonPath("companyDetail.dunsNumber", is(companyDetail.getDunsNumber())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/thirdparties/info")));
+                .andExpect(jsonPath("_links.self.href",
+                        is("http://localhost"+Constants.SECURED_TP_API + Constants.GET_TP_INFO_API)));
     }
 
     /**
@@ -100,7 +105,7 @@ public class SecuredThirdPartyControllerUnitTest {
     public void testGetThirdPartyCustomerWhenNotRegistered() throws Exception {
         given(service.getThirdPartyPrivateByEmail(null)).willThrow(new ThirdPartyCustomerNotFoundException("notPresentMail@yahoo.it"));
 
-        mvc.perform(get("/thirdparties/info").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get(Constants.SECURED_TP_API + Constants.GET_TP_INFO_API).accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isNotFound());
     }
@@ -134,7 +139,7 @@ public class SecuredThirdPartyControllerUnitTest {
         given(service.getThirdPartyCompanyByEmail(null)).willReturn(Optional.empty());
         given(service.getThirdPartyPrivateByEmail(null)).willReturn(Optional.of(thirdPartyPrivateWrapper));
 
-        mvc.perform(get("/thirdparties/info").accept(MediaTypes.HAL_JSON_VALUE))
+        mvc.perform(get(Constants.SECURED_TP_API + Constants.GET_TP_INFO_API).accept(MediaTypes.HAL_JSON_VALUE))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
@@ -144,6 +149,6 @@ public class SecuredThirdPartyControllerUnitTest {
                 .andExpect(jsonPath("privateThirdPartyDetail.surname", is(privateThirdPartyDetail.getSurname())))
                 .andExpect(jsonPath("privateThirdPartyDetail.birthDate", is(privateThirdPartyDetail.getBirthDate().toString())))
                 .andExpect(jsonPath("privateThirdPartyDetail.birthCity", is(privateThirdPartyDetail.getBirthCity())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/thirdparties/info")));
+                .andExpect(jsonPath("_links.self.href", is("http://localhost" + Constants.SECURED_TP_API + Constants.GET_TP_INFO_API)));
     }
 }

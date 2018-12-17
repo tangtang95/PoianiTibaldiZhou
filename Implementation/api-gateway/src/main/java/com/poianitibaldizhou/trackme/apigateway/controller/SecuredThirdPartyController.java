@@ -7,9 +7,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.Views;
+import com.poianitibaldizhou.trackme.apigateway.util.*;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -26,7 +24,7 @@ import java.util.Optional;
  * Indeed, authentication is needed in order to access the methods provided here.
  */
 @RestController
-@RequestMapping(path = "/thirdparties")
+@RequestMapping(path = Constants.SECURED_TP_API)
 public class SecuredThirdPartyController {
 
     private final ThirdPartyAccountManagerService service;
@@ -65,11 +63,12 @@ public class SecuredThirdPartyController {
      * its private detail (note that both is impossible)
      */
     @JsonView(Views.Public.class)
-    @GetMapping("/info")
+    @GetMapping(path = Constants.GET_TP_INFO_API)
     public @ResponseBody
-    Resource<Object> getThirdParty(@NotNull @AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {
+    Resource<Object> getThirdParty(@AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {
         String email = thirdPartyCustomer.getEmail();
         Optional<ThirdPartyCompanyWrapper> thirdPartyCompanyWrapper = service.getThirdPartyCompanyByEmail(email);
+        System.out.println("THIRD PARTY COMPANY WRAPPER: " + thirdPartyCompanyWrapper);
         if(thirdPartyCompanyWrapper.isPresent()) {
             return new Resource<>(thirdPartyCompanyAssembler.toResource(thirdPartyCompanyWrapper.get()));
         }
@@ -88,7 +87,7 @@ public class SecuredThirdPartyController {
      * @param thirdPartyCustomer customer to logout
      * @return true
      */
-    @GetMapping("/logout")
+    @GetMapping(Constants.LOGOUT_TP_API)
     public @ResponseBody boolean logout(@NotNull @AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {
         thirdPartyAuthenticationService.thirdPartyLogout(thirdPartyCustomer);
         return true;

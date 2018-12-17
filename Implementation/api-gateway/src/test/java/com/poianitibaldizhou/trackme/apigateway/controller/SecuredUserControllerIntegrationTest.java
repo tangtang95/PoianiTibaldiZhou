@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.apigateway.controller;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
@@ -76,7 +77,7 @@ public class SecuredUserControllerIntegrationTest {
         httpHeaders.setBearerAuth(token);
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/users/info"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.GET_USER_INFO_API),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
@@ -88,7 +89,7 @@ public class SecuredUserControllerIntegrationTest {
                 "   \"birthNation\":\"ITALY\",\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"https://localhost:"+port+"/users/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+Constants.SECURED_USER_API + Constants.GET_USER_INFO_API+ "\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -106,9 +107,10 @@ public class SecuredUserControllerIntegrationTest {
      *
      * @return token
      */
-    private String login() throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
+    private String login() {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/public/users/authenticate?username=username1&password=password1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
+                Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API+"?username=username1&password=password1"),
                 HttpMethod.POST, entity, String.class);
         return response.getBody();
     }

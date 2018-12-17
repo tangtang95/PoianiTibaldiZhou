@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.junit.After;
@@ -100,7 +101,7 @@ public class PublicThirdPartyControllerIntegrationTest {
         HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
 
         restTemplate.exchange(
-                createURLWithPort("/public/thirdparties/companies"),
+                createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_COMPANY_TP_API),
                 HttpMethod.POST, entity, String.class);
 
         ThirdPartyCustomer insertedTp = thirdPartyRepository.findByEmail(thirdPartyCustomer.getEmail()).orElseThrow(Error::new);
@@ -139,7 +140,7 @@ public class PublicThirdPartyControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/thirdparties/companies"),
+                    createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_COMPANY_TP_API),
                     HttpMethod.POST, entity, String.class);
         } catch(RestClientException e) {
             assertEquals("400 ", e.getMessage());
@@ -170,7 +171,7 @@ public class PublicThirdPartyControllerIntegrationTest {
         HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
 
         restTemplate.exchange(
-                createURLWithPort("/public/thirdparties/privates"),
+                createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API),
                 HttpMethod.POST, entity, String.class);
 
         ThirdPartyCustomer insertedTp = thirdPartyRepository.findByEmail(thirdPartyCustomer.getEmail()).orElseThrow(Error::new);
@@ -213,7 +214,7 @@ public class PublicThirdPartyControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/thirdparties/privates"),
+                    createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API),
                     HttpMethod.POST, entity, String.class);
             fail("Exception expected");
         } catch(RestClientException e) {
@@ -244,7 +245,7 @@ public class PublicThirdPartyControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/thirdparties/privates"),
+                    createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API),
                     HttpMethod.POST, entity, String.class);
             fail("Exception expected");
         } catch(RestClientException e) {

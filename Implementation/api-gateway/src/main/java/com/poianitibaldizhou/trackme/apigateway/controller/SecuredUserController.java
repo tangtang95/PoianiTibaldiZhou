@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,7 +18,7 @@ import javax.validation.constraints.NotNull;
  * Indeed, authentication is needed in order to access the methods provided here.
  */
 @RestController
-@RequestMapping(path = "/users")
+@RequestMapping(path = Constants.SECURED_USER_API)
 public class SecuredUserController {
 
     private final UserAccountManagerService service;
@@ -50,8 +51,9 @@ public class SecuredUserController {
      * @return resource containing the user and useful links
      */
     @JsonView(Views.Public.class)
-    @GetMapping("/info")
+    @GetMapping(Constants.GET_USER_INFO_API)
     public @ResponseBody Resource<User> getUser(@NotNull @AuthenticationPrincipal final User user) {
+        System.out.println("HERE IN GET USER INFO");
         return userAssembler.toResource(service.getUserBySsn(user.getSsn()));
     }
 
@@ -61,7 +63,7 @@ public class SecuredUserController {
      * @param user user to logout
      * @return true
      */
-    @GetMapping("/logout")
+    @GetMapping(Constants.LOGOUT_USER_API)
     public @ResponseBody boolean logout(@NotNull @AuthenticationPrincipal final User user) {
         userAuthenticationService.userLogout(user);
         return true;
