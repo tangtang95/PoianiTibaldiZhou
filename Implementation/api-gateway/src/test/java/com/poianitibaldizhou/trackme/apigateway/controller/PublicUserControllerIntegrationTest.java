@@ -4,6 +4,8 @@ import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import org.apache.tomcat.util.bcel.Const;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +83,7 @@ public class PublicUserControllerIntegrationTest {
         HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort("/public/users/newSsn"),
+                createURLWithPort(Constants.PUBLIC_USER_API+ "/newSsn"),
                 HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -114,7 +116,7 @@ public class PublicUserControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/users/newSsn"),
+                    createURLWithPort(Constants.PUBLIC_USER_API + "/newSsn"),
                     HttpMethod.POST, entity, String.class);
         } catch(RestClientException e) {
             assertEquals("400 ", e.getMessage());
@@ -139,7 +141,7 @@ public class PublicUserControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/users/user1"),
+                    createURLWithPort(Constants.PUBLIC_USER_API + "/user1"),
                     HttpMethod.POST, entity, String.class);
         } catch(RestClientException e) {
             assertEquals("400 ", e.getMessage());
@@ -162,7 +164,7 @@ public class PublicUserControllerIntegrationTest {
 
         try {
             restTemplate.exchange(
-                    createURLWithPort("/public/users/user100"),
+                    createURLWithPort(Constants.PUBLIC_USER_API + "/user100"),
                     HttpMethod.POST, entity, String.class);
         }catch(RestClientException e) {
             assertEquals("400 ", e.getMessage());

@@ -5,8 +5,12 @@ import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnException;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
 import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationProvider;
+import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
+import com.poianitibaldizhou.trackme.apigateway.util.ApiUtils;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import org.apache.tomcat.util.bcel.Const;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +53,12 @@ public class PublicUserControllerUnitTest {
     @MockBean
     private TokenAuthenticationProvider tokenAuthenticationProvider;
 
+    @MockBean
+    private ApiUtils apiUtils;
+
+    @MockBean
+    private ThirdPartyAuthenticationService thirdPartyAuthenticationService;
+
     /**
      * Test the registration of a user
      *
@@ -78,7 +88,7 @@ public class PublicUserControllerUnitTest {
                 "   \"birthNation\":\"Italia\"\n" +
                 "}";
 
-        mvc.perform(post("/public/users/newUser").
+        mvc.perform(post(Constants.PUBLIC_USER_API + "/newUser").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("password", is(user.getPassword())))
@@ -88,7 +98,8 @@ public class PublicUserControllerUnitTest {
                 .andExpect(jsonPath("birthDate", is(user.getBirthDate().toString())))
                 .andExpect(jsonPath("birthCity", is(user.getBirthCity())))
                 .andExpect(jsonPath("birthNation", is(user.getBirthNation())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/users/info")));
+                .andExpect(jsonPath("_links.self.href", is("http://localhost" +
+                        Constants.SECURED_USER_API + Constants.GET_USER_INFO_API)));
     }
 
     /**
@@ -120,7 +131,7 @@ public class PublicUserControllerUnitTest {
 
         given(service.registerUser(any(User.class))).willThrow(new AlreadyPresentUsernameException(user.getUsername()));
 
-        mvc.perform(post("/public/users/newUser").
+        mvc.perform(post(Constants.PUBLIC_USER_API+"/newUser").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
 
@@ -155,7 +166,7 @@ public class PublicUserControllerUnitTest {
 
         given(service.registerUser(any(User.class))).willThrow(new AlreadyPresentSsnException(user.getSsn()));
 
-        mvc.perform(post("/public/users/SsnAlreadyPresent").
+        mvc.perform(post( Constants.PUBLIC_USER_API + "/SsnAlreadyPresent").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
 

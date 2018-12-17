@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManager
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +20,7 @@ import java.net.URISyntaxException;
  * Public controller regarding the third parties: methods in there can be accessed without authentication
  */
 @RestController
-@RequestMapping("/public/thirdparties")
+@RequestMapping(Constants.PUBLIC_TP_API)
 public class PublicThirdPartyController {
 
     private ThirdPartyCompanyAssembler thirdPartyCompanyAssembler;
@@ -56,10 +57,11 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @PostMapping("/companies")
+    @PostMapping(Constants.REGISTER_COMPANY_TP_API)
     public @ResponseBody
     ResponseEntity<?> registerCompanyThirdParty(@RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
             throws URISyntaxException {
+        System.out.println("HERE in registration");
         Resource<ThirdPartyCompanyWrapper> resource = thirdPartyCompanyAssembler.
                 toResource(service.registerThirdPartyCompany(thirdPartyCompanyWrapper));
 
@@ -73,11 +75,11 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @PostMapping("/privates")
+    @PostMapping(Constants.REGISTER_PRIVATE_TP_API)
     public @ResponseBody
     ResponseEntity<?> registerPrivateThirdParty(@RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
             throws URISyntaxException {
-
+        System.out.println("HERE in registration");
         Resource<ThirdPartyPrivateWrapper> resource = thirdPartyPrivateAssembler.
                 toResource(service.registerThirdPartyPrivate(thirdPartyPrivateWrapper));
 
@@ -91,8 +93,10 @@ public class PublicThirdPartyController {
      * @param password password of the customer
      * @return token associated with the customer
      */
-    @PostMapping("/authenticate")
-    @ResponseBody String login(@RequestParam("email") final String email,  @RequestParam("password") final String password) {
-        return thirdPartyAuthenticationService.thirdPartyLogin(email, password).orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL));
+    @PostMapping(Constants.LOGIN_TP_API) @ResponseBody String login(
+            @RequestParam(Constants.LOGIN_TP_EMAIL_API_PARAM) final String email,
+            @RequestParam(Constants.LOGIN_TP_PW_API_PARAM) final String password) {
+        return thirdPartyAuthenticationService.thirdPartyLogin(email, password)
+                .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL));
     }
 }
