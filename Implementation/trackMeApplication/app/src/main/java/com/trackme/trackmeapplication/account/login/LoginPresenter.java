@@ -2,6 +2,14 @@ package com.trackme.trackmeapplication.account.login;
 
 import com.trackme.trackmeapplication.baseUtility.BasePresenterImpl;
 
+/**
+ * Presenter class is a middleware class between view and model and call the method of the view
+ * when the delegate performs an action. (mvp pattern)
+ *
+ * @author Mattia Tibaldi
+ * @see com.trackme.trackmeapplication.baseUtility.BasePresenterImpl
+ * @see LoginContract.LoginPresenter
+ */
 public class LoginPresenter extends BasePresenterImpl<LoginContract.LoginView> implements
         LoginContract.LoginPresenter {
 

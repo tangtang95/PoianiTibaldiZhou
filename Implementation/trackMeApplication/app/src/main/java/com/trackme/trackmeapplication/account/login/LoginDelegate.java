@@ -2,30 +2,71 @@ package com.trackme.trackmeapplication.account.login;
 
 import android.text.TextUtils;
 
+import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
+/**
+ *  Delegate class that performs the validation of the data insert by the user in the login forms.
+ *  (delegate pattern)
+ *
+ * @author Mattia Tibaldi
+ * @see BaseActivityDelegate
+ */
 public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,LoginPresenter> {
 
+    private AccountNetworkInterface network = new AccountNetworkImp();
+
+    /**
+     * Check if the user params are correct and call the method for performing the user login on server.
+     *
+     * @param username the username insert by user.
+     * @param password the password insert by user.
+     */
     public void userLogin(final String username, final String password) {
-        /*TODO*/
         if (username.isEmpty() || password.isEmpty())
             mPresenter.onLoginError();
-        else
-            mPresenter.onLoginSuccess();
+        else {
+            try {
+                network.userLogin();
+                mPresenter.onLoginSuccess();
+            } catch (InvalidDataLoginException e) {
+                mPresenter.onLoginError();
+            }
+        }
     }
 
+    /**
+     * Check if the user params are correct and call the method for performing the third party
+     * login on server.
+     *
+     * @param mail the mail insert by the user.
+     * @param password the password insert by the user.
+     */
     public void businessLogin(final String mail, final String password) {
-        /*TODO*/
         if (mail.isEmpty() || password.isEmpty())
             mPresenter.onLoginError();
         else
             if (!isValidEmail(mail))
                 mPresenter.onMailError();
-            else
-                mPresenter.onLoginSuccess();
+            else {
+                try {
+                    network.thirdPartyLogin();
+                    mPresenter.onLoginSuccess();
+                } catch (InvalidDataLoginException e) {
+                    mPresenter.onLoginError();
+                }
+            }
     }
 
+    /**
+     * Check if the mail is a possible mail. Return true if the string pass is a mail.
+     *
+     * @param target mail to test
+     * @return true if the mail is a possible mail or false otherwise.
+     */
     private boolean isValidEmail(String target) {
         return (!TextUtils.isEmpty(target) && target.matches(Constant.E_MAIL_PATTERN));
     }

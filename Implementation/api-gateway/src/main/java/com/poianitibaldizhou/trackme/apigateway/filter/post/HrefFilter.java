@@ -26,7 +26,6 @@ public class HrefFilter extends ZuulFilter {
     @Value(Constants.PORT)
     private String port;
 
-
     @Override
     public String filterType() {
         return FilterConstants.POST_TYPE;

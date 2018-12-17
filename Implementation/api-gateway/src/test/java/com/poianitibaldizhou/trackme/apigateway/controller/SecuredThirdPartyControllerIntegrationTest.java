@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
@@ -77,7 +78,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
         httpHeaders.setBearerAuth(token);
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/thirdparties/info"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.GET_TP_INFO_API),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
@@ -94,7 +95,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
                 "   },\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"https://localhost:"+port+"/thirdparties/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+Constants.SECURED_TP_API + Constants.GET_TP_INFO_API+ "\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -115,7 +116,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
         httpHeaders.setBearerAuth(token);
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/thirdparties/info"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.GET_TP_INFO_API),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "\n" +
@@ -135,7 +136,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
                 "   },\n" +
                 "   \"_links\":{\n" +
                 "      \"self\":{\n" +
-                "         \"href\":\"https://localhost:"+port+"/thirdparties/info\"\n" +
+                "         \"href\":\"https://localhost:"+port+Constants.SECURED_TP_API + Constants.GET_TP_INFO_API+ "\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
@@ -153,7 +154,8 @@ public class SecuredThirdPartyControllerIntegrationTest {
      */
     private String login(String email, String password) {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort("/public/thirdparties/authenticate?email="+email+"&password="+password),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
+                Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API+"?email="+email+"&password="+password),
                 HttpMethod.POST, entity, String.class);
         return response.getBody();
     }

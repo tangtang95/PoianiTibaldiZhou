@@ -19,7 +19,6 @@ public class ApiGatewayApplication {
 		SpringApplication.run(ApiGatewayApplication.class, args);
 	}
 
-
 	@Bean
 	public AccessControlFilter accessControlFilter() {
 		return new AccessControlFilter();

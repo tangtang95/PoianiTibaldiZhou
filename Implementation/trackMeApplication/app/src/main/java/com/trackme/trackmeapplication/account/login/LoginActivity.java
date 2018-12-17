@@ -12,6 +12,14 @@ import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+/**
+ * LoginActivity class. This abstract class implement some useful method for the user
+ * login. It extends BaseDelegationActivity.
+ *
+ * @author Mattia Tibaldi
+ * @see BaseDelegationActivity
+ * @see LoginContract
+ */
 public abstract class LoginActivity extends BaseDelegationActivity<
         LoginContract.LoginView,
         LoginPresenter,
@@ -19,30 +27,47 @@ public abstract class LoginActivity extends BaseDelegationActivity<
         implements LoginContract.LoginView {
 
     @BindView(R.id.editTextPass) protected EditText password;
+
+    /**
+     * This app uses a sharePreference for storing some value in other to share data with
+     * other activity. The value stored are username, email and boolean values that indicate if a
+     * user is logged.
+     */
     protected SharedPreferences sp;
 
+    /**
+     * Getter method.
+     *
+     * @return a new presenter for this activity;
+     */
     @NonNull
     @Override
     protected LoginPresenter getPresenterInstance() {
         return new LoginPresenter();
     }
 
+    /**
+     * Getter method.
+     *
+     * @return a new delegate for this activity.
+     */
     @Override
     protected LoginDelegate instantiateDelegateInstance() {
         return new LoginDelegate();
     }
 
+    /**
+     * It starts, without finish the first, a new RegisterActivity and it shows it to the user.
+     */
     @Override
     public void navigateToRegister() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
     }
 
-    @Override
-    public void setLoginError() {
-        password.setError(getString(R.string.user_login_error));
-    }
-
+    /**
+     * It handles the event click on the textView "Register" by using the mvp pattern.
+     */
     @OnClick(R.id.textViewRegister)
     public void onTextViewRegisterClick() {
         mPresenter.register();

@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticat
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,7 +20,7 @@ import java.net.URISyntaxException;
  * Public controller regarding the users: methods in there can be accessed without authentication
  */
 @RestController
-@RequestMapping("/public/users")
+@RequestMapping(Constants.PUBLIC_USER_API)
 public class PublicUserController {
 
     private final UserAssembler userAssembler;
@@ -51,7 +52,7 @@ public class PublicUserController {
      * @throws URISyntaxException due to the creation of a new URI resource
      */
     @JsonView(Views.Secured.class)
-    @PostMapping("/{ssn}")
+    @PostMapping(Constants.REGISTER_USER_API)
     public @ResponseBody
     ResponseEntity<?> registerUser(@PathVariable String ssn, @RequestBody User user) throws URISyntaxException {
         user.setSsn(ssn);
@@ -68,8 +69,10 @@ public class PublicUserController {
      * @param password password of the user
      * @return token associated with the user
      */
-    @PostMapping("/authenticate")
-    @ResponseBody String login(@RequestParam("username") final String username,  @RequestParam("password") final String password) {
+    @PostMapping(Constants.LOGIN_USER_API)
+    @ResponseBody String login(
+            @RequestParam(Constants.LOGIN_USER_USERNAME_PARAM) final String username,
+            @RequestParam(Constants.LOGIN_USER_PW_PARAM) final String password) {
         return userAuthenticationService.userLogin(username, password).orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL));
     }
 }

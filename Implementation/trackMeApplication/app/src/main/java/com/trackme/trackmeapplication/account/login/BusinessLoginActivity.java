@@ -5,28 +5,42 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.EditText;
 
+import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.R;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
+/**
+ * BusinessLoginActivity extends the abstract class LoginActivity and it allows to the third party,
+ * like third party user and company to login into the application.
+ *
+ * @author Mattia Tibaldi
+ * @see LoginActivity
+ **/
 public class BusinessLoginActivity extends LoginActivity{
 
     @BindView(R.id.editTextMail) protected EditText mail;
 
+    /**
+     * Method call when this activity is created. It initialize the share data param with the
+     * current sharedPreference.
+     *
+     * @param savedInstanceState last saved instant state.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_business_login);
 
-        sp = getSharedPreferences("login",MODE_PRIVATE);
+        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME,MODE_PRIVATE);
     }
 
     @Override
     public void navigateToHome() {
         Intent intent = new Intent(this, BusinessHomeActivity.class);
-        Intent finishIntent = new Intent("finish_activity");
+        Intent finishIntent = new Intent(Constant.FINISH_ACTION);
         sendBroadcast(finishIntent);
         startActivity(intent);
         finish();
@@ -35,8 +49,8 @@ public class BusinessLoginActivity extends LoginActivity{
     @Override
     public void saveUserSession() {
         SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("business_logged",true);
-        editor.putString("email", mail.getText().toString());
+        editor.putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY,true);
+        editor.putString(Constant.SD_EMAIL_DATA_KEY, mail.getText().toString());
         editor.apply();
     }
 
@@ -55,6 +69,10 @@ public class BusinessLoginActivity extends LoginActivity{
         mail.setError(getString(R.string.email_is_not_valid));
     }
 
+    /**
+     * It handles the third party login button click event and it delegate the validation to the
+     * LoginDelegate.
+     */
     @OnClick(R.id.businessLoginButton)
     public void onBusinessLoginButtonClick() {
         mDelegate.businessLogin(mail.getText().toString(), password.getText().toString());

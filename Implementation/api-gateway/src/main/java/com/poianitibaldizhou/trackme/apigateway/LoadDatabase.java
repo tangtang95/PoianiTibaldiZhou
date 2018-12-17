@@ -19,6 +19,7 @@ import java.sql.Date;
 @Slf4j
 public class LoadDatabase {
 
+    /*
     @Bean
     CommandLineRunner initDatabase(UserRepository repository, ThirdPartyRepository thirdPartyRepository,
                                    CompanyDetailRepository companyDetailRepository, PasswordEncoder passwordEncoder) {
@@ -48,4 +49,5 @@ public class LoadDatabase {
             log.info("Preloading " + companyDetailRepository.saveAndFlush(companyDetail));
         };
     }
+    */
 }

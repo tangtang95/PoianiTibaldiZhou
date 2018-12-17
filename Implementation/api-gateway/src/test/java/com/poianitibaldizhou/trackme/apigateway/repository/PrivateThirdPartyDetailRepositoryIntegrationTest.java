@@ -1,11 +1,14 @@
 package com.poianitibaldizhou.trackme.apigateway.repository;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
+import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
+import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -30,6 +33,12 @@ public class PrivateThirdPartyDetailRepositoryIntegrationTest {
 
     @Autowired
     private ThirdPartyRepository thirdPartyRepository;
+
+    @MockBean
+    private AccessControlFilter controlFilter;
+
+    @MockBean
+    private TranslationFilter translationFilter;
 
     /**
      * Test the research of private details by third party customer when a private detail for a specified customer
