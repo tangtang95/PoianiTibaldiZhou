@@ -50,7 +50,6 @@ import java.util.concurrent.TimeoutException;
 public class SOSAndroidService extends Service {
 
     private static final int FOREGROUND_ID = 1338;
-    private static final String GEOAPI_USERNAME = "trackmeadmin";
 
     private Date mBirthDate;
     private final IBinder mBinder = new LocalBinder();

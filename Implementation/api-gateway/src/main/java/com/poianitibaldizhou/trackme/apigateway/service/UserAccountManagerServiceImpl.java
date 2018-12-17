@@ -5,20 +5,25 @@ import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentSsnExcep
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsernameException;
 import com.poianitibaldizhou.trackme.apigateway.exception.SsnNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 /**
  * Implementation of the services regarding the management user accounts
  */
+@Slf4j
 @Service
 public class UserAccountManagerServiceImpl implements UserAccountManagerService {
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates the manager of the services regarding the account of the users.
@@ -30,6 +35,10 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
     public UserAccountManagerServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService){
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @Transactional
@@ -55,7 +64,15 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
-        return userRepository.saveAndFlush(user);
+        User savedUser = userRepository.saveAndFlush(user);
+
+        if(!Objects.isNull(internalCommunicationService)){
+            internalCommunicationService.broadcastUserMessage(savedUser);
+        } else{
+            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+        }
+
+        return savedUser;
     }
 
 }

@@ -16,6 +16,7 @@ public class PrivateThirdPartyDetail {
 
     @JsonIgnore
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @MapsId
@@ -23,7 +24,7 @@ public class PrivateThirdPartyDetail {
     @JoinColumn(name = "thirdPartyCustomer")
     private ThirdPartyCustomer thirdPartyCustomer;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 16)
     private String ssn;
 
     @Column(nullable = false)

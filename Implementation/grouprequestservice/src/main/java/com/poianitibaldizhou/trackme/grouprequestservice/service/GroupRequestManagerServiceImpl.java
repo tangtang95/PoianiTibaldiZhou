@@ -90,11 +90,10 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
 
         filterStatementRepository.flush();
 
-        if(Objects.nonNull(internalCommunicationService)) {
-            Objects.requireNonNull(internalCommunicationService).sendGroupRequestMessage(savedRequest,
+        if(!Objects.isNull(internalCommunicationService)) {
+            internalCommunicationService.sendGroupRequestMessage(savedRequest,
                     groupRequestWrapper.getFilterStatementList());
-        }
-        else{
+        } else{
             log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
         }
 
