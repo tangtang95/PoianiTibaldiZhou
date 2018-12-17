@@ -53,7 +53,6 @@ public class SecuredUserController {
     @JsonView(Views.Public.class)
     @GetMapping(Constants.GET_USER_INFO_API)
     public @ResponseBody Resource<User> getUser(@NotNull @AuthenticationPrincipal final User user) {
-        System.out.println("HERE IN GET USER INFO");
         return userAssembler.toResource(service.getUserBySsn(user.getSsn()));
     }
 

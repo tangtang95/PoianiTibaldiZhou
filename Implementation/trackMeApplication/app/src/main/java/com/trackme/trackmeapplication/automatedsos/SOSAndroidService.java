@@ -50,7 +50,6 @@ import java.util.concurrent.TimeoutException;
 public class SOSAndroidService extends Service {
 
     private static final int FOREGROUND_ID = 1338;
-    private static final String GEOAPI_USERNAME = "trackmeadmin";
 
     private Date mBirthDate;
     private final IBinder mBinder = new LocalBinder();
@@ -93,11 +92,6 @@ public class SOSAndroidService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
 
-        if (ActivityCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d(getString(R.string.debug_tag), "No call permission");
-            return super.onStartCommand(intent, flags, startId);
-        }
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetoothAdapter != null) {

@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.HealthData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.SendDataService;
+import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.ResourceDataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
@@ -22,7 +23,7 @@ import java.util.stream.Collectors;
  * Entry point for accessing services regarding the sending of data
  */
 @RestController
-@RequestMapping("/datacollection")
+@RequestMapping(Constants.SEND_DATA_API)
 public class SendDataController {
 
     private SendDataService sendDataService;
@@ -56,9 +57,9 @@ public class SendDataController {
      * @return a CREATED http response with the health data added inside a resource
      */
     @JsonView(Views.Public.class)
-    @PostMapping("/healthdata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<HealthData>> sendHealthData(@RequestHeader(value= "userSsn") String requestingUser,
-                                                                             @PathVariable(name = "userId") String userId,
+    @PostMapping(Constants.SEND_HEALTH_DATA_API)
+    public @ResponseBody ResponseEntity<Resource<HealthData>> sendHealthData(@RequestHeader(value= Constants.HEADER_USER_SSN) String requestingUser,
+                                                                             @PathVariable String userId,
                                         @RequestBody HealthData healthData){
         if(!requestingUser.equals(userId))
             throw new ImpossibleAccessException();
@@ -76,9 +77,9 @@ public class SendDataController {
      * @return a CREATED http response with the position data added inside a resource
      */
     @JsonView(Views.Public.class)
-    @PostMapping("/positiondata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<PositionData>> sendPositionData(@RequestHeader(value = "userSsn") String requestingUser,
-                                                                                 @PathVariable(name="userId") String userId,
+    @PostMapping(Constants.SEND_POSITION_DATA_API)
+    public @ResponseBody ResponseEntity<Resource<PositionData>> sendPositionData(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
+                                                                                 @PathVariable String userId,
                                                                                  @RequestBody PositionData positionData){
         if(!requestingUser.equals(userId))
             throw new ImpossibleAccessException();
@@ -95,9 +96,9 @@ public class SendDataController {
      * @return a CREATED http response with the list of data added
      */
     @JsonView(Views.Public.class)
-    @PostMapping("/clusterdata/{userId}")
-    public @ResponseBody ResponseEntity<Resource<ResourceDataWrapper>> sendClusterOfData(@RequestHeader(value = "userSsn") String requestingUser,
-                                                                                         @PathVariable(name = "userId") String userId,
+    @PostMapping(Constants.SEND_DATA_CLUSTER_API)
+    public @ResponseBody ResponseEntity<Resource<ResourceDataWrapper>> sendClusterOfData(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
+                                                                                         @PathVariable String userId,
                                                                                          @RequestBody DataWrapper data) {
         if(!requestingUser.equals(userId))
             throw new ImpossibleAccessException();

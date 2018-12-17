@@ -61,7 +61,6 @@ public class PublicThirdPartyController {
     public @ResponseBody
     ResponseEntity<?> registerCompanyThirdParty(@RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
             throws URISyntaxException {
-        System.out.println("HERE in registration");
         Resource<ThirdPartyCompanyWrapper> resource = thirdPartyCompanyAssembler.
                 toResource(service.registerThirdPartyCompany(thirdPartyCompanyWrapper));
 
@@ -79,7 +78,6 @@ public class PublicThirdPartyController {
     public @ResponseBody
     ResponseEntity<?> registerPrivateThirdParty(@RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
             throws URISyntaxException {
-        System.out.println("HERE in registration");
         Resource<ThirdPartyPrivateWrapper> resource = thirdPartyPrivateAssembler.
                 toResource(service.registerThirdPartyPrivate(thirdPartyPrivateWrapper));
 

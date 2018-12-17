@@ -25,7 +25,7 @@ public class ThirdPartyCustomer implements UserDetails {
     private Long id;
 
     @JsonView(Views.Public.class)
-    @Column(length = 254, unique = true)
+    @Column(length = 128, unique = true)
     private String email;
 
     @JsonView(Views.Secured.class)

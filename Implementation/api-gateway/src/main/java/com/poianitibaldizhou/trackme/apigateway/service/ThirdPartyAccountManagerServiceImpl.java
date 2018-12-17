@@ -10,15 +10,18 @@ import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDeta
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
  * Implementation of the services regarding the management of third party accounts
  */
+@Slf4j
 @Service
 public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountManagerService {
 
@@ -26,6 +29,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
     private final CompanyDetailRepository companyDetailRepository;
     private final PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository;
     private final PasswordEncoder passwordEncoder;
+    private InternalCommunicationService internalCommunicationService;
 
     /**
      * Creates the manager of the services regarding the accounts of third party customers.
@@ -46,6 +50,10 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         this.companyDetailRepository = companyDetailRepository;
         this.privateThirdPartyDetailRepository = privateThirdPartyDetailRepository;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService){
+        this.internalCommunicationService = internalCommunicationService;
     }
 
     @Override
@@ -107,6 +115,12 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         savedWrapper.setCompanyDetail(savedDetail);
         savedWrapper.setThirdPartyCustomer(savedCustomer);
 
+        if(!Objects.isNull(internalCommunicationService)) {
+            internalCommunicationService.broadcastCompanyThirdPartyMessage(savedDetail);
+        } else{
+            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+        }
+
         return savedWrapper;
     }
 
@@ -130,6 +144,12 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         ThirdPartyPrivateWrapper savedWrapper = new ThirdPartyPrivateWrapper();
         savedWrapper.setThirdPartyCustomer(savedCustomer);
         savedWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
+
+        if(!Objects.isNull(internalCommunicationService)) {
+            internalCommunicationService.broadcastPrivateThirdPartyMessage(privateThirdPartyDetail);
+        } else{
+            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+        }
 
         return savedWrapper;
     }

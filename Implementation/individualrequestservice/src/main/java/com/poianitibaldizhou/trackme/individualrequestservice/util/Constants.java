@@ -29,11 +29,26 @@ public class Constants {
 
     public static final String SPACE = " ";
 
-    // EXCHANGE AND QUEUES NAMES
+    // Exchange and queue names
     public static final String USER_EXCHANGE_NAME = "trackme.user-exchange";
     public static final String USER_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME = "trackme.user.created.individual-request-queue";
 
     public static final String INDIVIDUAL_REQUEST_EXCHANGE_NAME = "trackme.individualrequest-exchange";
     public static final String INDIVIDUAL_REQUEST_ACCEPTED_SHARE_DATA_QUEUE_NAME = "trackme.individualrequest.accepted.share-data-queue";
 
+    // Api path for requests
+    public static final String REQUEST_API = "/requests";
+    public static final String REQUEST_BY_ID_API = "/id/{id}";
+    public static final String PENDING_REQUEST_BY_USER_API = "/users/{ssn}";
+    public static final String REQUEST_BY_THIRD_PARTY_ID = "/thirdparties/{thirdPartyID}";
+    public static final String NEW_REQUEST_API = "/{ssn}";
+
+    // Api path for responses
+    public static final String RESPONSE_API = "/responses";
+    public static final String NEW_RESPONSE_API = "/users/{ssn}/requests/{requestID}";
+    public static final String NEW_BLOCK_API = "/blockedThirdParty/users/{ssn}/thirdparties/{thirdPartyID}";
+
+    // Header parameter in api
+    public static final String HEADER_THIRD_PARTY_ID = "thirdPartyId";
+    public static final String HEADER_USER_SSN = "userSsn";
 }

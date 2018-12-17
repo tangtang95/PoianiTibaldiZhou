@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.assembler.AggregatedDataRe
 import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
+import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Views;
 import org.springframework.hateoas.Resource;
@@ -20,7 +21,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Entry point for accessing services regarding the access of data
  */
 @RestController
-@RequestMapping("/dataretrieval")
+@RequestMapping(Constants.ACCESS_DATA_API)
 public class AccessDataController {
 
     private AccessDataService accessDataService;
@@ -42,10 +43,10 @@ public class AccessDataController {
      * @return a OK http response with all the data defined in the individual request
      */
     @JsonView(Views.Public.class)
-    @GetMapping("/individualrequests/{request_id}/thirdparties/{third_party_id}/")
-    public @ResponseBody Resource<DataWrapper> getIndividualRequestData(@RequestHeader(value = "thirdPartyId") String requestingThirdPartyId,
-                                                                        @PathVariable(name = "third_party_id") Long thirdPartyId,
-                                                                        @PathVariable(name = "request_id") Long individualRequestId){
+    @GetMapping(Constants.GET_INDIVIDUAL_REQUEST_DATA_API)
+    public @ResponseBody Resource<DataWrapper> getIndividualRequestData(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdPartyId,
+                                                                        @PathVariable(name = Constants.TP_ID) Long thirdPartyId,
+                                                                        @PathVariable(name = Constants.REQUEST_ID) Long individualRequestId){
         if(Long.parseLong(requestingThirdPartyId) != thirdPartyId)
             throw new ImpossibleAccessException();
 
@@ -63,10 +64,10 @@ public class AccessDataController {
      * @return a OK http response with the aggregated data requested
      */
     @JsonView(Views.Public.class)
-    @GetMapping("/grouprequests/{request_id}/thirdparties{third_party_id}/")
-    public @ResponseBody Resource<AggregatedData> getGroupRequestData(@RequestHeader(value="thirdPartyId") String requestingThirdPartyId,
-                                                                      @PathVariable(name = "third_party_id") Long thirdPartyId ,
-                                                                      @PathVariable(name = "request_id") Long groupRequestId){
+    @GetMapping(Constants.GET_GROUP_REQUEST_DATA_API)
+    public @ResponseBody Resource<AggregatedData> getGroupRequestData(@RequestHeader(value=Constants.HEADER_THIRD_PARTY_ID) String requestingThirdPartyId,
+                                                                      @PathVariable(name = Constants.TP_ID) Long thirdPartyId ,
+                                                                      @PathVariable(name = Constants.REQUEST_ID) Long groupRequestId){
         if(Long.parseLong(requestingThirdPartyId) != thirdPartyId)
             throw new ImpossibleAccessException();
 
@@ -82,11 +83,11 @@ public class AccessDataController {
      * @return a OK http response with all the data of the user between the two dates
      */
     @JsonView(Views.Public.class)
-    @GetMapping("/users/{user_id}")
-    public @ResponseBody Resource<DataWrapper> getOwnData(@RequestHeader(value = "userSsn") String requestingUser,
-                                                          @PathVariable(name = "user_id") String userId,
-                                                          @RequestParam(name = "from") Date from,
-                                                          @RequestParam(name = "to") Date to){
+    @GetMapping(Constants.GET_OWN_DATA_API)
+    public @ResponseBody Resource<DataWrapper> getOwnData(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
+                                                          @PathVariable(name = Constants.USER_ID) String userId,
+                                                          @RequestParam(name = Constants.DATA_FROM) Date from,
+                                                          @RequestParam(name = Constants.DATA_TO) Date to){
         if(!requestingUser.equals(userId))
             throw new ImpossibleAccessException();
 
