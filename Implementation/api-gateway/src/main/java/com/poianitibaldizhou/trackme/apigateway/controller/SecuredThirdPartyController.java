@@ -68,7 +68,6 @@ public class SecuredThirdPartyController {
     Resource<Object> getThirdParty(@AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {
         String email = thirdPartyCustomer.getEmail();
         Optional<ThirdPartyCompanyWrapper> thirdPartyCompanyWrapper = service.getThirdPartyCompanyByEmail(email);
-        System.out.println("THIRD PARTY COMPANY WRAPPER: " + thirdPartyCompanyWrapper);
         if(thirdPartyCompanyWrapper.isPresent()) {
             return new Resource<>(thirdPartyCompanyAssembler.toResource(thirdPartyCompanyWrapper.get()));
         }

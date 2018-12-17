@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualR
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Entry point for accessing the service that regards the individual request
  */
 @RestController
-@RequestMapping(path = "/requests")
+@RequestMapping(path = Constants.REQUEST_API)
 public class IndividualRequestController {
 
     private final IndividualRequestManagerService requestManagerService;
@@ -51,9 +52,9 @@ public class IndividualRequestController {
      * @param id id of the demanded request
      * @return resource containing the individual request
      */
-    @GetMapping("/id/{id}")
-    public @ResponseBody Resource<IndividualRequest> getRequestById(@RequestHeader(value = "thirdPartyId") String requestingThirdParty,
-                                                                    @RequestHeader(value = "userSsn") String requestingUser,
+    @GetMapping(path = Constants.REQUEST_BY_ID_API)
+    public @ResponseBody Resource<IndividualRequest> getRequestById(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
+                                                                    @RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
                                                                     @PathVariable Long id) {
         IndividualRequest request = requestManagerService.getRequestById(id);
 
@@ -78,8 +79,8 @@ public class IndividualRequestController {
      * @return set of resources of size 2: the first item is the set of pending requests, embedded with
      * their own link. The second one provides a self reference to this method.
      */
-    @GetMapping("/users/{ssn}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@RequestHeader(value = "userSsn") String requestingUser, @PathVariable String ssn) {
+    @GetMapping(path = Constants.PENDING_REQUEST_BY_USER_API)
+    public @ResponseBody Resources<Resource<IndividualRequest>> getUserPendingRequests(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser, @PathVariable String ssn) {
         if(!requestingUser.equals(ssn))
             throw new ImpossibleAccessException();
 
@@ -101,8 +102,8 @@ public class IndividualRequestController {
      * @return set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
-    @GetMapping("/thirdparties/{thirdPartyID}")
-    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable Long thirdPartyID) {
+    @GetMapping(path = Constants.REQUEST_BY_THIRD_PARTY_ID)
+    public @ResponseBody Resources<Resource<IndividualRequest>> getThirdPartyRequests(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable Long thirdPartyID) {
         if(Long.parseLong(requestingThirdParty) != thirdPartyID)
             throw new ImpossibleAccessException();
 
@@ -124,8 +125,8 @@ public class IndividualRequestController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @PostMapping("/{ssn}")
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+    @PostMapping(path = Constants.NEW_REQUEST_API)
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
         newRequest.setUser(new User(ssn));
         newRequest.setThirdPartyID(Long.parseLong(requestingThirdParty));
 

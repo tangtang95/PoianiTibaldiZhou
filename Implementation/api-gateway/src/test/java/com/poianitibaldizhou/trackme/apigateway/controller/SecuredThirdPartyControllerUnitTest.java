@@ -86,7 +86,6 @@ public class SecuredThirdPartyControllerUnitTest {
         mvc.perform(get(Constants.SECURED_TP_API+Constants.GET_TP_INFO_API).accept(MediaTypes.HAL_JSON_VALUE))
                 //.andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
                 .andExpect(jsonPath("companyDetail.thirdPartyCustomer.email", is(customer.getEmail())))
                 .andExpect(jsonPath("companyDetail.companyName", is(companyDetail.getCompanyName())))

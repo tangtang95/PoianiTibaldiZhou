@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -72,7 +73,7 @@ public class GroupRequestControllerUnitTest {
 
         given(service.getById(1L)).willReturn(groupRequestWrapper);
 
-        mvc.perform(get("/grouprequests/id/1").accept(MediaTypes.HAL_JSON_VALUE).header("thirdPartyId", "1"))
+        mvc.perform(get(Constants.GROUP_REQUEST_API + "/id/1").accept(MediaTypes.HAL_JSON_VALUE).header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
@@ -83,7 +84,7 @@ public class GroupRequestControllerUnitTest {
                 .andExpect(jsonPath("$.filterStatementList[0].column", is(filterStatement.getColumn().toString())))
                 .andExpect(jsonPath("$.filterStatementList[0].value", is(filterStatement.getValue())))
                 .andExpect(jsonPath("$.filterStatementList[0].comparisonSymbol", is(filterStatement.getComparisonSymbol().toString())))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/grouprequests/id/1")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.GROUP_REQUEST_API+"/id/1")));
 
     }
 
@@ -96,7 +97,8 @@ public class GroupRequestControllerUnitTest {
     public void testGetRequestByIdWhenRequestNotPresent() throws Exception{
         given(service.getById(1L)).willThrow(new GroupRequestNotFoundException(1L));
 
-        mvc.perform(get("/grouprequests/id/1").accept(MediaTypes.HAL_JSON_VALUE).header("thirdPartyId", "1"))
+        mvc.perform(get(Constants.GROUP_REQUEST_API+ "/id/1").accept(MediaTypes.HAL_JSON_VALUE)
+                .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isNotFound());
 
@@ -145,19 +147,29 @@ public class GroupRequestControllerUnitTest {
 
         given(service.getByThirdPartyId(1L)).willReturn(groupRequestWrapperList);
 
-        mvc.perform(get("/grouprequests/thirdparties/1").accept(MediaTypes.HAL_JSON_VALUE).header("thirdPartyId", "1"))
+        mvc.perform(get(Constants.GROUP_REQUEST_API+ "/thirdparties/1")
+                .accept(MediaTypes.HAL_JSON_VALUE)
+                .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.creationTimestamp", containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.aggregatorOperator", containsInAnyOrder(groupRequest1.getAggregatorOperator().toString(), groupRequest2.getAggregatorOperator().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.requestType", containsInAnyOrder(groupRequest1.getRequestType().toString(), groupRequest2.getRequestType().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.status", containsInAnyOrder(groupRequest1.getStatus().toString(), groupRequest2.getStatus().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].column", containsInAnyOrder(filterStatement1.getColumn().toString(), filterStatement2.getColumn().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].value", containsInAnyOrder(filterStatement1.getValue(), filterStatement2.getValue())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].comparisonSymbol", containsInAnyOrder(filterStatement1.getComparisonSymbol().toString(), filterStatement2.getComparisonSymbol().toString())))
-                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*]._links.self.href", containsInAnyOrder("http://localhost/grouprequests/id/1", "http://localhost/grouprequests/id/2")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/grouprequests/thirdparties/1")));
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.creationTimestamp",
+                        containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.aggregatorOperator",
+                        containsInAnyOrder(groupRequest1.getAggregatorOperator().toString(), groupRequest2.getAggregatorOperator().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.requestType",
+                        containsInAnyOrder(groupRequest1.getRequestType().toString(), groupRequest2.getRequestType().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].groupRequest.status",
+                        containsInAnyOrder(groupRequest1.getStatus().toString(), groupRequest2.getStatus().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].column",
+                        containsInAnyOrder(filterStatement1.getColumn().toString(), filterStatement2.getColumn().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].value",
+                        containsInAnyOrder(filterStatement1.getValue(), filterStatement2.getValue())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*].filterStatementList[*].comparisonSymbol",
+                        containsInAnyOrder(filterStatement1.getComparisonSymbol().toString(), filterStatement2.getComparisonSymbol().toString())))
+                .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*]._links.self.href",
+                        containsInAnyOrder("http://localhost"+Constants.GROUP_REQUEST_API+"/id/1", "http://localhost"+Constants.GROUP_REQUEST_API+"/id/2")))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.GROUP_REQUEST_API+"/thirdparties/1")));
     }
 
     /**
@@ -195,18 +207,49 @@ public class GroupRequestControllerUnitTest {
 
         given(service.addGroupRequest(any(GroupRequestWrapper.class))).willReturn(groupRequestWrapper);
 
-        String json = "{\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\"," +
-                "\"requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"},\"filterStatementList\":" +
-                "[{\"id\":1,\"column\":\"LATITUDE\",\"value\":\"100000\",\"comparisonSymbol\":\"LESS\"," +
-                "\"groupRequest\":{\"id\":1,\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\",\"" +
-                "requestType\":\"PRESSURE_MAX\",\"status\":\"REFUSED\"}},{\"id\":2,\"column\":\"LATITUDE\",\"" +
-                "value\":\"50000\",\"comparisonSymbol\":\"GREATER\",\"groupRequest\":{\"id\":1," +
-                "\"thirdPartyId\":1,\"creationTimestamp\":0,\"aggregatorOperator\":\"MAX\",\"requestType\":" +
-                "\"PRESSURE_MAX\",\"status\":\"REFUSED\"}}]}";
+        String json = "\n" +
+                "{\n" +
+                "   \"groupRequest\":{\n" +
+                "      \"creationTimestamp\":\"1970-01-01T00:00:00.000+0000\",\n" +
+                "      \"aggregatorOperator\":\"MAX\",\n" +
+                "      \"requestType\":\"PRESSURE_MAX\",\n" +
+                "      \"status\":\"REFUSED\"\n" +
+                "   },\n" +
+                "   \"filterStatementList\":[\n" +
+                "      {\n" +
+                "         \"column\":\"LATITUDE\",\n" +
+                "         \"value\":\"100000\",\n" +
+                "         \"comparisonSymbol\":\"LESS\",\n" +
+                "         \"groupRequest\":{\n" +
+                "            \"creationTimestamp\":\"1970-01-01T00:00:00.000+0000\",\n" +
+                "            \"aggregatorOperator\":\"MAX\",\n" +
+                "            \"requestType\":\"PRESSURE_MAX\",\n" +
+                "            \"status\":\"REFUSED\"\n" +
+                "         }\n" +
+                "      },\n" +
+                "      {\n" +
+                "         \"column\":\"LATITUDE\",\n" +
+                "         \"value\":\"50000\",\n" +
+                "         \"comparisonSymbol\":\"GREATER\",\n" +
+                "         \"groupRequest\":{\n" +
+                "            \"creationTimestamp\":\"1970-01-01T00:00:00.000+0000\",\n" +
+                "            \"aggregatorOperator\":\"MAX\",\n" +
+                "            \"requestType\":\"PRESSURE_MAX\",\n" +
+                "            \"status\":\"REFUSED\"\n" +
+                "         }\n" +
+                "      }\n" +
+                "   ],\n" +
+                "   \"_links\":{\n" +
+                "      \"self\":{\n" +
+                "         \"href\":\"http://localhost"+Constants.GROUP_REQUEST_API+"/id/1\"\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
 
-        mvc.perform(post("/grouprequests/thirdparties/1").
+        mvc.perform(post(Constants.GROUP_REQUEST_API+"/thirdparties/1").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
-                content(json).header("thirdPartyId", "1"))
+                content(json).header(Constants.HEADER_THIRD_PARTY_ID, "1"))
+                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("groupRequest.creationTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
@@ -226,7 +269,7 @@ public class GroupRequestControllerUnitTest {
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.aggregatorOperator", is(groupRequest.getAggregatorOperator().toString())))
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.requestType", is(groupRequest.getRequestType().toString())))
                 .andExpect(jsonPath("filterStatementList[1].groupRequest.status", is(groupRequest.getStatus().toString())))
-                .andExpect(jsonPath("_links.self.href", is("http://localhost/grouprequests/id/1")));
+                .andExpect(jsonPath("_links.self.href", is("http://localhost"+Constants.GROUP_REQUEST_API+"/id/1")));
     }
 
     /**
@@ -248,7 +291,7 @@ public class GroupRequestControllerUnitTest {
         given(service.addGroupRequest(groupRequestWrapper)).willThrow(new BadOperatorRequestTypeException(
                 groupRequest.getAggregatorOperator(), groupRequest.getRequestType()));
 
-        mvc.perform(post("/grouprequests/thirdparties/1").header("thirdPartyId", "1"))
+        mvc.perform(post(Constants.GROUP_REQUEST_API+"/thirdparties/1").header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(status().isBadRequest());
     }
 }
