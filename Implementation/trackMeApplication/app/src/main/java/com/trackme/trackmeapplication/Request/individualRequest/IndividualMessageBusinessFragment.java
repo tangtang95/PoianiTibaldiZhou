@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.individualRequest;
+package com.trackme.trackmeapplication.Request.individualRequest;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -71,7 +71,7 @@ public class CompanyRegisterFragment extends BaseFragment {
     @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
         if (checkConstraintOnData()) {
-            AccountNetworkInterface network = new AccountNetworkImp();
+            AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
                 network.thirdPartyLogin();
             } catch (InvalidDataLoginException e) {

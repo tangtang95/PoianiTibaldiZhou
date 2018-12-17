@@ -32,9 +32,9 @@
         <activity android:name=".home.userHome.UserSettingsActivity" />
         <activity android:name=".account.register.UserProfileActivity" />
         <activity android:name=".home.businessHome.BusinessHomeActivity" />
-        <activity android:name=".individualRequest.RequestBodyActivity" />
-        <activity android:name=".individualRequest.RequestFormActivity" />
-        <activity android:name=".groupRequest.GroupRequestBodyActivity"/>
+        <activity android:name=".Request.individualRequest.RequestBodyActivity" />
+        <activity android:name=".Request.individualRequest.RequestFormActivity" />
+        <activity android:name=".Request.groupRequest.GroupRequestFormActivity"/>
 
         <service android:name=".automatedsos.SOSAndroidService" />
     </application>

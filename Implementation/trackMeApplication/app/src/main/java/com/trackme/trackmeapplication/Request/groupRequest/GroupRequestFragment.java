@@ -1,12 +1,7 @@
-package com.trackme.trackmeapplication.groupRequest;
+package com.trackme.trackmeapplication.Request.groupRequest;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,43 +10,62 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.individualRequest.RequestItem;
+import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupRequestFragment extends Fragment {
+/**
+ * Group request fragment handles the group request sent by the third party. It shows all the request
+ * in a recyclerView and it allows to the third party to create some one new.
+ *
+ * @author Mattia Tibaldi
+ * @see BaseFragment
+ */
+public class GroupRequestFragment extends BaseFragment {
 
     @BindView(R.id.listView)
     protected RecyclerView recyclerView;
 
     private GroupRequestFragment.CustomRecyclerView customRecyclerView;
-    private List<RequestItem> requestItems = new ArrayList<>();
+    private List<GroupRequestItem> groupRequestItems = new ArrayList<>();
 
+    /**
+     * Custom recyclerView class for showing the groupRequestItem in the recycler.
+     */
     private class CustomRecyclerView extends RecyclerView.Adapter<GroupRequestFragment.CustomRecyclerView.MyViewHolder> {
 
-        public class MyViewHolder extends RecyclerView.ViewHolder {
+        /**
+         * The holder that searches the object in the layout and binds it.
+         */
+        class MyViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView ssn;
             private TextView status;
+            private TextView receiver;
 
+            /**
+             * Constructor.
+             *
+             * @param view current view.
+             */
             MyViewHolder(View view) {
                 super(view);
-                ssn = view.findViewById(R.id.textViewSsn);
                 status = view.findViewById(R.id.textViewStatus);
+                receiver = view.findViewById(R.id.textViewSsn);
             }
         }
 
-        private Activity context;
-        private List<RequestItem> items;
+        private List<GroupRequestItem> items;
 
-        public CustomRecyclerView(@NonNull Activity context, List<RequestItem> requestItems) {
-            this.context = context;
+        /**
+         * Constructor.
+         *
+         * @param requestItems list of item to show in the recyclerView.
+         */
+        CustomRecyclerView(List<GroupRequestItem> requestItems) {
             this.items = requestItems;
         }
 
@@ -64,9 +78,9 @@ public class GroupRequestFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull GroupRequestFragment.CustomRecyclerView.MyViewHolder holder, final int position) {
-            holder.status.setText("Pending");
-            holder.status.setTextColor(Color.YELLOW);
-            holder.ssn.setText(items.get(position).getSsn());
+            holder.status.setText(items.get(position).getStatus().name());
+            holder.status.setTextColor(items.get(position).getStatus().getColor());
+            holder.receiver.setText(getText(R.string.app_name));
         }
 
         @Override
@@ -75,41 +89,42 @@ public class GroupRequestFragment extends Fragment {
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View groupRequestFragment = inflater.inflate(R.layout.fragment_business_message, container, false);
-        ButterKnife.bind(this, groupRequestFragment);
+    protected int getLayoutResID() {
+        return R.layout.fragment_business_message;
+    }
 
+    @Override
+    protected void setUpFragment() {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), requestItems);
+        customRecyclerView = new CustomRecyclerView(groupRequestItems);
         recyclerView.setAdapter(customRecyclerView);
-
-        return groupRequestFragment;
     }
 
+
+    /**
+     * Handle the add individual request click event.
+     */
     @OnClick(R.id.add_individual_request)
     public void onAddIndividualRequestClick(){
-        Intent intent = new Intent(getActivity(), GroupRequestBodyActivity.class);
+        Intent intent = new Intent(getActivity(), GroupRequestFormActivity.class);
         startActivity(intent);
     }
 
-    public void addRequestItem(RequestItem requestItem) {
-        requestItems.add(0, requestItem);
+    public void addRequestItem(GroupRequestItem item) {
+        groupRequestItems.add(0, item);
         refreshList();
     }
 
+    /**
+     * Refresh the recyclerView when it changes.
+     */
     private void refreshList() {
         customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(new Runnable() {
-            @Override
-            public void run() {
-                recyclerView.smoothScrollToPosition(0);
-            }
-        });
+        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
     }
 
     @Override

@@ -69,7 +69,7 @@ public class UserRegisterFragment extends BaseFragment {
     @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
         if (checkConstraintOnData()) {
-            AccountNetworkInterface network = new AccountNetworkImp();
+            AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
                 network.userSignUp();
             } catch (UserAlreadySignUpException e) {

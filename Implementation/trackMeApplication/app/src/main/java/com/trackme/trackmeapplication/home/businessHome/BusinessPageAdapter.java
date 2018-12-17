@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.trackme.trackmeapplication.groupRequest.GroupRequestFragment;
-import com.trackme.trackmeapplication.individualRequest.IndividualMessageBusinessFragment;
+import com.trackme.trackmeapplication.Request.groupRequest.GroupRequestFragment;
+import com.trackme.trackmeapplication.Request.individualRequest.IndividualMessageBusinessFragment;
 
 public class BusinessPageAdapter extends FragmentPagerAdapter {
 

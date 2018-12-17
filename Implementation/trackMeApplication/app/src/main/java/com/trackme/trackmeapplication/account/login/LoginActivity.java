@@ -78,11 +78,11 @@ public abstract class LoginActivity extends BaseDelegationActivity<
 
         if (password.getInputType() == TEXT_PASSWORD) {
             password.setInputType(InputType.TYPE_CLASS_TEXT);
-            passwordVisibility.setImageResource(R.drawable.ic_visibility);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_white);
         }
         else {
             password.setInputType(TEXT_PASSWORD);
-            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_off_white);
         }
     }
 

@@ -17,7 +17,7 @@ import com.trackme.trackmeapplication.baseUtility.Constant;
  */
 public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,LoginPresenter> {
 
-    private AccountNetworkInterface network = new AccountNetworkImp();
+    private AccountNetworkInterface network = AccountNetworkImp.getInstance();
 
     /**
      * Check if the user params are correct and call the method for performing the user login on server.

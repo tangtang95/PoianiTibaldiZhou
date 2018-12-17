@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".groupRequest.GroupRequestBodyActivity">
+    tools:context=".Request.groupRequest.GroupRequestFormActivity">
 
     <Spinner
         android:id="@+id/spinnerOperator"
@@ -35,7 +35,7 @@
         android:layout_width="232dp"
         android:layout_height="23dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.081"
@@ -82,10 +82,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="8dp"
-        android:background="@color/colorPrimary"
         android:text=""
+        android:background="#802d2e2e"
         android:scrollbars="horizontal"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/colorPrimaryDark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.393"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +110,7 @@
         android:layout_width="82dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="12dp"
         android:text="@string/type"
         android:textAlignment="textEnd"
         android:textSize="18sp"
@@ -142,18 +142,33 @@
         app:layout_constraintStart_toEndOf="@+id/textViewAggregator"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/value"
+        android:textSize="18sp"
+        android:textStyle="italic"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.045"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spinnerOperator" />
+
     <EditText
-        android:id="@+id/editTextNumber"
+        android:id="@+id/editTextValue"
         android:layout_width="231dp"
         android:layout_height="49dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:inputType="number"
+        android:inputType="text"
         app:layout_constraintEnd_toStartOf="@+id/imageViewSend"
         app:layout_constraintHorizontal_bias="0.004"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerOperator"
+        app:layout_constraintTop_toBottomOf="@+id/textView15"
         tools:ignore="Autofill,LabelFor" />
 
     <ImageView

@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.trackme.trackmeapplication.individualRequest.IndividualMessageFragment;
+import com.trackme.trackmeapplication.Request.individualRequest.IndividualMessageFragment;
 
 public class UserPageAdapter extends FragmentPagerAdapter {
 

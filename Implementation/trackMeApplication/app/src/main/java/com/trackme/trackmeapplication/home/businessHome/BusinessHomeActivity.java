@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
+import com.trackme.trackmeapplication.baseUtility.Constant;
 
 import butterknife.BindView;
 
@@ -35,8 +36,8 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
         setSupportActionBar(toolbar);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        sp = getSharedPreferences("login", MODE_PRIVATE);
-        mail = sp.getString("email", null);
+        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
 
         super.onCreate(savedInstanceState);
 
@@ -75,7 +76,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
     public void navigateToUserLogin() {
         Intent intent = new Intent(this, UserLoginActivity.class);
         /*TODO*/
-        sp.edit().putBoolean("business_logged", false).apply();
+        sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
         startActivity(intent);
         finish();
     }

@@ -2,6 +2,13 @@ package com.trackme.trackmeapplication.baseUtility;
 
 import java.util.Objects;
 
+/**
+ * Implementation of the base presenter.
+ *
+ * @author Mattia Tibaldi
+ *
+ * @param <V>
+ */
 public class BasePresenterImpl<V extends BaseView> implements BasePresenter<V>{
 
     protected V mView;
@@ -16,6 +23,11 @@ public class BasePresenterImpl<V extends BaseView> implements BasePresenter<V>{
         this.mView = null;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the attach view.
+     */
     public V getView() {
         return mView;
     }

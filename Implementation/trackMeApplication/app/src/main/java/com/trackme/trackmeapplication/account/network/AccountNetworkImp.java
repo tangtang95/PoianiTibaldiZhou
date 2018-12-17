@@ -2,6 +2,15 @@ package com.trackme.trackmeapplication.account.network;
 
 public class AccountNetworkImp implements AccountNetworkInterface {
 
+    private static AccountNetworkImp instance = null;
+
+    private AccountNetworkImp() {}
+
+    public static AccountNetworkImp getInstance() {
+        if(instance == null)
+            instance = new AccountNetworkImp();
+        return instance;
+    }
 
     @Override
     public void userLogin() {

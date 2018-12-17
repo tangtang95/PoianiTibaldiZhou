@@ -9,13 +9,19 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.trackme.trackmeapplication.R;
-
 import java.util.Objects;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * Base activity class. It is an abstract class that implements the mvp pattern. Provide the bind of
+ * the activity with ButterKnife library.
+ *
+ * @author Mattia Tibaldi
+ *
+ * @param <P> Base presenter.
+ */
 public abstract class BaseActivity<P extends BasePresenter> extends AppCompatActivity
         implements BaseView {
 
@@ -23,10 +29,20 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
 
     private ProgressBar progressBar = null;
 
+    /**
+     * Getter method. Return the activity's presenter.
+     *
+     * @return the current presenter of this view.
+     */
     protected @NonNull abstract P getPresenterInstance();
 
     protected P mPresenter = null;
 
+    /**
+     * Attach the activity to its presenter.
+     *
+     * @param savedInstanceState the last saved instance state.
+     */
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,12 +50,20 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         mPresenter.attachView(this);
     }
 
+    /**
+     * Set the activity layout and bind the view.
+     *
+     * @param layoutResID activity layout.
+     */
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         super.setContentView(layoutResID);
         mUnBinder = ButterKnife.bind(this);
     }
 
+    /**
+     * Unbind the activity.
+     */
     @Override
     protected void onDestroy() {
         mPresenter.detachView();
@@ -69,10 +93,20 @@ public abstract class BaseActivity<P extends BasePresenter> extends AppCompatAct
         return getWindow().getDecorView();
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the progress bar. Null if the progress bar is not instantiate in the layout.
+     */
     protected ProgressBar getProgressBar(){
         return progressBar;
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the binder for tis activity.
+     */
     protected Unbinder getmUnBinder() {
         return mUnBinder;
     }

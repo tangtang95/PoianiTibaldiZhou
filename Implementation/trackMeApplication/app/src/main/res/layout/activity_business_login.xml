@@ -46,8 +46,7 @@
         android:textColor="@color/colorWhite"
         android:textColorHint="@color/colorWhite"
         android:textSize="16sp"
-        app:layout_constraintEnd_toStartOf="@+id/password_visibility"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextMail"
         tools:ignore="Autofill" />

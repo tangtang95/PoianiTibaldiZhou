@@ -13,14 +13,28 @@ import android.widget.Toast;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
+/**
+ * Base fragment is an abstract class that implement some useful method for the fragment and provide
+ * the bind with ButterKnife.
+ *
+ * @author Mattia Tibaldi
+ */
 public abstract class BaseFragment extends Fragment {
 
     private Context mContext = getContext();
 
     private Unbinder mUnBinder = null;
 
+    /**
+     * Getter method.
+     *
+     * @return the id of the layout of the fragment.
+     */
     protected abstract int getLayoutResID();
 
+    /**
+     * In this method the programmer can put some function for setting up of the fragment.
+     */
     protected abstract void setUpFragment();
 
     @Nullable
@@ -45,10 +59,20 @@ public abstract class BaseFragment extends Fragment {
         super.onDetach();
     }
 
+    /**
+     * Show a message on screen.
+     *
+     * @param message to show.
+     */
     public void showMessage(String message) {
         Toast.makeText(getmContext(), message, Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Getter method
+     *
+     * @return the current context. The context is set when the fragment is attached to its activity.
+     */
     public Context getmContext(){
         return mContext;
     }

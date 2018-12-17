@@ -71,7 +71,7 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
     @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
         if (checkConstraintOnData()) {
-            AccountNetworkInterface network = new AccountNetworkImp();
+            AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
                 network.thirdPartySignUp();
             } catch (UserAlreadySignUpException e) {

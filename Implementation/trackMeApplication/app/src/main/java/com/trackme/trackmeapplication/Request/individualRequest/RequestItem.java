@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.individualRequest;
+package com.trackme.trackmeapplication.Request.individualRequest;
 
 import java.io.Serializable;
 

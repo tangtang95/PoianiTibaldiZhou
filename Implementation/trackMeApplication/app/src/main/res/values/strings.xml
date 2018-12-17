@@ -80,4 +80,5 @@
 
     <string name="persistent_database_name">trackme-db</string>
     <string name="visibility_off_button">Visibility off button</string>
+    <string name="value">Value</string>
 </resources>
