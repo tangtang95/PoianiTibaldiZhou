@@ -10,6 +10,12 @@ import com.trackme.trackmeapplication.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * RegisterActivity loads the layout of the Registration pages and it shows its main
+ * menu.
+ *
+ * @author Mattia Tibaldi
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     @BindView(R.id.tab_layout)
@@ -17,6 +23,12 @@ public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.view_pager)
     protected ViewPager viewPager;
 
+    /**
+     * Load the layout and it instantiates the page adapter for managing the viewPager and the
+     * tabLayout
+     *
+     * @param savedInstanceState the last saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
