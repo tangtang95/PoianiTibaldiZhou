@@ -1,6 +1,6 @@
 package com.trackme.trackmeapplication.automatedsos.exception;
 
-import com.trackme.trackmeapplication.automatedsos.model.HealthData;
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 public class InvalidHealthDataException extends Exception {
 

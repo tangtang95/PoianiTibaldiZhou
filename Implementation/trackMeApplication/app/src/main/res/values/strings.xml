@@ -52,6 +52,7 @@
     <string name="notification_title">Automated SOS</string>
     <string name="ticker_text">ticker_text</string>
     <string name="debug_tag">SOS_DEBUG</string>
+    <string name="birth_date_key">birth_date_key</string>
     <string name="individual_request">INDIVIDUAL REQUEST</string>
     <string name="group_request">GROUP REQUEST</string>
     <string name="filter">Filter</string>
@@ -72,4 +73,5 @@
     <string name="broadcast_receiver_error">Impossible to close the last view. Do you want to close the application?</string>
     <string name="fatal_error_title">FATAL ERROR</string>
 
+    <string name="persistent_database_name">trackme-db</string>
 </resources>

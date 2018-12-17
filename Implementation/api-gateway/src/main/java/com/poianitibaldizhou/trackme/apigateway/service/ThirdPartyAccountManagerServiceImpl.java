@@ -10,7 +10,7 @@ import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDeta
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyWrapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +22,10 @@ import java.util.Optional;
 @Service
 public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountManagerService {
 
-    private ThirdPartyRepository thirdPartyRepository;
-    private CompanyDetailRepository companyDetailRepository;
-    private PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository;
+    private final ThirdPartyRepository thirdPartyRepository;
+    private final CompanyDetailRepository companyDetailRepository;
+    private final PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * Creates the manager of the services regarding the accounts of third party customers.
@@ -35,14 +36,16 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
      * @param companyDetailRepository repository regarding companies associated with third party customers
      * @param privateThirdPartyDetailRepository repository regarding third party customers that are not related
      *                                          with companies
+     * @param passwordEncoder password encoder needed for encoding passwords before registering users
      */
     public ThirdPartyAccountManagerServiceImpl(ThirdPartyRepository thirdPartyRepository,
                                                CompanyDetailRepository companyDetailRepository,
-                                               PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository) {
+                                               PrivateThirdPartyDetailRepository privateThirdPartyDetailRepository,
+                                               PasswordEncoder passwordEncoder) {
         this.thirdPartyRepository = thirdPartyRepository;
         this.companyDetailRepository = companyDetailRepository;
         this.privateThirdPartyDetailRepository = privateThirdPartyDetailRepository;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -92,6 +95,8 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         }
 
         // Register the customer
+        thirdPartyCompanyWrapper.getThirdPartyCustomer().setPassword(passwordEncoder.encode(
+                thirdPartyCompanyWrapper.getThirdPartyCustomer().getPassword()));
         ThirdPartyCustomer savedCustomer = thirdPartyRepository.saveAndFlush(thirdPartyCompanyWrapper.getThirdPartyCustomer());
 
         thirdPartyCompanyWrapper.getCompanyDetail().setThirdPartyCustomer(savedCustomer);
@@ -114,6 +119,8 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         }
 
         // Register the customer
+        thirdPartyPrivateWrapper.getThirdPartyCustomer().setPassword(passwordEncoder.encode(
+                thirdPartyPrivateWrapper.getThirdPartyCustomer().getPassword()));
         ThirdPartyCustomer savedCustomer = thirdPartyRepository.saveAndFlush(thirdPartyPrivateWrapper.getThirdPartyCustomer());
 
         thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().setThirdPartyCustomer(savedCustomer);
@@ -127,10 +134,4 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return savedWrapper;
     }
 
-    @Transactional
-    @Override
-    public boolean verifyThirdPartyCredential(String email, String password) {
-        // TODO
-        return false;
-    }
 }

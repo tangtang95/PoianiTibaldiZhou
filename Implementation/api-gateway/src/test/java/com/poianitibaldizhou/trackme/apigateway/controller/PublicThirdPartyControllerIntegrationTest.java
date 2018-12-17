@@ -20,6 +20,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -33,6 +34,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -48,6 +50,9 @@ public class PublicThirdPartyControllerIntegrationTest {
 
     @LocalServerPort
     private int port;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private ThirdPartyRepository thirdPartyRepository;
@@ -102,12 +107,12 @@ public class PublicThirdPartyControllerIntegrationTest {
         CompanyDetail insertedCompanyDetail = companyDetailRepository.findByThirdPartyCustomer(insertedTp).orElseThrow(Error::new);
 
         assertEquals(thirdPartyCustomer.getEmail(), insertedTp.getEmail());
-        assertEquals(thirdPartyCompanyWrapper.getThirdPartyCustomer().getPassword(), insertedTp.getPassword());
+        assertTrue(passwordEncoder.matches(thirdPartyCompanyWrapper.getThirdPartyCustomer().getPassword(), insertedTp.getPassword()));
         assertEquals(thirdPartyCompanyWrapper.getCompanyDetail().getAddress(), insertedCompanyDetail.getAddress());
         assertEquals(thirdPartyCompanyWrapper.getCompanyDetail().getDunsNumber(), insertedCompanyDetail.getDunsNumber());
         assertEquals(thirdPartyCompanyWrapper.getCompanyDetail().getCompanyName(), insertedCompanyDetail.getCompanyName());
         assertEquals(thirdPartyCompanyWrapper.getCompanyDetail().getThirdPartyCustomer().getEmail(), insertedCompanyDetail.getThirdPartyCustomer().getEmail());
-        assertEquals(thirdPartyCompanyWrapper.getCompanyDetail().getThirdPartyCustomer().getPassword(), insertedCompanyDetail.getThirdPartyCustomer().getPassword());
+        assertTrue(passwordEncoder.matches(thirdPartyCompanyWrapper.getCompanyDetail().getThirdPartyCustomer().getPassword(), insertedCompanyDetail.getThirdPartyCustomer().getPassword()));
     }
 
     /**
@@ -172,14 +177,14 @@ public class PublicThirdPartyControllerIntegrationTest {
         PrivateThirdPartyDetail insertedPrivateThirdPartyDetail1  = privateThirdPartyDetailRepository.findByThirdPartyCustomer(insertedTp).orElseThrow(Error::new);
 
         assertEquals(thirdPartyCustomer.getEmail(), insertedTp.getEmail());
-        assertEquals(thirdPartyPrivateWrapper.getThirdPartyCustomer().getPassword(), insertedTp.getPassword());
+        assertTrue(passwordEncoder.matches(thirdPartyPrivateWrapper.getThirdPartyCustomer().getPassword(), insertedTp.getPassword()));
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getBirthDate(), insertedPrivateThirdPartyDetail1.getBirthDate());
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getBirthCity(), insertedPrivateThirdPartyDetail1.getBirthCity());
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getName(), insertedPrivateThirdPartyDetail1.getName());
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getSurname(), insertedPrivateThirdPartyDetail1.getSurname());
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getSsn(), insertedPrivateThirdPartyDetail1.getSsn());
         assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getThirdPartyCustomer().getEmail(), insertedPrivateThirdPartyDetail1.getThirdPartyCustomer().getEmail());
-        assertEquals(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getThirdPartyCustomer().getPassword(), insertedPrivateThirdPartyDetail1.getThirdPartyCustomer().getPassword());
+        assertTrue(passwordEncoder.matches(thirdPartyPrivateWrapper.getPrivateThirdPartyDetail().getThirdPartyCustomer().getPassword(), insertedPrivateThirdPartyDetail1.getThirdPartyCustomer().getPassword()));
     }
 
     /**

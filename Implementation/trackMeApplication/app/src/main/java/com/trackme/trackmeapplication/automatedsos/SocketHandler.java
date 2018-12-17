@@ -6,7 +6,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackme.trackmeapplication.automatedsos.model.HealthData;
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.automatedsos.model.MessageType;
 
 import java.io.IOException;

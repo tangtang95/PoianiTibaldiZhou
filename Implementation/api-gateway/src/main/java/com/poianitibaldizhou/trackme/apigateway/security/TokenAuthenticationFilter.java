@@ -33,13 +33,7 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
 
     @Override
     public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        final String param = ofNullable(request.getHeader(AUTHORIZATION))
-                .orElse(request.getParameter("t"));
-
-        final String token = ofNullable(param)
-                .map(value -> removeStart(value, BEARER))
-                .map(String::trim)
-                .orElseThrow(() -> new BadCredentialsException(Constants.AUTHENTICATION_FILTER_MISSING_TOKEN));
+        final String token = getToken(request);
 
         final Authentication auth = new UsernamePasswordAuthenticationToken(token, token);
         return getAuthenticationManager().authenticate(auth);
@@ -52,4 +46,19 @@ public class TokenAuthenticationFilter extends AbstractAuthenticationProcessingF
         chain.doFilter(request, response);
     }
 
+    /**
+     * Returns the token of a given http requests
+     *
+     * @param request token related with this request will be returned
+     * @return token present in request
+     */
+    public String getToken(final HttpServletRequest request) {
+        final String param = ofNullable(request.getHeader(AUTHORIZATION))
+                .orElse(request.getParameter("t"));
+
+        return ofNullable(param)
+                .map(value -> removeStart(value, BEARER))
+                .map(String::trim)
+                .orElseThrow(() -> new BadCredentialsException(Constants.AUTHENTICATION_FILTER_MISSING_TOKEN));
+    }
 }

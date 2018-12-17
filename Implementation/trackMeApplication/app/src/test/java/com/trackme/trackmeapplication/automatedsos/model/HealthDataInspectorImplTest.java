@@ -1,6 +1,7 @@
 package com.trackme.trackmeapplication.automatedsos.model;
 
 import com.trackme.trackmeapplication.automatedsos.exception.InvalidHealthDataException;
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 import org.junit.Before;
 import org.junit.Test;

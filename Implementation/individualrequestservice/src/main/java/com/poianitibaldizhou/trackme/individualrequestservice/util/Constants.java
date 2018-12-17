@@ -13,6 +13,7 @@ public class Constants {
     }
 
     // Constants that regards exception messages
+    public static final String INVALID_CREDENTIAL = "Could not access this data";
     public static final String THIRD_PARTY_NOT_FOUND = "Could not find third party";
     public static final String REQUEST_ID_NOT_FOUND = "Could not find request";
     public static final String USER_NOT_FOUND = "Could not find user";

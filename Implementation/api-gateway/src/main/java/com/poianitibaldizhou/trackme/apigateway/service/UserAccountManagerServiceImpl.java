@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentUsername
 import com.poianitibaldizhou.trackme.apigateway.exception.SsnNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,14 +18,18 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
 
     private final UserRepository userRepository;
 
+    private final PasswordEncoder passwordEncoder;
+
     /**
      * Creates the manager of the services regarding the account of the users.
      * It needs a repository in order to make some operations on data (e.g. register a user)
      *
      * @param userRepository repository regarding the users
+     * @param passwordEncoder password encoder for encoding password between inserting them in the database
      */
-    public UserAccountManagerServiceImpl(UserRepository userRepository) {
+    public UserAccountManagerServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional
@@ -47,6 +52,8 @@ public class UserAccountManagerServiceImpl implements UserAccountManagerService 
         if(userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new AlreadyPresentUsernameException(user.getUsername());
         }
+
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         return userRepository.saveAndFlush(user);
     }

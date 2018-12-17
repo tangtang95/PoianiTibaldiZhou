@@ -66,7 +66,6 @@ public class SecuredUserControllerUnitTest {
         mvc.perform(get("/users/info").accept(MediaType.ALL))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("password", is(user.getPassword())))
                 .andExpect(jsonPath("firstName", is(user.getFirstName())))
                 .andExpect(jsonPath("lastName", is(user.getLastName())))
                 .andExpect(jsonPath("birthDate", is(user.getBirthDate().toString())))

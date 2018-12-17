@@ -2,6 +2,7 @@ package com.poianitibaldizhou.trackme.grouprequestservice.controller;
 
 import com.poianitibaldizhou.trackme.grouprequestservice.assembler.GroupRequestWrapperAssembler;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
+import com.poianitibaldizhou.trackme.grouprequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.grouprequestservice.service.GroupRequestManagerService;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import org.springframework.hateoas.Resource;
@@ -21,7 +22,7 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
  * Entry point for accessing the service that regards the group requests
  */
 @RestController
-@RequestMapping(path = "/grouprequestservice")
+@RequestMapping(path = "/grouprequests")
 public class GroupRequestController {
 
     private final GroupRequestManagerService requestManagerService;
@@ -46,30 +47,37 @@ public class GroupRequestController {
     /**
      * This method will return a group request, with its related filter statements, identified by a certain id.
      *
+     * @param requestingThirdParty id of the third party customer that is accessing this method
      * @param id id of the interested group request
      * @return resource containing the requested individual request
      */
-    @GetMapping("/requests/{id}")
-    public @ResponseBody Resource<GroupRequestWrapper> getRequest(@PathVariable Long id) {
+    @GetMapping("/id/{id}")
+    public @ResponseBody Resource<GroupRequestWrapper> getRequest(@RequestHeader(value="thirdPartyId") String requestingThirdParty, @PathVariable Long id) {
+        if(Long.parseLong(requestingThirdParty) != id)
+            throw new ImpossibleAccessException();
         return groupRequestWrapperAssembler.toResource(requestManagerService.getById(id));
     }
 
     /**
      * This method will access all the group requests performed by a certain third party customer
      *
+     * @param requestingThirdParty id of the third party customer that is accessing this method
      * @param thirdPartyId the set of requests are performed by the third party customer identified with this number
      * @return  set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
-    @GetMapping("/requests/thirdparties/{thirdPartyId}")
-    public @ResponseBody Resources<Resource<GroupRequestWrapper>> getRequestByThirdParty(@PathVariable Long thirdPartyId) {
+    @GetMapping("/thirdparties/{thirdPartyId}")
+    public @ResponseBody Resources<Resource<GroupRequestWrapper>> getRequestByThirdParty(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable Long thirdPartyId) {
+        if(Long.parseLong(requestingThirdParty) != thirdPartyId)
+            throw new ImpossibleAccessException();
+
         List<GroupRequestWrapper> requestWrappers = requestManagerService.getByThirdPartyId(thirdPartyId);
 
         List<Resource<GroupRequestWrapper>> requests = requestWrappers.stream()
                 .map(groupRequestWrapperAssembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(requests,
-                linkTo(methodOn(GroupRequestController.class).getRequestByThirdParty(thirdPartyId)).withSelfRel());
+                linkTo(methodOn(GroupRequestController.class).getRequestByThirdParty(requestingThirdParty, thirdPartyId)).withSelfRel());
     }
 
     // POST METHODS
@@ -77,15 +85,19 @@ public class GroupRequestController {
     /**
      * This method will create a new group request
      *
+     * @param requestingThirdParty id of the third party customer that is accessing this method
      * @param groupRequestWrapper group request that is asked to be added inside the system
      * @return an entity containing information about the created request, embedded with useful links to accessing
      * the new resource
      * @throws URISyntaxException due to the creation of a new uri resource: this will throw some exception if the syntax
      * is not well expressed
      */
-    @PostMapping("/requests/thirdparties/{thirdPartyId}")
-    public @ResponseBody ResponseEntity<?> newRequest(@PathVariable Long thirdPartyId, @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
+    @PostMapping("/thirdparties/{thirdPartyId}")
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value="thirdPartyId") String requestingThirdParty, @PathVariable Long thirdPartyId, @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
         // TODO maybe add check that position and health timestamp are actually timestamp
+        if(Long.parseLong(requestingThirdParty) != thirdPartyId)
+            throw new ImpossibleAccessException();
+
         groupRequestWrapper.getGroupRequest().setThirdPartyId(thirdPartyId);
         groupRequestWrapper.getFilterStatementList().forEach(filterStatement -> filterStatement.setGroupRequest(groupRequestWrapper.getGroupRequest()));
 
