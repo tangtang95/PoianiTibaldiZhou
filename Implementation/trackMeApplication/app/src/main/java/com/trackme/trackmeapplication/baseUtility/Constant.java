@@ -20,4 +20,5 @@ public final class Constant {
     public static final String SD_EMAIL_DATA_KEY = "email";
     public static final String USER_LOGGED_BOOLEAN_VALUE_KEY = "user_logged";
     public static final String BUSINESS_LOGGED_BOOLEAN_VALUE_KEY = "business_logged";
+
 }

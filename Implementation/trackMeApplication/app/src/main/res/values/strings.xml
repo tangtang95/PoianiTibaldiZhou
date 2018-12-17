@@ -72,6 +72,12 @@
     <string name="business_login_error">E-mail and password do not match.</string>
     <string name="broadcast_receiver_error">Impossible to close the last view. Do you want to close the application?</string>
     <string name="fatal_error_title">FATAL ERROR</string>
+    <string name="no_field_must_be_empty"> No field must be empty!</string>
+    <string name="ssn_is_not_valid">Social security number is not valid!</string>
+    <string name="username_is_too_long">Username is too long!</string>
+    <string name="user_with_this_social_security_number_already_exist">User with this social security number already exist.</string>
+    <string name="business_with_this_email_already_exist">Third party with this e-mail already exist.</string>
 
     <string name="persistent_database_name">trackme-db</string>
+    <string name="visibility_off_button">Visibility off button</string>
 </resources>

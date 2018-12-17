@@ -3,7 +3,9 @@ package com.trackme.trackmeapplication.account.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
@@ -22,6 +24,8 @@ import butterknife.OnClick;
 public class BusinessLoginActivity extends LoginActivity{
 
     @BindView(R.id.editTextMail) protected EditText mail;
+    @BindView(R.id.password_visibility)
+    protected ImageView passwordVisibility;
 
     /**
      * Method call when this activity is created. It initialize the share data param with the
@@ -52,6 +56,23 @@ public class BusinessLoginActivity extends LoginActivity{
         editor.putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY,true);
         editor.putString(Constant.SD_EMAIL_DATA_KEY, mail.getText().toString());
         editor.apply();
+    }
+
+    /**
+     * It handles the password visibility button click event.
+     */
+    @OnClick(R.id.password_visibility)
+    public void onPasswordVisibilityClick(){
+        final int TEXT_PASSWORD = 129;
+
+        if (password.getInputType() == TEXT_PASSWORD) {
+            password.setInputType(InputType.TYPE_CLASS_TEXT);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility);
+        }
+        else {
+            password.setInputType(TEXT_PASSWORD);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
+        }
     }
 
     @Override
