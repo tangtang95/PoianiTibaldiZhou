@@ -93,11 +93,6 @@ public class SOSAndroidService extends Service {
             return super.onStartCommand(intent, flags, startId);
         }
 
-        if (ActivityCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.CALL_PHONE)
-                != PackageManager.PERMISSION_GRANTED) {
-            Log.d(getString(R.string.debug_tag), "No call permission");
-            return super.onStartCommand(intent, flags, startId);
-        }
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetoothAdapter != null) {

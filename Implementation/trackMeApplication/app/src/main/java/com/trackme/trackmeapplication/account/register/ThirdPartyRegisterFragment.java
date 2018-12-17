@@ -1,26 +1,35 @@
 package com.trackme.trackmeapplication.account.register;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.text.InputType;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
+import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
-import java.util.Objects;
+import java.util.Calendar;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ThirdPartyRegisterFragment extends Fragment {
+/**
+ * Third party register fragment is a fragment shown in the registrationActivity and it provides a form for
+ * the third party registration on the application.
+ *
+ * @author Mattia Tibaldi
+ */
+public class ThirdPartyRegisterFragment extends BaseFragment {
 
+    /*Bind the object on the layout*/
     @BindView(R.id.register_ssn)
     protected EditText ssn;
     @BindView(R.id.register_mail)
@@ -32,28 +41,89 @@ public class ThirdPartyRegisterFragment extends Fragment {
     @BindView(R.id.register_last_name)
     protected EditText lastName;
     @BindView(R.id.register_birth_day)
-    protected EditText birthDay;
+    protected TextView birthDay;
     @BindView(R.id.register_birth_city)
     protected EditText birthCity;
     @BindView(R.id.register_birth_nation)
     protected EditText birthNation;
+    @BindView(R.id.password_visibility)
+    protected ImageView passwordVisibility;
 
-    @Nullable
+    private DatePickerDialog.OnDateSetListener onDateSetListener;
+
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View thirdPartyRegisterFragment = inflater.inflate(R.layout.fragment_business_register, container, false);
-        ButterKnife.bind(this, thirdPartyRegisterFragment);
-        return thirdPartyRegisterFragment;
+    protected int getLayoutResID() {
+        return R.layout.fragment_business_register;
     }
 
+    @Override
+    protected void setUpFragment() {
+        onDateSetListener = (datePicker, year, month, day) -> {
+            month++;
+            String date = month + "/" + day + "/" + year;
+            birthDay.setText(date);
+        };
+    }
+
+    /**
+     * It handles the register button click event.
+     */
     @OnClick(R.id.register_button)
     public void onRegisterButtonClick() {
         if (checkConstraintOnData()) {
-            /*TODO*/
-            Objects.requireNonNull(getActivity()).finish();
+            AccountNetworkInterface network = new AccountNetworkImp();
+            try {
+                network.thirdPartySignUp();
+            } catch (UserAlreadySignUpException e) {
+                showMessage(getString(R.string.business_with_this_email_already_exist));
+            }
+            ((Activity)getmContext()).finish();
         }
     }
 
+    /**
+     * It handles the password visibility button click event.
+     */
+    @OnClick(R.id.password_visibility)
+    public void onPasswordVisibilityClick(){
+        final int TEXT_PASSWORD = 129;
+
+        if (password.getInputType() == TEXT_PASSWORD) {
+            password.setInputType(InputType.TYPE_CLASS_TEXT);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility);
+        }
+        else {
+            password.setInputType(TEXT_PASSWORD);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
+        }
+    }
+
+    /**
+     * It handles the birthDay click event and it shows to the user a calendar for
+     * selecting the date.
+     */
+    @OnClick(R.id.register_birth_day)
+    public void onBirthDayClick() {
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog dialog = new DatePickerDialog(
+                getmContext(),
+                android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                onDateSetListener,
+                year, month, day);
+        if (dialog.getWindow() != null)
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+    }
+
+    /**
+     * Control if all the data insert by the user in the registration form are valid.
+     *
+     * @return true if the data insert are acceptable, false otherwise.
+     */
     private boolean checkConstraintOnData() {
         if (ssn.getText().toString().isEmpty() ||
                 mail.getText().toString().isEmpty() ||
@@ -63,19 +133,15 @@ public class ThirdPartyRegisterFragment extends Fragment {
                 birthDay.getText().toString().isEmpty() ||
                 birthCity.getText().toString().isEmpty() ||
                 birthNation.getText().toString().isEmpty()) {
-            Toast.makeText(getActivity(),"No field must be empty", Toast.LENGTH_LONG).show();
+            showMessage(getString(R.string.no_field_must_be_empty));
             return false;
         }
         if (!ssn.getText().toString().matches(Constant.SSN_PATTERN)) {
-            ssn.setError("Ssn is not valid");
+            ssn.setError(getString(R.string.ssn_is_not_valid));
             return false;
         }
         if (mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
-            mail.setError("E-mail is not valid");
-            return false;
-        }
-        if (!birthDay.getText().toString().matches(Constant.DATE_PATTERN)) {
-            ssn.setError("Date is not valid");
+            mail.setError(getString(R.string.email_is_not_valid));
             return false;
         }
         return true;

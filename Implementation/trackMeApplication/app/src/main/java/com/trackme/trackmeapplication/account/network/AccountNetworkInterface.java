@@ -1,6 +1,7 @@
 package com.trackme.trackmeapplication.account.network;
 
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
+import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
 
 /**
  * Network interface with the methods to communicate with the Account service on the server side.
@@ -32,11 +33,11 @@ public interface AccountNetworkInterface {
     /**
      * User sign up on server
      */
-    void userSignUp();
+    void userSignUp() throws UserAlreadySignUpException;
 
     /**
      * Third party sign up on server.
      */
-    void thirdPartySignUp();
+    void thirdPartySignUp() throws UserAlreadySignUpException;
 
 }

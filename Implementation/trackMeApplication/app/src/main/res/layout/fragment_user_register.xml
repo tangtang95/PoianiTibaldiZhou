@@ -8,8 +8,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fillViewport="true"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:fillViewport="true">
 
         <TableLayout
             android:layout_width="match_parent"
@@ -34,8 +34,8 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="44dp"
                 android:ems="10"
-                android:inputType="text"
                 android:hint="@string/ssn_example_aaa_gg_ssss"
+                android:inputType="text"
                 tools:ignore="Autofill" />
 
             <TextView
@@ -69,17 +69,30 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/register_password"
+            <LinearLayout
                 android:layout_width="300dp"
-                android:layout_height="40dp"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="46dp"
-                android:ems="10"
-                android:drawableEnd="@drawable/ic_visibility_off"
-                android:inputType="textPassword"
-                tools:ignore="Autofill,LabelFor" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/register_password"
+                    android:layout_width="300dp"
+                    android:layout_height="40dp"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginTop="5dp"
+                    android:ems="10"
+                    android:inputType="textPassword"
+                    tools:ignore="Autofill,LabelFor" />
+
+                <ImageView
+                    android:id="@+id/password_visibility"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/visibility_off_button"
+                    android:src="@drawable/ic_visibility_off" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/textView4"
@@ -133,7 +146,7 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="14sp" />
 
-            <EditText
+            <TextView
                 android:id="@+id/register_birth_day"
                 android:layout_width="300dp"
                 android:layout_height="40dp"
@@ -141,9 +154,9 @@
                 android:layout_marginTop="5dp"
                 android:layout_marginEnd="46dp"
                 android:ems="10"
-                android:inputType="date"
+                android:gravity="center_vertical"
                 android:hint="@string/date_example_mm_gg_yyyy"
-                tools:ignore="Autofill" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/textView7"
@@ -187,30 +200,40 @@
                 android:inputType="text"
                 tools:ignore="Autofill,LabelFor" />
 
-            <android.support.v7.widget.CardView
+
+            <LinearLayout
                 android:layout_width="300dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="30dp"
-                app:cardBackgroundColor="@color/colorPrimary"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="10dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/register_button"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="-3dp">
+                <android.support.v7.widget.CardView
+                    android:layout_width="300dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="20dp"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    android:layout_gravity="center_horizontal"
+                    app:cardCornerRadius="25dp"
+                    app:cardElevation="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:text="@string/register_button"
-                        android:textColor="@color/colorWhite"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </android.support.v7.widget.CardView>
+                    <RelativeLayout
+                        android:id="@+id/register_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="-3dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="@string/register_button"
+                            android:textColor="@color/colorWhite"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </android.support.v7.widget.CardView>
+
+            </LinearLayout>
 
         </TableLayout>
 

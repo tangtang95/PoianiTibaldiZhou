@@ -3,7 +3,9 @@ package com.trackme.trackmeapplication.account.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.text.InputType;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.register.RegisterActivity;
@@ -27,6 +29,8 @@ public abstract class LoginActivity extends BaseDelegationActivity<
         implements LoginContract.LoginView {
 
     @BindView(R.id.editTextPass) protected EditText password;
+    @BindView(R.id.password_visibility)
+    protected ImageView passwordVisibility;
 
     /**
      * This app uses a sharePreference for storing some value in other to share data with
@@ -63,6 +67,23 @@ public abstract class LoginActivity extends BaseDelegationActivity<
     public void navigateToRegister() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+    }
+
+    /**
+     * It handles the password visibility button click event.
+     */
+    @OnClick(R.id.password_visibility)
+    public void onPasswordVisibilityClick(){
+        final int TEXT_PASSWORD = 129;
+
+        if (password.getInputType() == TEXT_PASSWORD) {
+            password.setInputType(InputType.TYPE_CLASS_TEXT);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility);
+        }
+        else {
+            password.setInputType(TEXT_PASSWORD);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
+        }
     }
 
     /**
