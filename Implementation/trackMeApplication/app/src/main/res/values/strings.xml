@@ -8,8 +8,6 @@
     <string name="register_here">Register Here.</string>
     <string name="track_me_user_logo">TrackMe user logo</string>
     <string name="track_me_business_logo">TrackMe business logo</string>
-    <string name="user_login_error">Username and password do not match.</string>
-    <string name="business_login_error">E-mail and password do not match.</string>
     <string name="email_is_not_valid">E-mail is not valid</string>
     <string name="you_are_a_third_party_customer_login_here">You are a third party customer? <u>Login Here.</u></string>
     <string name="menu_message">Request</string>
@@ -54,6 +52,7 @@
     <string name="notification_title">Automated SOS</string>
     <string name="ticker_text">ticker_text</string>
     <string name="debug_tag">SOS_DEBUG</string>
+    <string name="birth_date_key">birth_date_key</string>
     <string name="individual_request">INDIVIDUAL REQUEST</string>
     <string name="group_request">GROUP REQUEST</string>
     <string name="filter">Filter</string>
@@ -67,4 +66,12 @@
     <string name="add_item_to_list_button">Add item to list button</string>
     <string name="heart_image">Heart image</string>
     <string name="history_item_image">history item image</string>
+
+    <!-- Error message. -->
+    <string name="user_login_error">Username and password do not match.</string>
+    <string name="business_login_error">E-mail and password do not match.</string>
+    <string name="broadcast_receiver_error">Impossible to close the last view. Do you want to close the application?</string>
+    <string name="fatal_error_title">FATAL ERROR</string>
+
+    <string name="persistent_database_name">trackme-db</string>
 </resources>
