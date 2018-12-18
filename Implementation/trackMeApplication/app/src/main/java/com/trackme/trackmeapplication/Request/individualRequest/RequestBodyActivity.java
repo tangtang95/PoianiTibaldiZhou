@@ -45,20 +45,17 @@ public class RequestBodyActivity extends AppCompatActivity {
 
     @OnClick(R.id.requestBodyRefuse)
     public void onRequestRefuseClick() {
-        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which){
-                    case DialogInterface.BUTTON_POSITIVE:
-                        /*TODO*/
-                        finish();
-                        break;
+        DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+                    /*TODO*/
+                    finish();
+                    break;
 
-                    case DialogInterface.BUTTON_NEGATIVE:
-                        /*TODO*/
-                        finish();
-                        break;
-                }
+                case DialogInterface.BUTTON_NEGATIVE:
+                    /*TODO*/
+                    finish();
+                    break;
             }
         };
 

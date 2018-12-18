@@ -71,7 +71,16 @@ public class UserRegisterFragment extends BaseFragment {
         if (checkConstraintOnData()) {
             AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
-                network.userSignUp();
+                network.userSignUp(
+                        ssn.getText().toString(),
+                        username.getText().toString(),
+                        password.getText().toString(),
+                        firstName.getText().toString(),
+                        lastName.getText().toString(),
+                        birthDay.getText().toString(),
+                        birthCity.getText().toString(),
+                        birthNation.getText().toString()
+                );
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.user_with_this_social_security_number_already_exist));
             }

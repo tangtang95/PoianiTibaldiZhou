@@ -66,6 +66,7 @@
     <string name="add_item_to_list_button">Add item to list button</string>
     <string name="heart_image">Heart image</string>
     <string name="history_item_image">history item image</string>
+    <string name="download_file">Download file</string>
 
     <!-- Error message. -->
     <string name="user_login_error">Username and password do not match.</string>
@@ -77,8 +78,11 @@
     <string name="username_is_too_long">Username is too long!</string>
     <string name="user_with_this_social_security_number_already_exist">User with this social security number already exist.</string>
     <string name="business_with_this_email_already_exist">Third party with this e-mail already exist.</string>
+    <string name="download_file_error">Impossible to download file</string>
 
     <string name="persistent_database_name">trackme-db</string>
     <string name="visibility_off_button">Visibility off button</string>
     <string name="value">Value</string>
+    <string name="file_download_image_button">File download image button</string>
+
 </resources>

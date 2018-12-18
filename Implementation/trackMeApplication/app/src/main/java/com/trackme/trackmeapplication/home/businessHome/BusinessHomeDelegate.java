@@ -14,10 +14,19 @@ import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
-import com.trackme.trackmeapplication.home.userHome.UserPageAdapter;
+import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
 import butterknife.BindView;
 
+/**
+ *  Delegate class that performs the creation of all menu (navigation view and navigation Bar)
+ *  (delegate pattern)
+ *
+ * @author Mattia Tibaldi
+ * @see BaseActivityDelegate
+ */
 public class BusinessHomeDelegate extends BaseActivityDelegate<
         BusinessHomeContract.BusinessHomeView,
         BusinessHomePresenter> implements
@@ -25,15 +34,15 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
 
 
     @BindView(R.id.drawer_layout)
-    protected DrawerLayout drawerLayout;
+    DrawerLayout drawerLayout;
     @BindView(R.id.toolbar)
-    protected Toolbar toolBar;
+    Toolbar toolBar;
     @BindView(R.id.nav_view)
-    protected NavigationView navigationView;
+    NavigationView navigationView;
     @BindView(R.id.tab_layout)
     protected TabLayout tabLayout;
     @BindView(R.id.view_pager)
-    protected ViewPager viewPager;
+    ViewPager viewPager;
 
     @Override
     public void onCreate(BusinessHomePresenter presenter) {
@@ -42,17 +51,24 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
         configureDrawer();
     }
 
+    /**
+     * Configure the drawer menu.
+     */
     private void configureDrawer() {
         View navHeader = navigationView.getHeaderView(0);
-        TextView headerUsername = navHeader.findViewById(R.id.nav_header_mail);
+        TextView headerUsername = navHeader.findViewById(R.id.nav_header_business_name);
         TextView circle = navHeader.findViewById(R.id.textViewCircle);
+        TextView info = navHeader.findViewById(R.id.nav_header_email);
 
         String mail = mPresenter.getView().getMail();
 
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+
         if (mail != null && !mail.isEmpty()) {
-            headerUsername.setText(mail);
-            circle.setText(mail.substring(0, 1));
-            /*TODO*/
+            ThirdPartyInterface thirdParty = sharedDataNetwork.getThirdParty(mail);
+            headerUsername.setText(thirdParty.getName());
+            circle.setText(thirdParty.getName().substring(0, 1));
+            info.setText(thirdParty.getEmail());
         }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,6 +99,11 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
         return true;
     }
 
+    /**
+     * Close the navigation view drawer.
+     *
+     * @return true if the operation can be performed, false otherwise
+     */
     public boolean closeDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -92,6 +113,9 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
         }
     }
 
+    /**
+     * Configure the toolBar menu.
+     */
     public void configureToolbar() {
         BusinessPageAdapter pageAdapter = new BusinessPageAdapter(mPresenter.getView().getActivity().getSupportFragmentManager(),
                 tabLayout.getTabCount());

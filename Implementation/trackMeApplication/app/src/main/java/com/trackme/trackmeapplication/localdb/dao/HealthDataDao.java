@@ -19,4 +19,7 @@ public interface HealthDataDao {
 
     @Query("DELETE FROM `health-data`")
     void deleteAll();
+
+    @Query("SELECT * FROM `health-data` ORDER BY timestamp DESC LIMIT 1")
+    HealthData getLast();
 }

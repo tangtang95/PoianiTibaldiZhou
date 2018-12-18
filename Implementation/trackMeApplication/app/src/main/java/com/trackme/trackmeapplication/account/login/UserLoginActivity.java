@@ -1,22 +1,27 @@
 package com.trackme.trackmeapplication.account.login;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.widget.EditText;
 
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseAlertDialog;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
-import com.trackme.trackmeapplication.R;
-
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
+import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_PERMS;
+import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_REQUEST;
 
 /**
  * UserLoginActivity extends the abstract class LoginActivity and it allows to the user to
@@ -83,8 +88,20 @@ public class UserLoginActivity extends LoginActivity {
             navigateToHome();
         } else if (sp.getBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false))
             navigateToBusinessHome();
+
+        if (!canAccessLocation())
+            requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
     }
 
+    /**
+     * Check if the permission of getting the GPS data.
+     *
+     * @return true if the access to the GPS is allowed, false otherwise
+     */
+    private boolean canAccessLocation() {
+        return ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
 
     @Override
     public void navigateToHome() {

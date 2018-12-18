@@ -2,6 +2,7 @@ package com.trackme.trackmeapplication.baseUtility;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.trackme.trackmeapplication.R;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -75,6 +82,29 @@ public abstract class BaseFragment extends Fragment {
      */
     public Context getmContext(){
         return mContext;
+    }
+
+    /**
+     * Create a file in download folder and it writes into some data.
+     *
+     * @param sFileName name of file
+     * @param sBody content of file
+     */
+    public void generateNoteOnSD(String sFolderName, String sFileName, String sBody) {
+        try {
+            File root = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),sFolderName);
+            if (!root.exists()) {
+                final boolean mkdirs = root.mkdirs();
+            }
+            File file = new File(root, sFileName);
+            FileWriter writer = new FileWriter(file);
+            writer.append(sBody);
+            writer.flush();
+            writer.close();
+            Toast.makeText(mContext, getString(R.string.download_file), Toast.LENGTH_SHORT).show();
+        } catch (IOException e) {
+            Toast.makeText(mContext, getString(R.string.download_file_error), Toast.LENGTH_SHORT).show();
+        }
     }
 
 }

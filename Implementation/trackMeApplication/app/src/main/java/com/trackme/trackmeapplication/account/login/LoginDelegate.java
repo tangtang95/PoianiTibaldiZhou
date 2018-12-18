@@ -30,7 +30,7 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
             mPresenter.onLoginError();
         else {
             try {
-                network.userLogin();
+                network.userLogin(username, password);
                 mPresenter.onLoginSuccess();
             } catch (InvalidDataLoginException e) {
                 mPresenter.onLoginError();
@@ -53,7 +53,7 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
                 mPresenter.onMailError();
             else {
                 try {
-                    network.thirdPartyLogin();
+                    network.thirdPartyLogin(mail, password);
                     mPresenter.onLoginSuccess();
                 } catch (InvalidDataLoginException e) {
                     mPresenter.onLoginError();

@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.Request.groupRequest;
 
+import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -134,6 +136,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
     /**
      * Send the group request to the server.
      */
+    @SuppressLint("SimpleDateFormat")
     @OnClick(R.id.imageViewSend)
     public void onSendButtonClick() {
         if (filter.getText().toString().isEmpty())
@@ -141,13 +144,13 @@ public class GroupRequestFormActivity extends AppCompatActivity {
         else {
             Calendar cal = Calendar.getInstance();
             Date date = cal.getTime();
-            DateFormat dateFormat = android.text.format.DateFormat.getDateFormat(getApplicationContext());
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
             SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
             String mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
 
             GroupRequestItem groupRequestItem = new GroupRequestItem(
-                    sharedDataNetwork.getThirdParty(mail).getThirdPartyName(),
+                    sharedDataNetwork.getThirdParty(mail).getName(),
                     dateFormat.format(date),
                     spinnerAggregator.getSelectedItem().toString(),
                     spinnerType.getSelectedItem().toString(),

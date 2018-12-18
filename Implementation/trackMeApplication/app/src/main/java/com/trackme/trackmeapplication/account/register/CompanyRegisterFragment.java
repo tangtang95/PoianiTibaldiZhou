@@ -6,7 +6,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
+import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
@@ -73,8 +73,13 @@ public class CompanyRegisterFragment extends BaseFragment {
         if (checkConstraintOnData()) {
             AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
-                network.thirdPartyLogin();
-            } catch (InvalidDataLoginException e) {
+                network.companySignUp(
+                        companyName.getText().toString(),
+                        mail.getText().toString(),
+                        password.getText().toString(),
+                        address.getText().toString(),
+                        dunsNumber.getText().toString());
+            } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
             }
             ((Activity)getmContext()).finish();

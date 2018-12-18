@@ -14,10 +14,13 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +34,7 @@ import com.jayway.jsonpath.ReadContext;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.automatedsos.exception.EmergencyNumberNotFoundException;
 import com.trackme.trackmeapplication.automatedsos.exception.NoPermissionException;
+import com.trackme.trackmeapplication.home.UserLocationListener;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 
 import net.minidev.json.JSONArray;
@@ -54,6 +58,12 @@ public class SOSAndroidService extends Service {
     private Date mBirthDate;
     private final IBinder mBinder = new LocalBinder();
     private Handler mHandler;
+
+    // Acquire a reference to the system Location Manager
+    LocationManager locationManager;
+
+    // Define a listener that responds to location updates
+    LocationListener locationListener = new UserLocationListener(this);
 
     /**
      * Class used for the client Binder.
@@ -110,7 +120,20 @@ public class SOSAndroidService extends Service {
             startNotificationForegroundWithoutChannel();
         }
 
+        setUpGPS();
+
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    /**
+     * SetUp the GPS.
+     */
+    private void setUpGPS() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
     }
 
     public String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException, NoPermissionException,

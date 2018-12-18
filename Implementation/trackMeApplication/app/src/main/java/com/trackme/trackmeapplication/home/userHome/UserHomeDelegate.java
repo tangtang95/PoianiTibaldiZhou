@@ -14,24 +14,34 @@ import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
+import com.trackme.trackmeapplication.sharedData.User;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
 import butterknife.BindView;
 
+/**
+ *  Delegate class that performs the creation of all menu (navigation view and navigation Bar)
+ *  (delegate pattern)
+ *
+ * @author Mattia Tibaldi
+ * @see BaseActivityDelegate
+ */
 public class UserHomeDelegate extends BaseActivityDelegate<
         UserHomeContract.UserHomeView,
         UserHomePresenter> implements
         NavigationView.OnNavigationItemSelectedListener, TabLayout.OnTabSelectedListener {
 
     @BindView(R.id.drawer_layout)
-    protected DrawerLayout drawerLayout;
+    DrawerLayout drawerLayout;
     @BindView(R.id.toolbar)
-    protected Toolbar toolBar;
+    Toolbar toolBar;
     @BindView(R.id.nav_view)
-    protected NavigationView navigationView;
+    NavigationView navigationView;
     @BindView(R.id.tab_layout)
     protected TabLayout tabLayout;
     @BindView(R.id.view_pager)
-    protected ViewPager viewPager;
+    ViewPager viewPager;
 
     @Override
     public void onCreate(UserHomePresenter presenter) {
@@ -40,6 +50,9 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         configureDrawer();
     }
 
+    /**
+     * Configure the drawer menu.
+     */
     private void configureDrawer() {
         View navHeader = navigationView.getHeaderView(0);
         TextView headerUsername = navHeader.findViewById(R.id.nav_header_user_name);
@@ -47,12 +60,14 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         TextView circle = navHeader.findViewById(R.id.textViewCircle);
 
         String username = mPresenter.getView().getUsername();
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
 
         if (username != null && !username.isEmpty()) {
-            headerUsername.setText(username);
-            circle.setText(username.substring(0, 1));
-            /*TODO*/
-            headerSSN.setText("SSN:");
+            User user = sharedDataNetwork.getUser(username);
+            headerUsername.setText(user.getName());
+            circle.setText(user.getName().substring(0, 1));
+            String ssn = "SSN: " + user.getSsn();
+            headerSSN.setText(ssn);
         }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -83,6 +98,11 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         return true;
     }
 
+    /**
+     * Close the navigation view drawer.
+     *
+     * @return true if the operation can be performed, false otherwise
+     */
     public boolean closeDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
@@ -92,6 +112,9 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         }
     }
 
+    /**
+     * Configure the toolBar menu.
+     */
     public void configureToolbar(){
         UserPageAdapter pageAdapter = new UserPageAdapter(mPresenter.getView().getActivity().getSupportFragmentManager(),
                 tabLayout.getTabCount());

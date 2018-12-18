@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.Request.groupRequest;
 
+import android.support.annotation.NonNull;
+
 import com.trackme.trackmeapplication.Request.RequestStatus;
 
 /**
@@ -11,11 +13,12 @@ public class GroupRequestItem {
 
     /*private attributes*/
     private String thirdPartyName = null;
-    private String creationDate = null;
+    private String creationDate;
     private String aggregator = null;
     private String requestType = null;
     private RequestStatus status = null;
     private String filter = null;
+    private String id = null;
 
     /**
      * Constructor. The client use this constructor to build the group request message to sent to
@@ -40,8 +43,10 @@ public class GroupRequestItem {
      *
      * @param status status of the request.
      */
-    GroupRequestItem(RequestStatus status){
+    public GroupRequestItem(@NonNull String requestID, @NonNull RequestStatus status, @NonNull String creationDate) {
         this.status = status;
+        this.id = requestID;
+        this.creationDate = creationDate;
     }
 
     /*Getter method*/
@@ -61,6 +66,8 @@ public class GroupRequestItem {
     public String getAggregator() {
         return aggregator;
     }
+
+    public String getID() { return id; }
 
     public String getRequestType() {
         return requestType;

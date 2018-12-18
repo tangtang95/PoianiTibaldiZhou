@@ -73,7 +73,16 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
         if (checkConstraintOnData()) {
             AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
-                network.thirdPartySignUp();
+                network.thirdPartySignUp(
+                        ssn.getText().toString(),
+                        mail.getText().toString(),
+                        password.getText().toString(),
+                        firstName.getText().toString(),
+                        lastName.getText().toString(),
+                        birthDay.getText().toString(),
+                        birthCity.getText().toString(),
+                        birthNation.getText().toString()
+                );
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
             }

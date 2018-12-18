@@ -13,31 +13,36 @@ public interface AccountNetworkInterface {
     /**
      * User login on the server.
      */
-    void userLogin() throws InvalidDataLoginException;
+    void userLogin(String username, String password) throws InvalidDataLoginException;
 
     /**
      * ThirdParty login on the server
      */
-    void thirdPartyLogin() throws InvalidDataLoginException;
+    void thirdPartyLogin(String email, String password) throws InvalidDataLoginException;
 
     /**
      * User logout from the server.
      */
-    void userLogout();
+    void userLogout(String username);
 
     /**
      * ThirdParty logout from the server.
      */
-    void thirdPartyLogout();
+    void thirdPartyLogout(String email);
 
     /**
      * User sign up on server
      */
-    void userSignUp() throws UserAlreadySignUpException;
+    void userSignUp(String ssn, String username, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException;
 
     /**
      * Third party sign up on server.
      */
-    void thirdPartySignUp() throws UserAlreadySignUpException;
+    void thirdPartySignUp(String ssn, String email, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException;
+
+    /**
+     * Company sign up on server.
+     */
+    void companySignUp(String companyName, String email, String password, String address, String dunsNumber) throws UserAlreadySignUpException;
 
 }

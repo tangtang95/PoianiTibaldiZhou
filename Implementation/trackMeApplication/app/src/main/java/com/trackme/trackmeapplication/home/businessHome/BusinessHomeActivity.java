@@ -9,11 +9,20 @@ import android.support.v7.widget.Toolbar;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.login.UserLoginActivity;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
 import butterknife.BindView;
 
+/**
+ * Business Home class. The main class for the business user with its menu for creating and managing
+ * request data.
+ *
+ * @author Mattia Tibaldi
+ * @see BaseDelegationActivity
+ */
 public class BusinessHomeActivity extends BaseDelegationActivity<
         BusinessHomeContract.BusinessHomeView,
         BusinessHomePresenter,
@@ -21,6 +30,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.tab_layout)protected TabLayout tabLayout;
+
     private SharedPreferences sp;
     private String mail;
 
@@ -58,24 +68,25 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
 
     @Override
     protected void onResume() {
-        mail = sp.getString("email", null);
+        mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
         super.onResume();
     }
 
     @Override
     public void navigateToBusinessProfile() {
-
+        /*TODO*/
     }
 
     @Override
     public void navigateToBusinessSettings() {
-
+        /*TODO*/
     }
 
     @Override
     public void navigateToUserLogin() {
         Intent intent = new Intent(this, UserLoginActivity.class);
-        /*TODO*/
+        AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
+        accountNetwork.thirdPartyLogout(mail);
         sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
         startActivity(intent);
         finish();

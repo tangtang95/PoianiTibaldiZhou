@@ -1,20 +1,69 @@
 package com.trackme.trackmeapplication.home;
 
+import android.Manifest;
+import android.app.Activity;
+import android.arch.persistence.room.Room;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.entity.PositionData;
+
+/**
+ * User location Listener. This class saves the user position when the position change.
+ */
 public class UserLocationListener implements LocationListener {
 
     private Location currentBestLocation = null;
+    private Context context;
 
-    static final int TWO_MINUTES = 1000 * 60 * 2;
+    private static final int TWO_MINUTES = 1000 * 60 * 2;
+    public static final String[] INITIAL_PERMS = {
+            Manifest.permission.ACCESS_FINE_LOCATION
+    };
+
+    public static final int INITIAL_REQUEST = 1000;
+
+    /**
+     * Constructor.
+     * Get the last position known.
+     *
+     * @param context the current activity context.
+     */
+    public UserLocationListener(Context context) {
+        this.context = context;
+        FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+
+            mFusedLocationClient.getLastLocation().addOnSuccessListener((Activity) context, location -> {
+                if (location != null) {
+                    currentBestLocation = location;
+                }
+            });
+        }
+    }
 
     @Override
     public void onLocationChanged(Location location) {
         if (currentBestLocation == null || isBetterLocation(location, currentBestLocation) ) {
             currentBestLocation = location;
-            /*TODO*/
+            Runnable addPositionData = () -> {
+                AppDatabase appDatabase = Room.databaseBuilder(context,
+                        AppDatabase.class, context.getString(R.string.persistent_database_name)).build();
+                PositionData positionData = new PositionData();
+                positionData.setLatitude(currentBestLocation.getLatitude());
+                positionData.setLongitude(currentBestLocation.getLongitude());
+                appDatabase.getPositionDataDao().insert(positionData);
+            };
+            addPositionData.run();
         }
     }
 
@@ -83,9 +132,12 @@ public class UserLocationListener implements LocationListener {
 
     }
 
-    @Override
-    public String toString() {
-        return "Location changed: Lat: " + currentBestLocation.getLatitude() + " Lng: "
-                + currentBestLocation.getLongitude();
+    /**
+     * Getter method.
+     *
+     * @return the current location of the user or the last known.
+     */
+    public Location getCurrentBestLocation() {
+        return currentBestLocation;
     }
 }

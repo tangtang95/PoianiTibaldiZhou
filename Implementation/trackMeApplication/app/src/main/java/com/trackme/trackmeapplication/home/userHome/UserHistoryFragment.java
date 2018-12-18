@@ -1,11 +1,10 @@
 package com.trackme.trackmeapplication.home.userHome;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,15 +13,29 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.baseUtility.BaseFragment;
+import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 
-public class UserHistoryFragment extends Fragment {
+import static android.content.Context.MODE_PRIVATE;
+
+/**
+ * User history fragment handles the data get from the application. It shows the last feasible
+ * data in a recyclerView.
+ *
+ * @author Mattia Tibaldi
+ * @see BaseFragment
+ */
+public class UserHistoryFragment extends BaseFragment {
 
     @BindView(R.id.listView)
     protected RecyclerView recyclerView;
@@ -30,30 +43,26 @@ public class UserHistoryFragment extends Fragment {
     private CustomRecyclerView customRecyclerView;
     private List<HistoryItem> historyItems = new ArrayList<>();
 
-    public class HistoryItem {
-        private String date;
-        private String info;
+    private Handler handler;
+    private Runnable checkNewHistoryItem;
 
-        public HistoryItem(String date, String info) {
-            this.date = date;
-            this.info = info;
-        }
-
-        public String getDate() {
-            return date;
-        }
-
-        public String getInfo() {
-            return info;
-        }
-    }
-
+    /**
+     * Custom recyclerView class for showing the historyItem in the recycler.
+     */
     private class CustomRecyclerView extends RecyclerView.Adapter<CustomRecyclerView.MyViewHolder> {
 
-        public class MyViewHolder extends RecyclerView.ViewHolder{
+        /**
+         * The holder that searches the object in the layout and binds it.
+         */
+        class MyViewHolder extends RecyclerView.ViewHolder{
             private TextView date;
             private TextView info;
 
+            /**
+             * Constructor.
+             *
+             * @param view current view.
+             */
             MyViewHolder(View view) {
                 super(view);
                 date = view.findViewById(R.id.textViewDate);
@@ -61,11 +70,14 @@ public class UserHistoryFragment extends Fragment {
             }
         }
 
-        private Context context;
         private List<HistoryItem> items;
 
-        public CustomRecyclerView(@NonNull Activity context, List<HistoryItem> historyItems) {
-            this.context = context;
+        /**
+         * Constructor.
+         *
+         * @param historyItems list of item to show.
+         */
+        CustomRecyclerView(List<HistoryItem> historyItems) {
             this.items = historyItems;
         }
 
@@ -78,8 +90,8 @@ public class UserHistoryFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.date.setText(historyItems.get(position).getDate());
-            holder.info.setText(historyItems.get(position).getInfo());
+            holder.date.setText(items.get(position).getDate());
+            holder.info.setText(items.get(position).getCompactInfo());
         }
 
         @Override
@@ -88,40 +100,55 @@ public class UserHistoryFragment extends Fragment {
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View userHistoryFragment = inflater.inflate(R.layout.fragment_user_history, container, false);
-        ButterKnife.bind(this, userHistoryFragment);
+    protected int getLayoutResID() {
+        return R.layout.fragment_user_history;
+    }
 
-        /*TODO*/
-
+    @SuppressLint("SimpleDateFormat")
+    @Override
+    protected void setUpFragment() {
         recyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), historyItems);
+        customRecyclerView = new CustomRecyclerView(historyItems);
         recyclerView.setAdapter(customRecyclerView);
 
-        addHistoryItem(new HistoryItem("12/08/1222","Pulse 100 bpm - Pressure: 120/80"));
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        String username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
 
-        return userHistoryFragment;
-    }
-
-    public void addHistoryItem(HistoryItem historyItem) {
-        historyItems.add(0, historyItem);
-        customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(new Runnable() {
+        handler = new Handler();
+        checkNewHistoryItem = new Runnable() {
             @Override
             public void run() {
-                recyclerView.smoothScrollToPosition(0);
+                Calendar cal = Calendar.getInstance();
+                Date today = cal.getTime();
+                cal.add(Calendar.DATE, -7);
+                Date lastWeek = cal.getTime();
+                String endDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
+                String startDate = new SimpleDateFormat("yyyy-MM-dd").format(lastWeek);
+                refreshList(sharedDataNetwork.getUserData(username, startDate, endDate));
+                handler.postDelayed(this, Resources.getSystem().getInteger(R.integer.refresh_item_time));
             }
-        });
+        };
+        handler.post(checkNewHistoryItem);
+    }
+
+    /**
+     * Refresh the recyclerView when it changes.
+     */
+    private void refreshList(List<HistoryItem> newItems) {
+        historyItems.clear();
+        historyItems.addAll(newItems);
+        customRecyclerView.notifyDataSetChanged();
+        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
     }
 
     @Override
-    public void onResume() {
-        /*TODO*/
-        super.onResume();
+    public void onDestroy() {
+        handler.removeCallbacks(checkNewHistoryItem);
+        super.onDestroy();
     }
 }
