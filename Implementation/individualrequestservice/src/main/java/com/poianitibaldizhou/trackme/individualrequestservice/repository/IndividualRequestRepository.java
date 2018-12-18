@@ -19,7 +19,7 @@ public interface IndividualRequestRepository extends JpaRepository<IndividualReq
      * @param id identifier of a certain third party customer
      * @return list of requests related to the specified third party customer
      */
-    List<IndividualRequest> findAllByThirdPartyID(Long id);
+    List<IndividualRequest> findAllByThirdParty_Id(Long id);
 
     /**
      * Return the list of all the individual requests with a certain status that are related to a certain user,

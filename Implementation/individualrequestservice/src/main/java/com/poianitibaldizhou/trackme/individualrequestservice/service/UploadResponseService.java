@@ -26,7 +26,7 @@ public interface UploadResponseService {
 
 
     /**
-     * User identified by the ssn blocks the third party customer identified by thirdPartyID.
+     * User identified by the ssn blocks the third party customer identified by thirdParty.
      * The system will refuse all the request of that customer towards the user.
      * It is necessary that the user exists and that the third party has performed at least a request, that
      * has been refused, on that user.

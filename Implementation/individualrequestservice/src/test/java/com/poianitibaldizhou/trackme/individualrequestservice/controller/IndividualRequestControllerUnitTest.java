@@ -1,13 +1,15 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 
-import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestResourceAssembler;
+import com.poianitibaldizhou.trackme.individualrequestservice.assembler.IndividualRequestWrapperResourceAssembler;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -30,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -37,7 +41,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringRunner.class)
 @WebMvcTest(IndividualRequestController.class)
-@Import({IndividualRequestResourceAssembler.class})
+@Import({IndividualRequestWrapperResourceAssembler.class})
+@ActiveProfiles("test")
 public class IndividualRequestControllerUnitTest {
 
     @Autowired
@@ -54,7 +59,10 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getUserRequestTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)2);
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(2L);
+        thirdParty.setIdentifierName("thirdParty2");
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), thirdParty);
         request.setId((long) 3);
 
         List<IndividualRequest> allRequests = Collections.singletonList(request);
@@ -62,18 +70,19 @@ public class IndividualRequestControllerUnitTest {
 
         mvc.perform(get(Constants.REQUEST_API + "/users/user1").accept(MediaTypes.HAL_JSON_VALUE).
                 header(Constants.HEADER_USER_SSN, "user1"))
+                .andDo(print())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].thirdPartyID", is(2)))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].status", is(IndividualRequestStatus.PENDING.toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].thirdPartyName", is("thirdParty2")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].status", is(IndividualRequestStatus.PENDING.toString())))
                 //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].startDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].endDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/3")))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.thirdPartyRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].startDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].endDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/3")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.thirdPartyRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/thirdparties/2")))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.userPendingRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.userPendingRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/users/user1")));
     }
@@ -116,7 +125,10 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getThirdPartyRequestTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty1");
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), thirdParty);
         request.setId((long)1);
 
         List<IndividualRequest> allRequests = Collections.singletonList(request);
@@ -127,16 +139,16 @@ public class IndividualRequestControllerUnitTest {
                 .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.individualRequests", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].thirdPartyID", is(1)))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].status", is(IndividualRequestStatus.PENDING.toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].thirdPartyName", is("thirdParty1")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].status", is(IndividualRequestStatus.PENDING.toString())))
                 //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].startDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0].endDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.thirdPartyRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].startDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].endDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.thirdPartyRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")))
-                .andExpect(jsonPath("$._embedded.individualRequests[0]._links.userPendingRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.userPendingRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")));
     }
@@ -184,7 +196,10 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void getRequestByIdTest() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), thirdParty);
         request.setId((long)1);
 
         given(service.getRequestById((long) 1)).willReturn(request);
@@ -197,7 +212,7 @@ public class IndividualRequestControllerUnitTest {
                 //.andExpect(jsonPath("$.timestamp", is(request.getTimestamp().toString())))
                 .andExpect(jsonPath("$.startDate", is(request.getStartDate().toString())))
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
-                .andExpect(jsonPath("$.thirdPartyID", is(request.getThirdPartyID().intValue())))
+                .andExpect(jsonPath("$.thirdPartyName", is(request.getThirdParty().getIdentifierName())))
                 .andExpect(jsonPath("$._links.self.href",
                         is("http://localhost"+Constants.REQUEST_API+"/id/1")))
                 .andExpect(jsonPath("$._links.thirdPartyRequest.href",
@@ -212,30 +227,37 @@ public class IndividualRequestControllerUnitTest {
      */
     @Test
     public void newRequestTest() throws Exception {
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+
         IndividualRequest request = new IndividualRequest();
         request.setUser(new User("user1"));
-        request.setThirdPartyID((long) 1);
+        request.setThirdParty(thirdParty);
         request.setStartDate(new Date(0));
         request.setEndDate(new Date(0));
         request.setId((long) 1);
         request.setStatus(IndividualRequestStatus.PENDING);
+        request.setMotivation("motivation");
 
+        ThirdParty thirdPartyMocked = new ThirdParty();
+        thirdPartyMocked.setId(1L);
+        thirdPartyMocked.setIdentifierName("thirdParty1");
         IndividualRequest mockedRequest = new IndividualRequest();
         mockedRequest.setUser(new User("user1"));
-        mockedRequest.setThirdPartyID((long) 1);
+        mockedRequest.setThirdParty(thirdPartyMocked);
         mockedRequest.setStartDate(new Date(0));
         mockedRequest.setEndDate(new Date(0));
         mockedRequest.setId((long) 1);
         mockedRequest.setTimestamp(new Timestamp(0));
         mockedRequest.setStatus(IndividualRequestStatus.PENDING);
+        mockedRequest.setMotivation("motivation");
 
         String json = "{\n" +
                 "\t\"id\": 1,\n" +
                 "\t\"status\": \"PENDING\",\n" +
                 "\t\"startDate\": \"1970-01-01\",\n" +
                 "\t\"endDate\": \"1970-01-01\",\n" +
-                "\t\"ssn\": \"user1\",\n" +
-                "\t\"thirdPartyID\": 1\n" +
+                "\t\"motivation\": \"motivation\""+
                 "}";
 
         given(service.addRequest(request)).willReturn(mockedRequest);
@@ -246,11 +268,11 @@ public class IndividualRequestControllerUnitTest {
                 .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.status", is(IndividualRequestStatus.PENDING.toString())))
-                .andExpect(jsonPath("$.id", is(1)))
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.startDate", is(request.getStartDate().toString())))
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
-                .andExpect(jsonPath("$.thirdPartyID", is(request.getThirdPartyID().intValue())))
+                .andExpect(jsonPath("$.thirdPartyName", is("thirdParty1")))
+                .andExpect(jsonPath("$.motivation", is(request.getMotivation())))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
                 .andExpect(jsonPath("$._links.thirdPartyRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")))
@@ -274,7 +296,7 @@ public class IndividualRequestControllerUnitTest {
                 "\t\"startDate\": \"1970-01-01\",\n" +
                 "\t\"endDate\": \"1970-01-01\",\n" +
                 "\t\"ssn\": \"user1\",\n" +
-                "\t\"thirdPartyID\": 1\n" +
+                "\t\"thirdParty\": 1\n" +
                 "}";
 
         mvc.perform(post(Constants.REQUEST_API+"/user1")

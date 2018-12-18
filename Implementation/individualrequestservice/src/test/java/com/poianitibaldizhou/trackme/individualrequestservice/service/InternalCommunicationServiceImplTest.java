@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotF
 import com.poianitibaldizhou.trackme.individualrequestservice.message.protocol.UserProtocolMessage;
 import com.poianitibaldizhou.trackme.individualrequestservice.message.publisher.IndividualRequestPublisher;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -30,12 +32,16 @@ import static org.mockito.Mockito.verify;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @DataJpaTest
 @RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql("classpath:sql/testEventListener.sql")
 public class InternalCommunicationServiceImplTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ThirdPartyRepository thirdPartyRepository;
 
     @Autowired
     private IndividualRequestRepository individualRequestRepository;
@@ -48,7 +54,7 @@ public class InternalCommunicationServiceImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        internalCommunicationService = new InternalCommunicationServiceImpl(userRepository, individualRequestPublisher);
+        internalCommunicationService = new InternalCommunicationServiceImpl(userRepository, thirdPartyRepository, individualRequestPublisher);
     }
 
     @After

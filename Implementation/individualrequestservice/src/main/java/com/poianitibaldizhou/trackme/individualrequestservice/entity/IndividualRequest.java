@@ -35,8 +35,9 @@ public class IndividualRequest {
     @JoinColumn(name = "ssn", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private Long thirdPartyID;
+    @ManyToOne
+    @JoinColumn(name = "third_partyid", nullable = false)
+    private ThirdParty thirdParty;
 
     @Column(nullable = false)
     private String motivation;
@@ -55,15 +56,15 @@ public class IndividualRequest {
      * @param startDate the request will allow to access data starting from this date
      * @param endDate the request will allow to access data up to this date
      * @param user the request will allow to acces data regarding the user identified by this ssn
-     * @param thirdPartyID the request is performed by a third party customer identified by this number
+     * @param thirdParty the request is performed by a third party customer identified by this number
      */
-    public IndividualRequest(Timestamp timestamp, Date startDate, Date endDate, User user, Long thirdPartyID) {
+    public IndividualRequest(Timestamp timestamp, Date startDate, Date endDate, User user, ThirdParty thirdParty) {
         this.status = IndividualRequestStatus.PENDING;
         this.timestamp = timestamp;
         this.startDate = startDate;
         this.endDate = endDate;
         this.user = user;
-        this.thirdPartyID = thirdPartyID;
+        this.thirdParty = thirdParty;
         this.motivation = "";
     }
 }

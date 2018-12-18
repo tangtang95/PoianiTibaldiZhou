@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,6 +45,7 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = IndividualRequestServiceApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 @Transactional
 @Sql("classpath:ControllerIntegrationTest.sql")
 public class IndividualRequestServiceManagerIntegrationTest {
@@ -89,7 +92,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
                 "  \"startDate\" : \"2000-01-01\",\n" +
                 "  \"endDate\" : \"2000-01-01\",\n" +
-                "  \"thirdPartyID\" : 1,\n" +
+                "  \"thirdPartyName\" : \"thirdParty1\",\n" +
+                "  \"motivation\" : \"\",\n" +
                 "  \"_links\" : {\n" +
                 "    \"self\" : {\n" +
                 "      \"href\" : \"http://localhost:"+port+Constants.REQUEST_API+"/id/1\"\n" +
@@ -168,51 +172,52 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
 
         String expectedBody = "{\n" +
-                "  \"_embedded\": {\n" +
-                "    \"individualRequests\": [\n" +
-                "      {\n" +
-                "        \"status\": \"PENDING\",\n" +
-                "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
-                "        \"startDate\": \"2000-01-01\",\n" +
-                "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"_links\": {\n" +
-                "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/4\"\n" +
-                "          },\n" +
-                "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
-                "          },\n" +
-                "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/requests/users/user1\"\n" +
-                "          }\n" +
-                "        }\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"status\": \"PENDING\",\n" +
-                "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
-                "        \"startDate\": \"2000-01-01\",\n" +
-                "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"thirdPartyID\": 2,\n" +
-                "        \"_links\": {\n" +
-                "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/5\"\n" +
-                "          },\n" +
-                "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
-                "          },\n" +
-                "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/users/user2\"\n" +
-                "          }\n" +
+                "  \"_embedded\" : {\n" +
+                "    \"individualRequestWrappers\" : [ {\n" +
+                "      \"status\" : \"PENDING\",\n" +
+                "      \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
+                "      \"startDate\" : \"2000-01-01\",\n" +
+                "      \"endDate\" : \"2000-01-01\",\n" +
+                "      \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "      \"motivation\" : \"\",\n" +
+                "      \"_links\" : {\n" +
+                "        \"self\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/4\"\n" +
+                "        },\n" +
+                "        \"thirdPartyRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
+                "        },\n" +
+                "        \"userPendingRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user1\"\n" +
                 "        }\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    }, {\n" +
+                "      \"status\" : \"PENDING\",\n" +
+                "      \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
+                "      \"startDate\" : \"2000-01-01\",\n" +
+                "      \"endDate\" : \"2000-01-01\",\n" +
+                "      \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "      \"motivation\" : \"\",\n" +
+                "      \"_links\" : {\n" +
+                "        \"self\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/5\"\n" +
+                "        },\n" +
+                "        \"thirdPartyRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
+                "        },\n" +
+                "        \"userPendingRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user2\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    } ]\n" +
                 "  },\n" +
-                "  \"_links\": {\n" +
-                "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
+                "  \"_links\" : {\n" +
+                "    \"self\" : {\n" +
+                "      \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         JSONAssert.assertEquals(expectedBody, responseEntity.getBody(), false);
     }
@@ -234,13 +239,14 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
         String expectedBody = "{\n" +
                 "  \"_embedded\": {\n" +
-                "    \"individualRequests\": [\n" +
+                "    \"individualRequestWrappers\": [\n" +
                 "      {\n" +
                 "        \"status\": \"PENDING\",\n" +
                 "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
                 "        \"startDate\": \"2000-01-01\",\n" +
                 "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"thirdPartyID\": 2,\n" +
+                "        \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "        \"motivation\" : \"\",\n" +
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
                 "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/5\"\n" +
@@ -294,8 +300,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWrongParameters() throws IOException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest();
-        individualRequest.setThirdPartyID(1L);
+        individualRequest.setThirdParty(thirdParty);
         individualRequest.setEndDate(new Date(0));
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
@@ -321,8 +330,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequest() throws Exception {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
-                new User("user1"), 1L);
+                new User("user1"), thirdParty);
 
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.writeValueAsString(individualRequest));
@@ -361,8 +373,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWhenIncompatibleDates() throws IOException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(100), new Date(0),
-                new User("user1"), 1L);
+                new User("user1"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -385,8 +400,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestOnNonRegisteredUser() {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
-                new User("nonRegisteredUser"), 1L);
+                new User("nonRegisteredUser"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -404,7 +422,10 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWhenBlocked() throws Exception {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "4");
-        IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), 4L);
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(4L);
+        thirdParty.setIdentifierName("thirdParty");
+        IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(

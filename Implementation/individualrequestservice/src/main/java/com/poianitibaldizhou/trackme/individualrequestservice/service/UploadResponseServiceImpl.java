@@ -2,10 +2,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.*;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.ResponseRepository;
-import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.repository.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.ResponseType;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +27,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
     private final IndividualRequestRepository individualRequestRepository;
     private final ResponseRepository responseRepository;
+    private final ThirdPartyRepository thirdPartyRepository;
 
     private InternalCommunicationService internalCommunicationService;
 
@@ -44,11 +42,14 @@ public class UploadResponseServiceImpl implements UploadResponseService {
      * @param individualResponseRepository repository regarding the responses to individual requests
      */
     public UploadResponseServiceImpl(UserRepository userRepository, BlockedThirdPartyRepository blockedThirdPartyRepository,
-                                     IndividualRequestRepository individualRequestRepository, ResponseRepository individualResponseRepository) {
+                                     IndividualRequestRepository individualRequestRepository,
+                                     ResponseRepository individualResponseRepository,
+                                     ThirdPartyRepository thirdPartyRepository) {
         this.userRepository = userRepository;
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.individualRequestRepository = individualRequestRepository;
         this.responseRepository = individualResponseRepository;
+        this.thirdPartyRepository = thirdPartyRepository;
     }
 
     public void setInternalCommunicationService(InternalCommunicationService internalCommunicationService){
@@ -104,7 +105,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         // Check that the block is valid (i.e. user registered, a request exist (and also a refused one), and no other block exists
         if(!userRepository.findById(user.getSsn()).isPresent())
             throw new UserNotFoundException(user);
-        List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
+        List<IndividualRequest> requestList = individualRequestRepository.findAllByThirdParty_Id(thirdPartyID);
 
         if(requestList.stream()
                 .noneMatch(individualRequest -> individualRequest.getUser().equals(user))) {
@@ -115,7 +116,10 @@ public class UploadResponseServiceImpl implements UploadResponseService {
             throw new ThirdPartyRefusedRequestNotFoundException(thirdPartyID);
         }
 
-        BlockedThirdPartyKey key = new BlockedThirdPartyKey(thirdPartyID, user);
+        ThirdParty thirdParty = thirdPartyRepository.findById(thirdPartyID)
+                .orElseThrow(() -> new ThirdPartyNotFoundException(thirdPartyID));
+
+        BlockedThirdPartyKey key = new BlockedThirdPartyKey(thirdParty, user);
         if(blockedThirdPartyRepository.findById(key).isPresent()) {
             throw new BlockAlreadyPerformedException(thirdPartyID);
         }
@@ -126,7 +130,7 @@ public class UploadResponseServiceImpl implements UploadResponseService {
         blockedThirdParty.setBlockDate(Date.valueOf(LocalDate.now()));
 
         // all the pending request for that user becomes refused
-        individualRequestRepository.findAllByThirdPartyID(thirdPartyID).stream().
+        individualRequestRepository.findAllByThirdParty_Id(thirdPartyID).stream().
                 filter(individualRequest -> individualRequest.getStatus().equals(IndividualRequestStatus.PENDING) &&
                         individualRequest.getUser().getSsn().equals(user.getSsn())).forEach(
                 individualRequest -> individualRequest.setStatus(IndividualRequestStatus.REFUSED)

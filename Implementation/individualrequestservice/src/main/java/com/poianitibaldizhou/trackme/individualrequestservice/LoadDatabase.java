@@ -21,7 +21,7 @@ public class LoadDatabase {
             individualRequest.setStartDate(new Date(0));
             individualRequest.setEndDate(new Date(0));
             individualRequest.setUser(user);
-            individualRequest.setThirdPartyID(1L);
+            individualRequest.setThirdParty(1L);
             individualRequest.setStatus(IndividualRequestStatus.PENDING);
 
             log.info("Preloading " + individualRequestRepository.saveAndFlush(individualRequest));

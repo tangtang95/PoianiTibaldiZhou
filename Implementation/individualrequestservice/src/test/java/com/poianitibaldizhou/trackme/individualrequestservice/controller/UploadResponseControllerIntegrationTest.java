@@ -3,6 +3,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.*;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
@@ -22,6 +23,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -39,6 +41,7 @@ import static org.junit.Assert.assertEquals;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
+@ActiveProfiles("test")
 @Sql("classpath:ControllerIntegrationTest.sql")
 public class UploadResponseControllerIntegrationTest {
 
@@ -296,11 +299,11 @@ public class UploadResponseControllerIntegrationTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        BlockedThirdPartyKey newItemKey = new BlockedThirdPartyKey(17L, new User("user17"));
+        BlockedThirdPartyKey newItemKey = new BlockedThirdPartyKey(new ThirdParty(17L, "thirdParty17"), new User("user17"));
         assertTrue(blockedThirdPartyRepository.findById(newItemKey).isPresent());
 
         requestRepository.flush();
-        requestRepository.findAllByThirdPartyID(17L).forEach(individualRequest -> assertEquals(IndividualRequestStatus.REFUSED,
+        requestRepository.findAllByThirdParty_Id(17L).forEach(individualRequest -> assertEquals(IndividualRequestStatus.REFUSED,
                 individualRequest.getStatus()));
     }
 

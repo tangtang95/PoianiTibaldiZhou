@@ -98,6 +98,7 @@ public class IndividualRequestEventListenerImplTest {
         public void onIndividualRequestAcceptedSuccessful() throws Exception {
             IndividualRequestProtocolMessage individualRequestProtocolMessage = new IndividualRequestProtocolMessage();
             individualRequestProtocolMessage.setId(1L);
+            individualRequestProtocolMessage.setThirdPartyName("thirdParty1");
             individualRequestProtocolMessage.setCreationTimestamp(new Timestamp(0));
             individualRequestProtocolMessage.setStatus(IndividualRequestStatusProtocolMessage.ACCEPTED);
             individualRequestProtocolMessage.setThirdPartyId(1L);
@@ -129,6 +130,7 @@ public class IndividualRequestEventListenerImplTest {
         public void onIndividualRequestAcceptedWithIndividualRequestNotAccepted() throws Exception {
             IndividualRequestProtocolMessage individualRequestProtocolMessage = new IndividualRequestProtocolMessage();
             individualRequestProtocolMessage.setId(1L);
+            individualRequestProtocolMessage.setThirdPartyName("thirdParty1");
             individualRequestProtocolMessage.setCreationTimestamp(new Timestamp(0));
             individualRequestProtocolMessage.setStatus(IndividualRequestStatusProtocolMessage.REFUSED);
             individualRequestProtocolMessage.setThirdPartyId(1L);
@@ -212,6 +214,7 @@ public class IndividualRequestEventListenerImplTest {
         public void onIndividualRequestAcceptedWithCorrectRoutingKey() throws Exception {
             IndividualRequestProtocolMessage individualRequestProtocolMessage = new IndividualRequestProtocolMessage();
             individualRequestProtocolMessage.setId(1L);
+            individualRequestProtocolMessage.setThirdPartyName("thirdParty1");
             individualRequestProtocolMessage.setCreationTimestamp(new Timestamp(0));
             individualRequestProtocolMessage.setStatus(IndividualRequestStatusProtocolMessage.ACCEPTED);
             individualRequestProtocolMessage.setThirdPartyId(1L);
@@ -237,6 +240,7 @@ public class IndividualRequestEventListenerImplTest {
         public void onIndividualRequestAcceptedWithIncorrectRoutingKey() throws Exception {
             IndividualRequestProtocolMessage individualRequestProtocolMessage = new IndividualRequestProtocolMessage();
             individualRequestProtocolMessage.setId(1L);
+            individualRequestProtocolMessage.setThirdPartyName("thirdParty1");
             individualRequestProtocolMessage.setCreationTimestamp(new Timestamp(0));
             individualRequestProtocolMessage.setStatus(IndividualRequestStatusProtocolMessage.ACCEPTED);
             individualRequestProtocolMessage.setThirdPartyId(1L);
@@ -262,6 +266,7 @@ public class IndividualRequestEventListenerImplTest {
         public void onIndividualRequestAcceptedWithWrongExchange() throws Exception {
             IndividualRequestProtocolMessage individualRequestProtocolMessage = new IndividualRequestProtocolMessage();
             individualRequestProtocolMessage.setId(1L);
+            individualRequestProtocolMessage.setThirdPartyName("thirdParty1");
             individualRequestProtocolMessage.setCreationTimestamp(new Timestamp(0));
             individualRequestProtocolMessage.setStatus(IndividualRequestStatusProtocolMessage.ACCEPTED);
             individualRequestProtocolMessage.setThirdPartyId(1L);
