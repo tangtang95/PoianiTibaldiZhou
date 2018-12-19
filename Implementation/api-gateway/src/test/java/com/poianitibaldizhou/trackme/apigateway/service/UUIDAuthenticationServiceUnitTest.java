@@ -1,8 +1,9 @@
-package com.poianitibaldizhou.trackme.apigateway.security.service;
+package com.poianitibaldizhou.trackme.apigateway.service;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
+import com.poianitibaldizhou.trackme.apigateway.service.UUIDAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import org.junit.After;
 import org.junit.Before;

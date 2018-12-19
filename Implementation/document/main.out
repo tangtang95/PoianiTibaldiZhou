@@ -9,6 +9,10 @@
 \BOOKMARK [1][-]{section.4}{Structure of the source code}{}% 9
 \BOOKMARK [2][-]{subsection.4.1}{Microservices}{section.4}% 10
 \BOOKMARK [3][-]{subsubsection.4.1.1}{API Gateway}{subsection.4.1}% 11
-\BOOKMARK [2][-]{subsection.4.2}{Mobile code}{section.4}% 12
-\BOOKMARK [1][-]{section.5}{Testing}{}% 13
-\BOOKMARK [1][-]{section.6}{Installation instruction}{}% 14
+\BOOKMARK [3][-]{subsubsection.4.1.2}{Service registry}{subsection.4.1}% 12
+\BOOKMARK [3][-]{subsubsection.4.1.3}{Individual request service}{subsection.4.1}% 13
+\BOOKMARK [3][-]{subsubsection.4.1.4}{Group request service}{subsection.4.1}% 14
+\BOOKMARK [3][-]{subsubsection.4.1.5}{Share data service}{subsection.4.1}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Mobile code}{section.4}% 16
+\BOOKMARK [1][-]{section.5}{Testing}{}% 17
+\BOOKMARK [1][-]{section.6}{Installation instruction}{}% 18

@@ -8,7 +8,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.exception.ThirdPartyCustomerNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
-import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerServiceImpl;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;

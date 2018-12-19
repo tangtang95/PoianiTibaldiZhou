@@ -1,6 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.security;
 
-import com.poianitibaldizhou.trackme.apigateway.security.service.AuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.AuthenticationService;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

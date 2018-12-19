@@ -1,9 +1,7 @@
-package com.poianitibaldizhou.trackme.apigateway.security.service;
+package com.poianitibaldizhou.trackme.apigateway.service;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

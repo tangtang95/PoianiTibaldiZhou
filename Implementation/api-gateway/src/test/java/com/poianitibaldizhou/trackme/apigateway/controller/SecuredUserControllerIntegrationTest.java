@@ -1,9 +1,11 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -97,7 +100,7 @@ public class SecuredUserControllerIntegrationTest {
      * Test the user logout
      */
     @Test
-    public void testUserLogout() {
+    public void testUserLogout() throws IOException {
         String token = login();
 
         httpHeaders.setBearerAuth(token);
@@ -150,13 +153,19 @@ public class SecuredUserControllerIntegrationTest {
      *
      * @return token
      */
-    private String login() {
+    private String login() throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API+"?username=username1&password=password1"),
                 HttpMethod.POST, entity, String.class);
-        return response.getBody();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        TokenWrapper tokenWrapper = mapper.readValue(response.getBody(), TokenWrapper.class);
+
+        return tokenWrapper.getToken();
     }
+
 
     /**
      * Utility method to form the url with the injected port for a certain uri

@@ -3,7 +3,7 @@ package com.poianitibaldizhou.trackme.apigateway.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;

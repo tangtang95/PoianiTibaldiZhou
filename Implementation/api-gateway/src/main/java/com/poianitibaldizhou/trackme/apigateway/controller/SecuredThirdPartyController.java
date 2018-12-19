@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
-import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
@@ -40,7 +40,7 @@ public class SecuredThirdPartyController {
      * Creates a new entry point for accessing the services that regard the accounts
      * of third party customers
      *
-     * @param service             service that manages the third party custommers accounts: needed
+     * @param service             service that manages the third party customers accounts: needed
      *                            in order to access the business function of the service
      * @param thirdPartyCompanyAssembler assembler for third party customer related with companies, that adds hal content
      * @param thirdPartyPrivateWrapper assembler for third party customer non-related with companies, that adds hal content

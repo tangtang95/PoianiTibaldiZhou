@@ -1,4 +1,4 @@
-package com.poianitibaldizhou.trackme.apigateway.security.service;
+package com.poianitibaldizhou.trackme.apigateway.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,11 +1,13 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -73,7 +76,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * @throws JSONException due to json assert equals method
      */
     @Test
-    public void testGetTPWhenCompany() throws JSONException {
+    public void testGetTPWhenCompany() throws JSONException, IOException {
         String token = login("tp1@provider.com", "tp1pass");
 
         httpHeaders.setBearerAuth(token);
@@ -111,7 +114,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * @throws JSONException due to json assert equals method
      */
     @Test
-    public void testGetTPWhenPrivate() throws JSONException {
+    public void testGetTPWhenPrivate() throws JSONException, IOException {
         String token = login("tp3@provider.com", "tp3pass");
 
         httpHeaders.setBearerAuth(token);
@@ -150,7 +153,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * Test the logout of a third party customer
      */
     @Test
-    public void testLogout() {
+    public void testLogout() throws IOException {
         String token = login("tp3@provider.com", "tp3pass");
 
         httpHeaders.setBearerAuth(token);
@@ -200,7 +203,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * Test the access to the user controller method /info
      */
     @Test
-    public void testGetOfUserInfo() {
+    public void testGetOfUserInfo() throws IOException {
         String token = login("tp3@provider.com", "tp3pass");
         httpHeaders.setBearerAuth(token);
 
@@ -214,8 +217,12 @@ public class SecuredThirdPartyControllerIntegrationTest {
         }
     }
 
+    /**
+     * Test the access to the user controller method of logout when logged as a third party customer
+     * @throws IOException
+     */
     @Test
-    public void testUserLogoutWhenLoggedAsTp() {
+    public void testUserLogoutWhenLoggedAsTp() throws IOException {
         String token = login("tp3@provider.com", "tp3pass");
         httpHeaders.setBearerAuth(token);
 
@@ -237,12 +244,16 @@ public class SecuredThirdPartyControllerIntegrationTest {
      *
      * @return token
      */
-    private String login(String email, String password) {
+    private String login(String email, String password) throws IOException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API + "?email=" + email + "&password=" + password),
                 HttpMethod.POST, entity, String.class);
-        return response.getBody();
+
+        ObjectMapper mapper = new ObjectMapper();
+        TokenWrapper tokenWrapper = mapper.readValue(response.getBody(), TokenWrapper.class);
+
+        return tokenWrapper.getToken();
     }
 
 

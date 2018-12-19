@@ -78,7 +78,7 @@ generated using the java keytool \cite{httpstool}.
 \\
 The authentication have been implemented by means of an UUID random token and the APIs has been secured in such a way that a certain client
 can access only the method that he should access: for example, a user can't access methods that regards a third party customer, but, also
-a user can't access API that regards another user (i.e. a user can access only his pending request, and not the pending requests of any
+a user can't access API that regards another user (e.g. a user can access only his pending request, and not the pending requests of any
 user) \\
 As one can claim, using UUID random tokens is for sure not the best way of achieving authentication, however, the code has been designed
 in such a way that is easily possible to upgrade this to the usage of JWT just implementing a single interface. This choice

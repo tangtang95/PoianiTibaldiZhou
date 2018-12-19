@@ -14,6 +14,44 @@ As one may notice, the one containing the set up of the API gateway also accesse
 In the following sections the structure of the single projects are analyzed. 
 
 \subsubsection{API Gateway}
+In the figure ~\ref{fig:pkgapigateway}, it is shown the root of the project structure. An analysis 
+of the various elements follows below the figure. 
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/PackageApigateway.png}
+\caption{ API gateway }
+\label{fig:pkgapigateway}
+\end{figure}
+
+\begin{itemize}
+\item Package repository: contains the JPA repository for accessing the persistent data necessary to this
+service. 
+In particular information regarding the accounts of users and third party customers are present. For what concerns the third party customers,
+since they can register both as private and as related with a company the following repositories are present: company details, private
+details, third party customers and users. An additional repository is present, and it accesses information regarding the API. Indeed, all
+the accessible APIs that are available are stored in a database, in order to provide access control. For better specifying this choice, 
+one may consider the fact that it is not necessary to search on the service registry non-existing API or to forward requests that can
+be already classified as rejected (e.g. user A that is trying to access an API available only for third party customers)
+\item Package assembler: this class contains components useful to build HATEOAS resources of entities that are returned to clients, adding
+hypermedia contents
+\item Package exception: this contains the custom exceptions defined during the development
+\item Package controller: contains the controller that defines the APIs that regards the management of the users and third party customer
+accounts. From here, it is possible to access the business functions that regards the account (e.g. login, logout, registration). Inside here,
+controller are split into secure and public controllers: the public one are accessible to everyone, while for accessing the secured ones,
+it is necessary to perform the log in
+\item Package message: it provides the functions of communicating with other microservices, by means of RabbitMQ. In particular, three
+subpackages are present here. The package publisher contains classes that helps in publishing the events of creation of new accounts to other
+other services. The package protocol defines a way of communicating the interested pieces of information, and, finally the configuration
+package specifies the configuration settings needed to convert object from JSON (and viceversa) during the exchange of data, and also
+the Rabbit queues  
+\item Package security: contains the main features that have been introduced above regarding the security 
+\item Package service: contains the services that implements the business functions of the account service, with all the APIs that it exposes.
+The interfaces present here map the component interfaces of the account service
+\item Package advice
+\item Package entity
+\item Package filter
+\item Package util
+\end{itemize}
+
 
 \subsubsection{Service registry}
 

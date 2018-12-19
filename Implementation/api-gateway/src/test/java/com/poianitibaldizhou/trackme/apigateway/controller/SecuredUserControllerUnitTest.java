@@ -5,7 +5,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.SsnNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
-import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.junit.Test;
