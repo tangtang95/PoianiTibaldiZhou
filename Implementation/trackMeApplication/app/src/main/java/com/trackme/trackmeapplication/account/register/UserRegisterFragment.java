@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.text.InputType;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
@@ -44,6 +47,10 @@ public class UserRegisterFragment extends BaseFragment {
     protected EditText birthCity;
     @BindView(R.id.register_birth_nation)
     protected EditText birthNation;
+    @BindView(R.id.password_visibility)
+    protected ImageView passwordVisibility;
+    @BindView(R.id.accept_terms)
+    protected CheckBox terms;
 
 
     private DatePickerDialog.OnDateSetListener onDateSetListener;
@@ -88,7 +95,30 @@ public class UserRegisterFragment extends BaseFragment {
         }
     }
 
+    /**
+     * It handles the password visibility button click event.
+     */
+    @OnClick(R.id.password_visibility)
+    public void onPasswordVisibilityClick(){
+        final int TEXT_PASSWORD = 129;
 
+        if (password.getInputType() == TEXT_PASSWORD) {
+            password.setInputType(InputType.TYPE_CLASS_TEXT);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility);
+        }
+        else {
+            password.setInputType(TEXT_PASSWORD);
+            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
+        }
+    }
+
+    /**
+     * Handle the term and condition click event.
+     */
+    @OnClick(R.id.textViewTermAndCondition)
+    void onTermsAndConditionClick() {
+        TermPopUp.showTermPopUp(getmContext());
+    }
 
     /**
      * It handles the birthDay click event and it shows to the user a calendar for
@@ -134,6 +164,10 @@ public class UserRegisterFragment extends BaseFragment {
         }
         if (username.getText().toString().length() > 30) {
             username.setError(getString(R.string.username_is_too_long));
+            return false;
+        }
+        if (!terms.isChecked()) {
+            showMessage(getString(R.string.terms_and_condition_error));
             return false;
         }
         return true;

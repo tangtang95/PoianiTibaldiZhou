@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.trackme.trackmeapplication.Request.individualRequest.IndividualMessageFragment;
+import com.trackme.trackmeapplication.request.individualRequest.IndividualMessageFragment;
 
 /**
  * User page adapter handles the viewPager widget. It creates a specific new fragment when the

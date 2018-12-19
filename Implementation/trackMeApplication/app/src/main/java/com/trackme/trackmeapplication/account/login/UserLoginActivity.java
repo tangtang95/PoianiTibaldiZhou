@@ -20,9 +20,6 @@ import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_PERMS;
-import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_REQUEST;
-
 /**
  * UserLoginActivity extends the abstract class LoginActivity and it allows to the user to
  * login into the application. It is the first Activity that starts when the user install
@@ -83,7 +80,8 @@ public class UserLoginActivity extends LoginActivity {
 
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME,MODE_PRIVATE);
         isRegister = false;
-
+        /*TODO*/
+        /*
         if (sp.getBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false)) {
             navigateToHome();
         } else if (sp.getBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false))
@@ -91,6 +89,7 @@ public class UserLoginActivity extends LoginActivity {
 
         if (!canAccessLocation())
             requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
+            */
     }
 
     /**
@@ -158,7 +157,7 @@ public class UserLoginActivity extends LoginActivity {
      */
     @OnClick(R.id.userLoginButton)
     public void onUserLoginButtonClick() {
-        mDelegate.userLogin(username.getText().toString(), password.getText().toString());
+        mDelegate.userLogin(username.getText().toString(), password.getText().toString(), this);
     }
 
     /**

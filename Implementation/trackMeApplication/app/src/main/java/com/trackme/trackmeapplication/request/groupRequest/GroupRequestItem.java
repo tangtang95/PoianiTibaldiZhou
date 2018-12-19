@@ -1,8 +1,8 @@
-package com.trackme.trackmeapplication.Request.groupRequest;
+package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.support.annotation.NonNull;
 
-import com.trackme.trackmeapplication.Request.RequestStatus;
+import com.trackme.trackmeapplication.request.RequestStatus;
 
 /**
  * Group request object.

@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.InputType;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -48,6 +49,8 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
     protected EditText birthNation;
     @BindView(R.id.password_visibility)
     protected ImageView passwordVisibility;
+    @BindView(R.id.accept_terms)
+    protected CheckBox terms;
 
     private DatePickerDialog.OnDateSetListener onDateSetListener;
 
@@ -88,6 +91,14 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
             }
             ((Activity)getmContext()).finish();
         }
+    }
+
+    /**
+     * Handle the term and condition click event.
+     */
+    @OnClick(R.id.textViewTermAndCondition)
+    void onTermsAndConditionClick() {
+        TermPopUp.showTermPopUp(getmContext());
     }
 
     /**
@@ -151,6 +162,10 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
         }
         if (mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
             mail.setError(getString(R.string.email_is_not_valid));
+            return false;
+        }
+        if (!terms.isChecked()) {
+            showMessage(getString(R.string.terms_and_condition_error));
             return false;
         }
         return true;

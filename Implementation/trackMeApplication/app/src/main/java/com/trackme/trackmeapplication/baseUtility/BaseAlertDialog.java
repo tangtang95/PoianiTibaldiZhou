@@ -1,7 +1,6 @@
 package com.trackme.trackmeapplication.baseUtility;
 
 import android.content.Context;
-import android.os.Build;
 import android.support.v7.app.AlertDialog;
 
 /**
@@ -23,11 +22,7 @@ public class BaseAlertDialog {
      */
     public BaseAlertDialog(Context context, String message, String title) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
-        } else {
-            builder = new AlertDialog.Builder(context);
-        }
+        builder = new AlertDialog.Builder(context, android.R.style.Theme_Material_Dialog_Alert);
 
         builder.setTitle(title)
                 .setMessage(message)

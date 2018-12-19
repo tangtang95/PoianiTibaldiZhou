@@ -1,8 +1,8 @@
-package com.trackme.trackmeapplication.Request.individualRequest;
+package com.trackme.trackmeapplication.request.individualRequest;
 
 import android.support.annotation.NonNull;
 
-import com.trackme.trackmeapplication.Request.RequestStatus;
+import com.trackme.trackmeapplication.request.RequestStatus;
 
 import java.io.Serializable;
 
@@ -17,6 +17,7 @@ public class RequestItem implements Serializable {
     private RequestStatus status;
     private String id;
     private String creationDate;
+    private String email;
 
     public RequestItem(String ssn, String thirdPartyName, String startDate, String endDate, String motive) {
         this.thirdPartyName = thirdPartyName;
@@ -31,10 +32,15 @@ public class RequestItem implements Serializable {
      *
      * @param status status of the request.
      */
-    public RequestItem(@NonNull String requestID, @NonNull RequestStatus status, @NonNull String creationDate) {
+    public RequestItem(@NonNull String requestID, @NonNull RequestStatus status, @NonNull String creationDate, String email) {
         this.status = status;
         this.id = requestID;
         this.creationDate = creationDate;
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public RequestStatus getStatus() {

@@ -1,9 +1,8 @@
-package com.trackme.trackmeapplication.Request.individualRequest;
+package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,11 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.os.Handler;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.Request.RequestStatus;
-import com.trackme.trackmeapplication.Request.individualRequest.network.IndividualRequestNetworkImp;
-import com.trackme.trackmeapplication.Request.individualRequest.network.IndividualrequestNetworkIInterface;
+import com.trackme.trackmeapplication.request.RequestStatus;
+import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
+import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
@@ -31,36 +31,35 @@ import butterknife.OnClick;
 import static android.content.Context.MODE_PRIVATE;
 
 /**
- * Individual message business fragment handles the individual request sent by the third party. It shows all the request
+ * Group request fragment handles the group request sent by the third party. It shows all the request
  * in a recyclerView and it allows to the third party to create some one new.
  *
  * @author Mattia Tibaldi
  * @see BaseFragment
  */
-public class IndividualMessageBusinessFragment extends BaseFragment {
+public class GroupRequestFragment extends BaseFragment {
 
     @BindView(R.id.listView)
     protected RecyclerView recyclerView;
 
-    private IndividualMessageBusinessFragment.CustomRecyclerView customRecyclerView;
-    private List<RequestItem> requestItems = new ArrayList<>();
+    private GroupRequestFragment.CustomRecyclerView customRecyclerView;
+    private List<GroupRequestItem> groupRequestItems = new ArrayList<>();
 
     private Handler handler;
     private Runnable checkNewRequest;
 
-
     /**
-     * Custom recyclerView class for showing the individualRequestItem in the recycler.
+     * Custom recyclerView class for showing the groupRequestItem in the recycler.
      */
-    private class CustomRecyclerView extends RecyclerView.Adapter<IndividualMessageBusinessFragment.CustomRecyclerView.MyViewHolder> {
+    private class CustomRecyclerView extends RecyclerView.Adapter<GroupRequestFragment.CustomRecyclerView.MyViewHolder> {
 
         /**
          * The holder that searches the object in the layout and binds it.
          */
         class MyViewHolder extends RecyclerView.ViewHolder {
 
-            private TextView ssn;
             private TextView status;
+            private TextView receiver;
             private ImageView download;
 
             /**
@@ -70,35 +69,35 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
              */
             MyViewHolder(View view) {
                 super(view);
-                ssn = view.findViewById(R.id.textViewSsn);
                 status = view.findViewById(R.id.textViewStatus);
+                receiver = view.findViewById(R.id.textViewSsn);
                 download = view.findViewById(R.id.download_request_data);
             }
         }
 
-        private List<RequestItem> items;
+        private List<GroupRequestItem> items;
 
         /**
          * Constructor.
          *
          * @param requestItems list of item to show in the recyclerView.
          */
-        CustomRecyclerView(List<RequestItem> requestItems) {
+        CustomRecyclerView(List<GroupRequestItem> requestItems) {
             this.items = requestItems;
         }
 
         @NonNull
         @Override
-        public IndividualMessageBusinessFragment.CustomRecyclerView.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public GroupRequestFragment.CustomRecyclerView.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.business_request_listview_layout, parent, false);
-            return new IndividualMessageBusinessFragment.CustomRecyclerView.MyViewHolder(v);
+            return new MyViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull IndividualMessageBusinessFragment.CustomRecyclerView.MyViewHolder holder, final int position) {
+        public void onBindViewHolder(@NonNull GroupRequestFragment.CustomRecyclerView.MyViewHolder holder, final int position) {
             holder.status.setText(items.get(position).getStatus().name());
             holder.status.setTextColor(items.get(position).getStatus().getColor());
-            holder.ssn.setText(items.get(position).getSsn());
+            holder.receiver.setText(getText(R.string.app_name));
 
             if (items.get(position).getStatus() == RequestStatus.ACCEPT){
                 holder.download.setVisibility(View.VISIBLE);
@@ -106,8 +105,8 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
                 SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
 
                 holder.download.setOnClickListener(view -> generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
-                        items.get(position).getSsn() + " " + items.get(position).getCreationDate(),
-                        sharedDataNetwork.getIndividualRequestData(items.get(position).getID())));
+                        getString(R.string.app_name) + " " + items.get(position).getCreationDate(),
+                        sharedDataNetwork.getGroupRequestData(items.get(position).getID())));
             }
         }
 
@@ -132,10 +131,10 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(requestItems);
+        customRecyclerView = new CustomRecyclerView(groupRequestItems);
         recyclerView.setAdapter(customRecyclerView);
 
-        IndividualrequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
+        GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
         String email = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
 
@@ -143,29 +142,29 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         checkNewRequest = new Runnable() {
             @Override
             public void run() {
-                refreshList(individualrequestNetwork.getIndividualRequest(email));
+                refreshList(groupRequestNetwork.getGroupRequest(email));
                 handler.postDelayed(this, Resources.getSystem().getInteger(R.integer.refresh_item_time));
             }
         };
         handler.post(checkNewRequest);
-
     }
+
 
     /**
      * Handle the add individual request click event.
      */
     @OnClick(R.id.add_individual_request)
     public void onAddIndividualRequestClick(){
-        Intent intent = new Intent(getActivity(), RequestFormActivity.class);
+        Intent intent = new Intent(getActivity(), GroupRequestFormActivity.class);
         startActivity(intent);
     }
 
     /**
      * Refresh the recyclerView when it changes.
      */
-    private void refreshList(List<RequestItem> newItems) {
-        requestItems.clear();
-        requestItems.addAll(newItems);
+    private void refreshList(List<GroupRequestItem> newItems) {
+        groupRequestItems.clear();
+        groupRequestItems.addAll(newItems);
         customRecyclerView.notifyDataSetChanged();
         recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
     }
@@ -175,5 +174,4 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         handler.removeCallbacks(checkNewRequest);
         super.onDestroy();
     }
-
 }

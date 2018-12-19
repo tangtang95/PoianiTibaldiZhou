@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.trackme.trackmeapplication.Request.groupRequest.GroupRequestFragment;
-import com.trackme.trackmeapplication.Request.individualRequest.IndividualMessageBusinessFragment;
+import com.trackme.trackmeapplication.request.groupRequest.GroupRequestFragment;
+import com.trackme.trackmeapplication.request.individualRequest.IndividualMessageBusinessFragment;
 
 /**
  * Business page adapter handles the viewPager widget. It creates a specific new fragment when the

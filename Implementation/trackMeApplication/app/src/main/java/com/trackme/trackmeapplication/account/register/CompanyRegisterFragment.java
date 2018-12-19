@@ -2,6 +2,7 @@ package com.trackme.trackmeapplication.account.register;
 
 import android.app.Activity;
 import android.text.InputType;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -37,6 +38,8 @@ public class CompanyRegisterFragment extends BaseFragment {
     protected EditText dunsNumber;
     @BindView(R.id.password_visibility)
     protected ImageView passwordVisibility;
+    @BindView(R.id.accept_terms)
+    protected CheckBox terms;
 
     @Override
     protected int getLayoutResID() {
@@ -87,6 +90,14 @@ public class CompanyRegisterFragment extends BaseFragment {
     }
 
     /**
+     * Handle the term and condition click event.
+     */
+    @OnClick(R.id.textViewTermAndCondition)
+    void onTermsAndConditionClick() {
+        TermPopUp.showTermPopUp(getmContext());
+    }
+
+    /**
      * Control if all the data insert by the user in the registration form are valid.
      *
      * @return true if the data insert are acceptable, false otherwise.
@@ -102,6 +113,10 @@ public class CompanyRegisterFragment extends BaseFragment {
         }
         if (mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
             mail.setError(getString(R.string.email_is_not_valid));
+            return false;
+        }
+        if (!terms.isChecked()) {
+            showMessage(getString(R.string.terms_and_condition_error));
             return false;
         }
         return true;

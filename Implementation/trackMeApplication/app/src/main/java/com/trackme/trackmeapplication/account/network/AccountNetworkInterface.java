@@ -13,12 +13,12 @@ public interface AccountNetworkInterface {
     /**
      * User login on the server.
      */
-    void userLogin(String username, String password) throws InvalidDataLoginException;
+    String userLogin(String username, String password) throws InvalidDataLoginException;
 
     /**
      * ThirdParty login on the server
      */
-    void thirdPartyLogin(String email, String password) throws InvalidDataLoginException;
+    String thirdPartyLogin(String email, String password) throws InvalidDataLoginException;
 
     /**
      * User logout from the server.
