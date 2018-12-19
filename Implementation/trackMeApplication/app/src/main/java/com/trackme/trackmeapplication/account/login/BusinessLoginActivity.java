@@ -96,7 +96,7 @@ public class BusinessLoginActivity extends LoginActivity{
      */
     @OnClick(R.id.businessLoginButton)
     public void onBusinessLoginButtonClick() {
-        mDelegate.businessLogin(mail.getText().toString(), password.getText().toString());
+        mDelegate.businessLogin(mail.getText().toString(), password.getText().toString(), this);
     }
 
 }

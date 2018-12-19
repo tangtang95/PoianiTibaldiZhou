@@ -12,13 +12,14 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
- * Company register fragment is a fragment shown in the registrationActivity and it provides a form for
+ * CompanyDetail register fragment is a fragment shown in the registrationActivity and it provides a form for
  * the company registration on the application.
  *
  * @author Mattia Tibaldi
@@ -76,12 +77,12 @@ public class CompanyRegisterFragment extends BaseFragment {
         if (checkConstraintOnData()) {
             AccountNetworkInterface network = AccountNetworkImp.getInstance();
             try {
-                network.companySignUp(
+                network.companySignUp( new CompanyDetail(
                         companyName.getText().toString(),
                         mail.getText().toString(),
                         password.getText().toString(),
                         address.getText().toString(),
-                        dunsNumber.getText().toString());
+                        dunsNumber.getText().toString()));
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
             }

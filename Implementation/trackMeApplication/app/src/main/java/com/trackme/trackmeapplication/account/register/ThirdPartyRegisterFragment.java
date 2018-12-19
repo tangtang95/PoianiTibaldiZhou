@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.account.register;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.graphics.Color;
@@ -16,8 +17,13 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -45,8 +51,6 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
     protected TextView birthDay;
     @BindView(R.id.register_birth_city)
     protected EditText birthCity;
-    @BindView(R.id.register_birth_nation)
-    protected EditText birthNation;
     @BindView(R.id.password_visibility)
     protected ImageView passwordVisibility;
     @BindView(R.id.accept_terms)
@@ -63,7 +67,7 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
     protected void setUpFragment() {
         onDateSetListener = (datePicker, year, month, day) -> {
             month++;
-            String date = month + "/" + day + "/" + year;
+            String date = year + "/" + month + "/" + day;
             birthDay.setText(date);
         };
     }
@@ -75,16 +79,22 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
     public void onRegisterButtonClick() {
         if (checkConstraintOnData()) {
             AccountNetworkInterface network = AccountNetworkImp.getInstance();
+            @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+            Date convertedDate = new Date();
             try {
-                network.thirdPartySignUp(
+                convertedDate = dateFormat.parse(birthDay.getText().toString());
+            } catch (ParseException e) {
+                showMessage(getString(R.string.date_format_error));
+            }
+            try {
+                network.thirdPartySignUp( new PrivateThirdPartyDetail(
                         ssn.getText().toString(),
                         mail.getText().toString(),
                         password.getText().toString(),
                         firstName.getText().toString(),
                         lastName.getText().toString(),
-                        birthDay.getText().toString(),
-                        birthCity.getText().toString(),
-                        birthNation.getText().toString()
+                        convertedDate,
+                        birthCity.getText().toString())
                 );
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
@@ -151,8 +161,7 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
                 firstName.getText().toString().isEmpty() ||
                 lastName.getText().toString().isEmpty() ||
                 birthDay.getText().toString().isEmpty() ||
-                birthCity.getText().toString().isEmpty() ||
-                birthNation.getText().toString().isEmpty()) {
+                birthCity.getText().toString().isEmpty() ){
             showMessage(getString(R.string.no_field_must_be_empty));
             return false;
         }

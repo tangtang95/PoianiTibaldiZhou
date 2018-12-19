@@ -1,14 +1,28 @@
 package com.trackme.trackmeapplication.account.network;
 
+import android.content.res.Resources;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
+import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
+import com.trackme.trackmeapplication.account.login.TokenWrapper;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.sharedData.CompanyDetail;
+import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
+import com.trackme.trackmeapplication.sharedData.ThirdPartyCompanyWrapper;
+import com.trackme.trackmeapplication.sharedData.ThirdPartyPrivateWrapper;
+import com.trackme.trackmeapplication.sharedData.User;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
 
 /**
  * AccountNetworkImp is a class that provide all the function to communicate with the account service
@@ -19,8 +33,13 @@ public class AccountNetworkImp implements AccountNetworkInterface {
     private static AccountNetworkImp instance = null;
 
     private int accountPort;
+    private String IPAddress;
+
     private RestTemplate restTemplate;
     private HttpHeaders httpHeaders;
+    private ObjectMapper mapper;
+
+    private String token;
 
     /**
      * Constructor. (singleton)
@@ -28,6 +47,9 @@ public class AccountNetworkImp implements AccountNetworkInterface {
     private AccountNetworkImp() {
         restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
+        mapper = new ObjectMapper();
+        accountPort = Resources.getSystem().getInteger(R.integer.server_port);
+        IPAddress = Resources.getSystem().getString(R.string.server_ip_address);
     }
 
     /**
@@ -48,9 +70,12 @@ public class AccountNetworkImp implements AccountNetworkInterface {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constant.PUBLIC_TP_API + Constant.LOGIN_USER_API+"?username="+username+"&password="+password),
                 HttpMethod.POST, entity, String.class);
-        if (response.getBody().isEmpty())
+        try {
+            token = mapper.readValue(response.getBody(), TokenWrapper.class).getToken();
+        } catch (IOException e) {
             throw new InvalidDataLoginException();
-        return response.getBody();
+        }
+        return token;
     }
 
     @Override
@@ -59,34 +84,73 @@ public class AccountNetworkImp implements AccountNetworkInterface {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constant.PUBLIC_TP_API + Constant.LOGIN_USER_API+"?email="+email+"&password="+password),
                 HttpMethod.POST, entity, String.class);
-        if (response.getBody().isEmpty())
+        try {
+            token = mapper.readValue(response.getBody(), TokenWrapper.class).getToken();
+        } catch (IOException e) {
             throw new InvalidDataLoginException();
-        return response.getBody();
+        }
+        return token;
     }
 
     @Override
-    public void userLogout(String username) {
+    public void userLogout() throws UserAlreadyLogoutException {
+        httpHeaders.add("Authorization", "Bearer " + token);
 
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constant.SECURED_USER_API + Constant.LOGOUT_USER_API),
+                HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode() != HttpStatus.OK)
+            throw new UserAlreadyLogoutException();
     }
 
     @Override
-    public void thirdPartyLogout(String email) {
+    public void thirdPartyLogout() throws UserAlreadyLogoutException {
+        httpHeaders.add("Authorization", "Bearer " + token);
 
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constant.SECURED_USER_API + Constant.LOGOUT_USER_API),
+                HttpMethod.GET, entity, String.class);
+
+        if (response.getStatusCode() != HttpStatus.OK)
+            throw new UserAlreadyLogoutException();
     }
 
     @Override
-    public void userSignUp(String ssn, String username, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException {
+    public void userSignUp(User user) throws UserAlreadySignUpException {
+        HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
 
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constant.PUBLIC_USER_API + "/newSsn"),
+                HttpMethod.POST, entity, String.class);
+        if (response.getStatusCode() != HttpStatus.CREATED)
+            throw new UserAlreadySignUpException();
     }
 
     @Override
-    public void thirdPartySignUp(String ssn, String email, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException {
+    public void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException {
+        ThirdPartyPrivateWrapper thirdPartyPrivateWrapper  = new ThirdPartyPrivateWrapper();
+        thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
 
+        HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_PRIVATE_TP_API),
+                HttpMethod.POST, entity, String.class);
+        if (response.getStatusCode() != HttpStatus.CREATED)
+            throw new UserAlreadySignUpException();
     }
 
     @Override
-    public void companySignUp(String companyName, String email, String password, String address, String dunsNumber) {
+    public void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException {
+        ThirdPartyCompanyWrapper thirdPartyCompanyWrapper = new ThirdPartyCompanyWrapper();
+        thirdPartyCompanyWrapper.setCompanyDetail(companyDetail);
 
+        HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_COMPANY_TP_API),
+                HttpMethod.POST, entity, String.class);
+        if (response.getStatusCode() != HttpStatus.CREATED)
+            throw new UserAlreadySignUpException();
     }
 
     /**
@@ -95,6 +159,6 @@ public class AccountNetworkImp implements AccountNetworkInterface {
      * @return url for accessing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "https://localhost:" + accountPort + uri;
+        return "https://"+ IPAddress + ":" + accountPort + uri;
     }
 }

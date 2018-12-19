@@ -87,6 +87,7 @@
     <string name="date_before_error">Hey! You have a temporal machine? The end date is before te start date!</string>
     <string name="terms_and_condition_error">"You must accept the Term and Condition of the software."</string>
     <string name="legal_note_show_error">"Impossible to show the legal note."</string>
+    <string name="date_format_error">Date format error</string>
 
     <string name="persistent_database_name">trackme-db</string>
 

@@ -8,6 +8,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
@@ -86,7 +87,11 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
     public void navigateToUserLogin() {
         Intent intent = new Intent(this, UserLoginActivity.class);
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
-        accountNetwork.thirdPartyLogout(mail);
+        try {
+            accountNetwork.thirdPartyLogout();
+        } catch (UserAlreadyLogoutException e) {
+            e.printStackTrace();
+        }
         sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
         startActivity(intent);
         finish();

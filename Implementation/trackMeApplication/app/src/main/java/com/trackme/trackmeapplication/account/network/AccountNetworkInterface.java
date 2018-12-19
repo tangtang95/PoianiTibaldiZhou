@@ -1,7 +1,11 @@
 package com.trackme.trackmeapplication.account.network;
 
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
+import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
+import com.trackme.trackmeapplication.sharedData.CompanyDetail;
+import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
+import com.trackme.trackmeapplication.sharedData.User;
 
 /**
  * Network interface with the methods to communicate with the Account service on the server side.
@@ -16,33 +20,33 @@ public interface AccountNetworkInterface {
     String userLogin(String username, String password) throws InvalidDataLoginException;
 
     /**
-     * ThirdParty login on the server
+     * PrivateThirdPartyDetail login on the server
      */
     String thirdPartyLogin(String email, String password) throws InvalidDataLoginException;
 
     /**
      * User logout from the server.
      */
-    void userLogout(String username);
+    void userLogout() throws UserAlreadyLogoutException;
 
     /**
-     * ThirdParty logout from the server.
+     * PrivateThirdPartyDetail logout from the server.
      */
-    void thirdPartyLogout(String email);
+    void thirdPartyLogout() throws UserAlreadyLogoutException;
 
     /**
      * User sign up on server
      */
-    void userSignUp(String ssn, String username, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException;
+    void userSignUp(User user) throws UserAlreadySignUpException;
 
     /**
      * Third party sign up on server.
      */
-    void thirdPartySignUp(String ssn, String email, String password, String firstName, String lastName, String birthDay, String birthCity, String birthNation) throws UserAlreadySignUpException;
+    void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException;
 
     /**
-     * Company sign up on server.
+     * CompanyDetail sign up on server.
      */
-    void companySignUp(String companyName, String email, String password, String address, String dunsNumber) throws UserAlreadySignUpException;
+    void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException;
 
 }
