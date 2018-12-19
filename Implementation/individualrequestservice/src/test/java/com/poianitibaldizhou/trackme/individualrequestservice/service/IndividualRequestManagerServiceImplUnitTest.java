@@ -9,7 +9,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Individ
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,9 +26,7 @@ import java.util.Optional;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for the individual request manager service

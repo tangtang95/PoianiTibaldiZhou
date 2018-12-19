@@ -9,7 +9,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotF
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,19 +69,18 @@ public class IndividualRequestControllerUnitTest {
 
         mvc.perform(get(Constants.REQUEST_API + "/users/user1").accept(MediaTypes.HAL_JSON_VALUE).
                 header(Constants.HEADER_USER_SSN, "user1"))
-                .andDo(print())
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].thirdPartyName", is("thirdParty2")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].status", is(IndividualRequestStatus.PENDING.toString())))
-                //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].startDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].endDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/3")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.thirdPartyRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].thirdPartyName", is("thirdParty2")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].status", is(IndividualRequestStatus.PENDING.toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].timestamp", is("1970-01-01T00:00:00.000+0000")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].startDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].endDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/3")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.thirdPartyRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/thirdparties/2")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.userPendingRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.userPendingRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/users/user1")));
     }
@@ -134,21 +132,20 @@ public class IndividualRequestControllerUnitTest {
         List<IndividualRequest> allRequests = Collections.singletonList(request);
         given(service.getThirdPartyRequests((long) 1)).willReturn(allRequests);
 
-        // TODO: fix timestamp format issue (here, but also in other methods of this test, when the timestamp is needed)
         mvc.perform(get(Constants.REQUEST_API +"/thirdparties/1").accept(MediaTypes.HAL_JSON_VALUE)
                 .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].thirdPartyName", is("thirdParty1")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].status", is(IndividualRequestStatus.PENDING.toString())))
-                //.andExpect(jsonPath("$._embedded.individualRequests[0].timestamp", is(request.getTimestamp().toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].startDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0].endDate", is(new Date(0).toString())))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.thirdPartyRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].thirdPartyName", is("thirdParty1")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].status", is(IndividualRequestStatus.PENDING.toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].timestamp", is("1970-01-01T00:00:00.000+0000")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].startDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].endDate", is(new Date(0).toString())))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.thirdPartyRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrappers[0]._links.userPendingRequest.href",
+                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.userPendingRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")));
     }

@@ -99,7 +99,7 @@ public class UserEventListenerImplTest {
 
             rabbitTemplate.convertAndSend("wrongExchange", "user.event.created", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any());
+            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
         }
 
         /**

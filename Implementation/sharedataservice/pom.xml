@@ -5,7 +5,7 @@
 
 	<groupId>com.poianitibaldizhou.trackme</groupId>
 	<artifactId>share-data-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<packaging>jar</packaging>
 
 	<name>share-data-service</name>
@@ -33,16 +33,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
 		</dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -119,13 +115,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.11</version>
         </dependency>
-
-		<!-- Other utils library -->
-		<dependency>
-			<groupId>com.github.javafaker</groupId>
-			<artifactId>javafaker</artifactId>
-			<version>0.15</version>
-		</dependency>
     </dependencies>
 
 	<build>

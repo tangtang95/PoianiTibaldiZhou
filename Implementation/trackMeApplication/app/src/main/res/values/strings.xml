@@ -49,7 +49,7 @@
     <string name="request_form_end_date">End date:</string>
     <string name="request_form_start_date">Start date:</string>
     <string name="request_form_to">To:</string>
-    <string name="notification_title">Automated SOS</string>
+    <string name="notification_title">TrackMe Health Service</string>
     <string name="ticker_text">ticker_text</string>
     <string name="debug_tag">SOS_DEBUG</string>
     <string name="birth_year_key">birth_date_key</string>
@@ -90,5 +90,16 @@
     <string name="date_format_error">Date format error</string>
 
     <string name="persistent_database_name">trackme-db</string>
+
+    <string name="notification_channel_id">notification_channel_id</string>
+    <string name="notification_channel_name">Service Notification Channel</string>
+    <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>
+    <string name="log_bluetooth_enabled">Bluetooth is enabled</string>
+    <string name="log_cannot_parse_date">Could not parse date due to date format</string>
+    <string name="make_call_error_invalid_data">Cannot make call due to invalid health data</string>
+    <string name="make_call_error_no_number">Cannot make call due to no number available</string>
+    <string name="make_call_error_no_permission">Cannot make call due to no permission (GPS)</string>
+    <string name="make_call_error_no_gps">Cannot make call due to no GPS available</string>
+    <string name="notification_text">Health service is running&#8320;</string>
 
 </resources>
