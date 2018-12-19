@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-feature android:name="android.hardware.location.gps" />
 
@@ -37,7 +38,8 @@
         <activity android:name=".Request.individualRequest.RequestFormActivity" />
         <activity android:name=".Request.groupRequest.GroupRequestFormActivity"/>
 
-        <service android:name=".automatedsos.SOSAndroidService" />
+        <service android:name=".service.health.HealthService" />
+        <service android:name=".service.position.LocationService" />
     </application>
 
 </manifest>
