@@ -1,53 +1,15 @@
-\documentclass[a4paper]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{hyperref}
-\usepackage{makeidx}
-\usepackage{caption}
-\usepackage{tabularx}
-\usepackage[table, xcdraw, dvipsnames]{xcolor}
-
-\graphicspath{ {images/} }
-% !TeX spellcheck = en_US
-\makeindex
-
-\begin{document}
-\title{TrackMe: DD \\Software Engineer 2 - 2018/2019}
-\author{
-        Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou \\
-        Politecnico di Milano\\\\ 
-        Version 1.0
-}
-\maketitle
-\newpage
-\tableofcontents
-\newpage
-
-\input{introduction}
-
-\newpage
-
-\input{archDesign}
-
-\newpage
-
-\input{uiDesign}
-
-\newpage
-
-\input{requirementsTraceability}
-
-\newpage
-
-\input{plan}
-
-\newpage
-
-\input{effort}
-
-\newpage
-
-\end{document}
+\section{Introduction}
+The purpose of this document is to provide all the information regarding the implementation of a viable product of the TrackMe project: in
+particular it regards the services of Data4Help and AutomatedSOS. 
+It follows a brief description of the structure of the document:
+\begin{itemize}
+\item First of all, in the front page it is possible to find links to the source code and to what needs to be installed
+\item The second section illustrates what are the requirements that have been actually implemented, providing some useful motivations
+in order to understand the choices that were made 
+\item The third one takes into consideration the frameworks adopted, recapping and introducing further comments on what was already
+mentioned in the Design Document. Moreover, benefits and drawbacks are better analyzed, and ulterior decisions are discussed
+\item The fourth chapter analyzes the structure of the source code and an UML class diagram is present to illustrate a precise structure of
+the written code 
+\item The fifth section provides information on how tests were written. Coverage is here presented and system tests is presented and commented
+\item The final chapter helps in understanding what is necessary to do in order to install and run the software, with all the necessary prerequisites 
+\end{itemize}

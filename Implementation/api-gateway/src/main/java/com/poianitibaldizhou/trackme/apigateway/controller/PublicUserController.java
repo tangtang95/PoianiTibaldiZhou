@@ -7,7 +7,6 @@ import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticat
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

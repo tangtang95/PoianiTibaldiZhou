@@ -1,53 +1,26 @@
-\documentclass[a4paper]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{hyperref}
-\usepackage{makeidx}
-\usepackage{caption}
-\usepackage{tabularx}
-\usepackage[table, xcdraw, dvipsnames]{xcolor}
+\section{Structure of the source code}
 
-\graphicspath{ {images/} }
-% !TeX spellcheck = en_US
-\makeindex
+\subsection{Microservices}
+Here the code regarding the microservices architecture is explained. \\
+The source code that meets the requirements mentioned above has been organized in the following way: for each microservices a project
+has been set up. 
+Indeed, when dealing with this type of architecture, one should think of a microservice
+as a project that should me as much independent as possible from the others: this is the reason that stands behind the choice that has been
+made. 
+Of course, in this way, it is possible to easily generate the single jars that will be deployed, when necessary, with, as mentioned
+in the design document, dockers. Therefore, the following projects are present: API gateway, service registry, group individual request
+service, individual request service and share data service. 
+As one may notice, the one containing the set up of the API gateway also accesses all the information related with the accounts, and, therefore, authentication and authorization functions are coded here.
+In the following sections the structure of the single projects are analyzed. 
 
-\begin{document}
-\title{TrackMe: DD \\Software Engineer 2 - 2018/2019}
-\author{
-        Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou \\
-        Politecnico di Milano\\\\ 
-        Version 1.0
-}
-\maketitle
-\newpage
-\tableofcontents
-\newpage
+\subsubsection{API Gateway}
 
-\input{introduction}
+\subsubsection{Service registry}
 
-\newpage
+\subsubsection{Individual request service}
 
-\input{archDesign}
+\subsubsection{Group request service}
 
-\newpage
+\subsubsection{Share data service}
 
-\input{uiDesign}
-
-\newpage
-
-\input{requirementsTraceability}
-
-\newpage
-
-\input{plan}
-
-\newpage
-
-\input{effort}
-
-\newpage
-
-\end{document}
+\subsection{Mobile code}

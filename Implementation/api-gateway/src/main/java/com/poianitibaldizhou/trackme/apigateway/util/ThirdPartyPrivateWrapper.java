@@ -1,7 +1,6 @@
 package com.poianitibaldizhou.trackme.apigateway.util;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
-import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

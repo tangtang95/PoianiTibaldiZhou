@@ -1,53 +1,92 @@
-\documentclass[a4paper]{article}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-\usepackage[english]{babel}
-\usepackage{graphicx}
-\usepackage{float}
-\usepackage{hyperref}
-\usepackage{makeidx}
-\usepackage{caption}
-\usepackage{tabularx}
-\usepackage[table, xcdraw, dvipsnames]{xcolor}
-
-\graphicspath{ {images/} }
 % !TeX spellcheck = en_US
-\makeindex
+\section{Requirements and functions implemented}
+As already mentioned, in this section it is possible to find information regarding the requirements and the functions that are actually implemented with some motivations.
 
-\begin{document}
-\title{TrackMe: DD \\Software Engineer 2 - 2018/2019}
-\author{
-        Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou \\
-        Politecnico di Milano\\\\ 
-        Version 1.0
-}
-\maketitle
-\newpage
-\tableofcontents
-\newpage
+\subsection{Core requirements and functions}
+All the core requirements from R1 to R9 have been implemented, since, as the name suggests, they are fundamental. 
 
-\input{introduction}
+\subsection{Data4Help requirements and functions}
+All the requirements related to G1, G2, G8, G9, G12 and G13 have been implemented, basically because they 
+are considered as the main features and components of Data4Help. 
+This is true for all the mentioned goals expects for what concerns G9, that is the blocking of third party
+customers, that can be considered as an additional functions, but can always be useful for engaging future users.
+The excluded ones are the following
+\begin{itemize}
+\item G7, that is the management of elapsing requests 
+\item G14, that is the subscription to non existing data
+\end{itemize}
+The motivation that stands behind this choice is basically a constraint on development time and the
+fact that these were considered more as a nice feature to have, and not something really critically. 
+Indeed, it is still possible to have a good prototype of the service, even without these features.
+It should be noted, however, that they do not require big efforts and can be easily integrated into the
+project in a second time: in particular, G7 can be considered as a periodical task to be scheduled that
+checks and manages the time stamp of the pending requests. 
+For what concerns G14, instead, the discussion is a bit more complex, but it basically consists in introducing a new status for the
+requests and a task that operates with the requests that are in such status and that performs some checks w.r.t. to the provided dates 
+(that are the starting date and the ending date of a request: this will be clear inspecting the source code of the entities that regard the
+requests). \\
+A final note on the requirements of Data4Help is the following and it regards the type of aggregated data that third parties can request.  
+All the filters mentioned in the design document have been developed, from a server-side point of view. 
+For clarifying this statement, that may sound obscure, consider that every available filter, except the one that regards GPS position data, is
+only related to some plain input that a third party customer inserts in the application and that is sent to the system.
+However, for filtering on GPS position a third party should define the interested region by specifying the coordinates that specify the bounds
+of the interested region. 
+Since, of course, this is totally no user friendly, the application could provide a list of possible cities and region and automatically
+translates it. Of course, this feature could also be deployed directly on the server. \\
+Nevertheless, up to now, what is present is the possibility of inserting group requests specifying the GPS filters, but this has not been 
+implemented in the mobile application for the discussed reason, and, because, at this stage, it is considered sufficient to have all the 
+other filters. 
 
-\newpage
+\subsection{AutomatedSOS}
+The goals, and the related requirements, that involves AutomatedSOS are G3 and G4. 
+However, in this case, not many of the requirements have been implemented, also due to some external limitations: indeed, considering
+the Android system and hardware, it is not possible to just intercept the phone call and access the microphone (for automating the phone call)
+and the speakers (to retrieve the response). 
+Therefore, in order to fully develop the requirements it would be necessary to use VoIP api, that requires some sort of payments.
+However, some requirements such as R12, R13, R15 and R17 have been implemented anyway, with the difference that the VoIP calls are mocked
+with normal phone calls and no automation is present for interacting with the emergency room operator. 
+This has been considered enough for a viable product also because it has been chosen to give more importance to the core business of the 
+company, that is considered to be Data4Help. 
+Another few words should be spent on R17, that is "during phone calls, the GPS is set on high precision": this is automatically performed
+by the Android system when calling emergency services \cite{androidELS}. \\
+Finally, for what concerns the part regarding the 5 seconds the following shrewdness have been adopted: the maxitum timeout for retrieving 
+the position takes in the worst case 1 second. 
+After that, the more critical part is parsing a JSON that contains the emergency numbers of the various countries, but this weights only
+120kB. 
+It is thought that this should be fast enough to satisfies the requirements of the five seconds. 
+However, the process speed of code is a problem always related with the performance of the user device and the consumed resources of other 
+applications, therefore being 100\% sure that the task is accomplished within that time is impossible. Nevertheless, some tests are perfomed
+and the avarage speeds satisfies this requirement.
 
-\input{archDesign}
+\subsection{Non functional requirements}
+For what concerns the non function requirements, as mentioned in the Design document, a microservices architecture has been developed. 
+In particular, the main implemented features of the architecture are the following: 
+\begin{itemize}
+\item Communication between microservices, since this is crucial in order to have a viable product. Indeed, without this, almost no
+requirement could be fully accomplished
+\item API Gateway that performs also authentication and authorization: this is also a core feature, since it is the entry point for accessing
+all the Rest API that the various microservices provide
+\item Service registry, because otherwise, one should have set up all the network communication in a more static way, and also the management
+of forwarding requests from the gateway would have been more complex 
+\end{itemize}
+The load balancer has not been implemented because, among the functions mentioned above is the last one that should be considered, since
+it is very complex to have one if you an API gateway and a service registry is not present. \\
 
-\newpage
+\par Some basic security feature have been developed also: indeed, all the passwords are stored in the database with bcrypt and the only type
+of communication allowed between clients and the API gateway, is HTTPS. In order to do this, a custom SSL certificate has been
+generated using the java keytool \cite{httpstool}.
+\\
+The authentication have been implemented by means of an UUID random token and the APIs has been secured in such a way that a certain client
+can access only the method that he should access: for example, a user can't access methods that regards a third party customer, but, also
+a user can't access API that regards another user (i.e. a user can access only his pending request, and not the pending requests of any
+user) \\
+As one can claim, using UUID random tokens is for sure not the best way of achieving authentication, however, the code has been designed
+in such a way that is easily possible to upgrade this to the usage of JWT just implementing a single interface. This choice
+has been done in order to simplify a bit the security issue and to focus more on the business core of the project. 
 
-\input{uiDesign}
-
-\newpage
-
-\input{requirementsTraceability}
-
-\newpage
-
-\input{plan}
-
-\newpage
-
-\input{effort}
-
-\newpage
-
-\end{document}
+\subsection{Other comments}
+The database regarding the collected health and position data, has not been deployed on the cloud at this
+early stage, because the integration was not considered necessary. Indeed, a viable prototype can be 
+exists even without this. Indeed, it is more something that regards the deploy, rather than the 
+implementation itself. \\
+The same reasoning has been applied also for the deployment of JARs in docker containers.

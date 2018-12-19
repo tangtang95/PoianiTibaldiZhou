@@ -9,7 +9,6 @@ import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthe
 import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.util.ApiUtils;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.zuul.filters.support.FilterConstants;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;

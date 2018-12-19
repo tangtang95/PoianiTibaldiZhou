@@ -1,4 +1,5 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
+
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
@@ -29,7 +30,6 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**

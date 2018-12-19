@@ -8,8 +8,6 @@ import com.poianitibaldizhou.trackme.apigateway.message.protocol.ThirdPartyProto
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
-import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
-import org.hibernate.ObjectNotFoundException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

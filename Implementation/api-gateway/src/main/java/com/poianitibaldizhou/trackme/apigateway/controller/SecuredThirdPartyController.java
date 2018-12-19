@@ -4,19 +4,20 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
-import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.util.*;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
+import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
+import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.constraints.NotNull;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Optional;
 
 /**
