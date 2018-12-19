@@ -3,6 +3,10 @@ package com.poianitibaldizhou.trackme.apigateway;
 import com.poianitibaldizhou.trackme.apigateway.filter.post.HrefFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
+import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationFilter;
+import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.util.ApiUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
@@ -20,8 +24,12 @@ public class ApiGatewayApplication {
 	}
 
 	@Bean
-	public AccessControlFilter accessControlFilter() {
-		return new AccessControlFilter();
+	public AccessControlFilter accessControlFilter(UserAuthenticationService userAuthenticationService,
+												   ThirdPartyAuthenticationService thirdPartyAuthenticationService,
+												   TokenAuthenticationFilter tokenAuthenticationFilter,
+												   ApiUtils apiUtils
+	) {
+		return new AccessControlFilter(userAuthenticationService, thirdPartyAuthenticationService, apiUtils, tokenAuthenticationFilter);
 	}
 
 	@Bean

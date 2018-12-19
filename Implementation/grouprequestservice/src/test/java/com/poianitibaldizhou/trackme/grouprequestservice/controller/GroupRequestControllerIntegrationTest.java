@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.grouprequestservice.entity.FilterStatement;
 import com.poianitibaldizhou.trackme.grouprequestservice.entity.GroupRequest;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.BadOperatorRequestTypeException;
 import com.poianitibaldizhou.trackme.grouprequestservice.exception.GroupRequestNotFoundException;
+import com.poianitibaldizhou.trackme.grouprequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.*;
@@ -147,7 +148,46 @@ public class GroupRequestControllerIntegrationTest {
         assertEquals(new GroupRequestNotFoundException(1000L).getMessage(), exceptionResponseBody.getMessage());
 	}
 
+
+	/**
+	 * Test the get of a group request when the header specifies an impossible access
+	 */
+	@Test
+	public void testGetRequestWhenWrongHeader() throws IOException {
+		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
+		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(
+				Constants.GROUP_REQUEST_API + "/id/1"),
+				HttpMethod.GET, entity, String.class);
+		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+
+		ObjectMapper mapper = new ObjectMapper();
+		ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+		assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+		assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+	}
+
 	// TEST GET REQUEST BY THIRD PARTY ID
+
+	/**
+	 * Test the get of group requests performed by a customer when the header specifies an impossible access
+	 */
+	@Test
+	public void testGetRequestByTpWhenWrongHeader() throws IOException {
+		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
+		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(
+				Constants.GROUP_REQUEST_API + "/thirdparties/1"),
+				HttpMethod.GET, entity, String.class);
+		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+
+		ObjectMapper mapper = new ObjectMapper();
+		ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+		assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+		assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+	}
 
 	/**
 	 * Test the get of requests of a specific third party customer
@@ -219,6 +259,33 @@ public class GroupRequestControllerIntegrationTest {
 	}
 
 	// TEST ADD NEW REQUEST
+
+	/**
+	 * Test the get of a group request when the header specifies an impossible access
+	 */
+	@Test
+	public void testAddRequestWhenWrongHeader() throws IOException {
+        GroupRequest groupRequest = new GroupRequest();
+        groupRequest.setRequestType(RequestType.ALL);
+        groupRequest.setAggregatorOperator(AggregatorOperator.DISTINCT_COUNT);
+
+        GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper();
+        groupRequestWrapper.setGroupRequest(groupRequest);
+        groupRequestWrapper.setFilterStatementList(new ArrayList<>());
+
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
+		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
+		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(
+				Constants.GROUP_REQUEST_API + "/thirdparties/1"),
+				HttpMethod.POST, entity, String.class);
+		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+
+		ObjectMapper mapper = new ObjectMapper();
+		ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+		assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+		assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+		assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+	}
 
 	/**
 	 * Test the add of a new group request with two filter statements
@@ -414,6 +481,24 @@ public class GroupRequestControllerIntegrationTest {
         assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
         assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
         assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
+    }
+
+    @Test
+    public void testAddRequest() throws IOException {
+	    httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+        HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(new GroupRequestWrapper(), httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/2"),
+                HttpMethod.POST, entity, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.BAD_REQUEST.toString(), exceptionResponseBody.getError());
+        assertEquals(Constants.INVALID_OPERATION, exceptionResponseBody.getMessage());
+
     }
 
 	// UTILITY METHOD

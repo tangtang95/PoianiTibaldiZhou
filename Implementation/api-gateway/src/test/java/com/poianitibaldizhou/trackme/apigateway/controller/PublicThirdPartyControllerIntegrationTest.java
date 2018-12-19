@@ -254,6 +254,36 @@ public class PublicThirdPartyControllerIntegrationTest {
     }
 
     /**
+     * Test when the mail of the third party is not specified
+     */
+    @Test
+    public void testEmailNonSpecified() {
+        ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
+        thirdPartyCustomer.setPassword("newPassword");
+
+        PrivateThirdPartyDetail privateThirdPartyDetail = new PrivateThirdPartyDetail();
+        privateThirdPartyDetail.setThirdPartyCustomer(new ThirdPartyCustomer());
+        privateThirdPartyDetail.setSsn("newSsn");
+        privateThirdPartyDetail.setBirthCity("Verona");
+        privateThirdPartyDetail.setBirthDate(new Date(0));
+
+        ThirdPartyPrivateWrapper thirdPartyPrivateWrapper  = new ThirdPartyPrivateWrapper();
+        thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
+        thirdPartyPrivateWrapper.setThirdPartyCustomer(thirdPartyCustomer);
+
+        HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
+
+        try {
+            restTemplate.exchange(
+                    createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(RestClientException e) {
+            assertEquals("400 ", e.getMessage());
+        }
+    }
+
+    /**
      * Utility method to form the url with the injected port for a certain uri
      * @param uri uri that will access a certain resource of the application
      * @return url for accesing the resource identified by the uri

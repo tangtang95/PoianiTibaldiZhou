@@ -10,7 +10,6 @@ import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticat
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.ApiUtils;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import org.apache.tomcat.util.bcel.Const;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.sql.Date;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

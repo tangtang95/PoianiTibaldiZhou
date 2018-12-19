@@ -23,18 +23,29 @@ import java.security.AccessControlException;
  * and viceversa.
  */
 public class AccessControlFilter extends ZuulFilter {
+    private final UserAuthenticationService userAuthenticationService;
 
-    @Autowired
-    private UserAuthenticationService userAuthenticationService;
+    private final ThirdPartyAuthenticationService thirdPartyAuthenticationService;
 
-    @Autowired
-    private ThirdPartyAuthenticationService thirdPartyAuthenticationService;
+    private final ApiUtils apiUtils;
 
-    @Autowired
-    private ApiUtils apiUtils;
+    private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
-    @Autowired
-    private TokenAuthenticationFilter tokenAuthenticationFilter;
+    /**
+     * Creates a new access control filter
+     *
+     * @param userAuthenticationService user authentication service, useful to access information by token
+     * @param thirdPartyAuthenticationService third party authentication service, useful to access information by token
+     * @param apiUtils api utiles for accessing info about avaiable apis
+     * @param tokenAuthenticationFilter token authentication filter for accessing information regarding the token
+     */
+    public AccessControlFilter(UserAuthenticationService userAuthenticationService, ThirdPartyAuthenticationService thirdPartyAuthenticationService,
+                               ApiUtils apiUtils, TokenAuthenticationFilter tokenAuthenticationFilter) {
+        this.userAuthenticationService = userAuthenticationService;
+        this.thirdPartyAuthenticationService = thirdPartyAuthenticationService;
+        this.apiUtils = apiUtils;
+        this.tokenAuthenticationFilter = tokenAuthenticationFilter;
+    }
 
     @Override
     public String filterType() {

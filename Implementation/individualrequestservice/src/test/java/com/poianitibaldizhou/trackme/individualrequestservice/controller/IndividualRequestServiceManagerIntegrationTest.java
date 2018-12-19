@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestS
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
@@ -72,6 +73,93 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
     // TEST GET SINGLE REQUEST METHOD
 
+    /**
+     * Test the get of a single request when the header is wrong, in particular the one regarding the user
+     */
+    @Test
+    public void testGetSingleRequestWhenWrongUserHeader() throws IOException {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of a single request when the third party header is wrong
+     *
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetSingleRequestWhenWrongTpHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of a single request when  both the headers are wrong
+     *
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetSingleRequestWhenHeaders() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of single request when both the headers are empty
+     */
+    @Test
+    public void testGetSingleRequestWhenHeadersEmpty() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the get of a single request with id 1 (this is present, since it is loaded with sql script with the loading
@@ -133,6 +221,27 @@ public class IndividualRequestServiceManagerIntegrationTest {
     }
 
     // TEST GET BY THIRD PARTY ID METHOD
+
+    /**
+     * Test the get of a the requests related with a customer when the header singals an impossible access
+     *
+     * @throws Exception due to json mappping
+     */
+    @Test
+    public void testGetRequestsByTpIdWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/thirdparties/2"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the get of all the requests performed by a third party customer when that requests are empty
@@ -223,6 +332,26 @@ public class IndividualRequestServiceManagerIntegrationTest {
     }
 
     // TEST GET PENDING REQUEST OF A CERTAIN USER
+
+    /**
+     * Test the get of the pending requests of a user when the header signals a wrong access
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetPendingRequestWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/users/user2"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the get of all the pending request of a certain user that is registered

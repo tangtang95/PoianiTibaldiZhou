@@ -9,6 +9,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.entity.PositionData;
 import com.poianitibaldizhou.trackme.sharedataservice.entity.User;
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.SendDataService;
+import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.junit.After;
 import org.junit.Before;
@@ -79,8 +80,8 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post("/datacollection/healthdata/" + USER_1).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_1))
+        mvc.perform(post(Constants.SEND_DATA_API + "/healthdata/" + USER_1).
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.heartBeat", is(output.getHeartBeat())))
@@ -104,8 +105,8 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post("/datacollection/healthdata/" + USER_NOT_FOUND).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_NOT_FOUND))
+        mvc.perform(post(Constants.SEND_DATA_API + "/healthdata/" + USER_NOT_FOUND).
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
 
@@ -123,8 +124,8 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post("/datacollection/positiondata/" + USER_1).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_1))
+        mvc.perform(post(Constants.SEND_DATA_API + "/positiondata/" + USER_1).
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.latitude", is(output.getLatitude())))
@@ -146,8 +147,8 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post("/datacollection/positiondata/" + USER_NOT_FOUND).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_NOT_FOUND))
+        mvc.perform(post(Constants.SEND_DATA_API + "/positiondata/" + USER_NOT_FOUND).
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
 
@@ -180,8 +181,8 @@ public class SendDataControllerUnitTest {
 
         given(service.sendClusterOfData(USER_1, input)).willReturn(output);
 
-        mvc.perform(post("/datacollection/clusterdata/" + USER_1)
-                .contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_1))
+        mvc.perform(post(Constants.SEND_DATA_API + "/clusterdata/" + USER_1)
+                .contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/clusterdata/"+USER_1)))
                 .andExpect(jsonPath("$.positionDataList", hasSize(1)))
@@ -226,8 +227,8 @@ public class SendDataControllerUnitTest {
 
         given(service.sendClusterOfData(USER_NOT_FOUND, input)).willThrow(new UserNotFoundException(USER_NOT_FOUND));
 
-        mvc.perform(post("/datacollection/clusterdata/" + USER_NOT_FOUND).
-                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header("userSsn", USER_NOT_FOUND))
+        mvc.perform(post(Constants.SEND_DATA_API + "/clusterdata/" + USER_NOT_FOUND).
+                contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
 
     }

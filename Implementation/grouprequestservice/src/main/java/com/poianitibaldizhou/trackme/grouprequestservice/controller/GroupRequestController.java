@@ -94,7 +94,6 @@ public class GroupRequestController {
      */
     @PostMapping(Constants.NEW_GROUP_REQUEST_API)
     public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable Long thirdPartyId, @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
-        // TODO maybe add check that position and health timestamp are actually timestamp
         if(Long.parseLong(requestingThirdParty) != thirdPartyId)
             throw new ImpossibleAccessException();
 

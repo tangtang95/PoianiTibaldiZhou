@@ -21,6 +21,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.security.KeyManagementException;
@@ -28,6 +29,8 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test for the secured controller that manages the third party accounts
@@ -145,6 +148,90 @@ public class SecuredThirdPartyControllerIntegrationTest {
         JSONAssert.assertEquals(expectedBody, response.getBody(), false);
     }
 
+    /**
+     * Test the logout of a third party customer
+     */
+    @Test
+    public void testLogout() {
+        String token = login("tp3@provider.com", "tp3pass");
+
+        httpHeaders.setBearerAuth(token);
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.LOGOUT_USER_API),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals("true", response.getBody());
+    }
+
+    /**
+     * Test the logout when the user is not logged
+     */
+    @Test
+    public void testLogoutWhenNotLogged() {
+        try {
+            httpHeaders.setBearerAuth("fakeToken");
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.LOGOUT_TP_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the get of information when the user is not logged
+     */
+    @Test
+    public void testGetWhenNotLogged() {
+        try {
+            httpHeaders.setBearerAuth("fakeToken");
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.GET_TP_INFO_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the access to the user controller method /info
+     */
+    @Test
+    public void testGetOfUserInfo() {
+        String token = login("tp3@provider.com", "tp3pass");
+        httpHeaders.setBearerAuth(token);
+
+        try {
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.GET_USER_INFO_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("400 ", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUserLogoutWhenLoggedAsTp() {
+        String token = login("tp3@provider.com", "tp3pass");
+        httpHeaders.setBearerAuth(token);
+
+        try {
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_TP_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("400 ", e.getMessage());
+        }
+    }
+
+
     // UTILS METHOD
 
     /**
@@ -155,7 +242,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
     private String login(String email, String password) {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
-                Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API+"?email="+email+"&password="+password),
+                Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API + "?email=" + email + "&password=" + password),
                 HttpMethod.POST, entity, String.class);
         return response.getBody();
     }

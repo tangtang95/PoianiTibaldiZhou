@@ -9,6 +9,7 @@ import com.poianitibaldizhou.trackme.sharedataservice.exception.IndividualReques
 import com.poianitibaldizhou.trackme.sharedataservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.sharedataservice.service.AccessDataService;
 import com.poianitibaldizhou.trackme.sharedataservice.util.AggregatedData;
+import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
 import com.poianitibaldizhou.trackme.sharedataservice.util.DataWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,8 +70,8 @@ public class AccessDataControllerUnitTest {
 
         given(service.getIndividualRequestData(THIRD_PARTY_ID, INDIVIDUAL_REQUEST_ID)).willReturn(dataWrapper);
 
-        mvc.perform(get("/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)
-                .accept(MediaTypes.HAL_JSON_VALUE).header("thirdPartyId", THIRD_PARTY_ID.toString()))
+        mvc.perform(get("/dataretrieval/individualrequests/" + INDIVIDUAL_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID)
+                .accept(MediaTypes.HAL_JSON_VALUE).header(Constants.HEADER_THIRD_PARTY_ID, THIRD_PARTY_ID.toString()))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.positionDataList", hasSize(2)))
@@ -89,7 +90,7 @@ public class AccessDataControllerUnitTest {
                 .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
                         containsInAnyOrder(1, 1)))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)));
+                        is("http://localhost/dataretrieval/individualrequests/" + INDIVIDUAL_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID)));
     }
 
     /**
@@ -101,8 +102,8 @@ public class AccessDataControllerUnitTest {
         given(service.getIndividualRequestData(THIRD_PARTY_ID, INDIVIDUAL_REQUEST_ID))
                 .willThrow(new IndividualRequestNotFoundException(INDIVIDUAL_REQUEST_ID));
 
-        mvc.perform(get("/dataretrieval/individualrequests/" + THIRD_PARTY_ID + "/" + INDIVIDUAL_REQUEST_ID)
-                .header("thirdPartyId", THIRD_PARTY_ID.toString()))
+        mvc.perform(get("/dataretrieval/individualrequests/" + INDIVIDUAL_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID)
+                .header(Constants.HEADER_THIRD_PARTY_ID, THIRD_PARTY_ID.toString()))
                 .andExpect(status().isNotFound());
     }
 
@@ -117,13 +118,13 @@ public class AccessDataControllerUnitTest {
 
         given(service.getGroupRequestData(THIRD_PARTY_ID, GROUP_REQUEST_ID)).willReturn(output);
 
-        mvc.perform(get("/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID).
+        mvc.perform(get("/dataretrieval/grouprequests/" + GROUP_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID).
                 header("thirdPartyId", THIRD_PARTY_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.value", is(2.0)))
                 .andExpect(jsonPath("$.generatedTimestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)));
+                        is("http://localhost/dataretrieval/grouprequests/" + GROUP_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID)));
     }
 
     /**
@@ -135,8 +136,8 @@ public class AccessDataControllerUnitTest {
         given(service.getGroupRequestData(THIRD_PARTY_ID, GROUP_REQUEST_ID))
                 .willThrow(new GroupRequestNotFoundException(GROUP_REQUEST_ID));
 
-        mvc.perform(get("/dataretrieval/grouprequests/" + THIRD_PARTY_ID + "/" + GROUP_REQUEST_ID)
-                .header("thirdPartyId", THIRD_PARTY_ID.toString()))
+        mvc.perform(get("/dataretrieval/grouprequests/" + GROUP_REQUEST_ID + "/thirdparties/" + THIRD_PARTY_ID)
+                .header(Constants.HEADER_THIRD_PARTY_ID, THIRD_PARTY_ID.toString()))
                 .andExpect(status().isNotFound());
     }
 
@@ -161,7 +162,7 @@ public class AccessDataControllerUnitTest {
         given(service.getOwnData(USER_ID, Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02"))).willReturn(dataWrapper);
 
         mvc.perform(get("/dataretrieval/users/" + USER_ID +"?from=1970-01-01&to=1970-01-02")
-                .header("userSsn", USER_ID))
+                .header(Constants.HEADER_USER_SSN, USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.positionDataList", hasSize(2)))
                 .andExpect(jsonPath("$.positionDataList[*].timestamp", containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.000+0000")))
@@ -192,7 +193,7 @@ public class AccessDataControllerUnitTest {
         given(service.getOwnData("user2", Date.valueOf("1970-01-01"), Date.valueOf("1970-01-02")))
                 .willThrow(new UserNotFoundException("user2"));
 
-        mvc.perform(get("/dataretrieval/users/user2?from=1970-01-01&to=1970-01-02").header("userSsn", "user2"))
+        mvc.perform(get("/dataretrieval/users/user2?from=1970-01-01&to=1970-01-02").header(Constants.HEADER_USER_SSN, "user2"))
                 .andExpect(status().isNotFound());
 
     }

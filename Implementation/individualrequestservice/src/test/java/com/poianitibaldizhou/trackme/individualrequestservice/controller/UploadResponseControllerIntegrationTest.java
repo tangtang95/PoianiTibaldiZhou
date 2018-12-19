@@ -74,6 +74,33 @@ public class UploadResponseControllerIntegrationTest {
     // TEST ADD RESPONSE METHOD
 
     /**
+     * Test the add of a response when the header throws an impossble access
+     *
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testAddResponseWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
+        String responseType = ResponseType.ACCEPT.toString();
+
+        HttpEntity<String> entity = new HttpEntity<>(responseType, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constants.RESPONSE_API+ "/users/user1/requests/1"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+
+    }
+
+    /**
      * Test the add of an acceptance response to an individual request
      * @throws Exception unsuccessful insertion of the new response
      */
@@ -191,6 +218,30 @@ public class UploadResponseControllerIntegrationTest {
     }
 
     // TEST BLOCK THIRD PARTY METHOD
+
+    /**
+     * Test the add of a new block when the header signals an impossible access
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testAddBlockWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN,"user1");
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                createURLWithPort(Constants.RESPONSE_API+"/blockedThirdParty/users/user2/thirdparties/100"),
+                HttpMethod.POST, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+
+        ObjectMapper mapper = new ObjectMapper();
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+
+    }
 
     /**
      * Test the add of a block by a certain user for a certain third party customer, when the user is not

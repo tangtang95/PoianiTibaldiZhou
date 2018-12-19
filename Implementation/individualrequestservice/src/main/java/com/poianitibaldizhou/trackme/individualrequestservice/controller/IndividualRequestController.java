@@ -60,6 +60,9 @@ public class IndividualRequestController {
                                                                     @PathVariable Long id) {
         IndividualRequestWrapper request = IndividualRequestWrapper.convertIntoWrapper(requestManagerService.getRequestById(id));
 
+        if(requestingUser.isEmpty() && requestingThirdParty.isEmpty())
+            throw new ImpossibleAccessException();
+
         if(!requestingThirdParty.isEmpty() && request.getThirdPartyId() != Long.parseLong(requestingThirdParty)) {
                 throw new ImpossibleAccessException();
         }

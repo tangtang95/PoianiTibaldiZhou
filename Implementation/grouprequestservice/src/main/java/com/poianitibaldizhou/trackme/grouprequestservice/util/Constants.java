@@ -4,6 +4,9 @@ public class Constants {
 
     private Constants(){}
 
+    // log messages
+    public static final String LOG_ERROR = "FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles";
+
     // Exception messages
     public static final String REQUEST_ID_NOT_FOUND = "Group request not found";
     public static final String BAD_OPERATOR_REQUEST_TYPE = "Can't match the aggregator operator with that request type";

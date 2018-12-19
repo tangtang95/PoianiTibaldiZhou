@@ -23,6 +23,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.net.ssl.SSLContext;
@@ -33,6 +34,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test for the secured controller that manages the user accounts
@@ -97,6 +100,56 @@ public class SecuredUserControllerIntegrationTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         JSONAssert.assertEquals(expectedBody, response.getBody(), false);
 
+    }
+
+
+    /**
+     * Test the user logout
+     */
+    @Test
+    public void testUserLogout() {
+        String token = login();
+
+        httpHeaders.setBearerAuth(token);
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_USER_API),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("true", response.getBody());
+    }
+
+    /**
+     * Test the logout when the user is not logged
+     */
+    @Test
+    public void testLogoutWhenNotLogged() {
+        try {
+            httpHeaders.setBearerAuth("fakeToken");
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_USER_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the get of information when the user is not logged
+     */
+    @Test
+    public void testGetWhenNotLogged() {
+        try {
+            httpHeaders.setBearerAuth("fakeToken");
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.GET_USER_INFO_API),
+                    HttpMethod.GET, entity, String.class);
+            fail("Exception expected");
+        } catch(HttpClientErrorException e) {
+            assertEquals("401 ", e.getMessage());
+        }
     }
 
 
