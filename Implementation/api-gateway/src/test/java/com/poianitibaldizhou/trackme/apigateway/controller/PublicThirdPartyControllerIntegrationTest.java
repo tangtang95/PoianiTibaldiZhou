@@ -34,9 +34,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * Integration test for the public part of the controller that manages the third party accounts
@@ -229,6 +227,36 @@ public class PublicThirdPartyControllerIntegrationTest {
     public void testNotAllParameterSpecified() {
         ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
         thirdPartyCustomer.setEmail("tp121@provider.com");
+        thirdPartyCustomer.setPassword("newPassword");
+
+        PrivateThirdPartyDetail privateThirdPartyDetail = new PrivateThirdPartyDetail();
+        privateThirdPartyDetail.setThirdPartyCustomer(new ThirdPartyCustomer());
+        privateThirdPartyDetail.setSsn("newSsn");
+        privateThirdPartyDetail.setBirthCity("Verona");
+        privateThirdPartyDetail.setBirthDate(new Date(0));
+
+        ThirdPartyPrivateWrapper thirdPartyPrivateWrapper  = new ThirdPartyPrivateWrapper();
+        thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
+        thirdPartyPrivateWrapper.setThirdPartyCustomer(thirdPartyCustomer);
+
+        HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
+
+        try {
+            restTemplate.exchange(
+                    createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(RestClientException e) {
+            assertEquals("400 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test when the mail of the third party is not specified
+     */
+    @Test
+    public void testEmailNonSpecified() {
+        ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
         thirdPartyCustomer.setPassword("newPassword");
 
         PrivateThirdPartyDetail privateThirdPartyDetail = new PrivateThirdPartyDetail();

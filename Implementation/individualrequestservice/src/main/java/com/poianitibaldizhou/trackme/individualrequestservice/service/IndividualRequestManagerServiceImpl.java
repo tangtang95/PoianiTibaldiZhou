@@ -2,21 +2,25 @@ package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdPartyKey;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.ThirdPartyNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.validation.constraints.Null;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the individual request manager service.
@@ -26,6 +30,7 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
 
     private final IndividualRequestRepository individualRequestRepository;
     private final BlockedThirdPartyRepository blockedThirdPartyRepository;
+    private final ThirdPartyRepository thirdPartyRepository;
     private final UserRepository userRepository;
 
     /**
@@ -40,16 +45,18 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
      */
     public IndividualRequestManagerServiceImpl(IndividualRequestRepository individualRequestRepository,
                                                BlockedThirdPartyRepository blockedThirdPartyRepository,
-                                               UserRepository userRepository) {
+                                               UserRepository userRepository,
+                                               ThirdPartyRepository thirdPartyRepository) {
         this.individualRequestRepository = individualRequestRepository;
         this.blockedThirdPartyRepository = blockedThirdPartyRepository;
         this.userRepository = userRepository;
+        this.thirdPartyRepository = thirdPartyRepository;
     }
 
     @Transactional
     @Override
     public List<IndividualRequest> getThirdPartyRequests(Long thirdPartyID) {
-        return individualRequestRepository.findAllByThirdPartyID(thirdPartyID);
+        return individualRequestRepository.findAllByThirdParty_Id(thirdPartyID);
     }
 
     @Transactional
@@ -73,15 +80,18 @@ public class IndividualRequestManagerServiceImpl implements IndividualRequestMan
         if(newRequest.getStartDate().after(newRequest.getEndDate())) {
             throw new IncompatibleDateException();
         }
+        ThirdParty thirdParty = thirdPartyRepository.findById(newRequest.getThirdParty().getId())
+                .orElseThrow(() -> new ThirdPartyNotFoundException(newRequest.getThirdParty().getId()));
 
         // Check if the request is blocked
-        BlockedThirdPartyKey key = new BlockedThirdPartyKey(newRequest.getThirdPartyID(), newRequest.getUser());
+        BlockedThirdPartyKey key = new BlockedThirdPartyKey(thirdParty, newRequest.getUser());
         if(blockedThirdPartyRepository.findById(key).isPresent()) {
             newRequest.setStatus(IndividualRequestStatus.REFUSED);
         } else {
             newRequest.setStatus(IndividualRequestStatus.PENDING);
         }
 
+        newRequest.setThirdParty(thirdParty);
         newRequest.setTimestamp(Timestamp.from(Instant.now()));
 
         // Save the request

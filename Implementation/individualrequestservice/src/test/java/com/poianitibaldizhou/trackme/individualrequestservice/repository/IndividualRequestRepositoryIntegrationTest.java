@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -27,6 +28,7 @@ import static org.junit.Assert.assertEquals;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @RunWith(SpringRunner.class)
 @DataJpaTest
+@ActiveProfiles("test")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 @Sql("classpath:RepositoryTest.sql")
@@ -59,11 +61,11 @@ public class IndividualRequestRepositoryIntegrationTest {
 
 
         // when: the third party is present and is related with two of them
-        List<IndividualRequest> requestList = requestRepository.findAllByThirdPartyID((long) 1);
+        List<IndividualRequest> requestList = requestRepository.findAllByThirdParty_Id((long) 1);
 
         // then: expect that the requests are related with the third party specified
         for(int i = 0; i < requestList.size(); i++) {
-            assertEquals((long)1, (long)requestList.get(i).getThirdPartyID());
+            assertEquals((long)1, (long)requestList.get(i).getThirdParty().getId());
         }
     }
 

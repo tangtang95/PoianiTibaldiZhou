@@ -3,7 +3,9 @@ package com.poianitibaldizhou.trackme.individualrequestservice.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.individualrequestservice.IndividualRequestServiceApplication;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.entity.ThirdParty;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
+import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.IncompatibleDateException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
@@ -23,6 +25,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -43,6 +46,7 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = IndividualRequestServiceApplication.class,
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
 @Transactional
 @Sql("classpath:ControllerIntegrationTest.sql")
 public class IndividualRequestServiceManagerIntegrationTest {
@@ -69,6 +73,93 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
     // TEST GET SINGLE REQUEST METHOD
 
+    /**
+     * Test the get of a single request when the header is wrong, in particular the one regarding the user
+     */
+    @Test
+    public void testGetSingleRequestWhenWrongUserHeader() throws IOException {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of a single request when the third party header is wrong
+     *
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetSingleRequestWhenWrongTpHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of a single request when  both the headers are wrong
+     *
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetSingleRequestWhenHeaders() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
+     * Test the get of single request when both the headers are empty
+     */
+    @Test
+    public void testGetSingleRequestWhenHeadersEmpty() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "");
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "");
+
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/id/1"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the get of a single request with id 1 (this is present, since it is loaded with sql script with the loading
@@ -89,7 +180,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
                 "  \"startDate\" : \"2000-01-01\",\n" +
                 "  \"endDate\" : \"2000-01-01\",\n" +
-                "  \"thirdPartyID\" : 1,\n" +
+                "  \"thirdPartyName\" : \"thirdParty1\",\n" +
+                "  \"motivation\" : \"\",\n" +
                 "  \"_links\" : {\n" +
                 "    \"self\" : {\n" +
                 "      \"href\" : \"http://localhost:"+port+Constants.REQUEST_API+"/id/1\"\n" +
@@ -131,6 +223,27 @@ public class IndividualRequestServiceManagerIntegrationTest {
     // TEST GET BY THIRD PARTY ID METHOD
 
     /**
+     * Test the get of a the requests related with a customer when the header singals an impossible access
+     *
+     * @throws Exception due to json mappping
+     */
+    @Test
+    public void testGetRequestsByTpIdWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/thirdparties/2"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
+
+    /**
      * Test the get of all the requests performed by a third party customer when that requests are empty
      *
      * @throws JSONException due to json assertEquals method
@@ -168,56 +281,77 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
 
         String expectedBody = "{\n" +
-                "  \"_embedded\": {\n" +
-                "    \"individualRequests\": [\n" +
-                "      {\n" +
-                "        \"status\": \"PENDING\",\n" +
-                "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
-                "        \"startDate\": \"2000-01-01\",\n" +
-                "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"_links\": {\n" +
-                "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/4\"\n" +
-                "          },\n" +
-                "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
-                "          },\n" +
-                "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/requests/users/user1\"\n" +
-                "          }\n" +
-                "        }\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"status\": \"PENDING\",\n" +
-                "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
-                "        \"startDate\": \"2000-01-01\",\n" +
-                "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"thirdPartyID\": 2,\n" +
-                "        \"_links\": {\n" +
-                "          \"self\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/5\"\n" +
-                "          },\n" +
-                "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
-                "          },\n" +
-                "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/users/user2\"\n" +
-                "          }\n" +
+                "  \"_embedded\" : {\n" +
+                "    \"individualRequestWrappers\" : [ {\n" +
+                "      \"status\" : \"PENDING\",\n" +
+                "      \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
+                "      \"startDate\" : \"2000-01-01\",\n" +
+                "      \"endDate\" : \"2000-01-01\",\n" +
+                "      \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "      \"motivation\" : \"\",\n" +
+                "      \"_links\" : {\n" +
+                "        \"self\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/4\"\n" +
+                "        },\n" +
+                "        \"thirdPartyRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
+                "        },\n" +
+                "        \"userPendingRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user1\"\n" +
                 "        }\n" +
                 "      }\n" +
-                "    ]\n" +
+                "    }, {\n" +
+                "      \"status\" : \"PENDING\",\n" +
+                "      \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
+                "      \"startDate\" : \"2000-01-01\",\n" +
+                "      \"endDate\" : \"2000-01-01\",\n" +
+                "      \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "      \"motivation\" : \"\",\n" +
+                "      \"_links\" : {\n" +
+                "        \"self\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/5\"\n" +
+                "        },\n" +
+                "        \"thirdPartyRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
+                "        },\n" +
+                "        \"userPendingRequest\" : {\n" +
+                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user2\"\n" +
+                "        }\n" +
+                "      }\n" +
+                "    } ]\n" +
                 "  },\n" +
-                "  \"_links\": {\n" +
-                "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
+                "  \"_links\" : {\n" +
+                "    \"self\" : {\n" +
+                "      \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
+
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
         JSONAssert.assertEquals(expectedBody, responseEntity.getBody(), false);
     }
 
     // TEST GET PENDING REQUEST OF A CERTAIN USER
+
+    /**
+     * Test the get of the pending requests of a user when the header signals a wrong access
+     * @throws Exception due to json mapping
+     */
+    @Test
+    public void testGetPendingRequestWhenWrongHeader() throws Exception {
+        httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/users/user2"),
+                HttpMethod.GET, entity, String.class);
+
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
+        ObjectMapper mapper = new ObjectMapper();
+
+        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
+        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
+        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
+        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
+    }
 
     /**
      * Test the get of all the pending request of a certain user that is registered
@@ -234,13 +368,14 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
         String expectedBody = "{\n" +
                 "  \"_embedded\": {\n" +
-                "    \"individualRequests\": [\n" +
+                "    \"individualRequestWrappers\": [\n" +
                 "      {\n" +
                 "        \"status\": \"PENDING\",\n" +
                 "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +
                 "        \"startDate\": \"2000-01-01\",\n" +
                 "        \"endDate\": \"2000-01-01\",\n" +
-                "        \"thirdPartyID\": 2,\n" +
+                "        \"thirdPartyName\" : \"thirdParty2\",\n" +
+                "        \"motivation\" : \"\",\n" +
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
                 "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/5\"\n" +
@@ -294,8 +429,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWrongParameters() throws IOException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest();
-        individualRequest.setThirdPartyID(1L);
+        individualRequest.setThirdParty(thirdParty);
         individualRequest.setEndDate(new Date(0));
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
@@ -321,8 +459,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequest() throws Exception {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
-                new User("user1"), 1L);
+                new User("user1"), thirdParty);
 
         ObjectMapper objectMapper = new ObjectMapper();
         System.out.println(objectMapper.writeValueAsString(individualRequest));
@@ -361,8 +502,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWhenIncompatibleDates() throws IOException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(100), new Date(0),
-                new User("user1"), 1L);
+                new User("user1"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -385,8 +529,11 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestOnNonRegisteredUser() {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
         IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0),
-                new User("nonRegisteredUser"), 1L);
+                new User("nonRegisteredUser"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
@@ -404,7 +551,10 @@ public class IndividualRequestServiceManagerIntegrationTest {
     @Test
     public void testAddRequestWhenBlocked() throws Exception {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "4");
-        IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), 4L);
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(4L);
+        thirdParty.setIdentifierName("thirdParty");
+        IndividualRequest individualRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user5"), thirdParty);
         HttpEntity<IndividualRequest> entity = new HttpEntity<>(individualRequest, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(

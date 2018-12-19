@@ -13,6 +13,7 @@ public class IndividualRequestProtocolMessage {
 
     private Long id;
     private Long thirdPartyId;
+    private String thirdPartyName;
     private IndividualRequestStatusProtocolMessage status;
     private Timestamp creationTimestamp;
     private Date startDate;
@@ -26,7 +27,7 @@ public class IndividualRequestProtocolMessage {
      * @return true if all attribute are non-null, false otherwise
      */
     public static boolean validateMessage(IndividualRequestProtocolMessage protocolMessage){
-        return  Stream.of(protocolMessage.id, protocolMessage.thirdPartyId, protocolMessage.status,
+        return  Stream.of(protocolMessage.id, protocolMessage.thirdPartyId, protocolMessage.thirdPartyName, protocolMessage.status,
                 protocolMessage.creationTimestamp, protocolMessage.startDate, protocolMessage.endDate,
                 protocolMessage.userSsn, protocolMessage.motivationText).noneMatch(Objects::isNull);
     }

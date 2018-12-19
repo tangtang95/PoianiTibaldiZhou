@@ -23,7 +23,7 @@ public class ResponseResourceAssembler implements ResourceAssembler<Response, Re
                         response.getRequest().getUser().getSsn()))
                         .withRel("userPendingRequest"),
                 linkTo(methodOn(IndividualRequestController.class).getRequestById(
-                        response.getRequest().getThirdPartyID().toString(),
+                        response.getRequest().getThirdParty().toString(),
                         response.getRequest().getUser().getSsn(),
                         response.getRequest().getId()))
                         .withRel("request"));

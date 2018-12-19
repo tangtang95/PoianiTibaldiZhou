@@ -50,7 +50,10 @@ public class UserHomeActivity extends BaseDelegationActivity<
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
         username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
 
-        startService(new Intent(this, SOSAndroidService.class));
+        stopService(new Intent(this, SOSAndroidService.class));
+        Intent serviceIntent = new Intent(this, SOSAndroidService.class);
+        serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
+        startService(serviceIntent);
 
         super.onCreate(savedInstanceState);
 

@@ -74,7 +74,8 @@ public class IndividualRequestPublisherImplIntegrationTest {
         assertEquals(individualRequest.getId(), protocolMessage.getId());
         assertEquals(IndividualRequestStatusUtils.getIndividualRequestStatusOfProtocol(individualRequest.getStatus()),
                 protocolMessage.getStatus());
-        assertEquals(individualRequest.getThirdPartyID(), protocolMessage.getThirdPartyId());
+        assertEquals(individualRequest.getThirdParty().getId(), protocolMessage.getThirdPartyId());
+        assertEquals(individualRequest.getThirdParty().getIdentifierName(), protocolMessage.getThirdPartyName());
         assertEquals(individualRequest.getTimestamp(), protocolMessage.getCreationTimestamp());
         assertEquals(individualRequest.getStartDate(), protocolMessage.getStartDate());
         assertEquals(individualRequest.getEndDate(), protocolMessage.getEndDate());

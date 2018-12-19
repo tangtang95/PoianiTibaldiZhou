@@ -5,7 +5,6 @@ import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import org.apache.tomcat.util.bcel.Const;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.poianitibaldizhou.trackme.apigateway.security.service;
+package com.poianitibaldizhou.trackme.apigateway.service;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
 

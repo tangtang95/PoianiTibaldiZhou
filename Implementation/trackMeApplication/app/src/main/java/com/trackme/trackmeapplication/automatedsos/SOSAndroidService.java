@@ -29,20 +29,17 @@ import android.util.Log;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Tasks;
-import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.ReadContext;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.automatedsos.exception.EmergencyNumberNotFoundException;
 import com.trackme.trackmeapplication.automatedsos.exception.NoPermissionException;
 import com.trackme.trackmeapplication.home.UserLocationListener;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 
-import net.minidev.json.JSONArray;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -90,13 +87,14 @@ public class SOSAndroidService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if(!intent.hasExtra(getString(R.string.birth_date_key))){
+        if(!intent.hasExtra(getString(R.string.birth_year_key))){
             return super.onStartCommand(intent, flags, startId);
         }
 
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.YEAR_FIELD);
+        String pattern = "yyyy-MM-dd";
+        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.US);
         try {
-            mBirthDate = dateFormat.parse(intent.getStringExtra(getString(R.string.birth_date_key)));
+            mBirthDate = dateFormat.parse(intent.getStringExtra(getString(R.string.birth_year_key)));
         } catch (ParseException e) {
             Log.d(getString(R.string.debug_tag), "Could not parse date due to date format");
             return super.onStartCommand(intent, flags, startId);
@@ -139,9 +137,9 @@ public class SOSAndroidService extends Service {
     public String getEmergencyRoomNumber() throws EmergencyNumberNotFoundException, NoPermissionException,
             InterruptedException, ExecutionException, TimeoutException {
         // For the prototype
-        // return "+393384967148";
+        return "+393384967148";
 
-        // For the real life
+        /* For the real life
         String countryCode = getCountryCode(getUserLocation());
         ReadContext ctx = JsonPath.parse(getEmergencyRoomJson());
         String jsonPath = "$.data[?(@.Country.ISOCode == '" + countryCode + "')]..All";
@@ -150,7 +148,7 @@ public class SOSAndroidService extends Service {
             if (arr.get(0) != null)
                 return (String) arr.get(0);
         }
-        throw new EmergencyNumberNotFoundException();
+        throw new EmergencyNumberNotFoundException();*/
     }
 
     public Date getUserBirthDate() {

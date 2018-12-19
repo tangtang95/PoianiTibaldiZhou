@@ -1,9 +1,7 @@
-package com.poianitibaldizhou.trackme.apigateway.security.service;
+package com.poianitibaldizhou.trackme.apigateway.service;
 
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -52,7 +50,7 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
     @Override
     public Optional<String> userLogin(String username, String password) {
         // Generates the token
-        final String uuid = UUID.randomUUID().toString();
+        final String uuid = getUUIDToken();
 
         // Check credentials and if the user is already logged
         User user = userAccountManagerService.getUserByUserName(username);
@@ -77,6 +75,9 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
     @Override
     public void userLogout(final User user) {
         String token = mapTokenByUsername.get(user.getUsername());
+        if(token == null)
+            throw new IllegalStateException();
+
         mapTokenByUsername.remove(user.getUsername());
         mapUserByToken.remove(token);
     }
@@ -88,7 +89,7 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
     @Override
     public Optional<String> thirdPartyLogin(String email, String password) {
         // Generates the token
-        final String uuid = UUID.randomUUID().toString();
+        final String uuid = getUUIDToken();
 
         // Check credentials and if the third party customer is already logged
         ThirdPartyCustomer thirdPartyCustomer = thirdPartyAccountManagerService.getThirdPartyByEmail(email);
@@ -113,6 +114,9 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
     @Override
     public void thirdPartyLogout(ThirdPartyCustomer thirdPartyCustomer) {
         String token = mapTokenByEmail.get(thirdPartyCustomer.getEmail());
+        if(token == null)
+            throw new IllegalStateException();
+
         mapTokenByEmail.remove(thirdPartyCustomer.getEmail());
         mapThirdPartyByToken.remove(token);
     }
@@ -129,5 +133,20 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
         }
 
         throw new UsernameNotFoundException(Constants.LOGGED_USER_NOT_FOUND + token);
+    }
+
+    /**
+     * Assure that a new token is being generated and not one that is already present
+     *
+     * @return token that is not assigned to any client
+     */
+    private String getUUIDToken() {
+        String token;
+
+        do {
+            token = UUID.randomUUID().toString();
+        } while(mapUserByToken.containsKey(token) || mapThirdPartyByToken.containsKey(token));
+
+        return token;
     }
 }

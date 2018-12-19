@@ -10,15 +10,14 @@ import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.automatedsos.model.MessageType;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.ObjectInputStream;
 
 public class SocketHandler extends Thread {
 
     private static final String TAG = "SocketHandler";
-    private static final Integer NUMBER_OF_BYTES_FOR_INTEGER = 4;
 
     private final BluetoothSocket mBluetoothSocket;
-    private final InputStream mInputStream;
+    private final ObjectInputStream mObjectInputStream;
     private final Handler mHandler;
 
     /**
@@ -30,17 +29,17 @@ public class SocketHandler extends Thread {
      */
     public SocketHandler(BluetoothSocket socket, Handler handler) {
         mBluetoothSocket = socket;
-        InputStream tmpIn = null;
+        ObjectInputStream tmpIn = null;
 
         // Get the input and output streams; using temp objects because
         // member streams are final.
         try {
-            tmpIn = socket.getInputStream();
+            tmpIn = new ObjectInputStream(socket.getInputStream());
         } catch (IOException e) {
             Log.e(TAG, "Error occurred when creating input stream", e);
         }
 
-        mInputStream = tmpIn;
+        mObjectInputStream = tmpIn;
         mHandler = handler;
     }
 
@@ -51,27 +50,25 @@ public class SocketHandler extends Thread {
      */
     @Override
     public void run() {
-        byte[] mBuffer = new byte[1024];
-
         while (true) {
             try {
-                mInputStream.read(mBuffer, 0, NUMBER_OF_BYTES_FOR_INTEGER);
-                int sizeOfNextString = Integer.valueOf(new String(mBuffer));
-                mInputStream.read(mBuffer, 0, sizeOfNextString);
+                Log.d("SOS_DEBUG", "waiting for input");
+                String healthDataJson = (String) mObjectInputStream.readObject();
 
                 ObjectMapper objectMapper = new ObjectMapper();
-                HealthData healthData = objectMapper.readValue(mBuffer, HealthData.class);
+                HealthData healthData = objectMapper.readValue(healthDataJson, HealthData.class);
 
-                Message readMsg = mHandler.obtainMessage(
+                Message message = mHandler.obtainMessage(
                         MessageType.HEALTH_DATA, healthData);
-                readMsg.sendToTarget();
+                message.sendToTarget();
             } catch (IOException e) {
                 Log.d(TAG, "Input stream was disconnected", e);
                 break;
-            }finally {
-                this.cancel();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
         }
+        this.cancel();
     }
 
     /**
@@ -79,7 +76,7 @@ public class SocketHandler extends Thread {
      */
     public void cancel() {
         try {
-            mInputStream.close();
+            mObjectInputStream.close();
             mBluetoothSocket.close();
         } catch (IOException e) {
             Log.e(TAG, "Could not close the connect socket", e);

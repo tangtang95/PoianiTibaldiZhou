@@ -15,8 +15,9 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class BlockedThirdPartyKey implements Serializable {
 
-    @Column(name = "thirdPartyID", nullable = false)
-    private Long thirdPartyID;
+    @ManyToOne
+    @JoinColumn(name = "third_party", nullable = false)
+    private ThirdParty thirdParty;
 
     @ManyToOne
     @JoinColumn(name = "ssn", nullable = false)
@@ -24,13 +25,13 @@ public class BlockedThirdPartyKey implements Serializable {
 
     /**
      * Creates a key for the BlockedThirdParty entity.
-     * A key is formed by two fields: thirdPartyID and ssn.
+     * A key is formed by two fields: thirdParty and ssn.
      *
-     * @param thirdPartyID third party that will be blocked to access data regarding user specified by the ssn
-     * @param user user that blocked the third party identified by thirdPartyID
+     * @param thirdParty third party that will be blocked to access data regarding user specified by the ssn
+     * @param user user that blocked the third party identified by thirdParty
      */
-    public BlockedThirdPartyKey(Long thirdPartyID, User user) {
-        this.thirdPartyID = thirdPartyID;
+    public BlockedThirdPartyKey(ThirdParty thirdParty, User user) {
+        this.thirdParty = thirdParty;
         this.user = user;
     }
 
@@ -41,12 +42,12 @@ public class BlockedThirdPartyKey implements Serializable {
 
     }
 
-    public Long getThirdPartyID() {
-        return thirdPartyID;
+    public ThirdParty getThirdParty() {
+        return thirdParty;
     }
 
-    public void setThirdPartyID(Long thirdPartyID) {
-        this.thirdPartyID = thirdPartyID;
+    public void setThirdParty(ThirdParty thirdParty) {
+        this.thirdParty = thirdParty;
     }
 
     public User getUser() {

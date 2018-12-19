@@ -14,8 +14,7 @@ import static android.content.ContentValues.TAG;
 public class BluetoothServer extends Thread {
 
     private static final String RF_COMM_NAME = "BluetoothCommunication";
-
-    private static final UUID UUID_CODE = UUID.fromString("trackme.application");
+    private static final UUID SERVER_UUID = UUID.fromString("7dc53df5-703e-49b3-8670-b1c468f47f1f");
 
     private final BluetoothServerSocket mServerSocket;
     private final Handler mHandler;
@@ -30,7 +29,7 @@ public class BluetoothServer extends Thread {
     public BluetoothServer(BluetoothAdapter bluetoothAdapter, Handler handler) {
         BluetoothServerSocket tmp = null;
         try {
-            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(RF_COMM_NAME, UUID_CODE);
+            tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(RF_COMM_NAME, SERVER_UUID);
         } catch (IOException e) {
             Log.e(TAG, "Socket's listen() method failed", e);
         }

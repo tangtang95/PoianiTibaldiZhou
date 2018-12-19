@@ -32,8 +32,8 @@ public class Constants {
 
     // API PATH ACCESS DATA CONTROLLER
     public static final String ACCESS_DATA_API = "/dataretrieval";
-    public static final String GET_INDIVIDUAL_REQUEST_DATA_API = "/individualrequests/{request_id}/thirdparties/{third_party_id}/";
-    public static final String GET_GROUP_REQUEST_DATA_API = "/grouprequests/{request_id}/thirdparties{third_party_id}";
+    public static final String GET_INDIVIDUAL_REQUEST_DATA_API = "/individualrequests/{request_id}/thirdparties/{third_party_id}";
+    public static final String GET_GROUP_REQUEST_DATA_API = "/grouprequests/{request_id}/thirdparties/{third_party_id}";
     public static final String GET_OWN_DATA_API = "/users/{user_id}";
 
     // API PATH SEND DATA CONTROLLER

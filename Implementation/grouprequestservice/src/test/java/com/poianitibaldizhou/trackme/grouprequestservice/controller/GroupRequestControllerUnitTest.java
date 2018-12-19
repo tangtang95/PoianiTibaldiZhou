@@ -294,4 +294,9 @@ public class GroupRequestControllerUnitTest {
         mvc.perform(post(Constants.GROUP_REQUEST_API+"/thirdparties/1").header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void testIllegalHeader() throws Exception {
+
+    }
 }

@@ -1,0 +1,48 @@
+\section{Adopted development framework}
+Most of the choices that regards the frameworks were already briefly introduced and motivated in the
+section 2.7 of the design document (that is, other design decision). 
+However, here frameworks and other API are recapped:
+
+\begin{itemize}
+
+\item Spring boot has been adopted since it fits well for microservices and the set up of pattern components
+of the architecture (e.g. service registry) can be easily integrated with the usage of Spring Cloud.
+The main drawback of this choice is that spring boot doesn't offer much control to the developer: this of
+course limit the development time, but when something goes wrong, it may take time to fix the issue
+
+\item Spring security has been used to develop the authentication and the access control of the application.
+It is basically the de-facto standard for securing Spring-based application. 
+
+\item Spring Cloud Netflix has been used to integrate and set up the API Gateway and the service registry.
+In particular, Zuul has been set up as the API gateway and Eureka as the service registry. 
+These were of a great help because it is only necessary to find the right configuration settings and then everything works as expected.
+
+\item RabbitMQ were used to set up the communications among microservices. 
+TODO INSERT BENEFITS, DRAWBACKS, COMMENTS HERE FOR TANG TANG
+
+\item Android: the mobile application has been developed for android. Here, Butter Knife has been used in order to easily bind the layout with the activities. It also enables to automatically configure listener to onClick methods. Also, room persistence library has been used to store
+collected data that has not been sent to the system yet, and information on the performed emergency calls
+TODO FURTHER COMMENTS HERE FOR MATTIA
+
+\end{itemize}
+
+Moreover, not already cited APIs has been adopted, and, therefore, are listed: 
+
+\begin{itemize}
+\item Project Lombok, that is a java library that automatically, by use of annotators, creates certain code in order to reduce the amount
+of boilerplate code that one write 
+\item Jayway JsonPath for manipulating JSON 
+\item MySQL has been adopted as a DBMS
+\item JPA for the management of persistence and object/relation mapping
+\item Google guava for the usage of immutable maps
+\item Jackson, that is an high performance JSON processor for Java has been used, since it the default library used by Spring boot 
+to convert object to json and viceversa. 
+This has been very useful in the set up of the controllers: indeed, it was possible to define POJOs as controller attributes, and the conversion between HTTP requests and Java is perfectly handled. 
+Jackson has been used also to define views in controller method: this allows to set up that in certain controller methods only certain attributes of a POJO are used. 
+For instance one can specify that when the user is accessing its own information, his password is not sent back, but, when registering, of course the password is needed
+Using different views in different methods helps in achieving what mentioned 
+\item HATEOS is used to provide hypermedia content to the clients. This helps the client mobile application in accessing the right methods 
+and it makes the APIs restful
+\item GeoNames has been used in order to find the country codes, if the Android geocoder doesn't work properly
+\end{itemize}
+TODO MATTIA AND TANG INSERT FURTHER COMMENTS ON THIS LIBRARY

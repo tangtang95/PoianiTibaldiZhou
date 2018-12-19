@@ -24,4 +24,8 @@ public class ExceptionResponseBody {
         this.error = error;
         this.message = message;
     }
+
+    public ExceptionResponseBody() {
+
+    }
 }

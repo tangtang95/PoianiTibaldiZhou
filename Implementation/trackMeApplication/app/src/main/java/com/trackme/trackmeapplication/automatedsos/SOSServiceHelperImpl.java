@@ -60,12 +60,15 @@ public class SOSServiceHelperImpl implements SOSServiceHelper {
 
     @Override
     public void saveHealthDataInLocalDB(HealthData healthData) {
-        appDatabase.getHealthDataDao().insert(healthData);
+        // TODO IN AsyncTask
+        //appDatabase.getHealthDataDao().insert(healthData);
     }
 
     @Override
     public boolean hasRecentEmergencyCall() {
-        return appDatabase.getEmergencyCallDao().getNumberOfRecentCalls() > 0;
+        // TODO IN AsyncTask
+        //return appDatabase.getEmergencyCallDao().getNumberOfRecentCalls() > 0;
+        return false;
     }
 
     @Override
@@ -89,7 +92,9 @@ public class SOSServiceHelperImpl implements SOSServiceHelper {
         emergencyCall.setPhoneNumber(phoneNumber);
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
         emergencyCall.setTimestamp(new Timestamp(calendar.getTime().getTime()));
-        appDatabase.getEmergencyCallDao().insert(emergencyCall);
+
+        //TODO Async Task
+        //appDatabase.getEmergencyCallDao().insert(emergencyCall);
         return true;
     }
 }

@@ -2,12 +2,12 @@ package com.poianitibaldizhou.trackme.apigateway.controller;
 
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
-import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import org.springframework.context.annotation.PropertySource;
+import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -91,10 +91,13 @@ public class PublicThirdPartyController {
      * @param password password of the customer
      * @return token associated with the customer
      */
-    @PostMapping(Constants.LOGIN_TP_API) @ResponseBody String login(
+    @PostMapping(Constants.LOGIN_TP_API) @ResponseBody
+    TokenWrapper login(
             @RequestParam(Constants.LOGIN_TP_EMAIL_API_PARAM) final String email,
             @RequestParam(Constants.LOGIN_TP_PW_API_PARAM) final String password) {
-        return thirdPartyAuthenticationService.thirdPartyLogin(email, password)
-                .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL));
+        TokenWrapper tokenWrapper = new TokenWrapper();
+        tokenWrapper.setToken(thirdPartyAuthenticationService.thirdPartyLogin(email, password)
+                .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL)));
+        return tokenWrapper;
     }
 }

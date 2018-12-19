@@ -8,6 +8,7 @@ import com.poianitibaldizhou.trackme.apigateway.exception.ThirdPartyCustomerNotF
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
+import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         this.internalCommunicationService = internalCommunicationService;
     }
 
+    @Transactional
     @Override
     public Optional<ThirdPartyCompanyWrapper> getThirdPartyCompanyByEmail(String email) {
         ThirdPartyCustomer thirdPartyCustomer = thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
@@ -89,6 +91,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         return Optional.empty();
     }
 
+    @Transactional
     @Override
     public ThirdPartyCustomer getThirdPartyByEmail(String email) {
         return thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
@@ -148,7 +151,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
         if(!Objects.isNull(internalCommunicationService)) {
             internalCommunicationService.broadcastPrivateThirdPartyMessage(privateThirdPartyDetail);
         } else{
-            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+            log.error(Constants.LOG_ERROR);
         }
 
         return savedWrapper;

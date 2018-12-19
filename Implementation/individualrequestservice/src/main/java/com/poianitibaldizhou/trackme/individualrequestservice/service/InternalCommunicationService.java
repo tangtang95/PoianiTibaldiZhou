@@ -1,6 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
+import com.poianitibaldizhou.trackme.individualrequestservice.message.protocol.ThirdPartyProtocolMessage;
 import com.poianitibaldizhou.trackme.individualrequestservice.message.protocol.UserProtocolMessage;
 
 public interface InternalCommunicationService {
@@ -19,4 +20,17 @@ public interface InternalCommunicationService {
      */
     void sendIndividualRequest(IndividualRequest individualRequest);
 
+    /**
+     * Handle the third party protocol message as a private third party. It saves the third party in the DB
+     *
+     * @param protocolMessage the protocol message of third party
+     */
+    void handlePrivateThirdParty(ThirdPartyProtocolMessage protocolMessage);
+
+    /**
+     * Handle the third party protocol message as a company third party. It saves the third party in the DB
+     *
+     * @param protocolMessage the protocol message of third party
+     */
+    void handleCompanyThirdParty(ThirdPartyProtocolMessage protocolMessage);
 }

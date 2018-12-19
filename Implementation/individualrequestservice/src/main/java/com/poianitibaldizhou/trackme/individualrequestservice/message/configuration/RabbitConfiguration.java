@@ -1,5 +1,7 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.message.configuration;
 
+import com.poianitibaldizhou.trackme.individualrequestservice.message.listener.ThirdPartyEventListener;
+import com.poianitibaldizhou.trackme.individualrequestservice.message.listener.ThirdPartyEventListenerImpl;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.InternalCommunicationService;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.UploadResponseServiceImpl;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;

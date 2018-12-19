@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -32,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @WebMvcTest(ResponseController.class)
 @Import({ResponseResourceAssembler.class, BlockedThirdPartyResourceAssembler.class})
+@ActiveProfiles("test")
 public class ResponseControllerUnitTest {
 
     @Autowired
@@ -46,7 +48,8 @@ public class ResponseControllerUnitTest {
      */
     @Test
     public void testAddResponseWithAccept() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"),
+                new ThirdParty(1L, "thirdParty1"));
         request.setId((long)1);
 
         Response response = new Response();
@@ -76,7 +79,8 @@ public class ResponseControllerUnitTest {
      */
     @Test
     public void testAddResponseWithRefuse() throws Exception {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long)1);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"),
+                new ThirdParty(1L, "thirdParty1"));
         request.setId((long)1);
 
         Response response = new Response();
@@ -176,7 +180,7 @@ public class ResponseControllerUnitTest {
      */
     @Test
     public void testAddBlock() throws Exception {
-        BlockedThirdPartyKey blockedThirdPartyKey = new BlockedThirdPartyKey( (long) 1, new User("user1"));
+        BlockedThirdPartyKey blockedThirdPartyKey = new BlockedThirdPartyKey(new ThirdParty(1L, "thirdParty1"), new User("user1"));
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();
         blockedThirdParty.setBlockDate(new Date(0));
         blockedThirdParty.setKey(blockedThirdPartyKey);
@@ -195,7 +199,7 @@ public class ResponseControllerUnitTest {
      */
     @Test
     public void testAddBlockWhenSomethingIsWrong() throws Exception {
-        BlockedThirdPartyKey blockedThirdPartyKey = new BlockedThirdPartyKey( (long) 1, new User("user1"));
+        BlockedThirdPartyKey blockedThirdPartyKey = new BlockedThirdPartyKey(new ThirdParty(1L, "thirdParty1"), new User("user1"));
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();
         blockedThirdParty.setBlockDate(new Date(0));
         blockedThirdParty.setKey(blockedThirdPartyKey);

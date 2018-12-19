@@ -6,8 +6,10 @@ import com.poianitibaldizhou.trackme.individualrequestservice.exception.RequestN
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotFoundException;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.BlockedThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.IndividualRequestRepository;
+import com.poianitibaldizhou.trackme.individualrequestservice.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +22,14 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit test for the individual request manager service
@@ -42,6 +46,9 @@ public class IndividualRequestManagerServiceImplUnitTest {
     @MockBean
     private BlockedThirdPartyRepository blockedThirdPartyRepository;
 
+    @MockBean
+    private ThirdPartyRepository thirdPartyRepository;
+
     private IndividualRequestManagerService requestManagerService;
 
     @Before
@@ -49,8 +56,12 @@ public class IndividualRequestManagerServiceImplUnitTest {
         setUpMockUserRepo(userRepository);
         setUpMockRequestRepo(individualRequestRepository);
         setUpMockBlockedRepo(blockedThirdPartyRepository);
-        requestManagerService = new IndividualRequestManagerServiceImpl(individualRequestRepository, blockedThirdPartyRepository, userRepository);
+        setUpMockThirdPartyRepo(thirdPartyRepository);
+        requestManagerService = new IndividualRequestManagerServiceImpl(individualRequestRepository,
+                blockedThirdPartyRepository, userRepository, thirdPartyRepository);
     }
+
+
 
     @After
     public void tearDown() {
@@ -81,13 +92,13 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     private void setUpMockRequestRepo(IndividualRequestRepository requestRepo) {
         IndividualRequest request1 = new IndividualRequest(
-                new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long) 1);
+                new Timestamp(0), new Date(0), new Date(0), new User("user1"), new ThirdParty(1L, "thirdParty1"));
         request1.setId((long) 1);
         IndividualRequest request2 = new IndividualRequest(
-                new Timestamp(10000), new Date(10000), new Date(10000), new User("user1"), (long) 1);
+                new Timestamp(10000), new Date(10000), new Date(10000), new User("user1"), new ThirdParty(1L, "thirdParty1"));
         request2.setId((long) 2);
         IndividualRequest request3 = new IndividualRequest(
-                new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 2);
+                new Timestamp(0), new Date(0), new Date(0), new User("user3"), new ThirdParty(1L, "thirdParty1"));
         request3.setId((long) 3);
 
         List<IndividualRequest> listOfFirstTP = new ArrayList<>();
@@ -101,8 +112,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
         Mockito.when(requestRepo.findById((long)2)).thenReturn(java.util.Optional.of(request2));
         Mockito.when(requestRepo.findById((long)3)).thenReturn(java.util.Optional.of(request3));
 
-        Mockito.when(requestRepo.findAllByThirdPartyID((long) 1)).thenReturn(listOfFirstTP);
-        Mockito.when(requestRepo.findAllByThirdPartyID((long) 2)).thenReturn(listOfSecondTP);
+        Mockito.when(requestRepo.findAllByThirdParty_Id((long) 1)).thenReturn(listOfFirstTP);
+        Mockito.when(requestRepo.findAllByThirdParty_Id((long) 2)).thenReturn(listOfSecondTP);
 
         List<IndividualRequest> listOfUser3 = new ArrayList<>();
         listOfUser3.add(request3);
@@ -115,10 +126,18 @@ public class IndividualRequestManagerServiceImplUnitTest {
      * @param blockedRepo blocked third party repository that will be mocked
      */
     private void setUpMockBlockedRepo(BlockedThirdPartyRepository blockedRepo) {
-        BlockedThirdPartyKey key = new BlockedThirdPartyKey((long)4, new User("user1"));
+        BlockedThirdPartyKey key = new BlockedThirdPartyKey(new ThirdParty(4L, "thirdParty4"), new User("user1"));
         BlockedThirdParty blockedThirdParty = new BlockedThirdParty();
         blockedThirdParty.setKey(key);
         Mockito.when(blockedRepo.findById(key)).thenReturn(java.util.Optional.ofNullable(blockedThirdParty));
+    }
+
+    /**
+     * Set up the mocks for the third party repository
+     * @param thirdPartyRepository third party repository that will be mocked
+     */
+    private void setUpMockThirdPartyRepo(ThirdPartyRepository thirdPartyRepository) {
+        when(thirdPartyRepository.findById(4L)).thenReturn(Optional.of(new ThirdParty(4L, "thirdParty4")));
     }
 
     /**
@@ -164,7 +183,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test
     public void addRequestTest() {
-        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user3"), (long) 4);
+        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user3"),
+                new ThirdParty(4L, "thirdParty4"));
         requestManagerService.addRequest(newRequest);
 
         verify(individualRequestRepository, times(1)).save(any(IndividualRequest.class));
@@ -175,7 +195,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test(expected = UserNotFoundException.class)
     public void addRequestTestWhenUserNotPresent() {
-        requestManagerService.addRequest(new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user4"), (long) 1));
+        requestManagerService.addRequest(new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user4"),
+                new ThirdParty(1L, "thirdParty1")));
     }
 
     /**
@@ -184,7 +205,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test
     public void addRequestTestWhenBlocked() {
-        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), (long) 4);
+        IndividualRequest newRequest = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"),
+                new ThirdParty(4L, "thirdParty4"));
 
         requestManagerService.addRequest(newRequest);
 
@@ -196,7 +218,8 @@ public class IndividualRequestManagerServiceImplUnitTest {
      */
     @Test(expected = IncompatibleDateException.class)
     public void addRequestIncompatibleDates() {
-        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(1), new Date(0), new User("user3"), (long) 4);
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(1), new Date(0), new User("user3"),
+                new ThirdParty(4L, "thirdParty4"));
 
         requestManagerService.addRequest(request);
     }

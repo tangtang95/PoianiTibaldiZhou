@@ -1,0 +1,55 @@
+\documentclass[a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{makeidx}
+\usepackage{caption}
+\usepackage{tabularx}
+\usepackage[table, xcdraw, dvipsnames]{xcolor}
+
+\graphicspath{ {images/} }
+% !TeX spellcheck = en_US
+\makeindex
+
+\begin{document}
+\title{TrackMe: Implementation document \\Software Engineer 2 - 2018/2019}
+\author{
+        Riccardo Poiani, Mattia Tibaldi, Tang-Tang Zhou \\
+        Politecnico di Milano\\\\ 
+        Version 1.0 \\
+        Link to source code: TODO INSERT LINK HERE \\
+		Link to what has to be installed: TODO INSERT LINK HERE \\
+}
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\input{introduction}
+
+\input{requirements}
+
+\input{frameworks}
+
+\input{structuresource}
+
+\input{testing}
+
+\input{installationInstruction}
+
+\newpage
+
+\begin{thebibliography}{9}
+
+\bibitem{androidELS}
+Android emergency location service, URL \url{https://crisisresponse.google/emergencylocationservice/how-it-works/}
+
+\bibitem{httpstool}
+Working with certificates and SSL, URL \url{https://docs.oracle.com/cd/E19830-01/819-4712/ablqw/index.html}
+
+\end{thebibliography}
+
+\end{document}

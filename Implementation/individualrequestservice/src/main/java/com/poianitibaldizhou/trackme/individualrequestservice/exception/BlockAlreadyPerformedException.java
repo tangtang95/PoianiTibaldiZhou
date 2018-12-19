@@ -10,7 +10,7 @@ public class BlockAlreadyPerformedException extends RuntimeException {
     /**
      * Creates a new block already performed exception
      *
-     * @param thirdPartyID the user is trying to blocking twice the third party customer identified by thirdPartyID
+     * @param thirdPartyID the user is trying to blocking twice the third party customer identified by thirdParty
      */
     public BlockAlreadyPerformedException(Long thirdPartyID) {
         super(Constants.TP_ALREADY_BLOCKED + Constants.SPACE + thirdPartyID);

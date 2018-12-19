@@ -77,15 +77,15 @@ public class ResponseController {
      *
      * @param requestingUser user accessing the method
      * @param ssn identified of the user that blocks the third party
-     * @param thirdPartyID identified of the third party that will be blocked
+     * @param thirdParty identified of the third party that will be blocked
      * @return an http 201 created message that contains the newly formed link
      */
     @PostMapping(Constants.NEW_BLOCK_API)
-    public @ResponseBody ResponseEntity<?> blockThirdParty(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser, @PathVariable String ssn, @PathVariable Long thirdPartyID) {
+    public @ResponseBody ResponseEntity<?> blockThirdParty(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser, @PathVariable String ssn, @PathVariable Long thirdParty) {
         if(!ssn.equals(requestingUser))
             throw new ImpossibleAccessException();
 
-        BlockedThirdParty blockedThirdParty = uploadResponseService.addBlock(new User(ssn), thirdPartyID);
+        BlockedThirdParty blockedThirdParty = uploadResponseService.addBlock(new User(ssn), thirdParty);
         Resource<BlockedThirdParty> resource = blockAssembler.toResource(blockedThirdParty);
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }

@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.grouprequestservice.exception.GroupRequestN
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.FilterStatementRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.repository.GroupRequestRepository;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.AggregatorOperator;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +65,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
         List<GroupRequest> groupRequestList = groupRequestRepository.findAllByThirdPartyId(thirdPartyId);
 
         groupRequestList.forEach(groupRequest ->
-            groupRequestWrappers.add(new GroupRequestWrapper(groupRequest, filterStatementRepository.findAllByGroupRequest_Id(groupRequest.getId())))
+                groupRequestWrappers.add(new GroupRequestWrapper(groupRequest, filterStatementRepository.findAllByGroupRequest_Id(groupRequest.getId())))
         );
 
         return groupRequestWrappers;
@@ -94,7 +95,7 @@ public class GroupRequestManagerServiceImpl implements GroupRequestManagerServic
             internalCommunicationService.sendGroupRequestMessage(savedRequest,
                     groupRequestWrapper.getFilterStatementList());
         } else{
-            log.error("FATAL ERROR: InternalCommunicationService null, maybe due to the settings of active profiles");
+            log.error(Constants.LOG_ERROR);
         }
 
         return new GroupRequestWrapper(savedRequest, filterStatementRepository.findAllByGroupRequest_Id(savedRequest.getId()));

@@ -3,11 +3,11 @@ package com.poianitibaldizhou.trackme.apigateway.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.UserAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.User;
-import com.poianitibaldizhou.trackme.apigateway.security.service.UserAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -70,9 +70,12 @@ public class PublicUserController {
      * @return token associated with the user
      */
     @PostMapping(Constants.LOGIN_USER_API)
-    @ResponseBody String login(
+    @ResponseBody
+    TokenWrapper login(
             @RequestParam(Constants.LOGIN_USER_USERNAME_PARAM) final String username,
             @RequestParam(Constants.LOGIN_USER_PW_PARAM) final String password) {
-        return userAuthenticationService.userLogin(username, password).orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL));
+        TokenWrapper tokenWrapper = new TokenWrapper();
+        tokenWrapper.setToken(userAuthenticationService.userLogin(username, password).orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL)));
+        return tokenWrapper;
     }
 }

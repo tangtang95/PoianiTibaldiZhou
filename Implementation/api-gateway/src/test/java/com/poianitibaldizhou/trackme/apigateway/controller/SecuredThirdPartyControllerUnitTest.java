@@ -1,4 +1,5 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
+
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
@@ -7,7 +8,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
 import com.poianitibaldizhou.trackme.apigateway.exception.ThirdPartyCustomerNotFoundException;
 import com.poianitibaldizhou.trackme.apigateway.filter.pre.AccessControlFilter;
 import com.poianitibaldizhou.trackme.apigateway.filter.route.TranslationFilter;
-import com.poianitibaldizhou.trackme.apigateway.security.service.ThirdPartyAuthenticationService;
+import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerServiceImpl;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
@@ -29,7 +30,6 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**

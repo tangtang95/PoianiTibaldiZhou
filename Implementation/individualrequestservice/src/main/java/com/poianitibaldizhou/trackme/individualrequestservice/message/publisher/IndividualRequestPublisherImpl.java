@@ -28,7 +28,8 @@ public class IndividualRequestPublisherImpl implements IndividualRequestPublishe
         IndividualRequestProtocolMessage protocolMessage = new IndividualRequestProtocolMessage();
         protocolMessage.setId(individualRequest.getId());
         protocolMessage.setCreationTimestamp(individualRequest.getTimestamp());
-        protocolMessage.setThirdPartyId(individualRequest.getThirdPartyID());
+        protocolMessage.setThirdPartyId(individualRequest.getThirdParty().getId());
+        protocolMessage.setThirdPartyName(individualRequest.getThirdParty().getIdentifierName());
         protocolMessage.setStatus(IndividualRequestStatusUtils.getIndividualRequestStatusOfProtocol(individualRequest.getStatus()));
         protocolMessage.setStartDate(individualRequest.getStartDate());
         protocolMessage.setEndDate(individualRequest.getEndDate());
