@@ -13,14 +13,12 @@ import com.poianitibaldizhou.trackme.individualrequestservice.repository.Individ
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.repository.UserRepository;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the individual request manager service.

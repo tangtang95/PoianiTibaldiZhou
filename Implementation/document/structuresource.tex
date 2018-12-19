@@ -46,19 +46,69 @@ the Rabbit queues
 \item Package security: contains the main features that have been introduced above regarding the security 
 \item Package service: contains the services that implements the business functions of the account service, with all the APIs that it exposes.
 The interfaces present here map the component interfaces of the account service
-\item Package advice
-\item Package entity
-\item Package filter
-\item Package util
+\item Package advice: this encompasses the handling of server side exceptions in order to show to clients useful messages without exposing
+the structure of the project and low level errors
+\item Package entity: here classes that are mapped to the databases are present   
+\item Package filter: it includes filters that the API gateway applies during the management of "external" requests (i.e. requests that
+need to be processed by other services). In particular, it is further subdivided into three packages: pre, route and post. In this case, the
+pre filter that is present perform access control on the external API that is being requested, the route filter is a translation filter
+that adds header in order to identify the clients in the other microservices, and the post filter fixes the hypermedia content that is sent
+as a response to the original request
+\item Package util: various utility needed in the development
 \end{itemize}
 
+The routes to the other microservices available are present in the application.properties file.
 
 \subsubsection{Service registry}
+The project of the service registry is almost empty, no package is present, but just an application class is present, annotated with 
+@EnableEurekaServer. The configuration of the service registry is set in the application.properties file.
 
 \subsubsection{Individual request service}
+Here it follows the package diagram of the individual request service project ~\ref{fig:pkgindividualrequest}. 
+As one may notice, the structure is very similar to the one explained in the api gateway project. 
+Of course, here, the controllers provide access to the APIs that regards the individual request service. 
+The business functions of this project are present in the  service package, and the interfaces that are present, 
+are mapped with the component interfaces of the Design document. \\
+Another difference w.r.t. the API gateway that is worth to point out is that here the package message contains also a subpackages that
+defines listeners: these are charged of listening to new events that are forwarded from RabbitMQ. 
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/PackageIndividualrequestservice.png}
+\caption{ Individual request service }
+\label{fig:pkgindividualrequest}
+\end{figure}
 
 \subsubsection{Group request service}
+In the next figure, the package diagram of the group request project is shown ~\ref{fig:pkggrouprequest}. \\
+The same comments hold here except for the fact that the business function mapped in the component interfaces are the one regarding
+the group request service. 
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/PackageGrouprequestservice.png}
+\caption{ Group request service }
+\label{fig:pkggrouprequest}
+\end{figure}
 
 \subsubsection{Share data service}
+The structure of the share data service, as shown by the following picture, is also very similar to the previous ones 
+~\ref{fig:pkgsharedata}.
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/PackageSharedataservice.png}
+\caption{ Share data service }
+\label{fig:pkgsharedata}
+\end{figure}
+
+However, it is important to point out the structure of the code that manages the personalized query specified by the group requests on 
+anonymized data. // TODO TANG
+  
+
 
 \subsection{Mobile code}
+
+\subsubsection{Data4Help}
+TODO MATTIA
+
+\subsubsection{AutomatedSOS}
+TODO TANG TANG
+

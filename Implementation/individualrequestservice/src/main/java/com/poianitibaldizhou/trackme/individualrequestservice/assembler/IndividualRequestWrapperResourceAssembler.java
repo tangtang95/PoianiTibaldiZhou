@@ -1,7 +1,6 @@
 package com.poianitibaldizhou.trackme.individualrequestservice.assembler;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.controller.IndividualRequestController;
-import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;

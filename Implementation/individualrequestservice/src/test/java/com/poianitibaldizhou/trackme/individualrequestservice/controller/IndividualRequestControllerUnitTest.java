@@ -9,7 +9,6 @@ import com.poianitibaldizhou.trackme.individualrequestservice.exception.UserNotF
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

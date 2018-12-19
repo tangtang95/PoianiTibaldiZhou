@@ -25,7 +25,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Date;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 

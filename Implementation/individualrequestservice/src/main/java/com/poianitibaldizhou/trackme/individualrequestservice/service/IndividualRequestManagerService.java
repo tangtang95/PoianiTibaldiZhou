@@ -2,7 +2,6 @@ package com.poianitibaldizhou.trackme.individualrequestservice.service;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.IndividualRequest;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
-import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 
 import java.util.List;
 
