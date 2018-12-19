@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.poianitibaldizhou.trackme</groupId>
 	<artifactId>service-registry</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0</version>
 	<name>service-registry</name>
 	<description>Service registry for the TrackMe project of software enginnering 2</description>
 

@@ -61,7 +61,7 @@ public class UserPublisherImplTest {
         userPublisher.publishUserCreated(user);
 
         UserProtocolMessage userProtocolMessage = (UserProtocolMessage) rabbitTemplate
-                .receiveAndConvert(userCreatedToShareDataServiceQueue.getName(), 2000);
+                .receiveAndConvert(userCreatedToShareDataServiceQueue.getName(), 5000);
 
         assertNotNull(userProtocolMessage);
         assertEquals(user.getSsn(), userProtocolMessage.getSsn());

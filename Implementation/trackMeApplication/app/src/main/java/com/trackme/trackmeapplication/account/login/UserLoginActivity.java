@@ -20,8 +20,8 @@ import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import butterknife.BindView;
 import butterknife.OnClick;
 
-import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_PERMS;
-import static com.trackme.trackmeapplication.home.UserLocationListener.INITIAL_REQUEST;
+import static com.trackme.trackmeapplication.service.position.UserLocationListener.INITIAL_PERMS;
+import static com.trackme.trackmeapplication.service.position.UserLocationListener.INITIAL_REQUEST;
 
 /**
  * UserLoginActivity extends the abstract class LoginActivity and it allows to the user to

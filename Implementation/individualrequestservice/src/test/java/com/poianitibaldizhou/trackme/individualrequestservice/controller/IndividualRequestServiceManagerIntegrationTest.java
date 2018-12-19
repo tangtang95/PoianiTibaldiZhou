@@ -282,7 +282,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
         String expectedBody = "{\n" +
                 "  \"_embedded\" : {\n" +
-                "    \"individualRequestWrappers\" : [ {\n" +
+                "    \"individualRequestWrapperList\" : [ {\n" +
                 "      \"status\" : \"PENDING\",\n" +
                 "      \"timestamp\" : \"2000-01-01T00:00:00.000+0000\",\n" +
                 "      \"startDate\" : \"2000-01-01\",\n" +
@@ -368,7 +368,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
 
         String expectedBody = "{\n" +
                 "  \"_embedded\": {\n" +
-                "    \"individualRequestWrappers\": [\n" +
+                "    \"individualRequestWrapperList\": [\n" +
                 "      {\n" +
                 "        \"status\": \"PENDING\",\n" +
                 "        \"timestamp\": \"2000-01-01T00:00:00.000+0000\",\n" +

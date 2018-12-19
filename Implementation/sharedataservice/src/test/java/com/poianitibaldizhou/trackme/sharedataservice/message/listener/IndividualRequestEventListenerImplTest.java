@@ -275,23 +275,8 @@ public class IndividualRequestEventListenerImplTest {
             individualRequestProtocolMessage.setUserSsn("user1");
             individualRequestProtocolMessage.setMotivationText("motivation");
 
-            rabbitTemplate.convertAndSend("wrongExchange", "individualrequest.event.refused",
+            rabbitTemplate.convertAndSend("wrongExchange", "individualrequest.event.accepted",
                     individualRequestProtocolMessage);
-
-            verify(individualRequestEventListener, timeout(2000).times(0))
-                    .onIndividualRequestAccepted(any(IndividualRequestProtocolMessage.class));
-        }
-
-        /**
-         * Test to check if the method of onIndividualRequestAccepted will not be called after sending the message when
-         * the object of the message is incorrect
-         *
-         * @throws Exception no exception expected
-         */
-        @Test
-        public void onIndividualRequestAcceptedWithWrongObject() throws Exception {
-            rabbitTemplate.convertAndSend(individualRequestExchange.getName(), "individualrequest.event.refused",
-                    new IndividualRequest());
 
             verify(individualRequestEventListener, timeout(2000).times(0))
                     .onIndividualRequestAccepted(any(IndividualRequestProtocolMessage.class));

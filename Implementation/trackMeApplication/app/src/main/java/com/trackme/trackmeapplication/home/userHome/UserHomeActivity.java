@@ -12,7 +12,7 @@ import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.account.register.UserProfileActivity;
-import com.trackme.trackmeapplication.automatedsos.SOSAndroidService;
+import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
@@ -50,8 +50,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
         username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
 
-        stopService(new Intent(this, SOSAndroidService.class));
-        Intent serviceIntent = new Intent(this, SOSAndroidService.class);
+        stopService(new Intent(this, HealthService.class));
+        Intent serviceIntent = new Intent(this, HealthService.class);
         serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
         startService(serviceIntent);
 
