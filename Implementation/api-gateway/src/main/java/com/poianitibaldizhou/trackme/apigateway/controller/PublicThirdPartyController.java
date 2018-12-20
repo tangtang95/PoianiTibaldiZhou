@@ -1,13 +1,11 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
+import com.poianitibaldizhou.trackme.apigateway.util.*;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -57,9 +55,10 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
+    @JsonView(Views.Public.class)
     @PostMapping(Constants.REGISTER_COMPANY_TP_API)
     public @ResponseBody
-    ResponseEntity<?> registerCompanyThirdParty(@RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
+    ResponseEntity<?> registerCompanyThirdParty(@JsonView (Views.Secured.class) @RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
             throws URISyntaxException {
         Resource<ThirdPartyCompanyWrapper> resource = thirdPartyCompanyAssembler.
                 toResource(service.registerThirdPartyCompany(thirdPartyCompanyWrapper));
@@ -74,9 +73,11 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
+    @JsonView(Views.Public.class)
     @PostMapping(Constants.REGISTER_PRIVATE_TP_API)
     public @ResponseBody
-    ResponseEntity<?> registerPrivateThirdParty(@RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
+    ResponseEntity<?> registerPrivateThirdParty(
+            @JsonView(Views.Secured.class) @RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
             throws URISyntaxException {
         Resource<ThirdPartyPrivateWrapper> resource = thirdPartyPrivateAssembler.
                 toResource(service.registerThirdPartyPrivate(thirdPartyPrivateWrapper));

@@ -226,7 +226,7 @@ public class IndividualRequestEventListenerImplTest {
             rabbitTemplate.convertAndSend(individualRequestExchange.getName(), "individualrequest.event.accepted",
                     individualRequestProtocolMessage);
 
-            verify(individualRequestEventListener, timeout(2000).times(1))
+            verify(individualRequestEventListener, timeout(5000).times(1))
                     .onIndividualRequestAccepted(individualRequestProtocolMessage);
         }
 
@@ -252,7 +252,7 @@ public class IndividualRequestEventListenerImplTest {
             rabbitTemplate.convertAndSend(individualRequestExchange.getName(), "individualrequest.event.refused",
                     individualRequestProtocolMessage);
 
-            verify(individualRequestEventListener, timeout(2000).times(0))
+            verify(individualRequestEventListener, timeout(5000).times(0))
                     .onIndividualRequestAccepted(any(IndividualRequestProtocolMessage.class));
         }
 
@@ -278,7 +278,7 @@ public class IndividualRequestEventListenerImplTest {
             rabbitTemplate.convertAndSend("wrongExchange", "individualrequest.event.accepted",
                     individualRequestProtocolMessage);
 
-            verify(individualRequestEventListener, timeout(2000).times(0))
+            verify(individualRequestEventListener, timeout(5000).times(0))
                     .onIndividualRequestAccepted(any(IndividualRequestProtocolMessage.class));
         }
     }

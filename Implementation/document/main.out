@@ -17,4 +17,8 @@
 \BOOKMARK [3][-]{subsubsection.4.2.1}{Data4Help}{subsection.4.2}% 17
 \BOOKMARK [3][-]{subsubsection.4.2.2}{AutomatedSOS}{subsection.4.2}% 18
 \BOOKMARK [1][-]{section.5}{Testing}{}% 19
-\BOOKMARK [1][-]{section.6}{Installation instruction}{}% 20
+\BOOKMARK [2][-]{subsection.5.1}{Microservices}{section.5}% 20
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Tests of a single microservices}{subsection.5.1}% 21
+\BOOKMARK [3][-]{subsubsection.5.1.2}{JMeter}{subsection.5.1}% 22
+\BOOKMARK [2][-]{subsection.5.2}{Android application}{section.5}% 23
+\BOOKMARK [1][-]{section.6}{Installation instruction}{}% 24

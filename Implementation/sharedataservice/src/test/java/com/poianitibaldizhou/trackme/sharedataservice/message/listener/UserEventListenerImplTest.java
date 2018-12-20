@@ -214,7 +214,7 @@ public class UserEventListenerImplTest {
             userProtocolMessage.setBirthNation("italy");
             rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.created", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(1)).onUserCreated(userProtocolMessage);
+            verify(userEventListener, timeout(5000).times(1)).onUserCreated(userProtocolMessage);
         }
 
         /**
@@ -254,7 +254,7 @@ public class UserEventListenerImplTest {
             userProtocolMessage.setBirthNation("italy");
             rabbitTemplate.convertAndSend("wrongExchange", "user.event.updated", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
+            verify(userEventListener, timeout(5000).times(0)).onUserCreated(any(UserProtocolMessage.class));
         }
 
         /**
@@ -267,7 +267,7 @@ public class UserEventListenerImplTest {
         public void onUserCreatedWithWrongObject() throws Exception {
             rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.updated", new User());
 
-            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
+            verify(userEventListener, timeout(5000).times(0)).onUserCreated(any(UserProtocolMessage.class));
         }
 
 

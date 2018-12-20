@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.23)  19 DEC 2018 22:48
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.23)  20 DEC 2018 14:21
 entering extended mode
 **./main.tex
 (main.tex
@@ -748,34 +748,64 @@ Underfull \hbox (badness 10000) in paragraph at lines 72--74
  []
 
 ) [5] (frameworks.tex [6]) (structuresource.tex
-<images/PackageApigateway.png, id=141, 618.31pt x 549.05125pt>
+<images/PackageApigateway.png, id=161, 618.31pt x 549.05125pt>
 File: images/PackageApigateway.png Graphic file (type png)
 <use images/PackageApigateway.png>
 Package pdftex.def Info: images/PackageApigateway.png  used on input line 20.
 (pdftex.def)             Requested size: 345.0pt x 306.36073pt.
  [7] [8 <./images/PackageApigateway.png (PNG copy)>] [9]
-<images/PackageIndividualrequestservice.png, id=158, 485.815pt x 549.05125pt>
+<images/PackageIndividualrequestservice.png, id=178, 485.815pt x 549.05125pt>
 File: images/PackageIndividualrequestservice.png Graphic file (type png)
 <use images/PackageIndividualrequestservice.png>
 Package pdftex.def Info: images/PackageIndividualrequestservice.png  used on in
 put line 76.
 (pdftex.def)             Requested size: 345.0pt x 389.90451pt.
-<images/PackageGrouprequestservice.png, id=160, 485.815pt x 549.05125pt>
+<images/PackageGrouprequestservice.png, id=180, 485.815pt x 549.05125pt>
 File: images/PackageGrouprequestservice.png Graphic file (type png)
 <use images/PackageGrouprequestservice.png>
 Package pdftex.def Info: images/PackageGrouprequestservice.png  used on input l
 ine 87.
 (pdftex.def)             Requested size: 345.0pt x 389.90451pt.
  [10 <./images/PackageIndividualrequestservice.png (PNG copy)>]
-<images/PackageSharedataservice.png, id=167, 586.19pt x 549.05125pt>
+<images/PackageSharedataservice.png, id=187, 586.19pt x 549.05125pt>
 File: images/PackageSharedataservice.png Graphic file (type png)
 <use images/PackageSharedataservice.png>
 Package pdftex.def Info: images/PackageSharedataservice.png  used on input line
  97.
 (pdftex.def)             Requested size: 345.0pt x 323.14154pt.
  [11 <./images/PackageGrouprequestservice.png (PNG copy)>])
-(testing.tex) (installationInstruction.tex) [12 <./images/PackageSharedataservi
-ce.png (PNG copy)>]
+(testing.tex
+Underfull \hbox (badness 10000) in paragraph at lines 4--22
+
+ []
+
+[12 <./images/PackageSharedataservice.png (PNG copy)>]
+<images/CoverageApigateway.png, id=197, 956.57375pt x 226.8475pt>
+File: images/CoverageApigateway.png Graphic file (type png)
+<use images/CoverageApigateway.png>
+Package pdftex.def Info: images/CoverageApigateway.png  used on input line 27.
+(pdftex.def)             Requested size: 345.0pt x 81.81387pt.
+<images/CoverageIndividualrequestservice.png, id=199, 956.57375pt x 237.38687pt
+>
+File: images/CoverageIndividualrequestservice.png Graphic file (type png)
+<use images/CoverageIndividualrequestservice.png>
+Package pdftex.def Info: images/CoverageIndividualrequestservice.png  used on i
+nput line 41.
+(pdftex.def)             Requested size: 345.0pt x 85.61496pt.
+ [13 <./images/CoverageApigateway.png>]
+File: images/CoverageIndividualrequestservice.png Graphic file (type png)
+<use images/CoverageIndividualrequestservice.png>
+Package pdftex.def Info: images/CoverageIndividualrequestservice.png  used on i
+nput line 49.
+(pdftex.def)             Requested size: 345.0pt x 85.61496pt.
+<images/CoverageSharedataservice.png, id=207, 920.43875pt x 250.9375pt>
+File: images/CoverageSharedataservice.png Graphic file (type png)
+<use images/CoverageSharedataservice.png>
+Package pdftex.def Info: images/CoverageSharedataservice.png  used on input lin
+e 59.
+(pdftex.def)             Requested size: 345.0pt x 94.0592pt.
+) (installationInstruction.tex) [14 <./images/CoverageIndividualrequestservice.
+png> <./images/CoverageSharedataservice.png>]
 LaTeX Font Info:    Try loading font information for T1+cmtt on input line 48.
 
 ("C:\Users\User.LAPTOP-FG37H74P\AppData\Local\Programs\MiKTeX 2.9\tex\latex\bas
@@ -788,20 +818,24 @@ Underfull \hbox (badness 1701) in paragraph at lines 48--49
  []
 
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 55.
-[13]
+[15]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 55.
  (main.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 55.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 55.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 67113D3631D5A2BA8A9B76A0F31048F6;1392.
+(rerunfilecheck)             Checksum: 984E5D339326315AB9DAAEB40E64DE7C;1685.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 55.
  ) 
 Here is how much of TeX's memory you used:
- 7929 strings out of 493303
- 121417 string characters out of 3123259
- 220295 words of memory out of 3000000
- 11320 multiletter control sequences out of 15000+200000
+ 7962 strings out of 493303
+ 122273 string characters out of 3123259
+ 220487 words of memory out of 3000000
+ 11340 multiletter control sequences out of 15000+200000
  12079 words of font info for 31 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  41i,7n,39p,331b,394s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -816,9 +850,9 @@ C:\Users\User.LAPTOP-FG37H74P\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen
 sers\User.LAPTOP-FG37H74P\AppData\Local\MiKTeX\2.9\fonts\pk\ljfour\jknappen\ec\
 dpi600\ecrm1728.pk><C:/Users/User.LAPTOP-FG37H74P/AppData/Local/Programs/MiKTeX
  2.9/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on main.pdf (13 pages, 226356 bytes).
+Output written on main.pdf (15 pages, 551077 bytes).
 PDF statistics:
- 517 PDF objects out of 1000 (max. 8388607)
- 42 named destinations out of 1000 (max. 500000)
- 181 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 560 PDF objects out of 1000 (max. 8388607)
+ 52 named destinations out of 1000 (max. 500000)
+ 228 words of extra memory for PDF output out of 10000 (max. 10000000)
 

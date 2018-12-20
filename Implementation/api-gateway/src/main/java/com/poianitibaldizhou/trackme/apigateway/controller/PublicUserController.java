@@ -51,10 +51,9 @@ public class PublicUserController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
-    @JsonView(Views.Secured.class)
     @PostMapping(Constants.REGISTER_USER_API)
-    public @ResponseBody
-    ResponseEntity<?> registerUser(@PathVariable String ssn, @RequestBody User user) throws URISyntaxException {
+    public @JsonView(Views.Public.class) @ResponseBody
+    ResponseEntity<?> registerUser(@PathVariable String ssn,@JsonView(Views.Secured.class) @RequestBody User user) throws URISyntaxException {
         user.setSsn(ssn);
 
         Resource<User> resource = userAssembler.toResource(service.registerUser(user));

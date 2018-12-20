@@ -90,7 +90,6 @@ public class PublicUserControllerUnitTest {
         mvc.perform(post(Constants.PUBLIC_USER_API + "/newUser").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("password", is(user.getPassword())))
                 .andExpect(jsonPath("username", is(user.getUsername())))
                 .andExpect(jsonPath("firstName", is(user.getFirstName())))
                 .andExpect(jsonPath("lastName", is(user.getLastName())))
