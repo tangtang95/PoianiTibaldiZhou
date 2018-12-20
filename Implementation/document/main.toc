@@ -9,10 +9,10 @@
 \contentsline {section}{\numberline {3}Adopted development framework}{6}{section.3}
 \contentsline {section}{\numberline {4}Structure of the source code}{7}{section.4}
 \contentsline {subsection}{\numberline {4.1}Microservices}{7}{subsection.4.1}
-\contentsline {subsubsection}{\numberline {4.1.1}API Gateway}{7}{subsubsection.4.1.1}
+\contentsline {subsubsection}{\numberline {4.1.1}API Gateway}{8}{subsubsection.4.1.1}
 \contentsline {subsubsection}{\numberline {4.1.2}Service registry}{9}{subsubsection.4.1.2}
-\contentsline {subsubsection}{\numberline {4.1.3}Individual request service}{9}{subsubsection.4.1.3}
-\contentsline {subsubsection}{\numberline {4.1.4}Group request service}{10}{subsubsection.4.1.4}
+\contentsline {subsubsection}{\numberline {4.1.3}Individual request service}{10}{subsubsection.4.1.3}
+\contentsline {subsubsection}{\numberline {4.1.4}Group request service}{11}{subsubsection.4.1.4}
 \contentsline {subsubsection}{\numberline {4.1.5}Share data service}{11}{subsubsection.4.1.5}
 \contentsline {subsection}{\numberline {4.2}Mobile code}{12}{subsection.4.2}
 \contentsline {subsubsection}{\numberline {4.2.1}Data4Help}{12}{subsubsection.4.2.1}
@@ -22,4 +22,6 @@
 \contentsline {subsubsection}{\numberline {5.1.1}Tests of a single microservices}{13}{subsubsection.5.1.1}
 \contentsline {subsubsection}{\numberline {5.1.2}JMeter}{14}{subsubsection.5.1.2}
 \contentsline {subsection}{\numberline {5.2}Android application}{14}{subsection.5.2}
-\contentsline {section}{\numberline {6}Installation instruction}{14}{section.6}
+\contentsline {section}{\numberline {6}Installation instruction}{15}{section.6}
+\contentsline {subsection}{\numberline {6.1}Microservices}{15}{subsection.6.1}
+\contentsline {subsection}{\numberline {6.2}Android application}{15}{subsection.6.2}

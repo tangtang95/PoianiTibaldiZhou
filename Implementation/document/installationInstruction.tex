@@ -12,11 +12,31 @@ of Windows that you are using
 
 \item MySQL is another critical component since it has been used as a DBMS for managing persistent data. For having this working, it
 is possible to follow the guide at : \url{https://beep.metid.polimi.it/documents/121843524/b5d81926-98f6-496f-bf45-a2a8e897228c}. \\
-Once that the server has been set up, it is necessary to create the databases and its admin.
-Open 
-
+Once that the server has been set up, it is necessary to create the databases and its admin: to do that, first of all, go to the MySQL 
+folder and login with root. After that, write "create user 'trackmeadmin'@'\%' identified by 'datecallmeeting95';". \\
+Now, the admin for the database has been created, and it is necessary to create all the databases used by the various microservices. \\
+In order to accomplish this, run "create database share\_data\_db;", "create database group\_request\_db;", 
+"create database individual\_request\_db", "create database account\_service\_db;". \\
+Finally, for each database created, it is necessary to run this command: "grant all on db\_name.* to 'trackmeadmin'@'\%';"
+where db\_name has to be substituted with share\_data\_db, group\_request\_db, account\_service\_db and individual\_request\_db. 
 
 \end{itemize}
 
+Once that all the previous steps have been accomplished, and once you have downloaded all the jars from the links present in the front page
+of this document, start MySQL server (following the guide mentioned above), and after that start the RabbitMQ server. In order to do that, 
+navigate to that folder in which RabbitMQ have been installed, search for "rabbitmq-server" and launch it (if you prefer other ways to launch
+the server you may check the link provided before: indeed, the links to the installation instruction of the various operative systems,
+provide also information on how to set up the server). \\
+After that, it is possible to start the downloaded jars by means of "java -jar jar\_name". 
+It is necessary to start first of all the service registry, and then all the other services (and, of course, also the API gateway), in the
+order you prefer: doing this should also speed up the start. 
+The port that are needed to be free are the following: 8443 (API gateway), 8761 (service registry), 8089 (share data service), 5762
+(rabbitmq), 8081 (group request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
+machine is which the jar will be ran, it is possible to modify this by adding "--server.port PORT\_NUMBER", while launching the jar. \\
+Furthermore, is also possible to modify any of the settings that are located within the application.properties that is possible to found 
+
+
+
+
 \subsection{Android application}
-TODO TANG E MATTIA
+TODO TANG E MATTIA: Take in mind also the case in which the other group does not have any android device
