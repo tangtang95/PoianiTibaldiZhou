@@ -23,7 +23,30 @@ public final class Constant {
     public static final String LOGIN_SHARED_DATA_NAME = "login_data";
     public static final String SD_USERNAME_DATA_KEY = "username";
     public static final String SD_EMAIL_DATA_KEY = "email";
+    public static final String SD_TOKEN_KEY = "token";
+    public static final String SD_INDIVIDUAL_REQUEST_KEY = "individual_request_item";
     public static final String USER_LOGGED_BOOLEAN_VALUE_KEY = "user_logged";
     public static final String BUSINESS_LOGGED_BOOLEAN_VALUE_KEY = "business_logged";
+
+    // Api regarding third parties accounts
+    public static final String PUBLIC_TP_API = "/public/thirdparties";
+    public static final String REGISTER_COMPANY_TP_API = "/companies";
+    public static final String REGISTER_PRIVATE_TP_API = "/privates";
+    public static final String LOGIN_TP_API = "/authenticate";
+    public static final String LOGIN_TP_EMAIL_API_PARAM = "email";
+    public static final String LOGIN_TP_PW_API_PARAM = "password";
+    public static final String SECURED_TP_API = "/thirdparties";
+    public static final String GET_TP_INFO_API = "/info";
+    public static final String LOGOUT_TP_API = "/logout";
+
+    // Api regarding user accounts
+    public static final String PUBLIC_USER_API = "/public/users";
+    public static final String REGISTER_USER_API = "/{ssn}";
+    public static final String LOGIN_USER_API = "/authenticate";
+    public static final String LOGIN_USER_USERNAME_PARAM = "username";
+    public static final String LOGIN_USER_PW_PARAM = "password";
+    public static final String SECURED_USER_API = "/users";
+    public static final String LOGOUT_USER_API = "/logout";
+    public static final String GET_USER_INFO_API = "/info";
 
 }

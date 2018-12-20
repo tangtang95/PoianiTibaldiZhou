@@ -34,9 +34,9 @@
         <activity android:name=".home.userHome.UserSettingsActivity" />
         <activity android:name=".account.register.UserProfileActivity" />
         <activity android:name=".home.businessHome.BusinessHomeActivity" />
-        <activity android:name=".Request.individualRequest.RequestBodyActivity" />
-        <activity android:name=".Request.individualRequest.RequestFormActivity" />
-        <activity android:name=".Request.groupRequest.GroupRequestFormActivity"/>
+        <activity android:name=".request.individualRequest.RequestBodyActivity" />
+        <activity android:name=".request.individualRequest.RequestFormActivity" />
+        <activity android:name=".request.groupRequest.GroupRequestFormActivity"/>
 
         <service android:name=".service.health.HealthService" />
         <service android:name=".service.position.LocationService" />

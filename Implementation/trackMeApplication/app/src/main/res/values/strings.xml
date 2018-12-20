@@ -67,6 +67,10 @@
     <string name="heart_image">Heart image</string>
     <string name="history_item_image">history item image</string>
     <string name="download_file">Download file</string>
+    <string name="visibility_off_button">Visibility off button</string>
+    <string name="value">Value</string>
+    <string name="file_download_image_button">File download image button</string>
+    <string name="accept_term_and_condition">Accept <u>Term and Condition</u></string>
 
     <!-- Error message. -->
     <string name="user_login_error">Username and password do not match.</string>
@@ -79,11 +83,14 @@
     <string name="user_with_this_social_security_number_already_exist">User with this social security number already exist.</string>
     <string name="business_with_this_email_already_exist">Third party with this e-mail already exist.</string>
     <string name="download_file_error">Impossible to download file</string>
+    <string name="block_third_party_message">Do you want to block this third party customer?</string>
+    <string name="date_before_error">Hey! You have a temporal machine? The end date is before te start date!</string>
+    <string name="terms_and_condition_error">"You must accept the Term and Condition of the software."</string>
+    <string name="legal_note_show_error">"Impossible to show the legal note."</string>
+    <string name="date_format_error">Date format error</string>
 
     <string name="persistent_database_name">trackme-db</string>
-    <string name="visibility_off_button">Visibility off button</string>
-    <string name="value">Value</string>
-    <string name="file_download_image_button">File download image button</string>
+
     <string name="notification_channel_id">notification_channel_id</string>
     <string name="notification_channel_name">Service Notification Channel</string>
     <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>

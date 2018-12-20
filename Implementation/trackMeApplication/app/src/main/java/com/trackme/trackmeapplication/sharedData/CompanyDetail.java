@@ -1,17 +1,16 @@
 package com.trackme.trackmeapplication.sharedData;
 
-public class Company implements ThirdPartyInterface{
+public class CompanyDetail implements ThirdPartyInterface{
 
+    private String id;
     private String companyName;
-    private String email;
-    private String password;
+    private ThirdPartyCustomer thirdPartyCustomer;
     private String address;
     private String dunsNumber;
 
-    public Company(String companyName, String email, String password, String address, String dunsNumber) {
+    public CompanyDetail(String companyName, String email, String password, String address, String dunsNumber) {
         this.companyName = companyName;
-        this.email = email;
-        this.password = password;
+        this.thirdPartyCustomer = new ThirdPartyCustomer(email, password);
         this.address = address;
         this.dunsNumber = dunsNumber;
     }
@@ -31,12 +30,12 @@ public class Company implements ThirdPartyInterface{
 
     @Override
     public String getEmail() {
-        return email;
+        return thirdPartyCustomer.getEmail();
     }
 
     @Override
     public String getPassword() {
-        return password;
+        return thirdPartyCustomer.getPassword();
     }
 
 }

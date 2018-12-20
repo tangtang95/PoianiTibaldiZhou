@@ -1,6 +1,6 @@
-package com.trackme.trackmeapplication.Request.groupRequest.network;
+package com.trackme.trackmeapplication.request.groupRequest.network;
 
-import com.trackme.trackmeapplication.Request.groupRequest.GroupRequestItem;
+import com.trackme.trackmeapplication.request.groupRequest.GroupRequestItem;
 
 import java.util.List;
 

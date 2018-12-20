@@ -1,4 +1,4 @@
-package com.trackme.trackmeapplication.Request.groupRequest;
+package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.Request.groupRequest.network.GroupRequestNetworkImp;
-import com.trackme.trackmeapplication.Request.groupRequest.network.GroupRequestNetworkInterface;
+import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
+import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 

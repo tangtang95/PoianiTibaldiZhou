@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Request.individualRequest.RequestFormActivity">
+    tools:context=".request.individualRequest.RequestFormActivity">
 
     <EditText
         android:id="@+id/editTextSnn"
@@ -38,15 +38,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
-    <EditText
+    <TextView
         android:id="@+id/editTextEndDate"
         android:layout_width="220dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:inputType="date"
+        android:hint="@string/date_example_mm_gg_yyyy"
+        android:gravity="center_vertical"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.024"
@@ -59,7 +60,7 @@
         android:layout_width="82dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="36dp"
         android:text="@string/request_form_end_date"
         android:textAlignment="textEnd"
         android:textSize="18sp"
@@ -84,14 +85,15 @@
             android:textColor="@color/colorWhite" />
     </RelativeLayout>
 
-    <EditText
+    <TextView
         android:id="@+id/editTextStartDate"
         android:layout_width="220dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
-        android:inputType="date"
+        android:hint="@string/date_example_mm_gg_yyyy"
+        android:gravity="center_vertical"
         android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.056"
@@ -118,7 +120,7 @@
         android:layout_width="82dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="28dp"
         android:text="@string/request_form_start_date"
         android:textAlignment="textEnd"
         android:textSize="18sp"

@@ -1,18 +1,21 @@
 package com.trackme.trackmeapplication.sharedData;
 
-public class User {
+import java.io.Serializable;
+import java.util.Date;
+
+public class User implements Serializable {
 
     private String firstName;
     private String lastName;
     private String ssn;
     private String username;
     private String password;
-    private String birthDate;
+    private Date birthDate;
     private String birthCity;
     private String birthNation;
 
 
-    public User(String ssn, String username, String password, String firstName, String lastName, String birthDate, String birthCity, String birthNation) {
+    public User(String ssn, String username, String password, String firstName, String lastName, Date birthDate, String birthCity, String birthNation) {
         this.ssn = ssn;
         this.username = username;
         this.password = password;
@@ -26,7 +29,7 @@ public class User {
 
     public String getUsername() { return username; }
 
-    public String getName() {
+    public String   getName() {
         return firstName + " " + lastName;
     }
 
@@ -38,7 +41,7 @@ public class User {
         return ssn;
     }
 
-    public String getBirthDate() {
+    public Date getBirthDate() {
         return birthDate;
     }
 
