@@ -1,6 +1,7 @@
 \section{Installation instruction}
 \subsection{Microservices}
 First of all, let's check all the prerequisites needed to install and run the software:
+
 \begin{itemize}
 
 \item RabbitMQ is necessary, since a RabbitMQ server is needed to make the communication between microservices properly working.
@@ -28,15 +29,34 @@ navigate to that folder in which RabbitMQ have been installed, search for "rabbi
 the server you may check the link provided before: indeed, the links to the installation instruction of the various operative systems,
 provide also information on how to set up the server). \\
 After that, it is possible to start the downloaded jars by means of "java -jar jar\_name". 
-It is necessary to start first of all the service registry, and then all the other services (and, of course, also the API gateway), in the
+It is necessary to start first of the service registry, and then all the other services (and, of course, also the API gateway), in the
 order you prefer: doing this should also speed up the start. 
-The port that are needed to be free are the following: 8443 (API gateway), 8761 (service registry), 8089 (share data service), 5762
-(rabbitmq), 8081 (group request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
+The port that are needed to be free are the following: 8443 (API gateway), 8761 (service registry), 8089 (share data service), 8081 (group
+request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
 machine is which the jar will be ran, it is possible to modify this by adding "--server.port PORT\_NUMBER", while launching the jar. \\
-Furthermore, is also possible to modify any of the settings that are located within the application.properties that is possible to found 
+Furthermore, is also possible to modify any of the settings that are located within the application.properties of the various project.
+One can find these files in the various folders of the source code, within the folder "main".\\
 
+\par 
+For running the tests, it is necessary to start again the RabbitMQ server and the MySQL server. After that, it is possible to go into
+the root of interested project and run "mvn test". \\
+Keep in mind that running the tests may take some time, due to the fact that some tests require to launch the entire spring application,
+or to connect to the RabbitMQ server, or to load data into the database. 
 
+\par 
+Here it follows a list of further considerations: 
+\begin{itemize}
+\item If, for some reason, it is necessary to open the source code in some IDE, keep in mind that it
+may be necessary to download the Lombok plugin. \\
+In the case in which you are using Intellij, this link may be useful:\\
+\url{https://projectlombok.org/setup/intellij}
 
+\item Another thing that one may take into consideration, is the fact that when downloading the source code, one may have problem with too long
+paths when extracting the folder. This is a problem that have been encountered only extracting the zip, and that is fixed
+by using tar.gz format. 
+
+\end{itemize}
 
 \subsection{Android application}
-TODO TANG E MATTIA: Take in mind also the case in which the other group does not have any android device
+TODO TANG E MATTIA: Take in mind also the case in which the other group does not have any android device, therefore add notes on the simulator
+and how to start things from there

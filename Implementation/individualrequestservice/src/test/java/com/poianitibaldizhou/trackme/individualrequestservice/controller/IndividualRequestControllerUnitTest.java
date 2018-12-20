@@ -32,7 +32,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -78,10 +77,6 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].startDate", is(new Date(0).toString())))
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].endDate", is(new Date(0).toString())))
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/3")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.thirdPartyRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/thirdparties/2")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.userPendingRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/users/user1")));
     }
 
@@ -143,10 +138,6 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].startDate", is(new Date(0).toString())))
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0].endDate", is(new Date(0).toString())))
                 .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.thirdPartyRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")))
-                .andExpect(jsonPath("$._embedded.individualRequestWrapperList[0]._links.userPendingRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/users/user1")))
                 .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")));
     }
 
@@ -211,9 +202,7 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
                 .andExpect(jsonPath("$.thirdPartyName", is(request.getThirdParty().getIdentifierName())))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/id/1")))
-                .andExpect(jsonPath("$._links.thirdPartyRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")));
+                        is("http://localhost"+Constants.REQUEST_API+"/id/1")));
     }
 
     /**
@@ -270,11 +259,7 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
                 .andExpect(jsonPath("$.thirdPartyName", is("thirdParty1")))
                 .andExpect(jsonPath("$.motivation", is(request.getMotivation())))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")))
-                .andExpect(jsonPath("$._links.thirdPartyRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/thirdparties/1")))
-                .andExpect(jsonPath("$._links.userPendingRequest.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/users/user1")));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.REQUEST_API+"/id/1")));
     }
 
     /**

@@ -185,13 +185,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  \"_links\" : {\n" +
                 "    \"self\" : {\n" +
                 "      \"href\" : \"http://localhost:"+port+Constants.REQUEST_API+"/id/1\"\n" +
-                "    },\n" +
-                "    \"thirdPartyRequest\" : {\n" +
-                "      \"href\" : \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/1\"\n" +
-                "    },\n" +
-                "    \"userPendingRequest\" : {\n" +
-                "      \"href\" : \"http://localhost:"+port+Constants.REQUEST_API+"/users/user1\"\n" +
-                "    }\n" +
+                "    }"+
                 "  }\n" +
                 "}";
 
@@ -292,13 +286,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "      \"_links\" : {\n" +
                 "        \"self\" : {\n" +
                 "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/4\"\n" +
-                "        },\n" +
-                "        \"thirdPartyRequest\" : {\n" +
-                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
-                "        },\n" +
-                "        \"userPendingRequest\" : {\n" +
-                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user1\"\n" +
-                "        }\n" +
+                "        }\n"+
                 "      }\n" +
                 "    }, {\n" +
                 "      \"status\" : \"PENDING\",\n" +
@@ -310,13 +298,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "      \"_links\" : {\n" +
                 "        \"self\" : {\n" +
                 "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/id/5\"\n" +
-                "        },\n" +
-                "        \"thirdPartyRequest\" : {\n" +
-                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
-                "        },\n" +
-                "        \"userPendingRequest\" : {\n" +
-                "          \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/users/user2\"\n" +
-                "        }\n" +
+                "        }\n"+
                 "      }\n" +
                 "    } ]\n" +
                 "  },\n" +
@@ -379,13 +361,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "        \"_links\": {\n" +
                 "          \"self\": {\n" +
                 "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/id/5\"\n" +
-                "          },\n" +
-                "          \"thirdPartyRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/2\"\n" +
-                "          },\n" +
-                "          \"userPendingRequest\": {\n" +
-                "            \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/users/user2\"\n" +
-                "          }\n" +
+                "          }\n"+
                 "        }\n" +
                 "      }\n" +
                 "    ]\n" +

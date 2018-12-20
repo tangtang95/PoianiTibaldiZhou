@@ -2,6 +2,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.assembler;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.controller.IndividualRequestController;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.Response;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
@@ -21,11 +22,11 @@ public class ResponseResourceAssembler implements ResourceAssembler<Response, Re
                 linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
                         response.getRequest().getUser().getSsn(),
                         response.getRequest().getUser().getSsn()))
-                        .withRel("userPendingRequest"),
+                        .withRel(Constants.REL_USER_PENDING_REQUEST),
                 linkTo(methodOn(IndividualRequestController.class).getRequestById(
                         response.getRequest().getThirdParty().toString(),
                         response.getRequest().getUser().getSsn(),
                         response.getRequest().getId()))
-                        .withRel("request"));
+                        .withRel(Constants.REL_REQUEST));
     }
 }

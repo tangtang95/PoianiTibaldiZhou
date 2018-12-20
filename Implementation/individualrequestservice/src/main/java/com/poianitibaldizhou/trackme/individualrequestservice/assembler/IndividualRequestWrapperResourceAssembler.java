@@ -21,14 +21,6 @@ public class IndividualRequestWrapperResourceAssembler implements ResourceAssemb
                         individualRequest.getThirdPartyId().toString(),
                         individualRequest.getUserSsn() ,
                         individualRequest.getId()))
-                        .withSelfRel(),
-                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(
-                        individualRequest.getThirdPartyId().toString(),
-                        individualRequest.getThirdPartyId()))
-                        .withRel("thirdPartyRequest"),
-                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
-                        individualRequest.getUserSsn(),
-                        individualRequest.getUserSsn()))
-                        .withRel("userPendingRequest"));
+                        .withSelfRel());
     }
 }

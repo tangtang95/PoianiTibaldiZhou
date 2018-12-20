@@ -11,6 +11,9 @@ public class Constants {
     private Constants(){
 
     }
+    // HATEOAS rel
+    public static final String REL_USER_PENDING_REQUEST = "userPendingRequest";
+    public static final String REL_REQUEST = "request";
 
     // Constants that regards exception messages
     public static final String INVALID_CREDENTIAL = "Could not access this data";
