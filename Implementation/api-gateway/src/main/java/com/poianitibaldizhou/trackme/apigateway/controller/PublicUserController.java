@@ -75,7 +75,8 @@ public class PublicUserController {
             @RequestParam(Constants.LOGIN_USER_USERNAME_PARAM) final String username,
             @RequestParam(Constants.LOGIN_USER_PW_PARAM) final String password) {
         TokenWrapper tokenWrapper = new TokenWrapper();
-        tokenWrapper.setToken(userAuthenticationService.userLogin(username, password).orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL)));
+        tokenWrapper.setToken(userAuthenticationService.userLogin(username, password)
+                .orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL)));
         return tokenWrapper;
     }
 }

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @SpringBootTest
@@ -45,18 +46,18 @@ public class UserPublisherImplTest {
     private UserPublisher userPublisher;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         rabbitAdmin = new RabbitAdmin(rabbitTemplate);
         rabbitAdmin.purgeQueue(userCreatedToShareDataServiceQueue.getName());
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         rabbitAdmin = null;
     }
 
     @Test
-    public void publishUserCreated() throws Exception {
+    public void publishUserCreated() {
         User user = userRepository.findByUsername("username1").orElseThrow(() -> new UsernameNotFoundException("username1"));
         userPublisher.publishUserCreated(user);
 
@@ -70,6 +71,7 @@ public class UserPublisherImplTest {
         assertEquals(user.getBirthDate(), userProtocolMessage.getBirthDate());
         assertEquals(user.getBirthCity(), userProtocolMessage.getBirthCity());
         assertEquals(user.getBirthNation(), userProtocolMessage.getBirthNation());
+        assertTrue(UserProtocolMessage.validateMessage(userProtocolMessage));
     }
 
 }

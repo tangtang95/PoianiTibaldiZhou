@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +29,7 @@ import java.sql.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Integration test for the public controller that manages the user accounts
@@ -169,6 +171,38 @@ public class PublicUserControllerIntegrationTest {
             assertEquals("400 ", e.getMessage());
         }
 
+    }
+
+    /**
+     * Test the log in when the credentials are wrong
+     */
+    @Test
+    public void testLoginBadCredentials() {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API+"?username=wrong&password=wrong"),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the log in when the password is wrong
+     */
+    @Test
+    public void testLoginBadCredentialsWhenWrongPassword() {
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API+"?username=username1&password=wrong"),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
+        }
     }
 
     /**

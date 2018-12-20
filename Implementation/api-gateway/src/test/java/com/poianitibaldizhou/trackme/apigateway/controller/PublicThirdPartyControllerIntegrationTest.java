@@ -282,6 +282,42 @@ public class PublicThirdPartyControllerIntegrationTest {
     }
 
     /**
+     * Test the login with bad credentials
+     */
+    @Test
+    public void testLoginBadCredentials() {
+        String email = "tp1@provider.com";
+        String password = "wrongPw";
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API + "?email=" + email + "&password=" + password),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the login with bad credentials when the password is wrong
+     */
+    @Test
+    public void testLoginBadCredentialsWrongPass() {
+        String email = "tp1@provider.com";
+        String password = "wrongPw";
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API + "?email=" + email + "&password=" + password),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
      * Utility method to form the url with the injected port for a certain uri
      * @param uri uri that will access a certain resource of the application
      * @return url for accesing the resource identified by the uri

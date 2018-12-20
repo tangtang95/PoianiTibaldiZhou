@@ -12,6 +12,7 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,7 +95,7 @@ public class ThirdPartyAccountManagerServiceImpl implements ThirdPartyAccountMan
     @Transactional
     @Override
     public ThirdPartyCustomer getThirdPartyByEmail(String email) {
-        return thirdPartyRepository.findByEmail(email).orElseThrow(() -> new ThirdPartyCustomerNotFoundException(email));
+        return thirdPartyRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
 
     @Transactional
