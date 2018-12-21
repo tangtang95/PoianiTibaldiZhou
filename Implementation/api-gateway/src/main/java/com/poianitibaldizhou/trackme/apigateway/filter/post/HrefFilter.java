@@ -48,8 +48,8 @@ public class HrefFilter extends ZuulFilter {
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         try (final InputStream responseDataStream = ctx.getResponseDataStream()) {
-            final String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, Constants.UTF8_CHAR_SET));
-            String newResponseBody = responseData;
+            String newResponseBody = CharStreams.toString(new InputStreamReader(responseDataStream, Constants.UTF8_CHAR_SET));
+            String servicePath = ctx.getRequest().getRequestURI().split("/")[1];
 
             List<String> hrefs = JsonPath.read(newResponseBody, Constants.JSON_HREF_QUERY);
 
@@ -57,11 +57,14 @@ public class HrefFilter extends ZuulFilter {
                 URL url = new URL(elem);
                 String path = url.getPath();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(Constants.HTTPS_PREFIX);
-                stringBuilder.append(serverAddress);
-                stringBuilder.append(Constants.PORT_SEPARATOR);
-                stringBuilder.append(port);
-                stringBuilder.append(path);
+                stringBuilder
+                        .append(Constants.HTTPS_PREFIX)
+                        .append(serverAddress)
+                        .append(Constants.PORT_SEPARATOR)
+                        .append(port)
+                        .append(Constants.SLASH)
+                        .append(servicePath)
+                        .append(path);
                 newResponseBody = newResponseBody.replace(elem, stringBuilder);
             }
 

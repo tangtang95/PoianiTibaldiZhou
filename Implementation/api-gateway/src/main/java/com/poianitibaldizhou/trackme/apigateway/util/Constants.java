@@ -5,7 +5,6 @@ package com.poianitibaldizhou.trackme.apigateway.util;
  */
 public class Constants {
 
-
     /**
      * Private constructor
      */
@@ -53,6 +52,7 @@ public class Constants {
     public static final String PORT = "${server.port}";
     public static final String HTTPS_PREFIX = "https://";
     public static final String PORT_SEPARATOR = ":";
+    public static final String SLASH = "/";
 
     public static final String UTF8_CHAR_SET = "UTF-8";
 
