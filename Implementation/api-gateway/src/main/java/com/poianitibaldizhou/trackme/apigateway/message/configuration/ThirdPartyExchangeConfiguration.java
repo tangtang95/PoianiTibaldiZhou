@@ -49,7 +49,7 @@ public class ThirdPartyExchangeConfiguration {
      * @return the binding between thirdPartyExchange and the queue of created third party for share data service
      */
     @Bean
-    public Binding bindThirdPartyExchangeToCreatedShareDataQueue(TopicExchange thirdPartyExchange,
+    public Binding bindThirdPartyExchangeToCreatedIndividualRequestQueue(TopicExchange thirdPartyExchange,
                                                            Queue thirdPartyCreatedToIndividualRequestServiceQueue){
         return BindingBuilder.bind(thirdPartyCreatedToIndividualRequestServiceQueue).to(thirdPartyExchange)
                 .with("third-party.*.created");

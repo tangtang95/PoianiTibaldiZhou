@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
  * Unit test of the authentication service implemented by means of UUID
  */
 @RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @SpringBootTest
 public class UUIDAuthenticationServiceUnitTest {
 

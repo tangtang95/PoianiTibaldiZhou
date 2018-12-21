@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +42,7 @@ import static org.junit.Assert.fail;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"classpath:IntegrationTPControllerTestData"})
+@ActiveProfiles("test")
 @Transactional
 public class SecuredThirdPartyControllerIntegrationTest {
 
@@ -160,7 +162,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.LOGOUT_USER_API),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
 
@@ -176,7 +178,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
             httpHeaders.setBearerAuth("fakeToken");
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_TP_API + Constants.LOGOUT_TP_API),
-                    HttpMethod.GET, entity, String.class);
+                    HttpMethod.POST, entity, String.class);
             fail("Exception expected");
         } catch(HttpClientErrorException e) {
             assertEquals("401 ", e.getMessage());
@@ -229,7 +231,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
         try {
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_TP_API),
-                    HttpMethod.GET, entity, String.class);
+                    HttpMethod.POST, entity, String.class);
             fail("Exception expected");
         } catch(HttpClientErrorException e) {
             assertEquals("400 ", e.getMessage());

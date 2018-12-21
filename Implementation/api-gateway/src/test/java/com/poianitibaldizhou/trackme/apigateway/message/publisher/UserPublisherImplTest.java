@@ -53,6 +53,7 @@ public class UserPublisherImplTest {
 
     @After
     public void tearDown() {
+        rabbitAdmin.purgeQueue(userCreatedToShareDataServiceQueue.getName());
         rabbitAdmin = null;
     }
 

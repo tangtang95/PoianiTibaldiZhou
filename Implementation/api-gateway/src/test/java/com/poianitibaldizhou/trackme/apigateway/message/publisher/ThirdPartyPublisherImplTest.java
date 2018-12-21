@@ -61,6 +61,7 @@ public class ThirdPartyPublisherImplTest {
 
     @After
     public void tearDown() throws Exception {
+        rabbitAdmin.purgeQueue(thirdPartyCreatedToIndividualRequestServiceQueue.getName());
         rabbitAdmin = null;
     }
 

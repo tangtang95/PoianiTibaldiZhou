@@ -72,9 +72,8 @@ public class AccessDataController {
     @JsonView(Views.Public.class)
     @GetMapping(Constants.GET_OWN_DATA_API)
     public @ResponseBody Resource<DataWrapper> getOwnData(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
-                                                          @RequestParam(name = Constants.DATA_FROM) Date from,
-                                                          @RequestParam(name = Constants.DATA_TO) Date to){
-
+                                                          @RequestParam(name = Constants.DATE_FROM) Date from,
+                                                          @RequestParam(name = Constants.DATE_TO) Date to){
         return new Resource<>(accessDataService.getOwnData(requestingUser, from, to),
                 linkTo(methodOn(AccessDataController.class).getOwnData(requestingUser, from, to)).withSelfRel());
     }

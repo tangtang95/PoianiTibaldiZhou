@@ -15,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ import static org.junit.Assert.fail;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"classpath:IntegrationUserControllerTestData.sql"})
+@ActiveProfiles("test")
 @Transactional
 public class SecuredUserControllerIntegrationTest {
 
@@ -107,7 +109,7 @@ public class SecuredUserControllerIntegrationTest {
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_USER_API),
-                HttpMethod.GET, entity, String.class);
+                HttpMethod.POST, entity, String.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals("true", response.getBody());
@@ -122,7 +124,7 @@ public class SecuredUserControllerIntegrationTest {
             httpHeaders.setBearerAuth("fakeToken");
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.SECURED_USER_API + Constants.LOGOUT_USER_API),
-                    HttpMethod.GET, entity, String.class);
+                    HttpMethod.POST, entity, String.class);
             fail("Exception expected");
         } catch(HttpClientErrorException e) {
             assertEquals("401 ", e.getMessage());

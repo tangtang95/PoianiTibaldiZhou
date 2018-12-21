@@ -93,7 +93,8 @@ public class PublicThirdPartyController {
      * @return token associated with the customer and a list of links to the possible actions that a logged
      * third party customer can perform
      */
-    @PostMapping(Constants.LOGIN_TP_API) @ResponseBody
+    @PostMapping(Constants.LOGIN_TP_API)
+    @ResponseBody
     public Resource<Object> login(
             @RequestParam(Constants.LOGIN_TP_EMAIL_API_PARAM) final String email,
             @RequestParam(Constants.LOGIN_TP_PW_API_PARAM) final String password) {

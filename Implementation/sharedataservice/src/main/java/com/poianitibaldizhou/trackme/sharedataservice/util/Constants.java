@@ -46,8 +46,8 @@ public class Constants {
     public static final String HEADER_THIRD_PARTY_ID = "thirdPartyId";
 
     // PATH VARIABLES NAME
-    public static final String DATA_FROM = "from";
-    public static final String DATA_TO = "to";
+    public static final String DATE_FROM = "from";
+    public static final String DATE_TO = "to";
     public static final String REQUEST_ID = "request_id";
 
 }
