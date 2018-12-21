@@ -59,6 +59,7 @@ public class UserEventListenerImplTest {
 
         @After
         public void tearDown() throws Exception {
+            rabbitAdmin.purgeQueue(userCreatedToIndividualRequestServiceQueue.getName());
             rabbitAdmin = null;
         }
 

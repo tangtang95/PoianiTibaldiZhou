@@ -54,6 +54,7 @@ public class IndividualRequestPublisherImplIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
+        rabbitAdmin.purgeQueue(individualRequestAcceptedToShareDataServiceQueue.getName());
         rabbitAdmin = null;
     }
 
