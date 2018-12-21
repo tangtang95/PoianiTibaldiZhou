@@ -19,13 +19,17 @@ import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -169,4 +173,37 @@ public class PublicUserControllerUnitTest {
                 .andExpect(status().isBadRequest());
 
     }
+
+    /**
+     * Test the login of a user into the system
+     *
+     * @throws Exception due to mock mvc post method
+     */
+    @Test
+    public void testUserLogin() throws Exception {
+        User user = new User();
+        user.setSsn("SsnAlreadyPresent");
+        user.setBirthNation("Italia");
+        user.setBirthCity("Brescia");
+        user.setBirthDate(new Date(0));
+        user.setFirstName("TangTang");
+        user.setLastName("Zhou");
+        user.setPassword("tangpass");
+        user.setUsername("newUserName");
+
+        given(authenticationService.userLogin("newUserName", "tangpass")).willReturn(Optional.of("newToken"));
+
+        // TODO add fix with dynamic port and ip
+        mvc.perform(post(Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API  +"?username=newUserName&password=tangpass"))
+                .andDo(print())
+                .andExpect(jsonPath("token", is("newToken")))
+                .andExpect(jsonPath("_links.logout.href", is("https://127.0.0.1:8443/users/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://127.0.0.1:8443/users/info")))
+                .andExpect(jsonPath("_links.pendingRequests.href", is("https://127.0.0.1:8443/individualrequestservice/requests/users")))
+                .andExpect(jsonPath("_links.postHealthData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/healthdata")))
+                .andExpect(jsonPath("_links.postPositionData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/positiondata")))
+                .andExpect(jsonPath("_links.postClusterData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/clusterdata")))
+                .andExpect(jsonPath("_links.getOwnData.href", is("https://127.0.0.1:8443/sharedataservice/dataretrieval/users")));
+    }
+
 }

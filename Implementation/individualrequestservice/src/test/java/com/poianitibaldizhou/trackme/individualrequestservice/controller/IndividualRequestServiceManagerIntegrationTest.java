@@ -217,27 +217,6 @@ public class IndividualRequestServiceManagerIntegrationTest {
     // TEST GET BY THIRD PARTY ID METHOD
 
     /**
-     * Test the get of a the requests related with a customer when the header singals an impossible access
-     *
-     * @throws Exception due to json mappping
-     */
-    @Test
-    public void testGetRequestsByTpIdWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/thirdparties/2"),
-                HttpMethod.GET, entity, String.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-        ObjectMapper mapper = new ObjectMapper();
-
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
-
-    /**
      * Test the get of all the requests performed by a third party customer when that requests are empty
      *
      * @throws JSONException due to json assertEquals method
@@ -246,13 +225,14 @@ public class IndividualRequestServiceManagerIntegrationTest {
     public void testGetByThirdPartyIDWhenNoRequestArePresent() throws JSONException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/thirdparties/1000"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                createURLWithPort(Constants.REQUEST_API+Constants.REQUEST_BY_THIRD_PARTY_ID),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/thirdparties/1000\"\n" +
+                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+Constants.REQUEST_BY_THIRD_PARTY_ID+"\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -270,7 +250,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
     public void testGetByThirdPartyID() throws JSONException {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/thirdparties/2"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                createURLWithPort(Constants.REQUEST_API+Constants.REQUEST_BY_THIRD_PARTY_ID),
                 HttpMethod.GET, entity, String.class);
 
 
@@ -304,7 +285,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  },\n" +
                 "  \"_links\" : {\n" +
                 "    \"self\" : {\n" +
-                "      \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + "/thirdparties/2\"\n" +
+                "      \"href\" : \"http://localhost:" + port + Constants.REQUEST_API + Constants.REQUEST_BY_THIRD_PARTY_ID+"\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -316,26 +297,6 @@ public class IndividualRequestServiceManagerIntegrationTest {
     // TEST GET PENDING REQUEST OF A CERTAIN USER
 
     /**
-     * Test the get of the pending requests of a user when the header signals a wrong access
-     * @throws Exception due to json mapping
-     */
-    @Test
-    public void testGetPendingRequestWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/users/user2"),
-                HttpMethod.GET, entity, String.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-        ObjectMapper mapper = new ObjectMapper();
-
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
-
-    /**
      * Test the get of all the pending request of a certain user that is registered
      *
      * @throws JSONException due to json assertEquals method
@@ -344,7 +305,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
     public void testGetPendingRequest() throws JSONException {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/users/user2"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                createURLWithPort(Constants.REQUEST_API+Constants.PENDING_REQUEST_BY_USER_API),
                 HttpMethod.GET, entity, String.class);
 
 
@@ -368,7 +330,7 @@ public class IndividualRequestServiceManagerIntegrationTest {
                 "  },\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+"/users/user2\"\n" +
+                "      \"href\": \"http://localhost:"+port+Constants.REQUEST_API+Constants.PENDING_REQUEST_BY_USER_API+"\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -384,7 +346,8 @@ public class IndividualRequestServiceManagerIntegrationTest {
     public void testGetPendingRequestWhenUserNotRegistered() throws IOException {
         httpHeaders.set(Constants.HEADER_USER_SSN, "notregistered");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(Constants.REQUEST_API+"/users/notregistered"),
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                createURLWithPort(Constants.REQUEST_API+Constants.PENDING_REQUEST_BY_USER_API),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());

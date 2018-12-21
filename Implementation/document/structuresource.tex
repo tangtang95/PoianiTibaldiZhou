@@ -58,10 +58,88 @@ as a response to the original request
 \end{itemize}
 
 The routes to the other microservices available are present in the application.properties file.
+Here it follows a list of the API available:
+\begin{itemize}
+
+\item /public/users/authorize \\
+This requires two request parameters, that are user name and password. This API is necessary to login the users.
+The method is POST.
+
+\item /public/users/\{ssn\} \\
+This is the entry point for registering a new user. Here, ssn is a path variable that specifies the social security number
+of the user that will register. A request body that specifies the necessary fields of the JSON are specified in the user entity. \\
+Here is reminded that one should check the needed fields paying attention also to the defined JSON views defined. \\
+This holds also for the other methods in which a request body is needed. \\
+The method is POST.
+
+
+\item /public/thirdparties/authorize \\
+This requires two parameters, that are email and password. This API is necessary to login the third party customers. 
+The method is POST.
+
+\item /public/thirdparties/companies is necessary to register a third party customer that is related with a company. \\
+A request body is needed to specify all the information related to that customer.
+The method is POST.
+
+\item /public/thirdparties/privates is necessary to register a third party customer that is not related with a company.
+A request body is needed to specify all the information related to that customer.
+The method is POST.
+
+\item /users/info returns the information of the user that is accessing that API 
+The method is GET.
+
+\item /users/logout performs the logout of a user from the system
+The method is POST.
+
+\item /thirdparties/info returns the information of the third party customer that is accessing the method
+The method is GET.
+
+\item /thirdparties/logout performs the logout of a third party customer from the system 
+The method is POST.
+
+\end{itemize}
+
 
 \subsubsection{Service registry}
 The project of the service registry is almost empty, no package is present, but just an application class is present, annotated with 
 @EnableEurekaServer. The configuration of the service registry is set in the application.properties file.
+
+\subsubsection{Group request service}
+In the next figure, the package diagram of the group request project is shown ~\ref{fig:pkggrouprequest}. \\
+The same comments hold here except for the fact that the business function mapped in the component interfaces are the one regarding
+the group request service. 
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/PackageGrouprequestservice.png}
+\caption{ Group request service }
+\label{fig:pkggrouprequest}
+\end{figure}
+
+Here it follows a list of the API available:
+\begin{itemize}
+
+\item /grouprequestservice/grouprequests/id/\{id\} \\
+It retrieves the information related with the group request specified by the id in the
+path variable. 
+The method is GET.
+
+\item /grouprequestservice/grouprequests/thirdparties \\
+It collects all the group requests related with the third party that is accessing the method. 
+The method is GET.
+
+\item /grouprequestservice/grouprequests/thirdparties \\
+This adds a new group requests. It requires a request body that contains all the details of the group
+request that will be added.
+The method is POST.
+
+\end{itemize}
+
+The prefix /grouprequestservice is necessary in order to access the APIs from the API gateway. 
+Note, that by inspecting the controller, the prefix won't be shown at all: this is because the API gateway does this translation 
+and mapping autonomously. Instead, one may notice some requested headers: they are added at runtime by the gateway, and so the client
+don't have to specify them, and, if it does, they will be overwritten. \\
+This comment holds, as well, for all the other microservices.
+
 
 \subsubsection{Individual request service}
 Here it follows the package diagram of the individual request service project ~\ref{fig:pkgindividualrequest}. 
@@ -78,16 +156,32 @@ defines listeners: these are charged of listening to new events that are forward
 \label{fig:pkgindividualrequest}
 \end{figure}
 
-\subsubsection{Group request service}
-In the next figure, the package diagram of the group request project is shown ~\ref{fig:pkggrouprequest}. \\
-The same comments hold here except for the fact that the business function mapped in the component interfaces are the one regarding
-the group request service. 
+Here it follows a description of the available API:
+\begin{itemize}
+\item /individualrequestservice/requests/id/\{id\} \\
+This retrieves an individual request identified by means of a certain id. 
+The method is GET.
 
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{images/PackageGrouprequestservice.png}
-\caption{ Group request service }
-\label{fig:pkggrouprequest}
-\end{figure}
+\item /individualrequestservice/requests/users \\ 
+This retrieves the pending requests of the user that is accessing the method. 
+The method is GET.
+
+\item /individualrequestservice/requests/thirdparties \\ 
+This retrieves the requests performed by the third party customer that is accessing the method.
+The method is GET.
+
+\item /individualrequestservice/requests/\{ssn\} \\
+This adds a new individual request toward the user specified in the path variable.
+A request body specifies the information requested to define the individual request.
+The method is POST. 
+
+\item /individualrequestservice/responses/requests/{requestID} \\
+It is used in the case in which the user that is accessing the method
+sends a response to the request identified by requestID in the path variable.
+
+\item /individualrequestservice/responses/blockedThirdParty/thirdparties/{thirdParty} \\
+It is used in the case in which the user that is accessing the method blocks the third party identified by the id specified in the path variable
+\end{itemize}
 
 \subsubsection{Share data service}
 The structure of the share data service, as shown by the following picture, is also very similar to the previous ones 
@@ -102,6 +196,39 @@ The structure of the share data service, as shown by the following picture, is a
 However, it is important to point out the structure of the code that manages the personalized query specified by the group requests on 
 anonymized data. // TODO TANG
   
+Here it follows a list of the main API that have been developed in the project, and that are located
+within the various microservices.
+It is possible to find these mapping in the controller packages. \\
+The methods are expressed from a client point of view: for example, takes into consideration the methods that starts with s 
+
+Here it follows a description of the available API
+
+\begin{itemize}
+\item /sharedataservice/dataretrieval/individualrequests/\{request\_id\} \\
+This method retrieves the data related to the individual request identified by the path variable. The method is GET.
+
+\item /sharedataservice/dataretrieval/grouprequests/\{request\_id\} \\
+This method retrieves the data related to the group request identified by the path variable. The method is GET.
+
+\item /sharedataservice/dataretrieval/users \\
+This method retrieves the own data of the user. In this case, two request parameters
+are necessary in order to specify an interval of time that involves the interested data.
+The method is GET.
+
+\item /sharedataservice/datacollection/healthdata \\
+This allows the user to send data regarding the health status to the system. The method is POST.
+A request body that specifies the data is required.
+
+\item /sharedataservice/datacollection/positiondata \\
+This allows the user to send data regarding his position data to the system. The method is POST.
+A request body that specifies the data is required.
+
+\item /sharedataservice/datacollection/clusterdata
+This allows the user to send cluster of data (both health and position data). The method is POST.
+A request body that specifies the data is required.
+
+\end{itemize}
+
 
 
 \subsection{Mobile code}

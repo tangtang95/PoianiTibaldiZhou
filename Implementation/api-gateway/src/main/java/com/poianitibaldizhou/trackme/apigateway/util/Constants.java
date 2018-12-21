@@ -5,6 +5,7 @@ package com.poianitibaldizhou.trackme.apigateway.util;
  */
 public class Constants {
 
+
     /**
      * Private constructor
      */
@@ -73,6 +74,35 @@ public class Constants {
     public static final String SECURED_USER_API = "/users";
     public static final String LOGOUT_USER_API = "/logout";
     public static final String GET_USER_INFO_API = "/info";
+
+    // External APIs
+    public static final String EXT_API_GET_PENDING_REQUESTS = "/individualrequestservice/requests/users";
+    public static final String EXT_API_HEALTH_DATA = "/sharedataservice/datacollection/healthdata";
+    public static final String EXT_API_POSITION_DATA = "/sharedataservice/datacollection/positiondata";
+    public static final String EXT_API_CLUSTER_DATA = "/sharedataservice/datacollection/clusterdata";
+    public static final String EXT_API_OWN_DATA = "/sharedataservice/dataretrieval/users";
+
+    public static final String EXT_API_GET_GROUP_REQUESTS = "/grouprequestservice/grouprequests/thirdparties";
+    public static final String EXT_API_ADD_INDIVIDUAL_REQUEST = "/individualrequestservice/requests";
+    public static final String EXT_API_GET_INDIVIDUAL_REQUESTS = "/individualrequestservice/requests/thirdparties";
+    public static final String EXT_API_ADD_GROUP_REQUEST = "/grouprequestservice/grouprequests/thirdparties";
+
+
+    // External APIs rel
+    public static final String EXT_API_GET_PENDING_REQUESTS_REL = "pendingRequests";
+    public static final String EXT_API_HEALTH_DATA_REL = "postHealthData";
+    public static final String EXT_API_POSITION_DATA_REL = "postPositionData";
+    public static final String EXT_API_CLUSTER_DATA_REL = "postClusterData";
+    public static final String EXT_API_OWN_DATA_REL = "getOwnData";
+
+    public static final String EXT_API_GET_GROUP_REQUESTS_REL = "groupRequests";
+    public static final String EXT_API_ADD_GROUP_REQUEST_REL = "newGroupRequest";
+    public static final String EXT_API_GET_INDIVIDUAL_REQUESTS_REL = "individualRequests";
+    public static final String EXT_API_ADD_INDIVIDUAL_REQUEST_REL = "newIndividualRequest";
+
+    // Internal APIs rel
+    public static final String LOGOUT_REL = "logout";
+    public static final String INFO_REL = "info";
 
 }
 

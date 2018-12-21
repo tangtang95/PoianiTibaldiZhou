@@ -80,7 +80,7 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/healthdata/" + USER_1).
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_HEALTH_DATA_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
@@ -88,7 +88,7 @@ public class SendDataControllerUnitTest {
                 .andExpect(jsonPath("$.pressureMin", is(output.getPressureMin())))
                 .andExpect(jsonPath("$.pressureMax", is(output.getPressureMax())))
                 .andExpect(jsonPath("$.bloodOxygenLevel", is(output.getBloodOxygenLevel())))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/healthdata/" + USER_1)));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/healthdata")));
 
     }
 
@@ -105,7 +105,7 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/healthdata/" + USER_NOT_FOUND).
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_HEALTH_DATA_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
@@ -124,13 +124,13 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/positiondata/" + USER_1).
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_POSITION_DATA_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.timestamp", is("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.latitude", is(output.getLatitude())))
                 .andExpect(jsonPath("$.longitude", is(output.getLongitude())))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/positiondata/" + USER_1)));
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/positiondata")));
 
     }
 
@@ -147,7 +147,7 @@ public class SendDataControllerUnitTest {
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(input);
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/positiondata/" + USER_NOT_FOUND).
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_POSITION_DATA_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
     }
@@ -181,16 +181,16 @@ public class SendDataControllerUnitTest {
 
         given(service.sendClusterOfData(USER_1, input)).willReturn(output);
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/clusterdata/" + USER_1)
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_DATA_CLUSTER_API)
                 .contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_1))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/clusterdata/"+USER_1)))
+                .andExpect(jsonPath("$._links.self.href", is("http://localhost/datacollection/clusterdata")))
                 .andExpect(jsonPath("$.positionDataList", hasSize(1)))
                 .andExpect(jsonPath("$.positionDataList[*].timestamp", contains("1970-01-01T00:00:00.000+0000")))
                 .andExpect(jsonPath("$.positionDataList[*].latitude", contains(outputPD1.getLatitude())))
                 .andExpect(jsonPath("$.positionDataList[*].longitude", contains(outputPD1.getLongitude())))
                 .andExpect(jsonPath("$.positionDataList[*]._links.self.href",
-                        contains("http://localhost/datacollection/positiondata/" + USER_1)))
+                        contains("http://localhost/datacollection/positiondata")))
                 .andExpect(jsonPath("$.healthDataList", hasSize(2)))
                 .andExpect(jsonPath("$.healthDataList[*].timestamp",
                         containsInAnyOrder("1970-01-01T00:00:00.000+0000", "1970-01-01T00:00:00.001+0000")))
@@ -203,8 +203,8 @@ public class SendDataControllerUnitTest {
                 .andExpect(jsonPath("$.healthDataList[*].bloodOxygenLevel",
                         containsInAnyOrder(outputHD1.getBloodOxygenLevel(), outputHD2.getBloodOxygenLevel())))
                 .andExpect(jsonPath("$.healthDataList[*]._links.self.href",
-                        containsInAnyOrder("http://localhost/datacollection/healthdata/" + USER_1,
-                                "http://localhost/datacollection/healthdata/" + USER_1)));
+                        containsInAnyOrder("http://localhost/datacollection/healthdata",
+                                "http://localhost/datacollection/healthdata")));
     }
 
     /**
@@ -227,7 +227,7 @@ public class SendDataControllerUnitTest {
 
         given(service.sendClusterOfData(USER_NOT_FOUND, input)).willThrow(new UserNotFoundException(USER_NOT_FOUND));
 
-        mvc.perform(post(Constants.SEND_DATA_API + "/clusterdata/" + USER_NOT_FOUND).
+        mvc.perform(post(Constants.SEND_DATA_API + Constants.SEND_DATA_CLUSTER_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json).header(Constants.HEADER_USER_SSN, USER_NOT_FOUND))
                 .andExpect(status().isNotFound());
 

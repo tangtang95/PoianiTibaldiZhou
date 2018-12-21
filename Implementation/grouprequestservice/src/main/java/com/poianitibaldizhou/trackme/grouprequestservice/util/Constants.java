@@ -13,7 +13,6 @@ public class Constants {
     public static final String INVALID_OPERATION = "Invalid operation. Please, check the format of the data that have been sent";
     public static final String IMPOSSIBLE_ACCESS = "Can't access this method";
 
-
     public static final String SPACE = " ";
 
     // Exchange and queue messages
@@ -27,10 +26,15 @@ public class Constants {
     // Api path
     public static final String GROUP_REQUEST_API = "/grouprequests";
     public static final String GROUP_REQUEST_BY_ID_API = "/id/{id}";
-    public static final String GROUP_REQUEST_BY_THIRD_PARTY_API = "/thirdparties/{thirdPartyId}";
-    public static final String NEW_GROUP_REQUEST_API = "/thirdparties/{thirdPartyId}";
+    public static final String GROUP_REQUEST_BY_THIRD_PARTY_API = "/thirdparties";
+    public static final String NEW_GROUP_REQUEST_API = "/thirdparties";
 
     // header
-    public static final String HEADER_USER_SSN = "userSsn";
     public static final String HEADER_THIRD_PARTY_ID = "thirdPartyId";
+
+    // External API
+    public static final String EXT_API_ACCESS_GROUP_REQUEST_DATA = "/sharedataservice/dataretrieval/grouprequests";
+    public static final String EXT_API_ACCESS_GROUP_REQUEST_DATA_REL = "accessData";
+
+    public static final String FAKE_URL = "http://fakeip:fakeport";
 }

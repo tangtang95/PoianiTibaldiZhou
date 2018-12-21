@@ -19,7 +19,7 @@ public class ResourceDataWrapperResourceAssembler implements ResourceAssembler<R
     @Override
     public Resource<ResourceDataWrapper> toResource(ResourceDataWrapper dataWrapper) {
         return new Resource<>(dataWrapper,
-                linkTo(methodOn(SendDataController.class).sendClusterOfData(dataWrapper.getUserSsn(),dataWrapper.getUserSsn(),
+                linkTo(methodOn(SendDataController.class).sendClusterOfData(dataWrapper.getUserSsn(),
                         new DataWrapper())).withSelfRel());
     }
 

@@ -1,13 +1,12 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.CompanyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.PrivateThirdPartyDetailRepository;
 import com.poianitibaldizhou.trackme.apigateway.repository.ThirdPartyRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import org.json.JSONException;
 import org.junit.After;
 import org.junit.Before;
@@ -29,6 +28,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -249,11 +249,8 @@ public class SecuredThirdPartyControllerIntegrationTest {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API + "?email=" + email + "&password=" + password),
                 HttpMethod.POST, entity, String.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        TokenWrapper tokenWrapper = mapper.readValue(response.getBody(), TokenWrapper.class);
-
-        return tokenWrapper.getToken();
+        List<String> list = JsonPath.read(response.getBody(), "$..token");
+        return list.get(0);
     }
 
 

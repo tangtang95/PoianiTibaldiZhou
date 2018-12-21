@@ -85,43 +85,46 @@ public class GroupRequestControllerIntegrationTest {
 				HttpMethod.GET, entity, String.class);
 
 		String expectedBody =  "\n" +
-				"{\n" +
-				"   \"groupRequest\":{\n" +
-				"      \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
-				"      \"aggregatorOperator\":\"COUNT\",\n" +
-				"      \"requestType\":\"ALL\",\n" +
-				"      \"status\":\"ACCEPTED\"\n" +
-				"   },\n" +
-				"   \"filterStatementList\":[\n" +
-				"      {\n" +
-				"         \"column\":\"HEART_BEAT\",\n" +
-				"         \"value\":\"200\",\n" +
-				"         \"comparisonSymbol\":\"GREATER\",\n" +
-				"         \"groupRequest\":{\n" +
-				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
-				"            \"aggregatorOperator\":\"COUNT\",\n" +
-				"            \"requestType\":\"ALL\",\n" +
-				"            \"status\":\"ACCEPTED\"\n" +
-				"         }\n" +
-				"      },\n" +
-				"      {\n" +
-				"         \"column\":\"BLOOD_OXYGEN_LEVEL\",\n" +
-				"         \"value\":\"90\",\n" +
-				"         \"comparisonSymbol\":\"GREATER\",\n" +
-				"         \"groupRequest\":{\n" +
-				"            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
-				"            \"aggregatorOperator\":\"COUNT\",\n" +
-				"            \"requestType\":\"ALL\",\n" +
-				"            \"status\":\"ACCEPTED\"\n" +
-				"         }\n" +
-				"      }\n" +
-				"   ],\n" +
-				"   \"_links\":{\n" +
-				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+ Constants.GROUP_REQUEST_API+"/id/1\"\n" +
-				"      }\n" +
-				"   }\n" +
-				"}";
+                "{\n" +
+                "   \"groupRequest\":{\n" +
+                "      \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
+                "      \"aggregatorOperator\":\"COUNT\",\n" +
+                "      \"requestType\":\"ALL\",\n" +
+                "      \"status\":\"ACCEPTED\"\n" +
+                "   },\n" +
+                "   \"filterStatementList\":[\n" +
+                "      {\n" +
+                "         \"column\":\"HEART_BEAT\",\n" +
+                "         \"value\":\"200\",\n" +
+                "         \"comparisonSymbol\":\"GREATER\",\n" +
+                "         \"groupRequest\":{\n" +
+                "            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
+                "            \"aggregatorOperator\":\"COUNT\",\n" +
+                "            \"requestType\":\"ALL\",\n" +
+                "            \"status\":\"ACCEPTED\"\n" +
+                "         }\n" +
+                "      },\n" +
+                "      {\n" +
+                "         \"column\":\"BLOOD_OXYGEN_LEVEL\",\n" +
+                "         \"value\":\"90\",\n" +
+                "         \"comparisonSymbol\":\"GREATER\",\n" +
+                "         \"groupRequest\":{\n" +
+                "            \"creationTimestamp\":\"2011-06-06T00:00:00.000+0000\",\n" +
+                "            \"aggregatorOperator\":\"COUNT\",\n" +
+                "            \"requestType\":\"ALL\",\n" +
+                "            \"status\":\"ACCEPTED\"\n" +
+                "         }\n" +
+                "      }\n" +
+                "   ],\n" +
+                "   \"_links\":{\n" +
+                "      \"self\":{\n" +
+                "         \"href\":\"http://localhost:"+port+"/grouprequests/id/1\"\n" +
+                "      },\n" +
+                "      \"accessData\":{\n" +
+                "         \"href\":\"http://fakeip:fakeport/sharedataservice/dataretrieval/grouprequests/1\"\n" +
+                "      }\n" +
+                "   }\n" +
+                "}";
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 		JSONAssert.assertEquals(expectedBody, response.getBody(), false);
@@ -171,25 +174,6 @@ public class GroupRequestControllerIntegrationTest {
 	// TEST GET REQUEST BY THIRD PARTY ID
 
 	/**
-	 * Test the get of group requests performed by a customer when the header specifies an impossible access
-	 */
-	@Test
-	public void testGetRequestByTpWhenWrongHeader() throws IOException {
-		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
-		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(
-				Constants.GROUP_REQUEST_API + "/thirdparties/1"),
-				HttpMethod.GET, entity, String.class);
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-
-		ObjectMapper mapper = new ObjectMapper();
-		ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
-		assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-		assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-		assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-	}
-
-	/**
 	 * Test the get of requests of a specific third party customer
 	 *
 	 * @throws JSONException due to json comparison
@@ -198,7 +182,8 @@ public class GroupRequestControllerIntegrationTest {
 	public void testGetRequestByThirdPartyId() throws JSONException {
 		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "5");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.GROUP_REQUEST_API + "/thirdparties/5"),
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
+				Constants.GROUP_REQUEST_API + Constants.GROUP_REQUEST_BY_THIRD_PARTY_API),
 				HttpMethod.GET, entity, String.class);
 
 		String expectedBody =  "\n" +
@@ -225,7 +210,7 @@ public class GroupRequestControllerIntegrationTest {
 				"   },\n" +
 				"   \"_links\":{\n" +
 				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+Constants.GROUP_REQUEST_API+"/thirdparties/5\"\n" +
+				"         \"href\":\"http://localhost:"+port+Constants.GROUP_REQUEST_API+Constants.GROUP_REQUEST_BY_THIRD_PARTY_API+"\"\n" +
 				"      }\n" +
 				"   }\n" +
 				"}";
@@ -243,13 +228,13 @@ public class GroupRequestControllerIntegrationTest {
 	public void testGetRequestByThirdPartyIdWhenNoRequest() throws JSONException {
 		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/1000"),
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.GROUP_REQUEST_API+Constants.GROUP_REQUEST_BY_THIRD_PARTY_API),
 				HttpMethod.GET, entity, String.class);
 
 		String expectedBody =  "{\n" +
 				"   \"_links\":{\n" +
 				"      \"self\":{\n" +
-				"         \"href\":\"http://localhost:"+port+Constants.GROUP_REQUEST_API+"/thirdparties/1000\"\n" +
+				"         \"href\":\"http://localhost:"+port+Constants.GROUP_REQUEST_API+Constants.GROUP_REQUEST_BY_THIRD_PARTY_API+"\"\n" +
 				"      }\n" +
 				"   }\n" +
 				"}";
@@ -259,33 +244,6 @@ public class GroupRequestControllerIntegrationTest {
 	}
 
 	// TEST ADD NEW REQUEST
-
-	/**
-	 * Test the get of a group request when the header specifies an impossible access
-	 */
-	@Test
-	public void testAddRequestWhenWrongHeader() throws IOException {
-        GroupRequest groupRequest = new GroupRequest();
-        groupRequest.setRequestType(RequestType.ALL);
-        groupRequest.setAggregatorOperator(AggregatorOperator.DISTINCT_COUNT);
-
-        GroupRequestWrapper groupRequestWrapper = new GroupRequestWrapper();
-        groupRequestWrapper.setGroupRequest(groupRequest);
-        groupRequestWrapper.setFilterStatementList(new ArrayList<>());
-
-        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1000");
-		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
-		ResponseEntity<String> responseEntity = restTemplate.exchange(createURLWithPort(
-				Constants.GROUP_REQUEST_API + "/thirdparties/1"),
-				HttpMethod.POST, entity, String.class);
-		assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
-
-		ObjectMapper mapper = new ObjectMapper();
-		ExceptionResponseBody exceptionResponseBody = mapper.readValue(responseEntity.getBody(), ExceptionResponseBody.class);
-		assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-		assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-		assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-	}
 
 	/**
 	 * Test the add of a new group request with two filter statements
@@ -324,7 +282,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/1"),
+				createURLWithPort(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -383,7 +341,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/2"),
+				createURLWithPort(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.CREATED, response.getStatusCode());
@@ -435,7 +393,7 @@ public class GroupRequestControllerIntegrationTest {
 		HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
 		ResponseEntity<String> response = restTemplate.exchange(
-				createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/2"),
+				createURLWithPort(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API),
 				HttpMethod.POST, entity, String.class);
 
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
@@ -472,7 +430,7 @@ public class GroupRequestControllerIntegrationTest {
         HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(groupRequestWrapper, httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/2"),
+                createURLWithPort(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API),
                 HttpMethod.POST, entity, String.class);
 
         ObjectMapper mapper = new ObjectMapper();
@@ -489,7 +447,7 @@ public class GroupRequestControllerIntegrationTest {
         HttpEntity<GroupRequestWrapper> entity = new HttpEntity<>(new GroupRequestWrapper(), httpHeaders);
 
         ResponseEntity<String> response = restTemplate.exchange(
-                createURLWithPort(Constants.GROUP_REQUEST_API+"/thirdparties/2"),
+                createURLWithPort(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API),
                 HttpMethod.POST, entity, String.class);
 
         ObjectMapper mapper = new ObjectMapper();

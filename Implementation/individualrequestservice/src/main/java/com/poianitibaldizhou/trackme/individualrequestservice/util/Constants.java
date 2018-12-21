@@ -45,16 +45,21 @@ public class Constants {
     // Api path for requests
     public static final String REQUEST_API = "/requests";
     public static final String REQUEST_BY_ID_API = "/id/{id}";
-    public static final String PENDING_REQUEST_BY_USER_API = "/users/{ssn}";
-    public static final String REQUEST_BY_THIRD_PARTY_ID = "/thirdparties/{thirdParty}";
+    public static final String PENDING_REQUEST_BY_USER_API = "/users";
+    public static final String REQUEST_BY_THIRD_PARTY_ID = "/thirdparties";
     public static final String NEW_REQUEST_API = "/{ssn}";
 
     // Api path for responses
     public static final String RESPONSE_API = "/responses";
-    public static final String NEW_RESPONSE_API = "/users/{ssn}/requests/{requestID}";
-    public static final String NEW_BLOCK_API = "/blockedThirdParty/users/{ssn}/thirdparties/{thirdParty}";
+    public static final String NEW_RESPONSE_API = "/requests/{requestID}";
+    public static final String NEW_BLOCK_API = "/blockedThirdParty/thirdparties/{thirdParty}";
 
     // Header parameter in api
     public static final String HEADER_THIRD_PARTY_ID = "thirdPartyId";
     public static final String HEADER_USER_SSN = "userSsn";
+
+    // External Api
+    public static final String EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA = "/sharedataservice/dataretrieval/individualrequests";
+    public static final String EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL = "accessData";
+    public static final String FAKE_URL = "http://fakeip:fakeport";
 }

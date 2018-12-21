@@ -1,11 +1,10 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.poianitibaldizhou.trackme.apigateway.ApiGatewayApplication;
 import com.poianitibaldizhou.trackme.apigateway.TestUtils;
 import com.poianitibaldizhou.trackme.apigateway.repository.UserRepository;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -159,11 +159,8 @@ public class SecuredUserControllerIntegrationTest {
                 Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API+"?username=username1&password=password1"),
                 HttpMethod.POST, entity, String.class);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        TokenWrapper tokenWrapper = mapper.readValue(response.getBody(), TokenWrapper.class);
-
-        return tokenWrapper.getToken();
+        List<String> list = JsonPath.read(response.getBody(), "$..token");
+        return list.get(0);
     }
 
 

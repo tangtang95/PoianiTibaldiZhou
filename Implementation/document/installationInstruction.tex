@@ -55,6 +55,10 @@ In the case in which you are using Intellij, this link may be useful:\\
 paths when extracting the folder. This is a problem that have been encountered only extracting the zip, and that is fixed
 by using tar.gz format. 
 
+\item When running tests that are provided with the source code, remember to not having started the application as a whole, or at least not
+the one that involves the test that is going to start. This is because the service has just a single queue
+for receiving the messages and, therefore, conflicts can happen, leading to some bugs. 
+
 \end{itemize}
 
 \subsection{Android application}

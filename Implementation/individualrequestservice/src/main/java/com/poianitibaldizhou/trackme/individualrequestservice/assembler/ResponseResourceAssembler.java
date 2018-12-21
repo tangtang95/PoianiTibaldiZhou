@@ -20,7 +20,6 @@ public class ResponseResourceAssembler implements ResourceAssembler<Response, Re
     public Resource<Response> toResource(Response response) {
         return new Resource<>(response,
                 linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
-                        response.getRequest().getUser().getSsn(),
                         response.getRequest().getUser().getSsn()))
                         .withRel(Constants.REL_USER_PENDING_REQUEST),
                 linkTo(methodOn(IndividualRequestController.class).getRequestById(

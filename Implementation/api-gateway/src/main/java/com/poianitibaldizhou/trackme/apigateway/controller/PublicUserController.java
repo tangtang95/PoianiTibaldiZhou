@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.UserAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.Constants;
+import com.poianitibaldizhou.trackme.apigateway.util.SetUpLinks;
 import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
+import static org.springframework.hateoas.jaxrs.JaxRsLinkBuilder.linkTo;
 
 /**
  * Public controller regarding the users: methods in there can be accessed without authentication
@@ -66,16 +69,17 @@ public class PublicUserController {
      *
      * @param username user name of the user
      * @param password password of the user
-     * @return token associated with the user
+     * @return token associated with the user and the links to the possible actions that he can take
      */
     @PostMapping(Constants.LOGIN_USER_API)
     @ResponseBody
-    TokenWrapper login(
-            @RequestParam(Constants.LOGIN_USER_USERNAME_PARAM) final String username,
-            @RequestParam(Constants.LOGIN_USER_PW_PARAM) final String password) {
+    public Resource<Object> login(@RequestParam(Constants.LOGIN_USER_USERNAME_PARAM) final String username,
+                           @RequestParam(Constants.LOGIN_USER_PW_PARAM) final String password) {
         TokenWrapper tokenWrapper = new TokenWrapper();
         tokenWrapper.setToken(userAuthenticationService.userLogin(username, password)
                 .orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL)));
-        return tokenWrapper;
+
+
+        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedUserLinks());
     }
 }

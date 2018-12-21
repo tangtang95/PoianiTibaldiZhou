@@ -19,7 +19,7 @@ public class PositionDataResourceAssembler implements ResourceAssembler<Position
     @Override
     public Resource<PositionData> toResource(PositionData positionData) {
         return new Resource<>(positionData,
-                linkTo(methodOn(SendDataController.class).sendPositionData(positionData.getUser().getSsn(),positionData.getUser().getSsn(),
+                linkTo(methodOn(SendDataController.class).sendPositionData(positionData.getUser().getSsn(),
                         positionData)).withSelfRel());
     }
 }

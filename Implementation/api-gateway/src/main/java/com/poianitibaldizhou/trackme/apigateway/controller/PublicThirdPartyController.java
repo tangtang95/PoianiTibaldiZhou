@@ -90,15 +90,17 @@ public class PublicThirdPartyController {
      *
      * @param email email of the customer
      * @param password password of the customer
-     * @return token associated with the customer
+     * @return token associated with the customer and a list of links to the possible actions that a logged
+     * third party customer can perform
      */
     @PostMapping(Constants.LOGIN_TP_API) @ResponseBody
-    TokenWrapper login(
+    public Resource<Object> login(
             @RequestParam(Constants.LOGIN_TP_EMAIL_API_PARAM) final String email,
             @RequestParam(Constants.LOGIN_TP_PW_API_PARAM) final String password) {
         TokenWrapper tokenWrapper = new TokenWrapper();
         tokenWrapper.setToken(thirdPartyAuthenticationService.thirdPartyLogin(email, password)
                 .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL)));
-        return tokenWrapper;
+
+        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedThirdPartyLinks());
     }
 }

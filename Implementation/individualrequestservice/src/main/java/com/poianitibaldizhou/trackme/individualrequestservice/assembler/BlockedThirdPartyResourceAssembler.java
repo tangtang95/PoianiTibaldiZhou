@@ -19,7 +19,6 @@ public class BlockedThirdPartyResourceAssembler implements ResourceAssembler<Blo
     public Resource<BlockedThirdParty> toResource(BlockedThirdParty blockedThirdParty) {
         return new Resource<>(blockedThirdParty,
                 linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
-                        blockedThirdParty.getKey().getUser().getSsn(),
                         blockedThirdParty.getKey().getUser().getSsn()))
                         .withRel(Constants.REL_USER_PENDING_REQUEST));
     }

@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssem
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
+import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentEmailException;
 import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationProvider;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
@@ -25,11 +26,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -235,5 +238,29 @@ public class PublicThirdPartyControllerUnitTest {
         mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Test the login into the system of a third party customer
+     * @throws Exception due to mock mvc post method
+     */
+    @Test
+    public void testLogin() throws Exception {
+        ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
+        thirdPartyCustomer.setPassword("tangpass");
+        thirdPartyCustomer.setEmail("newEmail");
+        thirdPartyCustomer.setId(1L);
+
+        given(authenticationService.thirdPartyLogin("newEmail", "tangpass")).willReturn(Optional.of("newToken"));
+
+        // TODO add fix with dynamic port and ip
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API +"?email=newEmail&password=tangpass"))
+                .andExpect(jsonPath("token", is("newToken")))
+                .andExpect(jsonPath("_links.logout.href", is("https://127.0.0.1:8443/thirdparties/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://127.0.0.1:8443/thirdparties/info")))
+                .andExpect(jsonPath("_links.groupRequests.href", is("https://127.0.0.1:8443/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.newGroupRequest.href", is("https://127.0.0.1:8443/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.individualRequests.href", is("https://127.0.0.1:8443/individualrequestservice/requests/thirdparties")))
+                .andExpect(jsonPath("_links.newIndividualRequest.href", is("https://127.0.0.1:8443/individualrequestservice/requests")));
     }
 }
