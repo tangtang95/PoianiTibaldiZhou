@@ -6,6 +6,7 @@ import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssem
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
 import com.poianitibaldizhou.trackme.apigateway.util.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -20,6 +21,12 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping(Constants.PUBLIC_TP_API)
 public class PublicThirdPartyController {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     private ThirdPartyCompanyAssembler thirdPartyCompanyAssembler;
     private ThirdPartyPrivateAssembler thirdPartyPrivateAssembler;
@@ -102,6 +109,6 @@ public class PublicThirdPartyController {
         tokenWrapper.setToken(thirdPartyAuthenticationService.thirdPartyLogin(email, password)
                 .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL)));
 
-        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedThirdPartyLinks());
+        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedThirdPartyLinks(serverAddress, port));
     }
 }

@@ -9,6 +9,7 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.SetUpLinks;
 import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +26,12 @@ import static org.springframework.hateoas.jaxrs.JaxRsLinkBuilder.linkTo;
 @RestController
 @RequestMapping(Constants.PUBLIC_USER_API)
 public class PublicUserController {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     private final UserAssembler userAssembler;
     private final UserAccountManagerService service;
@@ -80,6 +87,6 @@ public class PublicUserController {
                 .orElseThrow(() -> new BadCredentialsException(Constants.USER_BAD_CREDENTIAL)));
 
 
-        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedUserLinks());
+        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedUserLinks(serverAddress, port));
     }
 }

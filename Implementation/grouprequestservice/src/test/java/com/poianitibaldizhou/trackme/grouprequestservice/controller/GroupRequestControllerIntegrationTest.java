@@ -73,12 +73,12 @@ public class GroupRequestControllerIntegrationTest {
 	// TEST GET SINGLE REQUEST
 
 	/**
-	 * Test the get of a single group request from the API
+	 * Test the get of a single group request (accepted one) from the API
 	 *
 	 * @throws Exception due to json comparison
 	 */
 	@Test
-	public void testGetSingleRequest() throws Exception{
+	public void testGetSingleRequestAccepted() throws Exception{
 		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
 		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.GROUP_REQUEST_API + "/id/1"),
@@ -121,12 +121,56 @@ public class GroupRequestControllerIntegrationTest {
                 "         \"href\":\"http://localhost:"+port+"/grouprequests/id/1\"\n" +
                 "      },\n" +
                 "      \"accessData\":{\n" +
-                "         \"href\":\"http://fakeip:fakeport/sharedataservice/dataretrieval/grouprequests/1\"\n" +
+                "         \"href\":\"" + Constants.FAKE_URL + "/sharedataservice/dataretrieval/grouprequests/1\"\n" +
                 "      }\n" +
                 "   }\n" +
                 "}";
 
 		assertEquals(HttpStatus.OK, response.getStatusCode());
+		JSONAssert.assertEquals(expectedBody, response.getBody(), false);
+	}
+
+	/**
+	 * Test the get of a single group request (pending one) from the API
+	 *
+	 * @throws Exception due to json comparison
+	 */
+	@Test
+	public void testGetSingleRequestPending() throws Exception{
+		httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
+		HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+		ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.GROUP_REQUEST_API + "/id/2"),
+				HttpMethod.GET, entity, String.class);
+
+		String expectedBody =  "\n" +
+				"{\n" +
+				"   \"groupRequest\":{\n" +
+				"      \"creationTimestamp\":\"2005-11-03T00:00:00.000+0000\",\n" +
+				"      \"aggregatorOperator\":\"MAX\",\n" +
+				"      \"requestType\":\"HEART_BEAT\",\n" +
+				"      \"status\":\"UNDER_ANALYSIS\"\n" +
+				"   },\n" +
+				"   \"filterStatementList\":[\n" +
+				"      {\n" +
+				"         \"column\":\"HEART_BEAT\",\n" +
+				"         \"value\":\"80\",\n" +
+				"         \"comparisonSymbol\":\"LESS\",\n" +
+				"         \"groupRequest\":{\n" +
+				"            \"creationTimestamp\":\"2005-11-03T00:00:00.000+0000\",\n" +
+                "            \"aggregatorOperator\":\"MAX\",\n" +
+                "            \"requestType\":\"HEART_BEAT\",\n" +
+                "            \"status\":\"UNDER_ANALYSIS\"\n" +
+				"         }\n" +
+				"      }\n" +
+				"   ],\n" +
+				"   \"_links\":{\n" +
+				"      \"self\":{\n" +
+				"         \"href\":\"http://localhost:"+port+"/grouprequests/id/2\"\n" +
+				"      }\n" +
+				"   }\n" +
+				"}";
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
 		JSONAssert.assertEquals(expectedBody, response.getBody(), false);
 	}
 

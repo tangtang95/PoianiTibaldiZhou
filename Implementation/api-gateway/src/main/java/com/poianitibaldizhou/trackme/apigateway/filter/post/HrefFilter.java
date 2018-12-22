@@ -61,10 +61,10 @@ public class HrefFilter extends ZuulFilter {
                         .append(Constants.HTTPS_PREFIX)
                         .append(serverAddress)
                         .append(Constants.PORT_SEPARATOR)
-                        .append(port)
-                        .append(Constants.SLASH)
-                        .append(servicePath)
-                        .append(path);
+                        .append(port);
+                if(!(url.getHost().equals(Constants.FAKE_IP) && url.getPort() == 9999))
+                    stringBuilder.append(Constants.SLASH).append(servicePath);
+                stringBuilder.append(path);
                 newResponseBody = newResponseBody.replace(elem, stringBuilder);
             }
 

@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.grouprequestservice.exception.ImpossibleAcc
 import com.poianitibaldizhou.trackme.grouprequestservice.service.GroupRequestManagerService;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,11 +64,14 @@ public class GroupRequestController {
         if(!groupRequestWrapper.getGroupRequest().getThirdPartyId().equals(thirdPartyId))
             throw new ImpossibleAccessException();
 
-        return new Resource<>(groupRequestWrapper,
-                linkTo(methodOn(GroupRequestController.class).getRequest(groupRequestWrapper.getGroupRequest().getThirdPartyId().toString(),
-                        groupRequestWrapper.getGroupRequest().getId())).withSelfRel(),
-                new Link(Constants.FAKE_URL + Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA + "/" + groupRequestWrapper.getGroupRequest().getId(),
-                        Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA_REL));
+        List<Link> links = new ArrayList<>();
+        links.add(linkTo(methodOn(GroupRequestController.class).getRequest(groupRequestWrapper.getGroupRequest().getThirdPartyId().toString(),
+                groupRequestWrapper.getGroupRequest().getId())).withSelfRel());
+        if(groupRequestWrapper.getGroupRequest().getStatus() == RequestStatus.ACCEPTED)
+            links.add(new Link(Constants.FAKE_URL + Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA + "/" + groupRequestWrapper.getGroupRequest().getId(),
+                    Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA_REL));
+
+        return new Resource<>(groupRequestWrapper, links);
     }
 
     /**

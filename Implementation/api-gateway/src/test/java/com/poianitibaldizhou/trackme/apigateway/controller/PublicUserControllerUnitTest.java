@@ -13,6 +13,7 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -40,6 +41,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PublicUserController.class)
 @Import({UserAssembler.class})
 public class PublicUserControllerUnitTest {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     @Autowired
     private MockMvc mvc;
@@ -193,17 +200,16 @@ public class PublicUserControllerUnitTest {
 
         given(authenticationService.userLogin("newUserName", "tangpass")).willReturn(Optional.of("newToken"));
 
-        // TODO add fix with dynamic port and ip
         mvc.perform(post(Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API  +"?username=newUserName&password=tangpass"))
                 .andDo(print())
                 .andExpect(jsonPath("token", is("newToken")))
-                .andExpect(jsonPath("_links.logout.href", is("https://127.0.0.1:8443/users/logout")))
-                .andExpect(jsonPath("_links.info.href", is("https://127.0.0.1:8443/users/info")))
-                .andExpect(jsonPath("_links.pendingRequests.href", is("https://127.0.0.1:8443/individualrequestservice/requests/users")))
-                .andExpect(jsonPath("_links.postHealthData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/healthdata")))
-                .andExpect(jsonPath("_links.postPositionData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/positiondata")))
-                .andExpect(jsonPath("_links.postClusterData.href", is("https://127.0.0.1:8443/sharedataservice/datacollection/clusterdata")))
-                .andExpect(jsonPath("_links.getOwnData.href", is("https://127.0.0.1:8443/sharedataservice/dataretrieval/users")));
+                .andExpect(jsonPath("_links.logout.href", is("https://" + serverAddress + ":" + port + "/users/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://" + serverAddress + ":" + port + "/users/info")))
+                .andExpect(jsonPath("_links.pendingRequests.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests/users")))
+                .andExpect(jsonPath("_links.postHealthData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/healthdata")))
+                .andExpect(jsonPath("_links.postPositionData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/positiondata")))
+                .andExpect(jsonPath("_links.postClusterData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/clusterdata")))
+                .andExpect(jsonPath("_links.getOwnData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/dataretrieval/users")));
     }
 
 }

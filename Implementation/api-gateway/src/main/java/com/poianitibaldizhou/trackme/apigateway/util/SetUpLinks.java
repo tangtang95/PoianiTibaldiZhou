@@ -11,21 +11,16 @@ import java.util.List;
  */
 public class SetUpLinks {
 
-    // TODO Inser the bind with the application properties regarding the port
-    //@Value(Constants.PORT)
-    private static final String PORT = "8443";
 
-    // TODO insert the bind with the application properties regarding the IP
-    //@Value("Nothing")
-    private static final String IP = "127.0.0.1";
+    private SetUpLinks() {}
 
     /**
      * Get the list of links that are accessible once that the user has performed the login
      *
      * @return list of links that are accessible once that the has performed the login
      */
-    public static Links getLoggedUserLinks() {
-        String url = "https://"+ IP +":"+PORT;
+    public static Links getLoggedUserLinks(String serverAddress, Integer port) {
+        String url = "https://"+ serverAddress +":"+ port;
 
         List<Link> linkList = new ArrayList<>();
         Link link1 = new Link(url+Constants.SECURED_USER_API + Constants.LOGOUT_USER_API, Constants.LOGOUT_REL);
@@ -52,8 +47,8 @@ public class SetUpLinks {
      *
      * @return list of links that are accessible once that the third party customer has performed the login
      */
-    public static Links getLoggedThirdPartyLinks() {
-        String url = "https://"+ IP +":"+PORT;
+    public static Links getLoggedThirdPartyLinks(String serverAddress, Integer port) {
+        String url = "https://"+ serverAddress +":"+ port;
 
         List<Link> linkList = new ArrayList<>();
         linkList.add(new Link(url + Constants.SECURED_TP_API + Constants.LOGOUT_TP_API, Constants.LOGOUT_REL));
@@ -62,7 +57,6 @@ public class SetUpLinks {
         linkList.add(new Link(url + Constants.EXT_API_ADD_GROUP_REQUEST, Constants.EXT_API_ADD_GROUP_REQUEST_REL));
         linkList.add(new Link(url + Constants.EXT_API_GET_INDIVIDUAL_REQUESTS, Constants.EXT_API_GET_INDIVIDUAL_REQUESTS_REL));
         linkList.add(new Link(url + Constants.EXT_API_ADD_INDIVIDUAL_REQUEST, Constants.EXT_API_ADD_INDIVIDUAL_REQUEST_REL));
-
 
         return new Links(linkList);
     }

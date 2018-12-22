@@ -7,6 +7,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,21 +73,16 @@ public class IndividualRequestController {
         if(!requestingUser.isEmpty() && !request.getUserSsn().equals(requestingUser))
                 throw new ImpossibleAccessException();
 
-        if(requestingThirdParty.isEmpty())
-            return new Resource<>(request,
-                    linkTo(methodOn(IndividualRequestController.class).getRequestById(
-                    request.getThirdPartyId().toString(),
-                    request.getUserSsn() ,
-                    request.getId()))
-                    .withSelfRel());
-        else
-            return new Resource<>(request,
-                    linkTo(methodOn(IndividualRequestController.class).getRequestById(
-                            request.getThirdPartyId().toString(),
-                            request.getUserSsn() ,
-                            request.getId())).withSelfRel(),
-                    new Link(Constants.FAKE_URL+Constants.EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA+"/"+request.getId(),
-                            Constants.EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL));
+        List<Link> links = new ArrayList<>();
+        links.add(linkTo(methodOn(IndividualRequestController.class).getRequestById(
+                request.getThirdPartyId().toString(),
+                request.getUserSsn() ,
+                request.getId()))
+                .withSelfRel());
+        if(!requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.ACCEPTED)
+            links.add(new Link(Constants.FAKE_URL+Constants.EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA+"/"+request.getId(),
+                    Constants.EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL));
+        return new Resource<>(request, links);
     }
 
 

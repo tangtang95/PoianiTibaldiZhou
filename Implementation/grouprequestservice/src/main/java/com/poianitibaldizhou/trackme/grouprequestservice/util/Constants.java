@@ -36,5 +36,5 @@ public class Constants {
     public static final String EXT_API_ACCESS_GROUP_REQUEST_DATA = "/sharedataservice/dataretrieval/grouprequests";
     public static final String EXT_API_ACCESS_GROUP_REQUEST_DATA_REL = "accessData";
 
-    public static final String FAKE_URL = "http://fakeip:fakeport";
+    public static final String FAKE_URL = "http://fakeip:9999";
 }

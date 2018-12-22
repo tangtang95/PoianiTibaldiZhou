@@ -213,18 +213,19 @@ public class IndividualRequestControllerUnitTest {
 
     /**
      * Test the access to the rest api provided by the IndividualRequestController.
-     * In particular, this method tests the retrieval of requests with a certain id, when that requests is
+     * In particular, this method tests the retrieval of requests with a certain id, when that accepted request is
      * present. A third party is accessing the method in this case.
      *
      * @throws Exception exception due to mock mvc method perform
      */
     @Test
-    public void getRequestByIdTestWhenTp() throws Exception {
+    public void getAcceptedRequestByIdTestWhenTp() throws Exception {
         ThirdParty thirdParty = new ThirdParty();
         thirdParty.setId(1L);
         thirdParty.setIdentifierName("thirdParty");
         IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), thirdParty);
         request.setId((long)1);
+        request.setStatus(IndividualRequestStatus.ACCEPTED);
 
         given(service.getRequestById((long) 1)).willReturn(request);
 
@@ -239,8 +240,38 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$._links.self.href",
                         is("http://localhost"+Constants.REQUEST_API+"/id/1")))
                 .andExpect(jsonPath("$._links.accessData.href",
-                        is("http://fakeip:fakeport/sharedataservice/dataretrieval/individualrequests/1")));
+                        is(Constants.FAKE_URL + "/sharedataservice/dataretrieval/individualrequests/1")));
 
+    }
+
+    /**
+     * Test the access to the rest api provided by the IndividualRequestController.
+     * In particular, this method tests the retrieval of requests with a certain id, when that pending request is
+     * present. A third party is accessing the method in this case.
+     *
+     * @throws Exception exception due to mock mvc method perform
+     */
+    @Test
+    public void getPendingRequestByIdTestWhenTp() throws Exception {
+        ThirdParty thirdParty = new ThirdParty();
+        thirdParty.setId(1L);
+        thirdParty.setIdentifierName("thirdParty");
+        IndividualRequest request = new IndividualRequest(new Timestamp(0), new Date(0), new Date(0), new User("user1"), thirdParty);
+        request.setId((long)1);
+        request.setStatus(IndividualRequestStatus.PENDING);
+
+        given(service.getRequestById((long) 1)).willReturn(request);
+
+        mvc.perform(get(Constants.REQUEST_API+"/id/1").accept(MediaTypes.HAL_JSON_VALUE)
+                .header(Constants.HEADER_USER_SSN, "")
+                .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status", is(request.getStatus().toString())))
+                .andExpect(jsonPath("$.startDate", is(request.getStartDate().toString())))
+                .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
+                .andExpect(jsonPath("$.thirdPartyName", is(request.getThirdParty().getIdentifierName())))
+                .andExpect(jsonPath("$._links.self.href",
+                        is("http://localhost"+Constants.REQUEST_API+"/id/1")));
     }
 
     /**

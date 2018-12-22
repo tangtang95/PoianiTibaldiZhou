@@ -195,7 +195,6 @@ public class ThirdPartyEventListenerImplTest {
 
         @After
         public void tearDown() throws Exception {
-            rabbitAdmin.purgeQueue(thirdPartyCreatedToIndividualRequestServiceQueue.getName());
             rabbitAdmin = null;
         }
 

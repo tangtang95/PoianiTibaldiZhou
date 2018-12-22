@@ -61,5 +61,5 @@ public class Constants {
     // External Api
     public static final String EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA = "/sharedataservice/dataretrieval/individualrequests";
     public static final String EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL = "accessData";
-    public static final String FAKE_URL = "http://fakeip:fakeport";
+    public static final String FAKE_URL = "http://fakeip:9999";
 }

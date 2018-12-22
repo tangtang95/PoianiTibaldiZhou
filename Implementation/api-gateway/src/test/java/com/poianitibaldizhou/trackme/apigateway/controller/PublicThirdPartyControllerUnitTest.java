@@ -18,7 +18,9 @@ import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
@@ -43,6 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PublicThirdPartyController.class)
 @Import({ThirdPartyCompanyAssembler.class, ThirdPartyPrivateAssembler.class})
 public class PublicThirdPartyControllerUnitTest {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     @Autowired
     private MockMvc mvc;
@@ -253,14 +261,13 @@ public class PublicThirdPartyControllerUnitTest {
 
         given(authenticationService.thirdPartyLogin("newEmail", "tangpass")).willReturn(Optional.of("newToken"));
 
-        // TODO add fix with dynamic port and ip
         mvc.perform(post(Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API +"?email=newEmail&password=tangpass"))
                 .andExpect(jsonPath("token", is("newToken")))
-                .andExpect(jsonPath("_links.logout.href", is("https://127.0.0.1:8443/thirdparties/logout")))
-                .andExpect(jsonPath("_links.info.href", is("https://127.0.0.1:8443/thirdparties/info")))
-                .andExpect(jsonPath("_links.groupRequests.href", is("https://127.0.0.1:8443/grouprequestservice/grouprequests/thirdparties")))
-                .andExpect(jsonPath("_links.newGroupRequest.href", is("https://127.0.0.1:8443/grouprequestservice/grouprequests/thirdparties")))
-                .andExpect(jsonPath("_links.individualRequests.href", is("https://127.0.0.1:8443/individualrequestservice/requests/thirdparties")))
-                .andExpect(jsonPath("_links.newIndividualRequest.href", is("https://127.0.0.1:8443/individualrequestservice/requests")));
+                .andExpect(jsonPath("_links.logout.href", is("https://" + serverAddress + ":" + port + "/thirdparties/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://" + serverAddress + ":" + port + "/thirdparties/info")))
+                .andExpect(jsonPath("_links.groupRequests.href", is("https://" + serverAddress + ":" + port + "/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.newGroupRequest.href", is("https://" + serverAddress + ":" + port + "/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.individualRequests.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests/thirdparties")))
+                .andExpect(jsonPath("_links.newIndividualRequest.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests")));
     }
 }
