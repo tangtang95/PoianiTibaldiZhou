@@ -5,8 +5,6 @@ package com.poianitibaldizhou.trackme.apigateway.util;
  */
 public class Constants {
 
-
-
     /**
      * Private constructor
      */

@@ -129,7 +129,9 @@ public class UploadResponseControllerUnitTest {
                 .andExpect(jsonPath("$._links.userPendingRequest.href",
                         is("http://localhost"+Constants.REQUEST_API+"/users")))
                 .andExpect(jsonPath("$._links.request.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/id/1")));
+                        is("http://localhost"+Constants.REQUEST_API+"/id/1")))
+                .andExpect(jsonPath("$._links.blockThirdParty.href",
+                        is("http://localhost"+Constants.RESPONSE_API+"/blockedThirdParty/thirdparties/1")));
     }
 
     /**

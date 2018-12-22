@@ -14,7 +14,7 @@ HTTPS requests are tested: this methods usually call the business functions, tha
 If error occurs, the classes in the advice packages come into help, and, therefore, they are tested as well. \\
 For what concerns the tests that regards interfaces that allows to share events with other microservices, as soon as it was possible to have
 them working they were tested as well. 
-However, it is worth to note that the real integration between microservices have been tested with JMeter. This is because TODO TANG. \\
+However, it is worth to note that the real integration between microservices have been tested with JMeter. This is because there were multiple projects and an integration test with JUnit should have been done on one of the two or more projects to be integrated. This was a little bit difficult to approach and moreover, what the test would have checked was the correct execution of the message broker which is already reliable.
 The same things holds for the test of the service registry and for the forwarding of requests to other microservices by means of the Zuul
 gateway.  \\
 The approach taken for all the tests mentioned above (the ones with JMeter excluded), is white box testing. 
@@ -64,7 +64,26 @@ are valid also in this situation.
 
 
 \subsubsection{JMeter} 
-// TODO TANG TANG
+In order to do system testing on the server side of the project, JMeter has been adopted. There are many motivation for this choice: 
+open-source application, user friendly (GUI), and many functionality such as the possibility of doing functional testing, load testing. Moreover it provides the possibility of testing almost every kind of resources: databases, message brokers, HTTP REST APIs and 
+many other. In the end, to check if the system as a whole was working as expected, the following test plan has been written:
+\begin{itemize}
+\item Functional testing: without taking into consideration the concurrency and performance problems, the test plan focuses on 
+the expected return value of each request, to test if the system works as intended. It has also been checked the group 
+request accepted case when a group request is correlated to more than 1000 users.
+\item Load testing: with the help of the "Random Controller", a random choice in the HTTP requests is applied and many thread 
+users has been launched to test the maximum load of the system. In the GUI mode, the test results in a latency of more than 
+20 seconds which the API Gateway discards due to a timeout. If the test has been done in a non-GUI mode, the average latency 
+of a request would be lesser.
+\item Real simulation testing: it is just a variation of the load testing with the ThinkTime added: a simulation of a possible think time 
+of the user in order to make a request.
+\end{itemize}
+There are some considerations taken during the execution of the test plans:
+\begin{itemize}
+\item The test has been done locally with many applications opened, which could have interfered with the load testing.
+\item The services has been deployed all on the same machine which was different from the deployment diagram.
+\item Every time a test is launched, all the queues of the message broker are purged and the all tuples inside the DBs are deleted.
+\end{itemize}
 
 
 \subsection{Android application}

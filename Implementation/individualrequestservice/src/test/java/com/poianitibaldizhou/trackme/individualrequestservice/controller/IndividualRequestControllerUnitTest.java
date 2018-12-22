@@ -208,7 +208,9 @@ public class IndividualRequestControllerUnitTest {
                 .andExpect(jsonPath("$.endDate", is(request.getEndDate().toString())))
                 .andExpect(jsonPath("$.thirdPartyName", is(request.getThirdParty().getIdentifierName())))
                 .andExpect(jsonPath("$._links.self.href",
-                        is("http://localhost"+Constants.REQUEST_API+"/id/1")));
+                        is("http://localhost"+Constants.REQUEST_API+"/id/1")))
+                .andExpect(jsonPath("$._links.addResponse.href",
+                        is("http://localhost" + Constants.RESPONSE_API + "/requests/1")));
     }
 
     /**

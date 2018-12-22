@@ -12,7 +12,7 @@ import java.sql.Timestamp;
  */
 @Data
 @Entity
-public class Response implements Serializable {
+public class Response {
 
     @Id
     @Column(name = "requestID")

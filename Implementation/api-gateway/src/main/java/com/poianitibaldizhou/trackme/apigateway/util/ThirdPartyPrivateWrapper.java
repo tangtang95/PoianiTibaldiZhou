@@ -11,6 +11,6 @@ import java.io.Serializable;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class ThirdPartyPrivateWrapper extends ThirdPartyWrapper implements Serializable {
-    private PrivateThirdPartyDetail privateThirdPartyDetail;
+public class ThirdPartyPrivateWrapper extends ThirdPartyWrapper {
+    private transient PrivateThirdPartyDetail privateThirdPartyDetail;
 }

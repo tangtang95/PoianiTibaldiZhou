@@ -9,6 +9,7 @@ import com.poianitibaldizhou.trackme.individualrequestservice.service.Individual
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
@@ -79,9 +80,16 @@ public class IndividualRequestController {
                 request.getUserSsn() ,
                 request.getId()))
                 .withSelfRel());
-        if(!requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.ACCEPTED)
-            links.add(new Link(Constants.FAKE_URL+Constants.EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA+"/"+request.getId(),
+        if(!requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.ACCEPTED) {
+            links.add(new Link(Constants.FAKE_URL + Constants.EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA + "/" + request.getId(),
                     Constants.EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL));
+        }
+        if(requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.PENDING) {
+            links.add(linkTo(methodOn(ResponseController.class).newResponse(
+                    request.getUserSsn(),
+                    request.getId(),
+                    Strings.EMPTY)).withRel(Constants.REL_ADD_RESPONSE));
+        }
         return new Resource<>(request, links);
     }
 

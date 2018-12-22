@@ -16,6 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 /**
  * Entry point for accessing the service that regards the responses to individual request
  */
@@ -63,18 +66,21 @@ public class ResponseController {
         if(!requestingUser.equals(individualRequestManagerService.getRequestById(requestID).getUser().getSsn()))
             throw new ImpossibleAccessException();
 
-        ResponseType newResponse;
+        ResponseType responseType;
 
         if (response.equals(ResponseType.ACCEPT.toString())) {
-            newResponse = ResponseType.ACCEPT;
+            responseType = ResponseType.ACCEPT;
         } else if (response.equals(ResponseType.REFUSE.toString())) {
-            newResponse = ResponseType.REFUSE;
+            responseType = ResponseType.REFUSE;
         } else {
             throw new BadResponseTypeException(response);
         }
 
-        Resource<Response> resource = responseAssembler.toResource(
-                uploadResponseService.addResponse(requestID, newResponse, new User(requestingUser)));
+        Response newResponse = uploadResponseService.addResponse(requestID, responseType, new User(requestingUser));
+        Resource<Response> resource = responseAssembler.toResource(newResponse);
+        if(responseType == ResponseType.REFUSE)
+            resource.add(linkTo(methodOn(ResponseController.class).blockThirdParty(requestingUser,
+                    newResponse.getRequest().getThirdParty().getId())).withRel(Constants.REL_BLOCK_TP));
 
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }

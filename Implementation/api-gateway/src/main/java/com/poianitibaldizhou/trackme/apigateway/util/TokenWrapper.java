@@ -8,6 +8,6 @@ import java.io.Serializable;
  * Wrapper for token elements
  */
 @Data
-public class TokenWrapper implements Serializable {
+public class TokenWrapper {
     private String token;
 }

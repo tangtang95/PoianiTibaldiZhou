@@ -56,11 +56,28 @@ paths when extracting the folder. This is a problem that have been encountered o
 by using tar.gz format. 
 
 \item When running tests that are provided with the source code, remember to not having started the application as a whole, or at least not
-the one that involves the test that is going to start. This is because the service has just a single queue
-for receiving the messages and, therefore, conflicts can happen, leading to some bugs. 
-
+the one that involves the test that is going to start. This is because the same service which is running could steal the messages from the test execution environment and, therefore, conflicts can happen, leading to some bugs. 
 \end{itemize}
 
+\par
+In order to run the test plans of JMeter it is necessary to have JMeter installed. Then since RabbitMQ queues has to be purged and the DBs has to be deleted, it is necessary to add some libraries:
+\begin{itemize}
+\item mysql-connector.jar (\url{https://dev.mysql.com/downloads/connector/j/}) to be moved into the lib folder of JMeter
+\item amqp-client-3.x.x.jar (\url{https://www.rabbitmq.com/java-client.html} to be moved into the lib folder of JMeter; remember to download a version starting with 3, e.g. 3.6.6 (\url{http://repo1.maven.org/maven2/com/rabbitmq/amqp-client/})
+\item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter.
+\end{itemize}
+After this configuration, it is possible to run the test plans of JMeter on GUI/non-GUI mode.
+
 \subsection{Android application}
-TODO TANG E MATTIA: Take in mind also the case in which the other group does not have any android device, therefore add notes on the simulator
+TODO MATTIA: Take in mind also the case in which the other group does not have any android device, therefore add notes on the simulator
 and how to start things from there
+
+
+Regarding the tests of the health service, all the tests should be launched on an android simulator with some tweak configurations to do:
+\begin{itemize}
+\item Enable the developer settings by tapping a lot of time on the build settings of the simulator.
+\item Enable the mock position which can be found in the developer settings.
+\end{itemize}
+Moreover, the test regarding the bluetooth does not exist due to complexity: the simulator does not have the capacity to simulate bluetooth connections. Instead, there is a stub application bluetooth client which can be used to test if the communication between bluetooth devices is working as expected. Therefore, it is necessary to have two devices supporting bluetooth which are paired. Then after starting the health service on the device containing TrackMe application, a bluetooth server is running in background waiting for other devices. Now after starting the other application, it should be possible to insert the name of the device running the server and establish the connection. Once the connection is established it is possible to simulate the sending operation of health data.
+
+

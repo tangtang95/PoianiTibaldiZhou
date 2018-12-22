@@ -194,7 +194,10 @@ The structure of the share data service, as shown by the following picture, is a
 \end{figure}
 
 However, it is important to point out the structure of the code that manages the personalized query specified by the group requests on 
-anonymized data. // TODO TANG
+anonymized data. Basically, the custom query is realized with the help of QueryDSL, a sort of unified library to make queries; this choice comes from a limitation of Spring JPA: the impossibility to make union with dynamic queries. Therefore, after researches of other libraries supporting JPA, the best one and mostly supported by the community was QueryDSL which offers a method to makes JPA SQL queries. First of all it is necessary to say that JPA creates connection between objects of classes  and tuples of the DB; this has great advantages when it comes to use only JPA, but mixing it with other methods of retrieving data such as raw SQL queries could introduce some inconsistency. But thanks to JPA SQL queries it was possible to avoid this problem. In conclusion, the custom query is generally something with this simplified template:
+\begin{itemize}
+\item SELECT AGG\_OP(Column) FROM User JOIN ON Union(HealthData dynamic filtered, PositionData dynamic filtered) WHERE (sameSSN) AND "other filters of User table"
+\end{itemize}
   
 Here it follows a list of the main API that have been developed in the project, and that are located
 within the various microservices.
@@ -237,5 +240,11 @@ A request body that specifies the data is required.
 TODO MATTIA
 
 \subsubsection{AutomatedSOS}
-TODO TANG TANG
+The service regarding AutomatedSOS is completely developed to work locally on the smartphone of the user to achieve a high availability. Of course, it also has to have a high reliability, therefore, it is designed to be testable as possible. The project is subdivided in different packages:
+\begin{itemize}
+	\item bluetooth: this package deals with the communication between the other device collecting health data. Basically it is based on a BluetoothServer class which waits for a connection; once the connection is established, a SocketHandler object is instantiated and it waits for specific messages which will be forwarded to a HealthDataCallback that is responsible to save the health data and ask for a call if necessary.
+	\item health: here, there is the HealthService that deals with the notification and starting the bluetooth server and other objects. Another important class is the HealthServiceHelper which is used by HealthDataCallback to be able to call the service.
+	\item util: other utility classes such as HealthDataInspector which checks if a specific health data is dangerous for the user or not.
+	\item exception: all the exception that could happen during the chain of action to reach a call.
+\end{itemize}
 
