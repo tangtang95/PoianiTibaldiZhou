@@ -62,13 +62,10 @@ reactive approach in order to scale if it is necessary to manage big loads of da
 an important issue is how to communicate the identity of the petitioner to the service that handles the
 request. 
 The pattern suggests to implement the API gateway in such
-a way that it authenticates requests and passes an access token that securely identifies the client (a
-service may later include the access token in requests that it makes to other services)
+a way that it authenticates requests and passes an access token that securely identifies the client
 \item Database per service pattern: all the services need to persist data in some kind of databases and
 the solution is to keep each microservice's data private to that service and accessible only via its API.
-So a database can't be accessed directly by another service. In particular the pattern of schema-per
-service is always guaranteed, while a database-server-per-service is allocated to the services that are
-though to be the one with the highest throughput (i.e. spectator service and share data service)
+So a database can't be accessed directly by another service.
 \item The messages and the communications between services, that were already introduced in the component diagram, are implement by means of
 asynchronous messages, since a chain of synchronous calls could lead to slowdown the entire architecture. Note, that this leads to the
 replication of some data, however, performance is considered more important than cost in this case. A way to achieve a better communications between services is to use something similar to the API gateway: a message queue architecture which requires also an additional service called message broker that is responsible for gathering, routing and distributing messages from services to other services (something similar to a mail service)

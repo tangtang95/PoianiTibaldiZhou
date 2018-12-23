@@ -10,8 +10,6 @@ Various service components are present, and they all expose at least an interfac
 clients via the joint combination of API gateway and router.
 It follows a brief description of the various services, and a better specification of the interfaces they provide to users and third party customers:
 \begin{itemize}
-\item The account service provides all the functions related to user sessions, such as login and logout,
-and also the registration of clients 
 \item The race service makes possible for an athlete to enroll in a run; for a third party customer to set
 up one, and also close it; and it also enables the possibility of retrieving the available races and their
 status (e.g. in course, terminated). Therefore, it manages the "more static" part
@@ -26,10 +24,22 @@ previously requested, by means of "AccessDataService" interface
 \item The individual request service enables third party customer to upload individual request and monitor their status, and allows 
 a user to check if there are some requests for him, and, eventually, upload responses 
 \end{itemize}
+Microservices have their own data and, therefore, they access DBMS's API, while Maps's API are necessary 
+only for race and spectator service, in order to manage and double check position data and feasible paths.
 
-Microservices have their own data and, therefore, access DBMS's API, while Maps's API are necessary 
-only for race and spectator service, in order to manage and double check position data and feasible paths. \\
-The diagram also shows the main communications that take place between components. 
+\par 
+
+In this diagram, the API Gateway is analyzed further:
+\begin{itemize}
+\item The router will query the service registry, in order to know where instances 
+of the demanded service are located: once that it retrieves this information, it will be able to send and load balance requests.
+\item The account service provides all the functions related to user sessions, such as login and logout,
+and also the registration of clients 
+\end{itemize}
+To be able to save data regarding the account of user and third parties, the account service needs to have access to DBMS's API.
+
+\par 
+Moreover, the diagram also shows the main communications that take place between components. 
 The following message exchange is needed to completely and correctly exploit the project functions. 
 \begin{itemize}
 \item 

@@ -66,7 +66,11 @@ In order to run the test plans of JMeter it is necessary to have JMeter installe
 \item amqp-client-3.x.x.jar (\url{https://www.rabbitmq.com/java-client.html} to be moved into the lib folder of JMeter; remember to download a version starting with 3, e.g. 3.6.6 (\url{http://repo1.maven.org/maven2/com/rabbitmq/amqp-client/})
 \item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter.
 \end{itemize}
-After this configuration, it is possible to run the test plans of JMeter on GUI/non-GUI mode.
+After the configuration, once the services, databases and the message broker are running in background, it is possible to run the test plans of JMeter on GUI or non-GUI mode:
+\begin{itemize}
+\item GUI mode: a double click on bin/jmeter to launch the GUI application and then after opening a jmx file click the start button.
+\item non-GUI mode: run the command line: \textit{jmeter -n -t path/to/jmx/file -l path/to/new/jml/file}, after running this line, it is also possible to create a web report with another command line: \textit{jmeter -g path/to/jml/file -o /web-report/folder}. Then, it is possible to open the html web report by opening the file index.html in /web-report/folder.
+\end{itemize}
 
 \subsection{Android application}
 TODO MATTIA: Take in mind also the case in which the other group does not have any android device, therefore add notes on the simulator
