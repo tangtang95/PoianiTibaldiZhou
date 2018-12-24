@@ -2,21 +2,21 @@ package com.trackme.trackmeapplication.request.individualRequest;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
+import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
-import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -75,18 +75,19 @@ public class RequestFormActivity extends AppCompatActivity {
     public void onSendButtonClick() {
         if (checkConstraintOnData()) {
 
-            SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-            String email = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
-
-            SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+            AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
             IndividualRequestNetworkIInterface individualRequestNetwork = IndividualRequestNetworkImp.getInstance();
-            individualRequestNetwork.send(new RequestItem(
-                    ssn.getText().toString(),
-                    sharedDataNetwork.getThirdParty(email).getName(),
-                    startDate.getText().toString(),
-                    endDate.getText().toString(),
-                    motive.getText().toString()
-            ));
+            try {
+                individualRequestNetwork.send(new RequestItem(
+                        ssn.getText().toString(),
+                        accountNetwork.getThirdParty().getName(),
+                        startDate.getText().toString(),
+                        endDate.getText().toString(),
+                        motive.getText().toString()
+                ));
+            } catch (UserNotFoundException e) {
+                Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+            }
             finish();
         }
     }

@@ -1,7 +1,6 @@
 package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.annotation.SuppressLint;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -13,11 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -58,7 +57,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
     protected TextView filter;
 
     private GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
-    private SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+    private AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
 
     /**
      * Load the activity layout and get from the server all the value useful for compiling the request.
@@ -146,15 +145,17 @@ public class GroupRequestFormActivity extends AppCompatActivity {
             Date date = cal.getTime();
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-            SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-            String mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
-
-            GroupRequestItem groupRequestItem = new GroupRequestItem(
-                    sharedDataNetwork.getThirdParty(mail).getName(),
-                    dateFormat.format(date),
-                    spinnerAggregator.getSelectedItem().toString(),
-                    spinnerType.getSelectedItem().toString(),
-                    filter.getText().toString());
+            GroupRequestItem groupRequestItem = null;
+            try {
+                groupRequestItem = new GroupRequestItem(
+                        accountNetwork.getThirdParty().getName(),
+                        dateFormat.format(date),
+                        spinnerAggregator.getSelectedItem().toString(),
+                        spinnerType.getSelectedItem().toString(),
+                        filter.getText().toString());
+            } catch (UserNotFoundException e) {
+                Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+            }
 
             groupRequestNetwork.send(groupRequestItem);
             finish();

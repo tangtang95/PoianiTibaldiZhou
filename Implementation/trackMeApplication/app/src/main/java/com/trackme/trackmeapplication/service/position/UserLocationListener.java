@@ -25,11 +25,6 @@ public class UserLocationListener implements LocationListener {
     private Context context;
 
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-    public static final String[] INITIAL_PERMS = {
-            Manifest.permission.ACCESS_FINE_LOCATION
-    };
-
-    public static final int INITIAL_REQUEST = 1000;
 
     /**
      * Constructor.
@@ -37,7 +32,7 @@ public class UserLocationListener implements LocationListener {
      *
      * @param context the current activity context.
      */
-    public UserLocationListener(Context context) {
+    UserLocationListener(Context context) {
         this.context = context;
         FusedLocationProviderClient mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&

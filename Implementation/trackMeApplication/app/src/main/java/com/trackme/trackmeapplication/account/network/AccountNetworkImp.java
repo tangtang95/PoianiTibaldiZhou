@@ -1,19 +1,23 @@
 package com.trackme.trackmeapplication.account.network;
 
-import android.content.res.Resources;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
 import com.trackme.trackmeapplication.account.login.TokenWrapper;
+import com.trackme.trackmeapplication.baseUtility.ConnectionAsyncTask;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.baseUtility.exception.ConnectionException;
+import com.trackme.trackmeapplication.home.Settings;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyCompanyWrapper;
+import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyPrivateWrapper;
 import com.trackme.trackmeapplication.sharedData.User;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,14 +36,18 @@ public class AccountNetworkImp implements AccountNetworkInterface {
 
     private static AccountNetworkImp instance = null;
 
-    private int accountPort;
+    private Integer accountPort;
     private String IPAddress;
 
     private RestTemplate restTemplate;
     private HttpHeaders httpHeaders;
     private ObjectMapper mapper;
 
+    private final Object lock = new Object();
+
     private String token;
+    private static boolean isLock;
+
 
     /**
      * Constructor. (singleton)
@@ -48,8 +56,12 @@ public class AccountNetworkImp implements AccountNetworkInterface {
         restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
         mapper = new ObjectMapper();
-        accountPort = Resources.getSystem().getInteger(R.integer.server_port);
-        IPAddress = Resources.getSystem().getString(R.string.server_ip_address);
+        accountPort = Settings.getServerPort();
+        IPAddress = Settings.getServerAddress();
+    }
+
+    public static void setIsLock(Boolean b) {
+        isLock = b;
     }
 
     /**
@@ -65,26 +77,36 @@ public class AccountNetworkImp implements AccountNetworkInterface {
 
 
     @Override
-    public String userLogin(String username, String password) throws InvalidDataLoginException {
+    public String userLogin(String username, String password) throws InvalidDataLoginException, ConnectionException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
-                Constant.PUBLIC_TP_API + Constant.LOGIN_USER_API+"?username="+username+"&password="+password),
-                HttpMethod.POST, entity, String.class);
         try {
-            token = mapper.readValue(response.getBody(), TokenWrapper.class).getToken();
+            ConnectionAsyncTask connectionAsyncTask = new ConnectionAsyncTask(createURLWithPort(
+                    Constant.PUBLIC_USER_API + Constant.LOGIN_USER_API+"?username="+username+"&password="+password),
+                    HttpMethod.POST, entity, lock);
+            connectionAsyncTask.execute();
+            isLock = true;
+            synchronized (lock) {
+                while (isLock)
+                    lock.wait();
+                token = mapper.readValue(connectionAsyncTask.getResponse().getBody(), TokenWrapper.class).getToken();
+                return token;
+            }
         } catch (IOException e) {
             throw new InvalidDataLoginException();
+        }catch (Exception e) {
+            e.printStackTrace();
         }
-        return token;
+        return null;
     }
 
     @Override
     public String thirdPartyLogin(String email, String password) throws InvalidDataLoginException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constant.PUBLIC_TP_API + Constant.LOGIN_USER_API+"?email="+email+"&password="+password),
                 HttpMethod.POST, entity, String.class);
-        try {
+
             token = mapper.readValue(response.getBody(), TokenWrapper.class).getToken();
         } catch (IOException e) {
             throw new InvalidDataLoginException();
@@ -151,6 +173,18 @@ public class AccountNetworkImp implements AccountNetworkInterface {
                 HttpMethod.POST, entity, String.class);
         if (response.getStatusCode() != HttpStatus.CREATED)
             throw new UserAlreadySignUpException();
+    }
+
+    @Override
+    public User getUser() throws UserNotFoundException {
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        return sharedDataNetwork.getUser(token);
+    }
+
+    @Override
+    public ThirdPartyInterface getThirdParty() throws UserNotFoundException {
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        return sharedDataNetwork.getThirdParty(token);
     }
 
     /**

@@ -97,12 +97,13 @@ public class UserHomeActivity extends BaseDelegationActivity<
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
         try {
             accountNetwork.userLogout();
+            sp.edit().putBoolean(Constant.SD_USERNAME_DATA_KEY, false).apply();
+            startActivity(intent);
+            finish();
         } catch (UserAlreadyLogoutException e) {
             e.printStackTrace();
+            /*TODO*/
         }
-        sp.edit().putBoolean(Constant.SD_USERNAME_DATA_KEY, false).apply();
-        startActivity(intent);
-        finish();
     }
 
     @Override

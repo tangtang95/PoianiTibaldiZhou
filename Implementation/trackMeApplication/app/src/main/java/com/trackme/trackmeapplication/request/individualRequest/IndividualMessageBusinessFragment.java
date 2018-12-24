@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.home.Settings;
 import com.trackme.trackmeapplication.request.RequestStatus;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
@@ -144,7 +145,7 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
             @Override
             public void run() {
                 refreshList(individualrequestNetwork.getIndividualRequest(email));
-                handler.postDelayed(this, Resources.getSystem().getInteger(R.integer.refresh_item_time));
+                handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
         handler.post(checkNewRequest);

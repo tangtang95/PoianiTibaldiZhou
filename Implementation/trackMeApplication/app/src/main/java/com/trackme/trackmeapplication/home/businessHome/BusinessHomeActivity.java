@@ -89,12 +89,13 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
         try {
             accountNetwork.thirdPartyLogout();
+            sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+            startActivity(intent);
+            finish();
         } catch (UserAlreadyLogoutException e) {
             e.printStackTrace();
+            /*TODO*/
         }
-        sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
-        startActivity(intent);
-        finish();
     }
 
     @Override

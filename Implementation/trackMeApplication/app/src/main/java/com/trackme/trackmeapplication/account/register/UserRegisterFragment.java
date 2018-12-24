@@ -70,7 +70,7 @@ public class UserRegisterFragment extends BaseFragment {
     protected void setUpFragment() {
         onDateSetListener = (datePicker, year, month, day) -> {
             month++;
-            String date = month + "/" + day + "/" + year;
+            String date = year + "/" + month + "/" + day;
             birthDay.setText(date);
         };
 

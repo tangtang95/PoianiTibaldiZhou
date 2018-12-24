@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.home.Settings;
 import com.trackme.trackmeapplication.request.RequestStatus;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
@@ -143,7 +144,7 @@ public class GroupRequestFragment extends BaseFragment {
             @Override
             public void run() {
                 refreshList(groupRequestNetwork.getGroupRequest(email));
-                handler.postDelayed(this, Resources.getSystem().getInteger(R.integer.refresh_item_time));
+                handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
         handler.post(checkNewRequest);

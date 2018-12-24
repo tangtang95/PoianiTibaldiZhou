@@ -1,6 +1,7 @@
 package com.trackme.trackmeapplication.home.userHome;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Handler;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.home.Settings;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
@@ -130,7 +132,7 @@ public class UserHistoryFragment extends BaseFragment {
                 String endDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
                 String startDate = new SimpleDateFormat("yyyy-MM-dd").format(lastWeek);
                 refreshList(sharedDataNetwork.getUserData(username, startDate, endDate));
-                handler.postDelayed(this, Resources.getSystem().getInteger(R.integer.refresh_item_time));
+                handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
         handler.post(checkNewHistoryItem);

@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.home.userHome;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,10 +14,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.sharedData.User;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import butterknife.BindView;
 
@@ -60,14 +62,18 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         TextView circle = navHeader.findViewById(R.id.textViewCircle);
 
         String username = mPresenter.getView().getUsername();
-        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
 
         if (username != null && !username.isEmpty()) {
-            User user = sharedDataNetwork.getUser(username);
-            headerUsername.setText(user.getName());
-            circle.setText(user.getName().substring(0, 1));
-            String ssn = "SSN: " + user.getSsn();
-            headerSSN.setText(ssn);
+            try {
+                User user = accountNetwork.getUser();
+                headerUsername.setText(user.getName());
+                circle.setText(user.getName().substring(0, 1));
+                String ssn = "SSN: " + user.getSsn();
+                headerSSN.setText(ssn);
+            } catch (UserNotFoundException e) {
+                mPresenter.getView().showMessage(mPresenter.getView().getActivity().getString(R.string.impossible_to_find_user_detail));
+            }
         }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

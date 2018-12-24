@@ -2,6 +2,7 @@ package com.trackme.trackmeapplication.account.login;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
@@ -9,6 +10,7 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.baseUtility.exception.ConnectionException;
 
 /**
  *  Delegate class that performs the validation of the data insert by the user in the login forms.
@@ -28,7 +30,6 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
      * @param password the password insert by user.
      */
     public void userLogin(final String username, final String password, Context context) {
-
         SharedPreferences sp = context.getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, Context.MODE_PRIVATE);
 
         if (username.isEmpty() || password.isEmpty())
@@ -41,6 +42,8 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
                 mPresenter.onLoginSuccess();
             } catch (InvalidDataLoginException e) {
                 mPresenter.onLoginError();
+            } catch (ConnectionException e) {
+                mPresenter.getView().showMessage("Connection error");
             }
         }
     }

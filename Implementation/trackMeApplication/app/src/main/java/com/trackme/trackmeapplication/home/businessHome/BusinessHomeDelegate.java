@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.home.businessHome;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -13,10 +14,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
+import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
-import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import butterknife.BindView;
 
@@ -62,13 +64,17 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
 
         String mail = mPresenter.getView().getMail();
 
-        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
 
         if (mail != null && !mail.isEmpty()) {
-            ThirdPartyInterface thirdParty = sharedDataNetwork.getThirdParty(mail);
-            headerUsername.setText(thirdParty.getName());
-            circle.setText(thirdParty.getName().substring(0, 1));
-            info.setText(thirdParty.getEmail());
+            try {
+                ThirdPartyInterface thirdParty = accountNetwork.getThirdParty();
+                headerUsername.setText(thirdParty.getName());
+                circle.setText(thirdParty.getName().substring(0, 1));
+                info.setText(thirdParty.getEmail());
+            } catch (UserNotFoundException e) {
+                mPresenter.getView().showMessage(mPresenter.getView().getActivity().getString(R.string.impossible_to_find_user_detail));
+            }
         }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

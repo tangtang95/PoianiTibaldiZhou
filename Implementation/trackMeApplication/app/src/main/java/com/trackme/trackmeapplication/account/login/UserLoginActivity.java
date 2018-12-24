@@ -8,6 +8,7 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.widget.EditText;
 
@@ -19,6 +20,7 @@ import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+
 
 /**
  * UserLoginActivity extends the abstract class LoginActivity and it allows to the user to
@@ -33,6 +35,7 @@ public class UserLoginActivity extends LoginActivity {
     @BindView(R.id.editTextUser)
     protected EditText username;
 
+    public static final int INITIAL_REQUEST = 1000;
     /**
      * True if the broadcast receiver is registered, false otherwise.
      */
@@ -78,28 +81,95 @@ public class UserLoginActivity extends LoginActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_login);
 
-        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME,MODE_PRIVATE);
         isRegister = false;
-        /*TODO*/
-        /*
+        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+        sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+
+        getPermission();
+
         if (sp.getBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false)) {
             navigateToHome();
         } else if (sp.getBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false))
             navigateToBusinessHome();
 
-        if (!canAccessLocation())
-            requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
-            */
     }
 
+
     /**
-     * Check if the permission of getting the GPS data.
-     *
-     * @return true if the access to the GPS is allowed, false otherwise
+     * Request all the permission for the correct behavior of the application
      */
-    private boolean canAccessLocation() {
-        return ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    private void getPermission() {
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    INITIAL_REQUEST);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                    INITIAL_REQUEST + 1);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.BLUETOOTH},
+                    INITIAL_REQUEST + 2);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    INITIAL_REQUEST + 3);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    INITIAL_REQUEST + 4);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.INTERNET},
+                    INITIAL_REQUEST + 5);
+
+        if (ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_NETWORK_STATE},
+                    INITIAL_REQUEST + 6);
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        /*TODO*/
+        switch (requestCode) {
+            case INITIAL_REQUEST: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                } else {
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                break;
+            }
+            case INITIAL_REQUEST + 1:
+                break;
+            case INITIAL_REQUEST + 2:
+                break;
+            case INITIAL_REQUEST + 3:
+                break;
+            case INITIAL_REQUEST + 4:
+                break;
+            case INITIAL_REQUEST + 5:
+                break;
+        }
     }
 
     @Override
