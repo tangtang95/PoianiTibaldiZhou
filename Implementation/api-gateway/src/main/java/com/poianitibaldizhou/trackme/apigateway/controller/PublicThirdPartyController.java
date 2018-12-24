@@ -1,13 +1,12 @@
 package com.poianitibaldizhou.trackme.apigateway.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyCompanyAssembler;
 import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssembler;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAccountManagerService;
-import com.poianitibaldizhou.trackme.apigateway.util.Constants;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyCompanyWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
-import com.poianitibaldizhou.trackme.apigateway.util.TokenWrapper;
+import com.poianitibaldizhou.trackme.apigateway.util.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.hateoas.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,6 +21,12 @@ import java.net.URISyntaxException;
 @RestController
 @RequestMapping(Constants.PUBLIC_TP_API)
 public class PublicThirdPartyController {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     private ThirdPartyCompanyAssembler thirdPartyCompanyAssembler;
     private ThirdPartyPrivateAssembler thirdPartyPrivateAssembler;
@@ -57,9 +62,10 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
+    @JsonView(Views.Public.class)
     @PostMapping(Constants.REGISTER_COMPANY_TP_API)
     public @ResponseBody
-    ResponseEntity<?> registerCompanyThirdParty(@RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
+    ResponseEntity<?> registerCompanyThirdParty(@JsonView (Views.Secured.class) @RequestBody ThirdPartyCompanyWrapper thirdPartyCompanyWrapper)
             throws URISyntaxException {
         Resource<ThirdPartyCompanyWrapper> resource = thirdPartyCompanyAssembler.
                 toResource(service.registerThirdPartyCompany(thirdPartyCompanyWrapper));
@@ -74,9 +80,11 @@ public class PublicThirdPartyController {
      * @return an http 201 created message that contains the newly formed link
      * @throws URISyntaxException due to the creation of a new URI resource
      */
+    @JsonView(Views.Public.class)
     @PostMapping(Constants.REGISTER_PRIVATE_TP_API)
     public @ResponseBody
-    ResponseEntity<?> registerPrivateThirdParty(@RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
+    ResponseEntity<?> registerPrivateThirdParty(
+            @JsonView(Views.Secured.class) @RequestBody ThirdPartyPrivateWrapper thirdPartyPrivateWrapper)
             throws URISyntaxException {
         Resource<ThirdPartyPrivateWrapper> resource = thirdPartyPrivateAssembler.
                 toResource(service.registerThirdPartyPrivate(thirdPartyPrivateWrapper));
@@ -89,15 +97,18 @@ public class PublicThirdPartyController {
      *
      * @param email email of the customer
      * @param password password of the customer
-     * @return token associated with the customer
+     * @return token associated with the customer and a list of links to the possible actions that a logged
+     * third party customer can perform
      */
-    @PostMapping(Constants.LOGIN_TP_API) @ResponseBody
-    TokenWrapper login(
+    @PostMapping(Constants.LOGIN_TP_API)
+    @ResponseBody
+    public Resource<Object> login(
             @RequestParam(Constants.LOGIN_TP_EMAIL_API_PARAM) final String email,
             @RequestParam(Constants.LOGIN_TP_PW_API_PARAM) final String password) {
         TokenWrapper tokenWrapper = new TokenWrapper();
         tokenWrapper.setToken(thirdPartyAuthenticationService.thirdPartyLogin(email, password)
                 .orElseThrow(() -> new BadCredentialsException(Constants.THIRD_PARTY_BAD_CREDENTIAL)));
-        return tokenWrapper;
+
+        return new Resource<>(tokenWrapper, SetUpLinks.getLoggedThirdPartyLinks(serverAddress, port));
     }
 }

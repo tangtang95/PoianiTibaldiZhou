@@ -1,10 +1,7 @@
 package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.poianitibaldizhou.trackme.sharedataservice.ShareDataServiceApplication;
-import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
-import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,28 +52,6 @@ public class AccessDataControllerIntegrationTest {
 
     // TEST GET INDIVIDUAL REQUEST DATA METHOD
 
-    /**
-     * Test the get of a individual request data when the header is wrong
-     *
-     * @throws Exception due to json mapping
-     */
-    @Test
-    public void getIndividualRequestDataWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/1/thirdparties/1"),
-                HttpMethod.GET, entity, String.class);
-
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
 
     /**
      * Test the get individual request data with individual id and third party id matching in individual request
@@ -87,7 +62,7 @@ public class AccessDataControllerIntegrationTest {
     public void getIndividualRequestDataSuccessful() throws Exception {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/1/thirdparties/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/1"),
                 HttpMethod.GET, entity, String.class);
         
         String expectedBody = "{\n" +
@@ -133,7 +108,7 @@ public class AccessDataControllerIntegrationTest {
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.ACCESS_DATA_API + "/individualrequests/1/thirdparties/1\"\n" +
+                "      \"href\": \"http://localhost:" + port + Constants.ACCESS_DATA_API + "/individualrequests/1\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -150,7 +125,7 @@ public class AccessDataControllerIntegrationTest {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "3");
 
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/1/thirdparties/3"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/1"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -163,61 +138,13 @@ public class AccessDataControllerIntegrationTest {
     public void getIndividualDataWithNotMatchingRequestId() {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/4/thirdparties/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/individualrequests/4"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
-    // TEST GET INDIVIDUAL REQUEST DATA METHOD
-
-    /**
-     * Test the get of data related with group requests when the header is wrong
-     * @throws Exception due to json mapping
-     */
-    @Test
-    public void getGroupRequestDataWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "2");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/1/thirdparties/1"),
-                HttpMethod.GET, entity, String.class);
-
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
-
-    /**
-     * Test the get group request data when it is successful
-     *
-     * @throws Exception due to json assertEquals method
-     */
-    @Test
-    public void getGroupRequestDataSuccessful() throws Exception {
-        httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/1/thirdparties/1"),
-                HttpMethod.GET, entity, String.class);
-
-        String expectedBody = "{\n" +
-                "  \"value\": 8.0,\n" +
-                "  \"_links\": {\n" +
-                "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.ACCESS_DATA_API + "/grouprequests/1/thirdparties/1\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}";
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals(expectedBody, response.getBody(), false);
-    }
-
+    // TEST GET GROUP REQUEST DATA METHOD
     /**
      * Test the get group request data with a not existing third party
      */
@@ -225,7 +152,7 @@ public class AccessDataControllerIntegrationTest {
     public void getGroupRequestDataWithNotExistingThirdParty()  {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "4");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/1/thirdparties/4"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/1"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
@@ -238,29 +165,13 @@ public class AccessDataControllerIntegrationTest {
     public void getGroupRequestDataWithNotMatchingRequestId()  {
         httpHeaders.set(Constants.HEADER_THIRD_PARTY_ID, "1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/2/thirdparties/1"),
+        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/grouprequests/2"),
                 HttpMethod.GET, entity, String.class);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     // TEST GET OWN DATA METHOD
-
-    @Test
-    public void getOwnDataWhenWrongData() throws Exception {
-        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users/user1?from=2010-01-01&to=2010-01-01"),
-                        HttpMethod.GET, entity, String.class);
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
 
     /**
      * Test the get own data with existing user
@@ -272,7 +183,7 @@ public class AccessDataControllerIntegrationTest {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users/user1?from=2010-01-01&to=2010-01-01"),
+                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users?from=2010-01-01&to=2010-01-01"),
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
@@ -318,7 +229,7 @@ public class AccessDataControllerIntegrationTest {
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.ACCESS_DATA_API + "/users/user1?from=2010-01-01&to=2010-01-01\"\n" +
+                "      \"href\": \"http://localhost:" + port + Constants.ACCESS_DATA_API + "/users?from=2010-01-01&to=2010-01-01\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -335,7 +246,7 @@ public class AccessDataControllerIntegrationTest {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users/user3?from=2010-01-01&to=2010-01-01"),
+                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users?from=2010-01-01&to=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
@@ -348,7 +259,7 @@ public class AccessDataControllerIntegrationTest {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users/user1?from=2010-01-01"),
+                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users?from=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
@@ -361,7 +272,7 @@ public class AccessDataControllerIntegrationTest {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity<String> response = restTemplate
-                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users/user1?to=2010-01-01"),
+                .exchange(createURLWithPort(Constants.ACCESS_DATA_API+"/users?to=2010-01-01"),
                         HttpMethod.GET, entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

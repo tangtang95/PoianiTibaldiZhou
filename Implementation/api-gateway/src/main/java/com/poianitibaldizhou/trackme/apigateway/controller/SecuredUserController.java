@@ -9,10 +9,7 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 
@@ -65,7 +62,7 @@ public class SecuredUserController {
      * @param user user to logout
      * @return true
      */
-    @GetMapping(Constants.LOGOUT_USER_API)
+    @PostMapping(Constants.LOGOUT_USER_API)
     public @ResponseBody boolean logout(@NotNull @AuthenticationPrincipal final User user) {
         userAuthenticationService.userLogout(user);
         return true;

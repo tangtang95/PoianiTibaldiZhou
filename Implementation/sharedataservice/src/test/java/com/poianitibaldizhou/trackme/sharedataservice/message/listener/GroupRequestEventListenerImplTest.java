@@ -302,7 +302,7 @@ public class GroupRequestEventListenerImplTest {
             rabbitTemplate.convertAndSend(groupRequestExchange.getName(), "grouprequest.event.created",
                     groupRequestProtocolMessage);
 
-            verify(groupRequestEventListener, timeout(2000).times(1))
+            verify(groupRequestEventListener, timeout(5000).times(1))
                     .onGroupRequestCreated(groupRequestProtocolMessage);
         }
 

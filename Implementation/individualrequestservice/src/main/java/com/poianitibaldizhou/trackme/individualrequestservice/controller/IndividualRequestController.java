@@ -7,7 +7,10 @@ import com.poianitibaldizhou.trackme.individualrequestservice.entity.User;
 import com.poianitibaldizhou.trackme.individualrequestservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.individualrequestservice.service.IndividualRequestManagerService;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestStatus;
 import com.poianitibaldizhou.trackme.individualrequestservice.util.IndividualRequestWrapper;
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,7 +59,7 @@ public class IndividualRequestController {
      * @return resource containing the individual request
      */
     @GetMapping(path = Constants.REQUEST_BY_ID_API)
-    public @ResponseBody Resource<IndividualRequestWrapper> getRequestById(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
+    public @ResponseBody Resource<Object> getRequestById(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
                                                                     @RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser,
                                                                     @PathVariable Long id) {
         IndividualRequestWrapper request = IndividualRequestWrapper.convertIntoWrapper(requestManagerService.getRequestById(id));
@@ -70,7 +74,23 @@ public class IndividualRequestController {
         if(!requestingUser.isEmpty() && !request.getUserSsn().equals(requestingUser))
                 throw new ImpossibleAccessException();
 
-        return assembler.toResource(IndividualRequestWrapper.convertIntoWrapper(requestManagerService.getRequestById(id)));
+        List<Link> links = new ArrayList<>();
+        links.add(linkTo(methodOn(IndividualRequestController.class).getRequestById(
+                request.getThirdPartyId().toString(),
+                request.getUserSsn() ,
+                request.getId()))
+                .withSelfRel());
+        if(!requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.ACCEPTED) {
+            links.add(new Link(Constants.FAKE_URL + Constants.EXT_API_ACCESS_INDIVIDUAL_REQUEST_DATA + "/" + request.getId(),
+                    Constants.EXTP_API_ACCESS_INDIVIDUAL_REQUEST_DATA_REL));
+        }
+        if(requestingThirdParty.isEmpty() && request.getStatus() == IndividualRequestStatus.PENDING) {
+            links.add(linkTo(methodOn(ResponseController.class).newResponse(
+                    request.getUserSsn(),
+                    request.getId(),
+                    Strings.EMPTY)).withRel(Constants.REL_ADD_RESPONSE));
+        }
+        return new Resource<>(request, links);
     }
 
 
@@ -80,22 +100,20 @@ public class IndividualRequestController {
      * This method will return the requests of a certain user, that are marked with status PENDING
      *
      * @param requestingUser user that is accessing this method
-     * @param ssn the set of pending regards the user specified with this ssn
      * @return set of resources of size 2: the first item is the set of pending requests, embedded with
      * their own link. The second one provides a self reference to this method.
      */
     @GetMapping(path = Constants.PENDING_REQUEST_BY_USER_API)
-    public @ResponseBody Resources<Resource<IndividualRequestWrapper>> getUserPendingRequests(@RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser, @PathVariable String ssn) {
-        if(!requestingUser.equals(ssn))
-            throw new ImpossibleAccessException();
+    public @ResponseBody Resources<Resource<IndividualRequestWrapper>> getUserPendingRequests(
+            @RequestHeader(value = Constants.HEADER_USER_SSN) String requestingUser) {
+        User user = new User(requestingUser);
 
-        User user = new User(ssn);
         List<Resource<IndividualRequestWrapper>> pendingRequests = requestManagerService.getUserPendingRequests(user).stream()
                 .map(IndividualRequestWrapper::convertIntoWrapper)
                 .map(assembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(pendingRequests,
-                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(requestingUser, ssn)).withSelfRel());
+                linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(requestingUser)).withSelfRel());
     }
 
     // Third party customer access point to the service
@@ -104,15 +122,14 @@ public class IndividualRequestController {
      * This method will return the requests performed by a certain third party customer
      *
      * @param requestingThirdParty third party that requests the access to this method
-     * @param thirdParty the set of requests are performed by the third party customer identified with this number
      * @return set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
     @GetMapping(path = Constants.REQUEST_BY_THIRD_PARTY_ID)
-    public @ResponseBody Resources<Resource<IndividualRequestWrapper>> getThirdPartyRequests(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
-                                                                                      @PathVariable Long thirdParty) {
-        if(Long.parseLong(requestingThirdParty) != thirdParty)
-            throw new ImpossibleAccessException();
+    public @ResponseBody Resources<Resource<IndividualRequestWrapper>> getThirdPartyRequests(
+            @RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty) {
+
+        Long thirdParty = Long.parseLong(requestingThirdParty);
 
         List<Resource<IndividualRequestWrapper>> requests = requestManagerService.getThirdPartyRequests(thirdParty).stream()
                 .map(IndividualRequestWrapper::convertIntoWrapper)
@@ -120,7 +137,7 @@ public class IndividualRequestController {
                 .collect(Collectors.toList());
 
         return new Resources<>(requests,
-                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(requestingThirdParty, thirdParty)).withSelfRel());
+                linkTo(methodOn(IndividualRequestController.class).getThirdPartyRequests(requestingThirdParty)).withSelfRel());
     }
 
     /**
@@ -134,7 +151,11 @@ public class IndividualRequestController {
      * @throws URISyntaxException due to the creation of a new URI resource
      */
     @PostMapping(path = Constants.NEW_REQUEST_API)
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable String ssn, @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+    public @ResponseBody ResponseEntity<?> newRequest(
+            @RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
+            @PathVariable String ssn,
+            @RequestBody IndividualRequest newRequest) throws URISyntaxException {
+
         newRequest.setUser(new User(ssn));
         newRequest.setThirdParty(new ThirdParty(Long.parseLong(requestingThirdParty)));
 

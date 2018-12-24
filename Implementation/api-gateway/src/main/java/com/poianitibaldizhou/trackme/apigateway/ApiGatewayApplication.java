@@ -27,8 +27,7 @@ public class ApiGatewayApplication {
 	public AccessControlFilter accessControlFilter(UserAuthenticationService userAuthenticationService,
 												   ThirdPartyAuthenticationService thirdPartyAuthenticationService,
 												   TokenAuthenticationFilter tokenAuthenticationFilter,
-												   ApiUtils apiUtils
-	) {
+												   ApiUtils apiUtils) {
 		return new AccessControlFilter(userAuthenticationService, thirdPartyAuthenticationService, apiUtils, tokenAuthenticationFilter);
 	}
 

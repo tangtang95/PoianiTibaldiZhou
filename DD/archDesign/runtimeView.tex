@@ -2,11 +2,11 @@
 In this section, to clarify better how the system works dynamically at runtime, a series of sequence diagram is shown:
 \begin{itemize}
 \item Log-in diagram
+\item Send cluster of data diagram
 \item Request-acceptance diagram
 \item Publish group request diagram
 \item Automated SOS call diagram
 \item Close race diagram
-\item Send cluster of data diagram
 \end{itemize}
 
 \subsubsection{Log-in sequence diagram}
@@ -19,10 +19,35 @@ diagram exposes the procedure for the user.
 \label{fig:login}
 \end{figure}
 
-Only in this diagram, it is shown how the router and service registry works when they are called from the API gateway due to achieve simplicity on other diagrams which are more complex. As the diagram show, if the log-in is done correctly, a token is generated from the account service and returned back to the API gateway
-and to the client. 
-The information will be used by both the client and the API gateway to manage the user session: all the next requests will be authenticated
-using that token.  \\
+As the diagram show, if the log-in is done correctly, a token is generated and saved; afterwords, it is returned back to the client. 
+The information will be used by both the client and the API gateway to manage the user session: all the next requests will 
+be authenticated using that token.  \\
+
+\subsubsection{Send cluster of data sequence diagram}
+Only in the following diagram, it is shown how the API gateway and service registry works due to achieving simplicity on 
+other diagrams which are more complex. The interaction between components during the send of cluster of data done by a user 
+is described as follows:
+
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/senddata.pdf}
+\caption{ Sequence diagram: send cluster of data}
+\label{fig:closerace}
+\end{figure}
+
+The most of the request done by users is related to sending data to the TrackMe system. Therefore, this is one of the bottleneck 
+of the system. By taking into consideration that more or less every application server accepts about 8kB of header HTTP request and the data to send at each time:
+\begin{itemize}
+\item token\_id: it is a token of 16 bytes, which is necessary to identify the user;
+\item position data: it is, basically, two double representing latitude and longitude, but since the RESTful message cannot send double, it can be seen as two strings of 10 bytes;
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{Images/gpsprecision.pdf}
+\caption{ Degree precision versus length }
+\label{fig:precisiongps}
+\end{figure}
+\item health data: this type of data can be a heartbeat value (i.e. integer), a blood pressure value (i.e. minimum pressure or maximum pressure, which means two integers), or a bloody oxygen level (i.e. integer). Therefore, at most it is possible to have 2 integers when a health data is sent.
+\item timestamp: it usually weights 8 bytes when the timestamp has a timezone. To be coherent with everyone, the timestamp will always have a timezone of Greewich UTC.
+\end{itemize}
+Other than data, if the messages are, for instance, JSON they need a key which is a string. More or less a key can be estimated to be on average 10 bytes. Therefore, after this consideration, a possible recommendation about how periodically the user should send data is to do it once the data collected exceed 64 kB or when 10 minutes are elapsed. This choice is due to the fact that too much requests within a short time could overload the servers, but the system should also have updated data, so, if 10 minutes are elapsed from the last transfer and there are data available, then the user application should send data to TrackMe.
 
 \subsubsection{Request-acceptance sequence diagram}
 An important issue in the project is the process in which the user gives a reply to an individual request
@@ -104,26 +129,3 @@ In order to accomplish this, an asynchronous call is here performed, to inform t
 Note that some delay could happen, due to asynchronicity, in preventing the above mentioned features; however this is tolerated, because
 it is not something considered that critical.
 
-\subsubsection{Send cluster of data sequence diagram}
-The interaction between components during the send of cluster of data done by a user is described as follows:
-
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{Images/senddata.pdf}
-\caption{ Sequence diagram: send cluster of data}
-\label{fig:closerace}
-\end{figure}
-
-The most of the request done by users is related to sending data to the TrackMe system. Therefore, this is one of the bottleneck 
-of the system. By taking into consideration that more or less every application server accepts about 8kB of header HTTP request and the data to send at each time:
-\begin{itemize}
-\item token\_id: it is a token of 16 bytes, which is necessary to identify the user;
-\item position data: it is, basically, two double representing latitude and longitude, but since the RESTful message cannot send double, it can be seen as two strings of 10 bytes;
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{Images/gpsprecision.pdf}
-\caption{ Degree precision versus length }
-\label{fig:precisiongps}
-\end{figure}
-\item health data: this type of data can be a heartbeat value (i.e. integer), a blood pressure value (i.e. minimum pressure or maximum pressure, which means two integers), or a bloody oxygen level (i.e. integer). Therefore, at most it is possible to have 2 integers when a health data is sent.
-\item timestamp: it usually weights 8 bytes when the timestamp has a timezone. To be coherent with everyone, the timestamp will always have a timezone of Greewich UTC.
-\end{itemize}
-Other than data, if the messages are, for instance, JSON they need a key which is a string. More or less a key can be estimated to be on average 10 bytes. Therefore, after this consideration, a possible recommendation about how periodically the user should send data is to do it once the data collected exceed 64 kB or when 10 minutes are elapsed. This choice is due to the fact that too much requests within a short time could overload the servers, but the system should also have updated data, so, if 10 minutes are elapsed from the last transfer and there are data available, then the user application should send data to TrackMe.

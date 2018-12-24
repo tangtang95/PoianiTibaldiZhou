@@ -21,8 +21,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +46,7 @@ import static org.junit.Assert.*;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql({"classpath:IntegrationTPControllerTestData"})
+@ActiveProfiles("test")
 @Transactional
 public class PublicThirdPartyControllerIntegrationTest {
 
@@ -278,6 +281,42 @@ public class PublicThirdPartyControllerIntegrationTest {
             fail("Exception expected");
         } catch(RestClientException e) {
             assertEquals("400 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the login with bad credentials
+     */
+    @Test
+    public void testLoginBadCredentials() {
+        String email = "tp1@provider.com";
+        String password = "wrongPw";
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API + "?email=" + email + "&password=" + password),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
+        }
+    }
+
+    /**
+     * Test the login with bad credentials when the password is wrong
+     */
+    @Test
+    public void testLoginBadCredentialsWrongPass() {
+        String email = "tp1@provider.com";
+        String password = "wrongPw";
+        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+        try {
+            restTemplate.exchange(createURLWithPort(
+                    Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API + "?email=" + email + "&password=" + password),
+                    HttpMethod.POST, entity, String.class);
+            fail("Exception expected");
+        } catch(Exception e) {
+            assertEquals("401 ", e.getMessage());
         }
     }
 

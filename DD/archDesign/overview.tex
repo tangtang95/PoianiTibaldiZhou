@@ -12,10 +12,8 @@ project is presented and discussed.
 
 As a reference architecture, the microservices one has been considered: this decision will be later discussed. \\
 From the picture, it is evident that the clients can access the services by means of an API gateway, that will provide authentication 
-to the users, and forwards the requests to a router. 
-The router will query the service registry, in order to know where instances 
-of the demanded service are located: once that it retrieves this information, it will be able to send and load balance requests.
-Of course, a new service instance needs to register to the service registry. \\
+to the users, and forwards the requests to the correct microservices based on the service registry.
+Of course, a new service instance needs to register to the service registry in order to be located by the API gateway. \\
 Another relevant information is that the project can be ideally split, at a high level, into two applications: one for the users and one for the third parties customers: they both interact with the API gateway, that will guarantee to access all the
 microservices that compose the core functionality of the business.
 More specifically, the "microservices" block includes Data4Help and Track4Run functions, while the goals

@@ -47,4 +47,5 @@ public class LoadDatabase {
             log.info("Preloading " + companyDetailRepository.saveAndFlush(companyDetail));
         };
     }
+
 }

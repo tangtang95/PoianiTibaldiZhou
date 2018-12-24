@@ -9,6 +9,6 @@ import java.io.Serializable;
  * General wrapper of a third party customer that contains only the customer
  */
 @Data
-public class ThirdPartyWrapper implements Serializable {
+public class ThirdPartyWrapper{
     private ThirdPartyCustomer thirdPartyCustomer;
 }

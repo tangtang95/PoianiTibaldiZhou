@@ -1,8 +1,8 @@
-package com.poianitibaldizhou.trackme.sharedataservice.advice;
+package com.poianitibaldizhou.trackme.apigateway.advice;
 
-import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
-import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
+import com.poianitibaldizhou.trackme.apigateway.util.ExceptionResponseBody;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,29 +12,29 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 /**
- * Advice for managing errors regarding impossible accesses to controller methods
+ * Advice for managing errors about user wrong credentials
  */
 @ControllerAdvice
-public class ImpossibleAccessAdvice {
+public class UsernameNotFoundAdvice {
 
     /**
      * An advice signaled into the body of the response that activates
-     * only when the exception ImpossibleAccessException is thrown.
+     * only when the exception UsernameNotFoundException is thrown.
      * The issue is an HTTP 401.
      * The body of the advice contains the message of the exception
      *
      * @param e the error which triggers the advice
      * @return an http 401 response that contains the message of the exception
      */
-    @ExceptionHandler(ImpossibleAccessException.class)
+    @ExceptionHandler(UsernameNotFoundException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public @ResponseBody
-    ExceptionResponseBody impossibleAccessHandler(ImpossibleAccessException e) {
+    ExceptionResponseBody usernameNotFoundHandler(UsernameNotFoundException e) {
         return new ExceptionResponseBody(
                 Timestamp.valueOf(LocalDateTime.now()),
                 HttpStatus.UNAUTHORIZED.value(),
                 HttpStatus.UNAUTHORIZED.toString(),
                 e.getMessage());
-    }
 
+    }
 }

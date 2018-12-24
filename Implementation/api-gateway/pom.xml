@@ -18,9 +18,6 @@
     <properties>
         <java.version>1.8</java.version>
         <spring-cloud.version>Greenwich.M3</spring-cloud.version>
-        <sonar.language>java</sonar.language>
-        <sonar.core.codeCoveragePlugin>cobertura</sonar.core.codeCoveragePlugin>
-        <sonar.host.url>http://localhost:9000/</sonar.host.url>
     </properties>
 
     <dependencies>
@@ -93,12 +90,6 @@
             <artifactId>json-path</artifactId>
             <version>2.4.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>com.jfoenix</groupId>
-            <artifactId>jfoenix</artifactId>
-            <version>8.0.4</version>
-        </dependency>
     </dependencies>
 
 
@@ -121,31 +112,47 @@
                 <plugin>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-maven-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>3.4.0.905</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                </plugin>
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.1</version>
-                </plugin>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.20.1</version>
-                    <configuration>
-                        <argLine>@{argLine} -Xmx2048m -Dfile.encoding=${project.build.sourceEncoding}</argLine>
-                        <runOrder>random</runOrder>
-                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.2</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/entity/*</exclude>
+                        <exclude>**/filter/**</exclude>
+                        <exclude>**/util/Views.*</exclude>
+                        <exclude>**/ApiGatewayApplication.*</exclude>
+                        <exclude>**/LoadDatabase.*</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- attached to Maven test phase -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <repositories>
@@ -159,20 +166,6 @@
         </repository>
     </repositories>
 
-    <profiles>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <!-- Optional URL to server. Default value is http://localhost:9000 -->
-                <sonar.host.url>
-                    http://localhost:9000
-                </sonar.host.url>
-            </properties>
-        </profile>
-    </profiles>
 
 
 </project>

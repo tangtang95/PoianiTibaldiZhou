@@ -147,7 +147,7 @@ public class GroupRequestControllerUnitTest {
 
         given(service.getByThirdPartyId(1L)).willReturn(groupRequestWrapperList);
 
-        mvc.perform(get(Constants.GROUP_REQUEST_API+ "/thirdparties/1")
+        mvc.perform(get(Constants.GROUP_REQUEST_API+ Constants.GROUP_REQUEST_BY_THIRD_PARTY_API)
                 .accept(MediaTypes.HAL_JSON_VALUE)
                 .header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8"))
@@ -169,7 +169,8 @@ public class GroupRequestControllerUnitTest {
                         containsInAnyOrder(filterStatement1.getComparisonSymbol().toString(), filterStatement2.getComparisonSymbol().toString())))
                 .andExpect(jsonPath("$._embedded.groupRequestWrapperList[*]._links.self.href",
                         containsInAnyOrder("http://localhost"+Constants.GROUP_REQUEST_API+"/id/1", "http://localhost"+Constants.GROUP_REQUEST_API+"/id/2")))
-                .andExpect(jsonPath("$._links.self.href", is("http://localhost"+Constants.GROUP_REQUEST_API+"/thirdparties/1")));
+                .andExpect(jsonPath("$._links.self.href",
+                        is("http://localhost"+Constants.GROUP_REQUEST_API+Constants.GROUP_REQUEST_BY_THIRD_PARTY_API)));
     }
 
     /**
@@ -246,7 +247,7 @@ public class GroupRequestControllerUnitTest {
                 "   }\n" +
                 "}";
 
-        mvc.perform(post(Constants.GROUP_REQUEST_API+"/thirdparties/1").
+        mvc.perform(post(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").
                 content(json).header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andDo(print())
@@ -291,7 +292,7 @@ public class GroupRequestControllerUnitTest {
         given(service.addGroupRequest(groupRequestWrapper)).willThrow(new BadOperatorRequestTypeException(
                 groupRequest.getAggregatorOperator(), groupRequest.getRequestType()));
 
-        mvc.perform(post(Constants.GROUP_REQUEST_API+"/thirdparties/1").header(Constants.HEADER_THIRD_PARTY_ID, "1"))
+        mvc.perform(post(Constants.GROUP_REQUEST_API+Constants.NEW_GROUP_REQUEST_API).header(Constants.HEADER_THIRD_PARTY_ID, "1"))
                 .andExpect(status().isBadRequest());
     }
 

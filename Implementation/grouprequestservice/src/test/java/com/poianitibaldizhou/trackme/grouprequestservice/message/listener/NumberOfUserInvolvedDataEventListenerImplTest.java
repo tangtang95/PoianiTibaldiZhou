@@ -193,6 +193,7 @@ public class NumberOfUserInvolvedDataEventListenerImplTest {
 
         @After
         public void tearDown() throws Exception {
+            rabbitAdmin.purgeQueue(numberOfUserInvolvedGeneratedToGroupRequestServiceQueue.getName());
             rabbitAdmin = null;
         }
 

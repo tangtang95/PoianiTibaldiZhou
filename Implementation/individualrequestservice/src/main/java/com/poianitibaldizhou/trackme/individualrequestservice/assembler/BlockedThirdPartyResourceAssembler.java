@@ -2,6 +2,7 @@ package com.poianitibaldizhou.trackme.individualrequestservice.assembler;
 
 import com.poianitibaldizhou.trackme.individualrequestservice.controller.IndividualRequestController;
 import com.poianitibaldizhou.trackme.individualrequestservice.entity.BlockedThirdParty;
+import com.poianitibaldizhou.trackme.individualrequestservice.util.Constants;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.ResourceAssembler;
 import org.springframework.stereotype.Component;
@@ -18,8 +19,7 @@ public class BlockedThirdPartyResourceAssembler implements ResourceAssembler<Blo
     public Resource<BlockedThirdParty> toResource(BlockedThirdParty blockedThirdParty) {
         return new Resource<>(blockedThirdParty,
                 linkTo(methodOn(IndividualRequestController.class).getUserPendingRequests(
-                        blockedThirdParty.getKey().getUser().getSsn(),
                         blockedThirdParty.getKey().getUser().getSsn()))
-                        .withRel("userPendingRequest"));
+                        .withRel(Constants.REL_USER_PENDING_REQUEST));
     }
 }

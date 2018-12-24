@@ -4,7 +4,7 @@ package com.poianitibaldizhou.trackme.apigateway.util;
  * Views useful to set the fields of an entity that are used in a certain controller method
  */
 public class Views {
-    public Views(){}
+    private Views(){}
 
     /**
      * Public views: used in the more general case

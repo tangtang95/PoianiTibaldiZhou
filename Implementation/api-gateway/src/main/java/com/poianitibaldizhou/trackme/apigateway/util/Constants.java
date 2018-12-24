@@ -33,6 +33,7 @@ public class Constants {
     // Exchange and queues names
     public static final String USER_EXCHANGE_NAME = "trackme.user-exchange";
     public static final String USER_CREATED_SHARE_DATA_QUEUE_NAME = "trackme.user.created.share-data-queue";
+    public static final String USER_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME = "trackme.user.created.individual-request-queue";
 
     public static final String THIRD_PARTY_EXCHANGE_NAME = "trackme.third-party-exchange";
     public static final String THIRD_PARTY_CREATED_INDIVIDUAL_REQUEST_QUEUE_NAME = "trackme.third-party.created.individual-request-queue";
@@ -47,9 +48,12 @@ public class Constants {
 
     public static final String PUBLIC_API = "/public/**";
     public static final String JSON_HREF_QUERY = "$..href";
+    public static final String SERVER_ADDRESS = "${server.address}";
     public static final String PORT = "${server.port}";
     public static final String HTTPS_PREFIX = "https://";
     public static final String PORT_SEPARATOR = ":";
+    public static final String SLASH = "/";
+    public static final String FAKE_IP = "fakeip";
 
     public static final String UTF8_CHAR_SET = "UTF-8";
 
@@ -73,6 +77,35 @@ public class Constants {
     public static final String SECURED_USER_API = "/users";
     public static final String LOGOUT_USER_API = "/logout";
     public static final String GET_USER_INFO_API = "/info";
+
+    // External APIs
+    public static final String EXT_API_GET_PENDING_REQUESTS = "/individualrequestservice/requests/users";
+    public static final String EXT_API_HEALTH_DATA = "/sharedataservice/datacollection/healthdata";
+    public static final String EXT_API_POSITION_DATA = "/sharedataservice/datacollection/positiondata";
+    public static final String EXT_API_CLUSTER_DATA = "/sharedataservice/datacollection/clusterdata";
+    public static final String EXT_API_OWN_DATA = "/sharedataservice/dataretrieval/users";
+
+    public static final String EXT_API_GET_GROUP_REQUESTS = "/grouprequestservice/grouprequests/thirdparties";
+    public static final String EXT_API_ADD_INDIVIDUAL_REQUEST = "/individualrequestservice/requests";
+    public static final String EXT_API_GET_INDIVIDUAL_REQUESTS = "/individualrequestservice/requests/thirdparties";
+    public static final String EXT_API_ADD_GROUP_REQUEST = "/grouprequestservice/grouprequests/thirdparties";
+
+
+    // External APIs rel
+    public static final String EXT_API_GET_PENDING_REQUESTS_REL = "pendingRequests";
+    public static final String EXT_API_HEALTH_DATA_REL = "postHealthData";
+    public static final String EXT_API_POSITION_DATA_REL = "postPositionData";
+    public static final String EXT_API_CLUSTER_DATA_REL = "postClusterData";
+    public static final String EXT_API_OWN_DATA_REL = "getOwnData";
+
+    public static final String EXT_API_GET_GROUP_REQUESTS_REL = "groupRequests";
+    public static final String EXT_API_ADD_GROUP_REQUEST_REL = "newGroupRequest";
+    public static final String EXT_API_GET_INDIVIDUAL_REQUESTS_REL = "individualRequests";
+    public static final String EXT_API_ADD_INDIVIDUAL_REQUEST_REL = "newIndividualRequest";
+
+    // Internal APIs rel
+    public static final String LOGOUT_REL = "logout";
+    public static final String INFO_REL = "info";
 
 }
 

@@ -13,19 +13,24 @@ import com.poianitibaldizhou.trackme.apigateway.util.Constants;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,6 +41,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PublicUserController.class)
 @Import({UserAssembler.class})
 public class PublicUserControllerUnitTest {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     @Autowired
     private MockMvc mvc;
@@ -90,7 +101,6 @@ public class PublicUserControllerUnitTest {
         mvc.perform(post(Constants.PUBLIC_USER_API + "/newUser").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("password", is(user.getPassword())))
                 .andExpect(jsonPath("username", is(user.getUsername())))
                 .andExpect(jsonPath("firstName", is(user.getFirstName())))
                 .andExpect(jsonPath("lastName", is(user.getLastName())))
@@ -170,4 +180,36 @@ public class PublicUserControllerUnitTest {
                 .andExpect(status().isBadRequest());
 
     }
+
+    /**
+     * Test the login of a user into the system
+     *
+     * @throws Exception due to mock mvc post method
+     */
+    @Test
+    public void testUserLogin() throws Exception {
+        User user = new User();
+        user.setSsn("SsnAlreadyPresent");
+        user.setBirthNation("Italia");
+        user.setBirthCity("Brescia");
+        user.setBirthDate(new Date(0));
+        user.setFirstName("TangTang");
+        user.setLastName("Zhou");
+        user.setPassword("tangpass");
+        user.setUsername("newUserName");
+
+        given(authenticationService.userLogin("newUserName", "tangpass")).willReturn(Optional.of("newToken"));
+
+        mvc.perform(post(Constants.PUBLIC_USER_API + Constants.LOGIN_USER_API  +"?username=newUserName&password=tangpass"))
+                .andDo(print())
+                .andExpect(jsonPath("token", is("newToken")))
+                .andExpect(jsonPath("_links.logout.href", is("https://" + serverAddress + ":" + port + "/users/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://" + serverAddress + ":" + port + "/users/info")))
+                .andExpect(jsonPath("_links.pendingRequests.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests/users")))
+                .andExpect(jsonPath("_links.postHealthData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/healthdata")))
+                .andExpect(jsonPath("_links.postPositionData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/positiondata")))
+                .andExpect(jsonPath("_links.postClusterData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/datacollection/clusterdata")))
+                .andExpect(jsonPath("_links.getOwnData.href", is("https://" + serverAddress + ":" + port + "/sharedataservice/dataretrieval/users")));
+    }
+
 }

@@ -23,6 +23,9 @@ import java.util.List;
  */
 public class HrefFilter extends ZuulFilter {
 
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
     @Value(Constants.PORT)
     private String port;
 
@@ -45,20 +48,22 @@ public class HrefFilter extends ZuulFilter {
     public Object run() throws ZuulException {
         RequestContext ctx = RequestContext.getCurrentContext();
         try (final InputStream responseDataStream = ctx.getResponseDataStream()) {
-            final String responseData = CharStreams.toString(new InputStreamReader(responseDataStream, Constants.UTF8_CHAR_SET));
-            String newResponseBody = responseData;
+            String newResponseBody = CharStreams.toString(new InputStreamReader(responseDataStream, Constants.UTF8_CHAR_SET));
+            String servicePath = ctx.getRequest().getRequestURI().split("/")[1];
 
             List<String> hrefs = JsonPath.read(newResponseBody, Constants.JSON_HREF_QUERY);
-            String address = NetworkInterface.getNetworkInterfaces().nextElement().getInetAddresses().nextElement().getHostAddress();
 
             for(String elem : hrefs) {
                 URL url = new URL(elem);
                 String path = url.getPath();
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append(Constants.HTTPS_PREFIX);
-                stringBuilder.append(address);
-                stringBuilder.append(Constants.PORT_SEPARATOR);
-                stringBuilder.append(port);
+                stringBuilder
+                        .append(Constants.HTTPS_PREFIX)
+                        .append(serverAddress)
+                        .append(Constants.PORT_SEPARATOR)
+                        .append(port);
+                if(!(url.getHost().equals(Constants.FAKE_IP) && url.getPort() == 9999))
+                    stringBuilder.append(Constants.SLASH).append(servicePath);
                 stringBuilder.append(path);
                 newResponseBody = newResponseBody.replace(elem, stringBuilder);
             }

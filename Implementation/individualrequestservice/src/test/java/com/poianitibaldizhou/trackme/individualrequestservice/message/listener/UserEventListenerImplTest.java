@@ -79,7 +79,7 @@ public class UserEventListenerImplTest {
 
             rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.created", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(1)).onUserCreated(userProtocolMessage);
+            verify(userEventListener, timeout(5000).times(1)).onUserCreated(userProtocolMessage);
         }
 
         /**
@@ -99,7 +99,7 @@ public class UserEventListenerImplTest {
 
             rabbitTemplate.convertAndSend("wrongExchange", "user.event.created", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(0)).onUserCreated(any(UserProtocolMessage.class));
+            verify(userEventListener, timeout(5000).times(0)).onUserCreated(any(UserProtocolMessage.class));
         }
 
         /**
@@ -119,7 +119,7 @@ public class UserEventListenerImplTest {
 
             rabbitTemplate.convertAndSend(userExchange.getName(), "user.event.updated", userProtocolMessage);
 
-            verify(userEventListener, timeout(2000).times(0)).onUserCreated(userProtocolMessage);
+            verify(userEventListener, timeout(5000).times(0)).onUserCreated(userProtocolMessage);
         }
 
 

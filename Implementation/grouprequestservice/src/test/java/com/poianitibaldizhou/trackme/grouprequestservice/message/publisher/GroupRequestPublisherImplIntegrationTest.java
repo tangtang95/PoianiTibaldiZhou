@@ -68,6 +68,8 @@ public class GroupRequestPublisherImplIntegrationTest {
 
     @After
     public void tearDown() throws Exception {
+        rabbitAdmin.purgeQueue(groupRequestAcceptedToShareDataServiceQueue.getName());
+        rabbitAdmin.purgeQueue(groupRequestCreatedToShareDataServiceQueue.getName());
         rabbitAdmin = null;
     }
 

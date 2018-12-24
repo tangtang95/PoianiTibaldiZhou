@@ -12,10 +12,7 @@ import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import com.poianitibaldizhou.trackme.apigateway.util.Views;
 import org.springframework.hateoas.Resource;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
@@ -87,7 +84,7 @@ public class SecuredThirdPartyController {
      * @param thirdPartyCustomer customer to logout
      * @return true
      */
-    @GetMapping(Constants.LOGOUT_TP_API)
+    @PostMapping(Constants.LOGOUT_TP_API)
     public @ResponseBody boolean logout(@NotNull @AuthenticationPrincipal final ThirdPartyCustomer thirdPartyCustomer) {
         thirdPartyAuthenticationService.thirdPartyLogout(thirdPartyCustomer);
         return true;

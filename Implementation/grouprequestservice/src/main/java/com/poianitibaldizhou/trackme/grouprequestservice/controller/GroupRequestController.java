@@ -5,6 +5,8 @@ import com.poianitibaldizhou.trackme.grouprequestservice.exception.ImpossibleAcc
 import com.poianitibaldizhou.trackme.grouprequestservice.service.GroupRequestManagerService;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.Constants;
 import com.poianitibaldizhou.trackme.grouprequestservice.util.GroupRequestWrapper;
+import com.poianitibaldizhou.trackme.grouprequestservice.util.RequestStatus;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.Resource;
 import org.springframework.hateoas.Resources;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,24 +55,36 @@ public class GroupRequestController {
      * @return resource containing the requested individual request
      */
     @GetMapping(Constants.GROUP_REQUEST_BY_ID_API)
-    public @ResponseBody Resource<GroupRequestWrapper> getRequest(@RequestHeader(Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable Long id) {
-        if(Long.parseLong(requestingThirdParty) != id)
+    public @ResponseBody Resource<Object> getRequest(@RequestHeader(Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
+                                                     @PathVariable Long id) {
+        Long thirdPartyId = Long.parseLong(requestingThirdParty);
+
+        GroupRequestWrapper groupRequestWrapper = requestManagerService.getById(id);
+
+        if(!groupRequestWrapper.getGroupRequest().getThirdPartyId().equals(thirdPartyId))
             throw new ImpossibleAccessException();
-        return groupRequestWrapperAssembler.toResource(requestManagerService.getById(id));
+
+        List<Link> links = new ArrayList<>();
+        links.add(linkTo(methodOn(GroupRequestController.class).getRequest(groupRequestWrapper.getGroupRequest().getThirdPartyId().toString(),
+                groupRequestWrapper.getGroupRequest().getId())).withSelfRel());
+        if(groupRequestWrapper.getGroupRequest().getStatus() == RequestStatus.ACCEPTED)
+            links.add(new Link(Constants.FAKE_URL + Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA + "/" + groupRequestWrapper.getGroupRequest().getId(),
+                    Constants.EXT_API_ACCESS_GROUP_REQUEST_DATA_REL));
+
+        return new Resource<>(groupRequestWrapper, links);
     }
 
     /**
      * This method will access all the group requests performed by a certain third party customer
      *
      * @param requestingThirdParty id of the third party customer that is accessing this method
-     * @param thirdPartyId the set of requests are performed by the third party customer identified with this number
      * @return  set of resources of size 2: the first item is the set of demanded requests, embedded with their own
      * link. The second one provides a self reference to this method
      */
     @GetMapping(Constants.GROUP_REQUEST_BY_THIRD_PARTY_API)
-    public @ResponseBody Resources<Resource<GroupRequestWrapper>> getRequestByThirdParty(@RequestHeader(value = "thirdPartyId") String requestingThirdParty, @PathVariable Long thirdPartyId) {
-        if(Long.parseLong(requestingThirdParty) != thirdPartyId)
-            throw new ImpossibleAccessException();
+    public @ResponseBody Resources<Resource<GroupRequestWrapper>> getRequestByThirdParty(
+            @RequestHeader(value = Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty) {
+        Long thirdPartyId = Long.parseLong(requestingThirdParty);
 
         List<GroupRequestWrapper> requestWrappers = requestManagerService.getByThirdPartyId(thirdPartyId);
 
@@ -77,7 +92,7 @@ public class GroupRequestController {
                 .map(groupRequestWrapperAssembler::toResource).collect(Collectors.toList());
 
         return new Resources<>(requests,
-                linkTo(methodOn(GroupRequestController.class).getRequestByThirdParty(requestingThirdParty, thirdPartyId)).withSelfRel());
+                linkTo(methodOn(GroupRequestController.class).getRequestByThirdParty(requestingThirdParty)).withSelfRel());
     }
 
     // POST METHODS
@@ -93,12 +108,13 @@ public class GroupRequestController {
      * is not well expressed
      */
     @PostMapping(Constants.NEW_GROUP_REQUEST_API)
-    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty, @PathVariable Long thirdPartyId, @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
-        if(Long.parseLong(requestingThirdParty) != thirdPartyId)
-            throw new ImpossibleAccessException();
+    public @ResponseBody ResponseEntity<?> newRequest(@RequestHeader(Constants.HEADER_THIRD_PARTY_ID) String requestingThirdParty,
+                                                      @RequestBody GroupRequestWrapper groupRequestWrapper) throws URISyntaxException {
+        Long thirdPartyId = Long.parseLong(requestingThirdParty);
 
         groupRequestWrapper.getGroupRequest().setThirdPartyId(thirdPartyId);
-        groupRequestWrapper.getFilterStatementList().forEach(filterStatement -> filterStatement.setGroupRequest(groupRequestWrapper.getGroupRequest()));
+        groupRequestWrapper.getFilterStatementList().forEach(
+                filterStatement -> filterStatement.setGroupRequest(groupRequestWrapper.getGroupRequest()));
 
         Resource<GroupRequestWrapper> resource = groupRequestWrapperAssembler.toResource(requestManagerService.addGroupRequest(groupRequestWrapper));
 

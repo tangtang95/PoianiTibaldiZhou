@@ -13,7 +13,9 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.Date;
@@ -26,6 +28,7 @@ import static org.mockito.internal.verification.VerificationModeFactory.times;
  * Unit test for the implementation of the user account manager service
  */
 @RunWith(SpringRunner.class)
+@ActiveProfiles("test")
 @SpringBootTest
 public class UserAccountManagerServiceImplUnitTest {
 
@@ -98,6 +101,14 @@ public class UserAccountManagerServiceImplUnitTest {
     public void testGetUserBySsnWhenPresent() {
         User user = service.getUserBySsn("user1");
         assertEquals(user, user1);
+    }
+
+    /**
+     * Test the get of a user by its username when not present
+     */
+    @Test(expected = UsernameNotFoundException.class)
+    public void testGetUserByUsernameWhenNotPresent() {
+        service.getUserByUserName("notPresentUsername");
     }
 
     /**

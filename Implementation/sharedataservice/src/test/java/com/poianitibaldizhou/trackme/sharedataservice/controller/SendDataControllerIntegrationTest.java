@@ -1,11 +1,8 @@
 package com.poianitibaldizhou.trackme.sharedataservice.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.poianitibaldizhou.trackme.sharedataservice.ShareDataServiceApplication;
-import com.poianitibaldizhou.trackme.sharedataservice.exception.ImpossibleAccessException;
 import com.poianitibaldizhou.trackme.sharedataservice.util.Constants;
-import com.poianitibaldizhou.trackme.sharedataservice.util.ExceptionResponseBody;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +18,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.io.IOException;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
@@ -61,33 +57,6 @@ public class SendDataControllerIntegrationTest {
     // TEST SEND POSITION DATA METHOD
 
     /**
-     * Test the send of position data when the header provides an impossible access
-     */
-    @Test
-    public void sendPositionDataWhenWrongHeader() throws IOException {
-        httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
-
-        String requestBody = "{\n" +
-                "\t\"timestamp\": 1543422758573,\n" +
-                "\t\"latitude\": 20,\n" +
-                "\t\"longitude\": 30\n" +
-                "}";
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/positiondata/user2"),
-                entity, String.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
-
-    /**
      * Test the position data with a request body which is correct and a user ssn which exists
      *
      * @throws Exception due to json assertEquals method
@@ -103,7 +72,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/positiondata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_POSITION_DATA_API),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -112,7 +81,7 @@ public class SendDataControllerIntegrationTest {
                 "  \"latitude\": 20.0,\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/positiondata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + Constants.SEND_POSITION_DATA_API+"\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -134,7 +103,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/positiondata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_POSITION_DATA_API),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -150,42 +119,12 @@ public class SendDataControllerIntegrationTest {
     public void sendPositionDataNotExistingUserWithRequestBodyEmpty() {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/positiondata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_POSITION_DATA_API),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // TEST SEND HEALTH DATA METHOD
-
-    /**
-     * Test the forward of health data when the header is wrong and generates an impossible access exception
-     * @throws Exception due to json mapping
-     */
-    @Test
-    public void sendHealthDataWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_USER_SSN, "user2");
-
-        String requestBody = "{\n" +
-                "\t\"timestamp\": 1543422758573,\n" +
-                "\t\"heartBeat\": 60,\n" +
-                "\t\"bloodOxygenLevel\": 30,\n" +
-                "\t\"pressureMin\": 60,\n" +
-                "\t\"pressureMax\": 80\n" +
-                "}";
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/healthdata/user1"),
-                entity, String.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
 
     /**
      * Test the health data with a request body which is correct and a user ssn which exists
@@ -204,7 +143,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/healthdata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_HEALTH_DATA_API),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -215,7 +154,7 @@ public class SendDataControllerIntegrationTest {
                 "  \"pressureMax\": 80,\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/healthdata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + Constants.SEND_HEALTH_DATA_API+"\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -239,7 +178,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/healthdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_HEALTH_DATA_API),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -255,55 +194,12 @@ public class SendDataControllerIntegrationTest {
     public void sendHealthDataNotExistingUserWithRequestBodyEmpty() {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/healthdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_HEALTH_DATA_API),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 
     // TEST SEND CLUSTER OF DATA METHOD
-
-    @Test
-    public void sendClusterDataWhenWrongHeader() throws Exception {
-        httpHeaders.set(Constants.HEADER_USER_SSN, "user1");
-        String requestBody = "{\n" +
-                "\t\"positionDataList\": [\n" +
-                "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422758573,\n" +
-                "\t\t\t\"latitude\": 20,\n" +
-                "\t\t\t\"longitude\": 30\n" +
-                "\t\t}\n" +
-                "\t],\n" +
-                "\t\"healthDataList\": [\n" +
-                "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422758573,\n" +
-                "\t\t\t\"heartBeat\": 60,\n" +
-                "\t\t\t\"bloodOxygenLevel\": 30,\n" +
-                "\t\t\t\"pressureMin\": 60,\n" +
-                "\t\t\t\"pressureMax\": 80\n" +
-                "\t\t},\n" +
-                "\t\t{\n" +
-                "\t\t\t\"timestamp\": 1543422713573,\n" +
-                "\t\t\t\"heartBeat\": 20,\n" +
-                "\t\t\t\"bloodOxygenLevel\": 30,\n" +
-                "\t\t\t\"pressureMin\": 45,\n" +
-                "\t\t\t\"pressureMax\": 80\n" +
-                "\t\t}\n" +
-                "\t]\n" +
-                "}";
-
-        HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/clusterdata/user2"),
-                entity, String.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-
-        ObjectMapper mapper = new ObjectMapper();
-        ExceptionResponseBody exceptionResponseBody = mapper.readValue(response.getBody(), ExceptionResponseBody.class);
-
-        assertEquals(HttpStatus.UNAUTHORIZED.value(), exceptionResponseBody.getStatus());
-        assertEquals(HttpStatus.UNAUTHORIZED.toString(), exceptionResponseBody.getError());
-        assertEquals(new ImpossibleAccessException().getMessage(), exceptionResponseBody.getMessage());
-    }
 
     /**
      * Test the send cluster of data with a request body which is correct and a user ssn which exists
@@ -338,7 +234,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/clusterdata/user1"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_DATA_CLUSTER_API),
                 entity, String.class);
 
         String expectedBody = "{\n" +
@@ -349,7 +245,7 @@ public class SendDataControllerIntegrationTest {
                 "      \"latitude\": 20.0,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port +"/datacollection/positiondata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port +"/datacollection/positiondata\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +
@@ -363,7 +259,7 @@ public class SendDataControllerIntegrationTest {
                 "      \"pressureMax\": 80,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/healthdata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/healthdata\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    },\n" +
@@ -375,14 +271,14 @@ public class SendDataControllerIntegrationTest {
                 "      \"pressureMax\": 80,\n" +
                 "      \"_links\": {\n" +
                 "        \"self\": {\n" +
-                "          \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/healthdata/user1\"\n" +
+                "          \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/healthdata\"\n" +
                 "        }\n" +
                 "      }\n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"_links\": {\n" +
                 "    \"self\": {\n" +
-                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/clusterdata/user1\"\n" +
+                "      \"href\": \"http://localhost:" + port + Constants.SEND_DATA_API + "/clusterdata\"\n" +
                 "    }\n" +
                 "  }\n" +
                 "}";
@@ -424,7 +320,7 @@ public class SendDataControllerIntegrationTest {
                 "}";
 
         HttpEntity<String> entity = new HttpEntity<>(requestBody, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/clusterdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_DATA_CLUSTER_API),
                 entity, String.class);
 
         String expectedBody = "Could not find user: user3";
@@ -440,7 +336,7 @@ public class SendDataControllerIntegrationTest {
     public void sendClusterDataNotExistingUserWithRequestBodyEmpty()  {
         httpHeaders.set(Constants.HEADER_USER_SSN, "user3");
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+"/clusterdata/user3"),
+        ResponseEntity<String> response = restTemplate.postForEntity(createURLWithPort(Constants.SEND_DATA_API+Constants.SEND_DATA_CLUSTER_API),
                 entity, String.class);
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }

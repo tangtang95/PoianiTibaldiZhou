@@ -5,6 +5,7 @@ import com.poianitibaldizhou.trackme.apigateway.assembler.ThirdPartyPrivateAssem
 import com.poianitibaldizhou.trackme.apigateway.entity.CompanyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.PrivateThirdPartyDetail;
 import com.poianitibaldizhou.trackme.apigateway.entity.ThirdPartyCustomer;
+import com.poianitibaldizhou.trackme.apigateway.entity.User;
 import com.poianitibaldizhou.trackme.apigateway.exception.AlreadyPresentEmailException;
 import com.poianitibaldizhou.trackme.apigateway.security.TokenAuthenticationProvider;
 import com.poianitibaldizhou.trackme.apigateway.service.ThirdPartyAuthenticationService;
@@ -17,7 +18,9 @@ import com.poianitibaldizhou.trackme.apigateway.util.ThirdPartyPrivateWrapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.hateoas.MediaTypes;
@@ -25,11 +28,13 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
+import java.util.Optional;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(PublicThirdPartyController.class)
 @Import({ThirdPartyCompanyAssembler.class, ThirdPartyPrivateAssembler.class})
 public class PublicThirdPartyControllerUnitTest {
+
+    @Value(Constants.SERVER_ADDRESS)
+    private String serverAddress;
+
+    @Value(Constants.PORT)
+    private Integer port;
 
     @Autowired
     private MockMvc mvc;
@@ -104,9 +115,7 @@ public class PublicThirdPartyControllerUnitTest {
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
-                .andExpect(jsonPath("thirdPartyCustomer.password", is(customer.getPassword())))
                 .andExpect(jsonPath("companyDetail.thirdPartyCustomer.email", is(customer.getEmail())))
-                .andExpect(jsonPath("companyDetail.thirdPartyCustomer.password", is(customer.getPassword())))
                 .andExpect(jsonPath("companyDetail.companyName", is(companyDetail.getCompanyName())))
                 .andExpect(jsonPath("companyDetail.address", is(companyDetail.getAddress())))
                 .andExpect(jsonPath("companyDetail.dunsNumber", is(companyDetail.getDunsNumber())))
@@ -196,9 +205,7 @@ public class PublicThirdPartyControllerUnitTest {
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("thirdPartyCustomer.email", is(customer.getEmail())))
-                .andExpect(jsonPath("thirdPartyCustomer.password", is(customer.getPassword())))
                 .andExpect(jsonPath("privateThirdPartyDetail.thirdPartyCustomer.email", is(customer.getEmail())))
-                .andExpect(jsonPath("privateThirdPartyDetail.thirdPartyCustomer.password", is(customer.getPassword())))
                 .andExpect(jsonPath("privateThirdPartyDetail.ssn", is(privateThirdPartyDetail.getSsn())))
                 .andExpect(jsonPath("privateThirdPartyDetail.name", is(privateThirdPartyDetail.getName())))
                 .andExpect(jsonPath("privateThirdPartyDetail.surname", is(privateThirdPartyDetail.getSurname())))
@@ -239,5 +246,28 @@ public class PublicThirdPartyControllerUnitTest {
         mvc.perform(post(Constants.PUBLIC_TP_API + Constants.REGISTER_PRIVATE_TP_API).
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Test the login into the system of a third party customer
+     * @throws Exception due to mock mvc post method
+     */
+    @Test
+    public void testLogin() throws Exception {
+        ThirdPartyCustomer thirdPartyCustomer = new ThirdPartyCustomer();
+        thirdPartyCustomer.setPassword("tangpass");
+        thirdPartyCustomer.setEmail("newEmail");
+        thirdPartyCustomer.setId(1L);
+
+        given(authenticationService.thirdPartyLogin("newEmail", "tangpass")).willReturn(Optional.of("newToken"));
+
+        mvc.perform(post(Constants.PUBLIC_TP_API + Constants.LOGIN_TP_API +"?email=newEmail&password=tangpass"))
+                .andExpect(jsonPath("token", is("newToken")))
+                .andExpect(jsonPath("_links.logout.href", is("https://" + serverAddress + ":" + port + "/thirdparties/logout")))
+                .andExpect(jsonPath("_links.info.href", is("https://" + serverAddress + ":" + port + "/thirdparties/info")))
+                .andExpect(jsonPath("_links.groupRequests.href", is("https://" + serverAddress + ":" + port + "/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.newGroupRequest.href", is("https://" + serverAddress + ":" + port + "/grouprequestservice/grouprequests/thirdparties")))
+                .andExpect(jsonPath("_links.individualRequests.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests/thirdparties")))
+                .andExpect(jsonPath("_links.newIndividualRequest.href", is("https://" + serverAddress + ":" + port + "/individualrequestservice/requests")));
     }
 }

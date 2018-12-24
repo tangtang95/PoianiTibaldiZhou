@@ -5,20 +5,25 @@ However, here frameworks and other API are recapped:
 
 \begin{itemize}
 
-\item Spring boot has been adopted since it fits well for microservices and the set up of pattern components
+\item Spring Boot has been adopted since it fits well for microservices and the set up of pattern components
 of the architecture (e.g. service registry) can be easily integrated with the usage of Spring Cloud.
 The main drawback of this choice is that spring boot doesn't offer much control to the developer: this of
 course limit the development time, but when something goes wrong, it may take time to fix the issue
 
-\item Spring security has been used to develop the authentication and the access control of the application.
+\item Spring Security has been used to develop the authentication and the access control of the application.
 It is basically the de-facto standard for securing Spring-based application. 
 
 \item Spring Cloud Netflix has been used to integrate and set up the API Gateway and the service registry.
 In particular, Zuul has been set up as the API gateway and Eureka as the service registry. 
 These were of a great help because it is only necessary to find the right configuration settings and then everything works as expected.
 
-\item RabbitMQ were used to set up the communications among microservices. 
-TODO INSERT BENEFITS, DRAWBACKS, COMMENTS HERE FOR TANG TANG
+\item RabbitMQ is used to set up the communications among microservices. This was chosen because of its properties: durable, 
+open-source, asynchrony and mostly for the reliability. With the help of RabbitMQ it has been achieved a communication 
+between microservices which is asynchronous, durable and reliable. Even if RabbitMQ crashes, once it restarts the queues 
+and messages are saved and, therefore, nothing is lost. Moreover, in the remote case where a microservice cannot handle 
+the message due to an unavailability of other machines such as databases, the message is re-pushed into the same queue and it 
+will be re-pulled until the operation has finished correctly. In conclusion, RabbitMQ is an essential piece to achieve the property 
+of "Eventually Consistency".
 
 \item Android: the mobile application has been developed for android. Here, Butter Knife has been used in order to easily bind the layout with the activities. It also enables to automatically configure listener to onClick methods. Also, room persistence library has been used to store
 collected data that has not been sent to the system yet, and information on the performed emergency calls
@@ -43,6 +48,13 @@ For instance one can specify that when the user is accessing its own information
 Using different views in different methods helps in achieving what mentioned 
 \item HATEOS is used to provide hypermedia content to the clients. This helps the client mobile application in accessing the right methods 
 and it makes the APIs restful
+\item QueryDSL has been adopted to perform the custom query of accessing the group request data
 \item GeoNames has been used in order to find the country codes, if the Android geocoder doesn't work properly
+\item JaCoCo has been used to generate reports on the test coverage (they will be shown in the chapter related to testing)
+\item JMeter has been used to test the system as a whole: functional testing, load testing, and a simulation of a real load testing where there is some kind of think time for each user thread
+\item Room, a library about SQLite DB has been used to save data regarding health, position and emergency calls.
+\item Android bluetooth to communicate with the device collecting health data
+\item Android espresso to test mainly the correct execution of the emergency calls (e.g. if a real call is performed or not)
 \end{itemize}
-TODO MATTIA AND TANG INSERT FURTHER COMMENTS ON THIS LIBRARY
+
+TODO MATTIA INSERT FURTHER COMMENTS ON THE LIBRARY AND API YOU MAY HAVE USED IN ANDROID
