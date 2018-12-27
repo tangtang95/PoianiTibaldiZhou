@@ -2,7 +2,6 @@ package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 import android.os.Handler;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.home.Settings;
+import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.request.RequestStatus;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;

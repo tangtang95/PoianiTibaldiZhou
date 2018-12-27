@@ -17,6 +17,7 @@ import com.trackme.trackmeapplication.baseUtility.BaseAlertDialog;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
+import com.trackme.trackmeapplication.httpConnection.ConnectionAsyncTask;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -83,10 +84,19 @@ public class UserLoginActivity extends LoginActivity {
 
         isRegister = false;
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+
+        //Fake status for debug
         sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
         sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
 
+        //get app permission
         getPermission();
+
+        //load the keystore
+        ConnectionAsyncTask connectionAsyncTask = ConnectionAsyncTask.getInstance();
+        connectionAsyncTask.setUpSLLConnection(getResources().openRawResource(
+                getResources().getIdentifier("keystore",
+                        "raw", getPackageName())));
 
         if (sp.getBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false)) {
             navigateToHome();

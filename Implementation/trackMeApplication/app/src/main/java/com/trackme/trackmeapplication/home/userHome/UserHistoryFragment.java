@@ -1,9 +1,7 @@
 package com.trackme.trackmeapplication.home.userHome;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,7 +14,7 @@ import android.widget.TextView;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.home.Settings;
+import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 

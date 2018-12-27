@@ -5,10 +5,11 @@ import com.trackme.trackmeapplication.account.exception.InvalidDataLoginExceptio
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
 import com.trackme.trackmeapplication.account.login.TokenWrapper;
-import com.trackme.trackmeapplication.baseUtility.ConnectionAsyncTask;
 import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.baseUtility.exception.ConnectionException;
-import com.trackme.trackmeapplication.home.Settings;
+import com.trackme.trackmeapplication.httpConnection.ConnectionAsyncTask;
+import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyCompanyWrapper;
@@ -43,10 +44,7 @@ public class AccountNetworkImp implements AccountNetworkInterface {
     private HttpHeaders httpHeaders;
     private ObjectMapper mapper;
 
-    private final Object lock = new Object();
-
     private String token;
-    private static boolean isLock;
 
 
     /**
@@ -60,16 +58,7 @@ public class AccountNetworkImp implements AccountNetworkInterface {
         IPAddress = Settings.getServerAddress();
     }
 
-    public static void setIsLock(Boolean b) {
-        isLock = b;
-    }
-
-    /**
-     * Getter method.
-     *
-     * @return a new instance of the class if it is not just created.
-     */
-    public static AccountNetworkImp getInstance() {
+    public static AccountNetworkImp getInstance(){
         if(instance == null)
             instance = new AccountNetworkImp();
         return instance;
@@ -80,17 +69,13 @@ public class AccountNetworkImp implements AccountNetworkInterface {
     public String userLogin(String username, String password) throws InvalidDataLoginException, ConnectionException {
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
         try {
-            ConnectionAsyncTask connectionAsyncTask = new ConnectionAsyncTask(createURLWithPort(
-                    Constant.PUBLIC_USER_API + Constant.LOGIN_USER_API+"?username="+username+"&password="+password),
-                    HttpMethod.POST, entity, lock);
-            connectionAsyncTask.execute();
-            isLock = true;
-            synchronized (lock) {
-                while (isLock)
-                    lock.wait();
-                token = mapper.readValue(connectionAsyncTask.getResponse().getBody(), TokenWrapper.class).getToken();
-                return token;
-            }
+            ConnectionBuilder connectionBuilder = new ConnectionBuilder();
+            String url = createURLWithPort(
+                    Constant.PUBLIC_USER_API + Constant.LOGIN_USER_API+"?username="+username+"&password="+password);
+            connectionBuilder.setUrl(url).setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().execute();
+
+            token = mapper.readValue(connectionBuilder.getConnection().getResponse(), TokenWrapper.class).getToken();
+            return token;
         } catch (IOException e) {
             throw new InvalidDataLoginException();
         }catch (Exception e) {

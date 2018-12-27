@@ -1,9 +1,8 @@
 package com.trackme.trackmeapplication.sharedData.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackme.trackmeapplication.baseUtility.ConnectionAsyncTask;
 import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.home.Settings;
+import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.home.userHome.HistoryItem;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
@@ -19,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SharedDataNetworkImp implements SharedDataNetworkInterface{
@@ -31,8 +31,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface{
     private RestTemplate restTemplate;
     private HttpHeaders httpHeaders;
     private ObjectMapper mapper;
-
-    private final Object lock = new Object();
 
     private SharedDataNetworkImp() {
         restTemplate = new RestTemplate();
@@ -52,17 +50,18 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface{
     public User getUser(String token) throws UserNotFoundException {
         httpHeaders.add("Authorization", "Bearer " + token);
         HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ConnectionAsyncTask connectionAsyncTask = new ConnectionAsyncTask(
-                createURLWithPort(Constant.SECURED_USER_API + Constant.GET_USER_INFO_API),
-                HttpMethod.GET, entity, lock);
-        connectionAsyncTask.execute();
-        if (connectionAsyncTask.getResponse().getStatusCode() != HttpStatus.OK)
-            throw new UserNotFoundException();
-        try {
-            return mapper.readValue(connectionAsyncTask.getResponse().getBody(), User.class);
-        } catch (IOException e) {
-            throw new UserNotFoundException();
-        }
+        //ConnectionAsyncTask connectionAsyncTask = new ConnectionAsyncTask(
+        //        createURLWithPort(Constant.SECURED_USER_API + Constant.GET_USER_INFO_API),
+         //       HttpMethod.GET, entity);
+        //connectionAsyncTask.execute();
+        //if (connectionAsyncTask.getStatusReturned() != HttpStatus.OK)
+        //    throw new UserNotFoundException();
+        //try {
+        //    return mapper.readValue(connectionAsyncTask.getResponse(), User.class);
+        //} catch (IOException e) {
+        //    throw new UserNotFoundException();
+        //}
+        return null;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface{
 
     @Override
     public List<HistoryItem> getUserData(String username, String startDate, String endDate) {
-        return null;
+        return new ArrayList<>();
     }
 
     /**

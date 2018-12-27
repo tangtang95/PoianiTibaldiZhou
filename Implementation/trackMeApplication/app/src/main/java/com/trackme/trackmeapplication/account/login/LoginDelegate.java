@@ -2,7 +2,6 @@ package com.trackme.trackmeapplication.account.login;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.text.TextUtils;
 
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
@@ -10,7 +9,7 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.baseUtility.exception.ConnectionException;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 
 /**
  *  Delegate class that performs the validation of the data insert by the user in the login forms.

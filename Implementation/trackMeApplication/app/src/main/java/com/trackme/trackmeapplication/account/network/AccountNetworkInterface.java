@@ -3,7 +3,7 @@ package com.trackme.trackmeapplication.account.network;
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadySignUpException;
-import com.trackme.trackmeapplication.baseUtility.exception.ConnectionException;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;

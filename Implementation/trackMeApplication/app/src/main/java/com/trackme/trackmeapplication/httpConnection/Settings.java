@@ -1,9 +1,9 @@
-package com.trackme.trackmeapplication.home;
+package com.trackme.trackmeapplication.httpConnection;
 
 public class Settings {
 
     private static int serverPort = 8443;
-    private static String serverAddress = "localhost";
+    private static String serverAddress = "192.168.1.84";
     private static int refreshItemTime = 10000;
 
     public static int getServerPort() {
