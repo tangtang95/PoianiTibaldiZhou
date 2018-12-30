@@ -96,10 +96,10 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
                         convertedDate,
                         birthCity.getText().toString())
                 );
+                ((Activity)getmContext()).finish();
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
             }
-            ((Activity)getmContext()).finish();
         }
     }
 
@@ -169,7 +169,7 @@ public class ThirdPartyRegisterFragment extends BaseFragment {
             ssn.setError(getString(R.string.ssn_is_not_valid));
             return false;
         }
-        if (mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
+        if (!mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
             mail.setError(getString(R.string.email_is_not_valid));
             return false;
         }

@@ -68,5 +68,10 @@ class UserHomeContract {
          */
         void onLogoutSelected();
 
+        /**
+         * Call when a connection error event is launched.
+         */
+        void onConnectionError();
+
     }
 }

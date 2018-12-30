@@ -81,6 +81,7 @@ dependencies {
     implementation 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation('com.jayway.jsonpath:json-path:2.4.0')
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.4")
 
     implementation 'com.android.support:multidex:1.0.2'
     androidTestImplementation 'com.android.support:multidex:1.0.2'

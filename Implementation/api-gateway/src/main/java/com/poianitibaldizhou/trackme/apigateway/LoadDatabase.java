@@ -17,15 +17,15 @@ import java.sql.Date;
 @Configuration
 @Slf4j
 public class LoadDatabase {
-
+    /*
     @Bean
     CommandLineRunner initDatabase(UserRepository repository, ThirdPartyRepository thirdPartyRepository,
                                    CompanyDetailRepository companyDetailRepository, PasswordEncoder passwordEncoder) {
         return args -> {
             User user = new User();
-            user.setSsn("user1");
-            user.setUsername("username1");
-            user.setPassword(passwordEncoder.encode("password1"));
+            user.setSsn("u");
+            user.setUsername("U");
+            user.setPassword(passwordEncoder.encode("p"));
             user.setBirthNation("Italy");
             user.setBirthDate(new Date(0));
             user.setLastName("cordero");
@@ -48,4 +48,5 @@ public class LoadDatabase {
         };
     }
 
+*/
 }

@@ -5,29 +5,30 @@ import org.springframework.http.HttpMethod;
 
 public class ConnectionBuilder {
 
-    private ConnectionAsyncTask connectionAsyncTask = ConnectionAsyncTask.getInstance();
+    private ConnectionThread connectionThread;
 
-    public ConnectionBuilder() {
-        connectionAsyncTask.setIsLockTrue();
+    public ConnectionBuilder(LockInterface lockInterface) {
+        SSL ssl = SSL.getInstance();
+        connectionThread = new ConnectionThread(ssl.getSllContext(), ssl.getHostnameVerifier(), lockInterface);
     }
 
     public ConnectionBuilder setUrl(String url) {
-        connectionAsyncTask.setUrl(url);
+        connectionThread.setUrl(url);
         return this;
     }
 
     public ConnectionBuilder setHttpMethod(HttpMethod method) {
-        connectionAsyncTask.setHttpAction(method);
+        connectionThread.setHttpAction(method);
         return this;
     }
 
     public ConnectionBuilder setEntity(HttpEntity entity) {
-        connectionAsyncTask.setEntity(entity);
+        connectionThread.setEntity(entity);
         return this;
     }
 
-    public ConnectionAsyncTask getConnection() {
-        return connectionAsyncTask;
+    public ConnectionThread getConnection() {
+        return connectionThread;
     }
 
 }

@@ -89,6 +89,7 @@
     <string name="legal_note_show_error">"Impossible to show the legal note."</string>
     <string name="date_format_error">Date format error</string>
     <string name="impossible_to_find_user_detail">Impossible found user detail</string>
+    <string name="connection_error">"Connection error"</string>
 
     <string name="persistent_database_name">trackme-db</string>
 

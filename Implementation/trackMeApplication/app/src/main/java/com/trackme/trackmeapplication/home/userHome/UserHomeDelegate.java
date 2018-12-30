@@ -17,6 +17,7 @@ import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.User;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
@@ -69,10 +70,12 @@ public class UserHomeDelegate extends BaseActivityDelegate<
                 User user = accountNetwork.getUser();
                 headerUsername.setText(user.getName());
                 circle.setText(user.getName().substring(0, 1));
-                String ssn = "SSN: " + user.getSsn();
+                String ssn = "Nation: " + user.getBirthNation();
                 headerSSN.setText(ssn);
             } catch (UserNotFoundException e) {
                 mPresenter.getView().showMessage(mPresenter.getView().getActivity().getString(R.string.impossible_to_find_user_detail));
+            } catch (ConnectionException e) {
+                mPresenter.onConnectionError();
             }
         }
 

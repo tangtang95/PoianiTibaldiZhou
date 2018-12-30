@@ -25,7 +25,7 @@ public interface AccountNetworkInterface {
     /**
      * PrivateThirdPartyDetail login on the server
      */
-    String thirdPartyLogin(String email, String password) throws InvalidDataLoginException;
+    String thirdPartyLogin(String email, String password) throws InvalidDataLoginException, ConnectionException;
 
     /**
      * User logout from the server.
@@ -57,13 +57,13 @@ public interface AccountNetworkInterface {
      *
      * @return the user data saved in the server.
      */
-    User getUser() throws UserNotFoundException;
+    User getUser() throws UserNotFoundException, ConnectionException;
 
     /**
      * Getter method.
      *
      * @return the third party data saved in the server.
      */
-    ThirdPartyInterface getThirdParty() throws UserNotFoundException;
+    ThirdPartyInterface getThirdParty() throws UserNotFoundException, ConnectionException;
 
 }

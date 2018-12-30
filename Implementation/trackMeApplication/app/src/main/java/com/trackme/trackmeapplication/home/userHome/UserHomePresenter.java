@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.home.userHome;
 
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BasePresenterImpl;
 
 /**
@@ -26,5 +27,10 @@ public class UserHomePresenter extends BasePresenterImpl<
     @Override
     public void onLogoutSelected() {
         mView.navigateToUserLogin();
+    }
+
+    @Override
+    public void onConnectionError() {
+        mView.showMessage(mView.getContentView().getResources().getString(R.string.connection_error));
     }
 }

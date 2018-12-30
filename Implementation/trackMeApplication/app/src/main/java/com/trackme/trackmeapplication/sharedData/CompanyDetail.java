@@ -1,5 +1,8 @@
 package com.trackme.trackmeapplication.sharedData;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CompanyDetail implements ThirdPartyInterface{
 
     private String id;
@@ -38,4 +41,15 @@ public class CompanyDetail implements ThirdPartyInterface{
         return thirdPartyCustomer.getPassword();
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public ThirdPartyCustomer getThirdPartyCustomer() {
+        return thirdPartyCustomer;
+    }
 }

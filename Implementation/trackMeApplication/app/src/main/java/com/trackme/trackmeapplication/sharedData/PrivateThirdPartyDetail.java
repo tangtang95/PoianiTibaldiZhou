@@ -1,8 +1,11 @@
 package com.trackme.trackmeapplication.sharedData;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PrivateThirdPartyDetail implements ThirdPartyInterface {
 
     private Long id;
@@ -49,4 +52,19 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
         return birthCity;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public ThirdPartyCustomer getThirdPartyCustomer() {
+        return thirdPartyCustomer;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public Date getBirthDate() {
+        return birthDate;
+    }
 }

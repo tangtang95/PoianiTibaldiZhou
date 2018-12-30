@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
@@ -155,6 +156,8 @@ public class GroupRequestFormActivity extends AppCompatActivity {
                         filter.getText().toString());
             } catch (UserNotFoundException e) {
                 Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+            } catch (ConnectionException e) {
+                Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
             }
 
             groupRequestNetwork.send(groupRequestItem);

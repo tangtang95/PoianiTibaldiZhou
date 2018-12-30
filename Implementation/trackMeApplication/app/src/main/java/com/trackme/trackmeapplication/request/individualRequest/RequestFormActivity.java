@@ -14,6 +14,7 @@ import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
@@ -87,6 +88,8 @@ public class RequestFormActivity extends AppCompatActivity {
                 ));
             } catch (UserNotFoundException e) {
                 Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+            } catch (ConnectionException e) {
+                Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
             }
             finish();
         }

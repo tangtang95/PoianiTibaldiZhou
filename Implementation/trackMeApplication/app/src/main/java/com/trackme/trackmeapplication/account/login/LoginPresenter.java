@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.account.login;
 
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BasePresenterImpl;
 
 /**
@@ -26,6 +27,11 @@ public class LoginPresenter extends BasePresenterImpl<LoginContract.LoginView> i
     @Override
     public void onLoginError() {
         mView.setLoginError();
+    }
+
+    @Override
+    public void onConnectionError() {
+        mView.showMessage(mView.getContentView().getResources().getString(R.string.connection_error));
     }
 
     @Override

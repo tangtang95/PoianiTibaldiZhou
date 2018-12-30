@@ -101,10 +101,10 @@ public class UserRegisterFragment extends BaseFragment {
                         birthCity.getText().toString(),
                         birthNation.getText().toString())
                 );
+                ((Activity)getmContext()).finish();
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.user_with_this_social_security_number_already_exist));
             }
-            ((Activity)getmContext()).finish();
         }
     }
 

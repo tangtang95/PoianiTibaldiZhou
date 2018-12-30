@@ -83,10 +83,10 @@ public class CompanyRegisterFragment extends BaseFragment {
                         password.getText().toString(),
                         address.getText().toString(),
                         dunsNumber.getText().toString()));
+                ((Activity)getmContext()).finish();
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
             }
-            ((Activity)getmContext()).finish();
         }
     }
 
@@ -112,7 +112,7 @@ public class CompanyRegisterFragment extends BaseFragment {
             showMessage(getString(R.string.no_field_must_be_empty));
             return false;
         }
-        if (mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
+        if (!mail.getText().toString().matches(Constant.E_MAIL_PATTERN)) {
             mail.setError(getString(R.string.email_is_not_valid));
             return false;
         }

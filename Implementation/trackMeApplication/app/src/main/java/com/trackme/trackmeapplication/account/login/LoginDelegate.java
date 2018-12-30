@@ -42,7 +42,7 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
             } catch (InvalidDataLoginException e) {
                 mPresenter.onLoginError();
             } catch (ConnectionException e) {
-                mPresenter.getView().showMessage("Connection error");
+                mPresenter.onConnectionError();
             }
         }
     }
@@ -71,6 +71,8 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
                     mPresenter.onLoginSuccess();
                 } catch (InvalidDataLoginException e) {
                     mPresenter.onLoginError();
+                } catch (ConnectionException e) {
+                    mPresenter.onConnectionError();
                 }
             }
     }

@@ -251,6 +251,7 @@ public class SecuredThirdPartyControllerIntegrationTest {
         ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(
                 Constants.PUBLIC_TP_API + Constants.LOGIN_USER_API + "?email=" + email + "&password=" + password),
                 HttpMethod.POST, entity, String.class);
+        System.out.println(response);
         List<String> list = JsonPath.read(response.getBody(), "$..token");
         return list.get(0);
     }
@@ -262,6 +263,6 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "https://localhost:" + port + uri;
+        return "https://192.168.1.84:" + port + uri;
     }
 }

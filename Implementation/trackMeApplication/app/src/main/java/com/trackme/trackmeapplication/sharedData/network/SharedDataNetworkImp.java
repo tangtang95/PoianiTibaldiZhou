@@ -1,9 +1,16 @@
 package com.trackme.trackmeapplication.sharedData.network;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.trackme.trackmeapplication.baseUtility.Constant;
-import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.JsonPathException;
 import com.trackme.trackmeapplication.home.userHome.HistoryItem;
+import com.trackme.trackmeapplication.httpConnection.BusinessURLManager;
+import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
+import com.trackme.trackmeapplication.httpConnection.LockInterface;
+import com.trackme.trackmeapplication.httpConnection.UserURLManager;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;
@@ -13,31 +20,27 @@ import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SharedDataNetworkImp implements SharedDataNetworkInterface{
+public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInterface {
 
     private static SharedDataNetworkImp instance = null;
 
-    private int accountPort;
-    private String IPAddress;
-
-    private RestTemplate restTemplate;
     private HttpHeaders httpHeaders;
     private ObjectMapper mapper;
 
+    private UserURLManager userUrlManager = null;
+    private BusinessURLManager businessURLManager = null;
+
+    private final Object lock = new Object();
+    private boolean isLock;
+
     private SharedDataNetworkImp() {
-        restTemplate = new RestTemplate();
         httpHeaders = new HttpHeaders();
         mapper = new ObjectMapper();
-        accountPort = Settings.getServerPort();
-        IPAddress = Settings.getServerAddress();
     }
 
     public static SharedDataNetworkImp getInstance() {
@@ -47,38 +50,70 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface{
     }
 
     @Override
-    public User getUser(String token) throws UserNotFoundException {
-        httpHeaders.add("Authorization", "Bearer " + token);
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        //ConnectionAsyncTask connectionAsyncTask = new ConnectionAsyncTask(
-        //        createURLWithPort(Constant.SECURED_USER_API + Constant.GET_USER_INFO_API),
-         //       HttpMethod.GET, entity);
-        //connectionAsyncTask.execute();
-        //if (connectionAsyncTask.getStatusReturned() != HttpStatus.OK)
-        //    throw new UserNotFoundException();
-        //try {
-        //    return mapper.readValue(connectionAsyncTask.getResponse(), User.class);
-        //} catch (IOException e) {
-        //    throw new UserNotFoundException();
-        //}
-        return null;
+    public User getUser(String token) throws UserNotFoundException, ConnectionException {
+        synchronized (lock) {
+            userUrlManager = UserURLManager.getInstance();
+            isLock(true);
+            httpHeaders.add("Authorization", "Bearer " + token);
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+            try {
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(userUrlManager.getUserInfoLink()).setHttpMethod(HttpMethod.GET)
+                        .setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK:
+                        Log.d("BODY", connectionBuilder.getConnection().getResponse());
+                        return mapper.readValue(connectionBuilder.getConnection().getResponse(), User.class);
+                    case UNAUTHORIZED: throw new ConnectionException();
+                    case NOT_FOUND: throw new UserNotFoundException();
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw new UserNotFoundException();
+            }
+        }
     }
 
     @Override
-    public ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException {
-        httpHeaders.add("Authorization", "Bearer " + token);
-        HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<String> response = restTemplate.exchange(createURLWithPort(Constant.SECURED_TP_API + Constant.GET_TP_INFO_API),
-                HttpMethod.GET, entity, String.class);
-        if (response.getStatusCode() != HttpStatus.OK)
-            throw new UserNotFoundException();
-        try {
-            return mapper.readValue(response.getBody(), PrivateThirdPartyDetail.class);
-        } catch (IOException e) {
+    public ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException, ConnectionException {
+        synchronized (lock) {
+            businessURLManager = BusinessURLManager.getInstance();
+            isLock(true);
+            httpHeaders.add("Authorization", "Bearer " + token);
+            HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             try {
-                return mapper.readValue(response.getBody(), CompanyDetail.class);
-            } catch (IOException e1) {
-                throw new UserNotFoundException();
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(businessURLManager.getUserInfoLink()).setHttpMethod(HttpMethod.GET)
+                        .setEntity(entity).getConnection().start();
+
+                while (isLock)
+                    lock.wait();
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK:
+                        List<String> list;
+                        try {
+                            list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..privateThirdPartyDetail");
+                            return mapper.readValue(list.get(0), PrivateThirdPartyDetail.class);
+                        } catch (JsonPathException e) {
+                            list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..companyDetail");
+                            return mapper.readValue(list.get(0), CompanyDetail.class);
+                        }
+                    case UNAUTHORIZED: throw new ConnectionException();
+                    case NOT_FOUND: throw new UserNotFoundException();
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return null;
+            } catch (IOException e) {
+                e.printStackTrace();
+                throw  new UserNotFoundException();
             }
         }
     }
@@ -98,12 +133,13 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface{
         return new ArrayList<>();
     }
 
-    /**
-     * Utility method to form the url with the injected port for a certain uri
-     * @param uri uri that will access a certain resource of the application
-     * @return url for accessing the resource identified by the uri
-     */
-    private String createURLWithPort(String uri) {
-        return "https://"+ IPAddress + ":" + accountPort + uri;
+    @Override
+    public Object getLock() {
+        return lock;
+    }
+
+    @Override
+    public void isLock(boolean b) {
+        this.isLock = b;
     }
 }

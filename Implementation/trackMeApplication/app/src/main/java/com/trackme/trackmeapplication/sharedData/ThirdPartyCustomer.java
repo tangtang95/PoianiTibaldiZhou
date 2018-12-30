@@ -1,6 +1,8 @@
 package com.trackme.trackmeapplication.sharedData;
 
-public class ThirdPartyCustomer {
+import java.io.Serializable;
+
+public class ThirdPartyCustomer implements Serializable {
 
     private Long id;
     private String email;

@@ -1,19 +1,24 @@
 package com.trackme.trackmeapplication.sharedData;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.io.Serializable;
 import java.util.Date;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
+    private String username;
     private String firstName;
     private String lastName;
-    private String ssn;
-    private String username;
-    private String password;
     private Date birthDate;
     private String birthCity;
     private String birthNation;
 
+    private String ssn;
+    private String password;
+
+    public User(){}
 
     public User(String ssn, String username, String password, String firstName, String lastName, Date birthDate, String birthCity, String birthNation) {
         this.ssn = ssn;
@@ -31,6 +36,14 @@ public class User implements Serializable {
 
     public String   getName() {
         return firstName + " " + lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getPassword() {

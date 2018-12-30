@@ -100,7 +100,7 @@ public class PublicThirdPartyControllerIntegrationTest {
         thirdPartyCompanyWrapper.setThirdPartyCustomer(thirdPartyCustomer);
 
         HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
-
+        System.out.println(entity);
         restTemplate.exchange(
                 createURLWithPort(Constants.PUBLIC_TP_API + Constants.REGISTER_COMPANY_TP_API),
                 HttpMethod.POST, entity, String.class);
@@ -326,6 +326,6 @@ public class PublicThirdPartyControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "https://localhost:" + port + uri;
+        return "https://192.168.1.84:" + port + uri;
     }
 }

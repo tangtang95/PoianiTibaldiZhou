@@ -71,6 +71,11 @@ class LoginContract {
         void onLoginError();
 
         /**
+         * Call when a connection error event is launched.
+         */
+        void onConnectionError();
+
+        /**
          * Call when a login is correctly performed.
          */
         void onLoginSuccess();
