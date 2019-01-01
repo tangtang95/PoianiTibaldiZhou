@@ -263,6 +263,6 @@ public class SecuredThirdPartyControllerIntegrationTest {
      * @return url for accesing the resource identified by the uri
      */
     private String createURLWithPort(String uri) {
-        return "https://192.168.1.84:" + port + uri;
+        return "https://localhost:" + port + uri;
     }
 }
