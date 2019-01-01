@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.account.network;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.trackme.trackmeapplication.account.exception.InvalidDataLoginException;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
@@ -23,7 +25,6 @@ import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterf
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -37,7 +38,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
 
     private HttpHeaders httpHeaders;
 
-    private String token;
     private UserURLManager userUrlManager = null;
     private BusinessURLManager businessURLManager = null;
 
@@ -81,8 +81,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                         //Log.d("BODY", connectionBuilder.getConnection().getResponse());
                         userUrlManager.setUrls(JsonPath.read(connectionBuilder.getConnection().getResponse(), "$.._links"));
                         List<String> list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..token");
-                        token = list.get(0);
-                        return token;
+                        return list.get(0);
                     case UNAUTHORIZED: throw new InvalidDataLoginException();
                     default: throw new ConnectionException();
                 }
@@ -114,8 +113,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                         //Log.d("BODY", connectionBuilder.getConnection().getResponse());
                         businessURLManager.setUrls(JsonPath.read(connectionBuilder.getConnection().getResponse(), "$.._links"));
                         List<String> list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..token");
-                        token = list.get(0);
-                        return token;
+                        return list.get(0);
                     case UNAUTHORIZED: throw new InvalidDataLoginException();
                     default: throw new ConnectionException();
                 }
@@ -127,7 +125,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     }
 
     @Override
-    public void userLogout() throws UserAlreadyLogoutException {
+    public void userLogout(String token) throws UserAlreadyLogoutException, ConnectionException {
         synchronized (lock) {
             isLock(true);
             try {
@@ -141,8 +139,12 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 while (isLock)
                     lock.wait();
 
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
-                    throw new UserAlreadyLogoutException();
+                switch (connectionBuilder.getConnection().getStatusReturned()) {
+                    case OK: break;
+                    case UNAUTHORIZED: throw new UserAlreadyLogoutException();
+                    default: throw new ConnectionException();
+                }
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -150,7 +152,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     }
 
     @Override
-    public void thirdPartyLogout() throws UserAlreadyLogoutException {
+    public void thirdPartyLogout(String token) throws UserAlreadyLogoutException, ConnectionException {
         synchronized (lock) {
             isLock(true);
             try {
@@ -164,8 +166,11 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 while (isLock)
                     lock.wait();
 
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
-                    throw new UserAlreadyLogoutException();
+                switch (connectionBuilder.getConnection().getStatusReturned()) {
+                    case OK: break;
+                    case UNAUTHORIZED: throw new UserAlreadyLogoutException();
+                    default: throw new ConnectionException();
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -173,84 +178,102 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     }
 
     @Override
-    public void userSignUp(User user) throws UserAlreadySignUpException {
+    public void userSignUp(User user) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
             userUrlManager = UserURLManager.getInstance();
             isLock(true);
             try {
-                HttpEntity<User> entity = new HttpEntity<>(user, httpHeaders);
+                ObjectMapper mapper = new ObjectMapper();
+
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(user), httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
-                connectionBuilder.setUrl(userUrlManager.createURLWithPort(Constant.PUBLIC_USER_API + Constant.REGISTER_USER_API ))
+                connectionBuilder.setUrl(userUrlManager.createURLWithPort(
+                        Constant.PUBLIC_USER_API + Constant.REGISTER_USER_API + user.extractSsn()))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
                 while (isLock)
                     lock.wait();
-
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
-                    throw new UserAlreadySignUpException();
-            } catch (InterruptedException e) {
+                switch (connectionBuilder.getConnection().getStatusReturned()) {
+                    case INTERNAL_SERVER_ERROR: throw new ConnectionException();
+                    case BAD_REQUEST: throw new UserAlreadySignUpException();
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException {
+    public void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
             businessURLManager = BusinessURLManager.getInstance();
             isLock(true);
             try {
                 ThirdPartyPrivateWrapper thirdPartyPrivateWrapper = new ThirdPartyPrivateWrapper();
                 thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
+                thirdPartyPrivateWrapper.setThirdPartyCustomer(privateThirdPartyDetail.getThirdPartyCustomer());
+                ObjectMapper mapper= new ObjectMapper();
 
-                HttpEntity<ThirdPartyPrivateWrapper> entity = new HttpEntity<>(thirdPartyPrivateWrapper, httpHeaders);
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(thirdPartyPrivateWrapper), httpHeaders);
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_PRIVATE_TP_API))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
                 while (isLock)
                     lock.wait();
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
-                    throw new UserAlreadySignUpException();
-            } catch (InterruptedException e) {
+                switch (connectionBuilder.getConnection().getStatusReturned()) {
+                    case INTERNAL_SERVER_ERROR: throw new ConnectionException();
+                    case BAD_REQUEST: throw new UserAlreadySignUpException();
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException {
+    public void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
             businessURLManager = BusinessURLManager.getInstance();
             isLock(true);
             try {
                 ThirdPartyCompanyWrapper thirdPartyCompanyWrapper = new ThirdPartyCompanyWrapper();
                 thirdPartyCompanyWrapper.setCompanyDetail(companyDetail);
+                thirdPartyCompanyWrapper.setThirdPartyCustomer(companyDetail.getThirdPartyCustomer());
+                ObjectMapper mapper= new ObjectMapper();
 
-                HttpEntity<ThirdPartyCompanyWrapper> entity = new HttpEntity<>(thirdPartyCompanyWrapper, httpHeaders);
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(thirdPartyCompanyWrapper), httpHeaders);
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_COMPANY_TP_API))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
                 while (isLock)
                     lock.wait();
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
-                    throw new UserAlreadySignUpException();
-            } catch (InterruptedException e) {
+                switch (connectionBuilder.getConnection().getStatusReturned()) {
+                    case INTERNAL_SERVER_ERROR: throw new ConnectionException();
+                    case BAD_REQUEST: throw new UserAlreadySignUpException();
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
                 e.printStackTrace();
             }
         }
     }
 
     @Override
-    public User getUser() throws UserNotFoundException, ConnectionException {
+    public User getUser(String token) throws UserNotFoundException, ConnectionException {
         SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
         return sharedDataNetwork.getUser(token);
     }
 
     @Override
-    public ThirdPartyInterface getThirdParty() throws UserNotFoundException, ConnectionException {
+    public ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException, ConnectionException {
         SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
         return sharedDataNetwork.getThirdParty(token);
     }

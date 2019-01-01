@@ -15,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
@@ -47,9 +49,9 @@ public class IndividualMessageFragment extends BaseFragment {
     private List<RequestItem> requestItems = new ArrayList<>();
 
     private Handler handler;
-    Runnable checkNewRequest;
+    Thread checkNewRequest;
     IndividualRequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
-    String username;
+    String token;
 
     /**
      * Custom recyclerView class for showing the individualRequestItem in the recycler.
@@ -102,8 +104,12 @@ public class IndividualMessageFragment extends BaseFragment {
             holder.name.setText(items.get(position).getThirdPartyName());
 
             holder.accept.setOnClickListener(view -> {
-                individualrequestNetwork.acceptIndividualRequest(items.get(position).getID());
-                refreshList(individualrequestNetwork.getOwnIndividualRequest(username));
+                try {
+                    individualrequestNetwork.acceptIndividualRequest(token, items.get(position).extractResponseLink());
+                    refreshList();
+                } catch (ConnectionException e) {
+                    Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                }
             });
 
             holder.refuse.setOnClickListener(view -> {
@@ -111,14 +117,22 @@ public class IndividualMessageFragment extends BaseFragment {
                 DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
                     switch (which) {
                         case DialogInterface.BUTTON_POSITIVE:
-                            individualrequestNetwork.blockThirdPartyCustomer(items.get(position).getEmail());
-                            individualrequestNetwork.refuseIndividualRequest(items.get(position).getID());
-                            refreshList(individualrequestNetwork.getOwnIndividualRequest(username));
+                            try {
+                                String blockUrl = individualrequestNetwork.refuseIndividualRequest(token, items.get(position).extractResponseLink());
+                                individualrequestNetwork.blockThirdPartyCustomer(token, blockUrl);
+                                refreshList();
+                            } catch (ConnectionException e) {
+                                Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                            }
                             break;
 
                         case DialogInterface.BUTTON_NEGATIVE:
-                            individualrequestNetwork.refuseIndividualRequest(items.get(position).getID());
-                            refreshList(individualrequestNetwork.getOwnIndividualRequest(username));
+                            try {
+                                individualrequestNetwork.refuseIndividualRequest(token, items.get(position).extractResponseLink());
+                                refreshList();
+                            } catch (ConnectionException e) {
+                                Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                            }
                             break;
                     }
                 };
@@ -162,13 +176,13 @@ public class IndividualMessageFragment extends BaseFragment {
         recyclerView.setAdapter(customRecyclerView);
 
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
+        token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
 
         handler = new Handler();
-        checkNewRequest = new Runnable() {
+        checkNewRequest = new Thread() {
             @Override
             public void run() {
-                refreshList(individualrequestNetwork.getOwnIndividualRequest(username));
+                refreshList();
                 handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
@@ -178,11 +192,15 @@ public class IndividualMessageFragment extends BaseFragment {
     /**
      * Refresh the recyclerView when it changes.
      */
-    private void refreshList(List<RequestItem> newItems) {
+    private void refreshList() {
         requestItems.clear();
-        requestItems.addAll(newItems);
-        customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
+        try {
+            requestItems.addAll(individualrequestNetwork.getOwnIndividualRequest(token));
+            customRecyclerView.notifyDataSetChanged();
+        } catch (ConnectionException e) {
+            if (this.isAdded())
+                Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -191,4 +209,9 @@ public class IndividualMessageFragment extends BaseFragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onDetach() {
+        handler.removeCallbacks(checkNewRequest);
+        super.onDetach();
+    }
 }

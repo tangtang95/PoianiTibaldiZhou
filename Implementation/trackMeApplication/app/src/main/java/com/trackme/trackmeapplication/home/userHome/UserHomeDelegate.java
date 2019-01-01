@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.home.userHome;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -62,14 +61,14 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         TextView headerSSN = navHeader.findViewById(R.id.nav_header_user_sn);
         TextView circle = navHeader.findViewById(R.id.textViewCircle);
 
-        String username = mPresenter.getView().getUsername();
+        String token = mPresenter.getView().getToken();
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
 
-        if (username != null && !username.isEmpty()) {
+        if (token != null && !token.isEmpty()) {
             try {
-                User user = accountNetwork.getUser();
-                headerUsername.setText(user.getName());
-                circle.setText(user.getName().substring(0, 1));
+                User user = accountNetwork.getUser(token);
+                headerUsername.setText(user.extractName());
+                circle.setText(user.extractName().substring(0, 1));
                 String ssn = "Nation: " + user.getBirthNation();
                 headerSSN.setText(ssn);
             } catch (UserNotFoundException e) {
@@ -92,6 +91,7 @@ public class UserHomeDelegate extends BaseActivityDelegate<
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        boolean check;
         switch (item.getItemId()) {
             case R.id.nav_profile:
                 mPresenter.onProfileSelected();
@@ -101,6 +101,16 @@ public class UserHomeDelegate extends BaseActivityDelegate<
                 break;
             case R.id.nav_logout:
                 mPresenter.onLogoutSelected();
+                break;
+            case R.id.bluetooth_switch:
+                check = !item.isChecked();
+                item.setChecked(check);
+                mPresenter.onBluetoothSwitch(check);
+                break;
+            case R.id.location_switch:
+                check = !item.isChecked();
+                item.setChecked(check);
+                mPresenter.onLocationSwitch(check);
                 break;
         }
         closeDrawer();

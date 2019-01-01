@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.home.businessHome;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -63,16 +62,16 @@ public class BusinessHomeDelegate extends BaseActivityDelegate<
         TextView circle = navHeader.findViewById(R.id.textViewCircle);
         TextView info = navHeader.findViewById(R.id.nav_header_email);
 
-        String mail = mPresenter.getView().getMail();
+        String token = mPresenter.getView().getToken();
 
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
 
-        if (mail != null && !mail.isEmpty()) {
+        if (token != null && !token.isEmpty()) {
             try {
-                ThirdPartyInterface thirdParty = accountNetwork.getThirdParty();
-                headerUsername.setText(thirdParty.getName());
-                circle.setText(thirdParty.getName().substring(0, 1));
-                info.setText(thirdParty.getEmail());
+                ThirdPartyInterface thirdParty = accountNetwork.getThirdParty(token);
+                headerUsername.setText(thirdParty.extractName());
+                circle.setText(thirdParty.extractName().substring(0, 1));
+                info.setText(thirdParty.extractEmail());
             } catch (UserNotFoundException e) {
                 mPresenter.getView().showMessage(mPresenter.getView().getActivity().getString(R.string.impossible_to_find_user_detail));
             } catch (ConnectionException e) {

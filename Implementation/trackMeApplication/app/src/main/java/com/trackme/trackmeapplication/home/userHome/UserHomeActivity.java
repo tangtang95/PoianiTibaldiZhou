@@ -13,6 +13,7 @@ import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.account.register.UserProfileActivity;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
@@ -33,8 +34,9 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     @BindView(R.id.toolbar) protected Toolbar toolbar;
     @BindView(R.id.tab_layout)protected TabLayout tabLayout;
+
     private SharedPreferences sp;
-    private String username;
+    private String token;
 
     @NonNull
     @Override
@@ -49,7 +51,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
+        token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
 
         stopService(new Intent(this, HealthService.class));
         Intent serviceIntent = new Intent(this, HealthService.class);
@@ -75,7 +77,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     @Override
     protected void onResume() {
-        username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
+        token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
         super.onResume();
     }
 
@@ -96,14 +98,37 @@ public class UserHomeActivity extends BaseDelegationActivity<
         Intent intent = new Intent(this, UserLoginActivity.class);
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
         try {
-            accountNetwork.userLogout();
-            sp.edit().putBoolean(Constant.SD_USERNAME_DATA_KEY, false).apply();
+            accountNetwork.userLogout(token);
+            sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
             startActivity(intent);
             finish();
         } catch (UserAlreadyLogoutException e) {
-            e.printStackTrace();
-            /*TODO*/
+            sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+            startActivity(intent);
+            finish();
+        } catch (ConnectionException e) {
+            showMessage(getString(R.string.connection_error));
         }
+    }
+
+    @Override
+    public void startLocationService() {
+        /*TODO TANG*/
+    }
+
+    @Override
+    public void stopLocationService() {
+        /*TODO TANG*/
+    }
+
+    @Override
+    public void startBluetoothService() {
+        /*TODO TANG*/
+    }
+
+    @Override
+    public void stopBluetoothService() {
+        /*TODO TANG*/
     }
 
     @Override
@@ -112,8 +137,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public String getUsername() {
-        return username;
+    public String getToken() {
+        return token;
     }
 
 }

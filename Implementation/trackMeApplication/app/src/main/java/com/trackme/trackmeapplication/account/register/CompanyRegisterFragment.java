@@ -12,7 +12,9 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
+import com.trackme.trackmeapplication.sharedData.ThirdPartyCustomer;
 
 
 import butterknife.BindView;
@@ -79,13 +81,15 @@ public class CompanyRegisterFragment extends BaseFragment {
             try {
                 network.companySignUp( new CompanyDetail(
                         companyName.getText().toString(),
-                        mail.getText().toString(),
-                        password.getText().toString(),
+                        new ThirdPartyCustomer(mail.getText().toString(),
+                                password.getText().toString()),
                         address.getText().toString(),
                         dunsNumber.getText().toString()));
                 ((Activity)getmContext()).finish();
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.business_with_this_email_already_exist));
+            } catch (ConnectionException e) {
+                showMessage(getString(R.string.connection_error));
             }
         }
     }

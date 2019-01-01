@@ -39,7 +39,7 @@ class BusinessHomeContract {
          *
          * @return the third party mail used in the login.
          */
-        String getMail();
+        String getToken();
 
     }
 

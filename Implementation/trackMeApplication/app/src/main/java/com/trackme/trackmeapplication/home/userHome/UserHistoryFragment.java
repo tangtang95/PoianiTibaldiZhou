@@ -10,11 +10,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
@@ -90,7 +92,7 @@ public class UserHistoryFragment extends BaseFragment {
 
         @Override
         public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-            holder.date.setText(items.get(position).getDate());
+            holder.date.setText(items.get(position).getTimestamp());
             holder.info.setText(items.get(position).getCompactInfo());
         }
 
@@ -115,12 +117,8 @@ public class UserHistoryFragment extends BaseFragment {
         customRecyclerView = new CustomRecyclerView(historyItems);
         recyclerView.setAdapter(customRecyclerView);
 
-        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
-        SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        String username = sp.getString(Constant.SD_USERNAME_DATA_KEY, null);
-
         handler = new Handler();
-        checkNewHistoryItem = new Runnable() {
+        checkNewHistoryItem = new Thread() {
             @Override
             public void run() {
                 Calendar cal = Calendar.getInstance();
@@ -129,7 +127,7 @@ public class UserHistoryFragment extends BaseFragment {
                 Date lastWeek = cal.getTime();
                 String endDate = new SimpleDateFormat("yyyy-MM-dd").format(today);
                 String startDate = new SimpleDateFormat("yyyy-MM-dd").format(lastWeek);
-                refreshList(sharedDataNetwork.getUserData(username, startDate, endDate));
+                refreshList(startDate, endDate);
                 handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
@@ -139,11 +137,18 @@ public class UserHistoryFragment extends BaseFragment {
     /**
      * Refresh the recyclerView when it changes.
      */
-    private void refreshList(List<HistoryItem> newItems) {
+    private void refreshList(String startDate, String endDate) {
+        SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+        SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        String token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
         historyItems.clear();
-        historyItems.addAll(newItems);
-        customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
+        try {
+            customRecyclerView.notifyDataSetChanged();
+            historyItems.addAll(sharedDataNetwork.getUserData(token, startDate, endDate));
+        } catch (ConnectionException e) {
+            if (this.isAdded())
+                Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

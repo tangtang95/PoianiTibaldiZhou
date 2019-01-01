@@ -35,7 +35,7 @@
     <string name="register_ssn">SSN</string>
     <string name="register_first_name">First name</string>
     <string name="register_last_name">Last name</string>
-    <string name="register_birth_date">Birth date</string>
+    <string name="register_birth_date">Birth timestamp</string>
     <string name="register_birth_city">Birth city</string>
     <string name="register_birth_nation">Birth nation</string>
     <string name="register_button">REGISTER</string>
@@ -46,8 +46,8 @@
     <string name="ssn_example_aaa_gg_ssss">AAA-GG-SSSS</string>
     <string name="date_example_mm_gg_yyyy">MM/GG/YYYY</string>
     <string name="request_form_motive">Motive</string>
-    <string name="request_form_end_date">End date:</string>
-    <string name="request_form_start_date">Start date:</string>
+    <string name="request_form_end_date">End timestamp:</string>
+    <string name="request_form_start_date">Start timestamp:</string>
     <string name="request_form_to">To:</string>
     <string name="notification_title">TrackMe Health Service</string>
     <string name="ticker_text">ticker_text</string>
@@ -84,7 +84,7 @@
     <string name="business_with_this_email_already_exist">Third party with this e-mail already exist.</string>
     <string name="download_file_error">Impossible to download file</string>
     <string name="block_third_party_message">Do you want to block this third party customer?</string>
-    <string name="date_before_error">Hey! You have a temporal machine? The end date is before te start date!</string>
+    <string name="date_before_error">Hey! You have a temporal machine? The end timestamp is before te start timestamp!</string>
     <string name="terms_and_condition_error">"You must accept the Term and Condition of the software."</string>
     <string name="legal_note_show_error">"Impossible to show the legal note."</string>
     <string name="date_format_error">Date format error</string>
@@ -97,11 +97,14 @@
     <string name="notification_channel_name">Service Notification Channel</string>
     <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>
     <string name="log_bluetooth_enabled">Bluetooth is enabled</string>
-    <string name="log_cannot_parse_date">Could not parse date due to date format</string>
+    <string name="log_cannot_parse_date">Could not parse timestamp due to timestamp format</string>
     <string name="make_call_error_invalid_data">Cannot make call due to invalid health data</string>
     <string name="make_call_error_no_number">Cannot make call due to no number available</string>
     <string name="make_call_error_no_permission">Cannot make call due to no permission (GPS)</string>
     <string name="make_call_error_no_gps">Cannot make call due to no GPS available</string>
     <string name="notification_text">Health service is running&#8320;</string>
+    <string name="b_o_l">B.O.L</string>
+    <string name="location">Location</string>
+    <string name="bluetooth">Bluetooth</string>
 
 </resources>

@@ -54,7 +54,7 @@ public class BusinessLoginActivity extends LoginActivity{
     public void saveUserSession() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY,true);
-        editor.putString(Constant.SD_EMAIL_DATA_KEY, mail.getText().toString());
+        editor.putString(Constant.SD_BUSINESS_TOKEN_KEY, mail.getText().toString());
         editor.apply();
     }
 

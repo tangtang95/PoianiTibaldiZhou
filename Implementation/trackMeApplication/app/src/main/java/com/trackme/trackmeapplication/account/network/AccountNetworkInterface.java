@@ -30,40 +30,40 @@ public interface AccountNetworkInterface {
     /**
      * User logout from the server.
      */
-    void userLogout() throws UserAlreadyLogoutException;
+    void userLogout(String token) throws UserAlreadyLogoutException, ConnectionException;
 
     /**
      * PrivateThirdPartyDetail logout from the server.
      */
-    void thirdPartyLogout() throws UserAlreadyLogoutException;
+    void thirdPartyLogout(String token) throws UserAlreadyLogoutException, ConnectionException;
 
     /**
      * User sign up on server
      */
-    void userSignUp(User user) throws UserAlreadySignUpException;
+    void userSignUp(User user) throws UserAlreadySignUpException, ConnectionException;
 
     /**
      * Third party sign up on server.
      */
-    void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException;
+    void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException, ConnectionException;
 
     /**
      * CompanyDetail sign up on server.
      */
-    void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException;
+    void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException, ConnectionException;
 
     /**
      * Getter method.
      *
      * @return the user data saved in the server.
      */
-    User getUser() throws UserNotFoundException, ConnectionException;
+    User getUser(String token) throws UserNotFoundException, ConnectionException;
 
     /**
      * Getter method.
      *
      * @return the third party data saved in the server.
      */
-    ThirdPartyInterface getThirdParty() throws UserNotFoundException, ConnectionException;
+    ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException, ConnectionException;
 
 }

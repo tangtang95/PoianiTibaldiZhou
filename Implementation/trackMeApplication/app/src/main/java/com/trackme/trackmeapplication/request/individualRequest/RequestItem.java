@@ -1,58 +1,40 @@
 package com.trackme.trackmeapplication.request.individualRequest;
 
-import android.support.annotation.NonNull;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.trackme.trackmeapplication.request.RequestStatus;
 
 import java.io.Serializable;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestItem implements Serializable {
 
+    private String ssn;
+    private String email;
+
+    private String status;
+    private String timestamp;
     private String thirdPartyName;
     private String startDate;
     private String endDate;
-    private String motive;
-    private String ssn;
+    private String motivation;
+    private String responseLink;
 
-    private RequestStatus status;
-    private String id;
-    private String creationDate;
-    private String email;
+    public RequestItem(){}
 
-    public RequestItem(String ssn, String thirdPartyName, String startDate, String endDate, String motive) {
+    RequestItem(String ssn, String thirdPartyName, String startDate, String endDate, String motivation) {
         this.thirdPartyName = thirdPartyName;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.motive = motive;
+        this.motivation = motivation;
         this.ssn = ssn;
     }
 
-    /**
-     * Constructor. This constructor is use to build the receiver message from the server
-     *
-     * @param status status of the request.
-     */
-    public RequestItem(@NonNull String requestID, @NonNull RequestStatus status, @NonNull String creationDate, String email) {
-        this.status = status;
-        this.id = requestID;
-        this.creationDate = creationDate;
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public RequestStatus getStatus() {
-        return status;
+        return RequestStatus.valueOf(status);
     }
 
-    public String getID() {
-        return id;
-    }
-
-    public String getCreationDate() {
-        return creationDate;
+    public String getTimestamp() {
+        return timestamp;
     }
 
     public String getThirdPartyName() {
@@ -67,11 +49,23 @@ public class RequestItem implements Serializable {
         return endDate;
     }
 
-    public String getMotive() {
-        return motive;
+    public String getMotivation() {
+        return motivation;
     }
 
     public String getSsn() {
         return ssn;
+    }
+
+    public void setResponseLink(String responseLink) {
+        this.responseLink = responseLink;
+    }
+
+    String extractResponseLink(){
+        return responseLink;
+    }
+
+    String extractEmail() {
+        return email;
     }
 }

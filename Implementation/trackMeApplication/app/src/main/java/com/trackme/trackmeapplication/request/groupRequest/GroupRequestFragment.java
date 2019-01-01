@@ -136,7 +136,7 @@ public class GroupRequestFragment extends BaseFragment {
 
         GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        String email = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
+        String email = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
 
         handler = new Handler();
         checkNewRequest = new Runnable() {

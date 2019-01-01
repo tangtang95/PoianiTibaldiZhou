@@ -20,6 +20,22 @@ public class UserHomePresenter extends BasePresenterImpl<
     }
 
     @Override
+    public void onLocationSwitch(boolean status) {
+        if (status)
+            mView.startLocationService();
+        else
+            mView.stopLocationService();
+    }
+
+    @Override
+    public void onBluetoothSwitch(boolean status) {
+        if (status)
+            mView.startBluetoothService();
+        else
+            mView.stopBluetoothService();
+    }
+
+    @Override
     public void onSettingsSelected() {
         mView.navigateToUserSettings();
     }

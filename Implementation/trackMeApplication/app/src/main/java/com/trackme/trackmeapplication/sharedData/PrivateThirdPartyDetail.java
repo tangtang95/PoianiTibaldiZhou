@@ -8,7 +8,6 @@ import java.util.Date;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrivateThirdPartyDetail implements ThirdPartyInterface {
 
-    private Long id;
     private ThirdPartyCustomer thirdPartyCustomer;
     private String ssn;
     private String name;
@@ -17,9 +16,9 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
     private String birthCity;
 
 
-    public PrivateThirdPartyDetail(String ssn, String email, String password, String firstName, String lastName, Date birthDate, String birthCity) {
+    public PrivateThirdPartyDetail(String ssn, ThirdPartyCustomer thirdPartyCustomer, String firstName, String lastName, Date birthDate, String birthCity) {
         this.ssn = ssn;
-        this.thirdPartyCustomer = new ThirdPartyCustomer(email, password);
+        this.thirdPartyCustomer = thirdPartyCustomer;
         this.name = firstName;
         this.surname = lastName;
         this.birthDate = birthDate;
@@ -28,32 +27,24 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
     }
 
     @Override
-    public String getName() {
+    public String extractName() {
         return name + " " + surname;
     }
+
+    @Override
+    public String extractEmail() {
+        return thirdPartyCustomer.getEmail();
+    }
+
+    @Override
+    public String extractPassword() {return thirdPartyCustomer.getPassword();}
 
     public String getSsn() {
         return ssn;
     }
 
-    @Override
-    public String getEmail() {
-        return thirdPartyCustomer.getEmail();
-    }
-
-    @Override
-    public String getPassword() {return thirdPartyCustomer.getPassword();}
-
-    public Date getBirthDay() {
-        return birthDate;
-    }
-
     public String getBirthCity() {
         return birthCity;
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public ThirdPartyCustomer getThirdPartyCustomer() {
@@ -66,5 +57,9 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
 
     public Date getBirthDate() {
         return birthDate;
+    }
+
+    public String getName() {
+        return name;
     }
 }

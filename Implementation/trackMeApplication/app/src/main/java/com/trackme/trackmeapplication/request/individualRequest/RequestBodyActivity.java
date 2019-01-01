@@ -1,12 +1,15 @@
 package com.trackme.trackmeapplication.request.individualRequest;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.baseUtility.Constant;
@@ -30,6 +33,8 @@ public class RequestBodyActivity extends AppCompatActivity {
     @BindView(R.id.textViewRequestBodyMotive)
     protected TextView motive;
 
+    private String token;
+
     IndividualRequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
     RequestItem requestItem;
 
@@ -39,13 +44,15 @@ public class RequestBodyActivity extends AppCompatActivity {
         setContentView(R.layout.activity_request_body);
 
         requestItem = (RequestItem) getIntent().getSerializableExtra(Constant.SD_INDIVIDUAL_REQUEST_KEY);
+        SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
 
         ButterKnife.bind(this);
 
         thirdPartyName.setText(requestItem.getThirdPartyName());
         String s = requestItem.getStartDate() + " to " + requestItem.getEndDate();
         period.setText(s);
-        motive.setText(requestItem.getMotive());
+        motive.setText(requestItem.getMotivation());
     }
 
     /**
@@ -53,9 +60,12 @@ public class RequestBodyActivity extends AppCompatActivity {
      */
     @OnClick(R.id.requestBodyAccept)
     public void onRequestAcceptClick() {
-        individualrequestNetwork.acceptIndividualRequest(requestItem.getID());
+        try {
+            individualrequestNetwork.acceptIndividualRequest(token, requestItem.extractResponseLink());
+        } catch (ConnectionException e) {
+            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        }
         finish();
-
     }
 
     /**
@@ -66,13 +76,21 @@ public class RequestBodyActivity extends AppCompatActivity {
         DialogInterface.OnClickListener dialogClickListener = (dialog, which) -> {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
-                    individualrequestNetwork.blockThirdPartyCustomer(requestItem.getEmail());
-                    individualrequestNetwork.refuseIndividualRequest(requestItem.getID());
+                    try {
+                        String blockUrl = individualrequestNetwork.refuseIndividualRequest(token, requestItem.extractResponseLink());
+                        individualrequestNetwork.blockThirdPartyCustomer(token, blockUrl);
+                    } catch (ConnectionException e) {
+                        Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
-                    individualrequestNetwork.refuseIndividualRequest(requestItem.getID());
+                    try {
+                        individualrequestNetwork.refuseIndividualRequest(token, requestItem.extractResponseLink());
+                    } catch (ConnectionException e) {
+                        Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                    }
                     finish();
                     break;
             }

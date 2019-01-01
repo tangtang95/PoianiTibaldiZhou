@@ -5,15 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CompanyDetail implements ThirdPartyInterface{
 
-    private String id;
-    private String companyName;
     private ThirdPartyCustomer thirdPartyCustomer;
+    private String companyName;
     private String address;
     private String dunsNumber;
 
-    public CompanyDetail(String companyName, String email, String password, String address, String dunsNumber) {
+    public CompanyDetail(String companyName, ThirdPartyCustomer thirdPartyCustomer, String address, String dunsNumber) {
         this.companyName = companyName;
-        this.thirdPartyCustomer = new ThirdPartyCustomer(email, password);
+        this.thirdPartyCustomer = thirdPartyCustomer;
         this.address = address;
         this.dunsNumber = dunsNumber;
     }
@@ -27,23 +26,20 @@ public class CompanyDetail implements ThirdPartyInterface{
     }
 
     @Override
-    public String getName() {
+    public String extractName() {
         return companyName;
     }
 
     @Override
-    public String getEmail() {
+    public String extractEmail() {
         return thirdPartyCustomer.getEmail();
     }
 
     @Override
-    public String getPassword() {
+    public String extractPassword() {
         return thirdPartyCustomer.getPassword();
     }
 
-    public String getId() {
-        return id;
-    }
 
     public String getCompanyName() {
         return companyName;

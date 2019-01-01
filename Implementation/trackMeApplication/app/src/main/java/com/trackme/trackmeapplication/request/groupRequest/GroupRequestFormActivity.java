@@ -1,6 +1,7 @@
 package com.trackme.trackmeapplication.request.groupRequest;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
+import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
@@ -59,6 +61,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
 
     private GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
     private AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
+    private SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
 
     /**
      * Load the activity layout and get from the server all the value useful for compiling the request.
@@ -149,7 +152,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
             GroupRequestItem groupRequestItem = null;
             try {
                 groupRequestItem = new GroupRequestItem(
-                        accountNetwork.getThirdParty().getName(),
+                        accountNetwork.getThirdParty(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null)).extractName(),
                         dateFormat.format(date),
                         spinnerAggregator.getSelectedItem().toString(),
                         spinnerType.getSelectedItem().toString(),

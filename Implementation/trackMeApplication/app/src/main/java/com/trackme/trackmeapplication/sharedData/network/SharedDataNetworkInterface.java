@@ -18,6 +18,6 @@ public interface SharedDataNetworkInterface {
 
     String getIndividualRequestData(String requestID);
 
-    List<HistoryItem> getUserData(String username, String startDate, String endDate);
+    List<HistoryItem> getUserData(String token, String startDate, String endDate) throws ConnectionException;
 
 }

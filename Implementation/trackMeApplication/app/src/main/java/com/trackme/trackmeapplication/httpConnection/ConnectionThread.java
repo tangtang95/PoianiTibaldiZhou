@@ -59,11 +59,11 @@ public class ConnectionThread extends Thread {
 
     @Override
     public void run() {
-        HttpsURLConnection urlConnection;
         try {
-            urlConnection = (HttpsURLConnection) url.openConnection();
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setHostnameVerifier(hostnameVerifier);
             urlConnection.setSSLSocketFactory(sllContext.getSocketFactory());
+            urlConnection.setDoInput(true);
             InputStream in;
 
             if (entity.getHeaders().getAuthorization() != null)
@@ -76,16 +76,22 @@ public class ConnectionThread extends Thread {
                     break;
                 case POST:
                     urlConnection.setDoOutput(true);
+                    urlConnection.setRequestProperty("Content-type", "application/json");
                     OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
                     writeStream(out);
 
                     Log.d("STATUS:", String.valueOf(urlConnection.getResponseCode()));
 
-                    if (urlConnection.getResponseCode() != HttpStatus.OK.value())
-                        onPostExecute("", HttpStatus.valueOf(urlConnection.getResponseCode()));
-                    else {
-                        in = new BufferedInputStream(urlConnection.getInputStream());
-                        onPostExecute(readStream(in), HttpStatus.valueOf(urlConnection.getResponseCode()));
+                    switch (urlConnection.getResponseCode()) {
+                        case 200:
+                            in = new BufferedInputStream(urlConnection.getInputStream());
+                            onPostExecute(readStream(in), HttpStatus.valueOf(urlConnection.getResponseCode()));
+                            break;
+                        case 201:
+                            in = new BufferedInputStream(urlConnection.getInputStream());
+                            onPostExecute(readStream(in), HttpStatus.valueOf(urlConnection.getResponseCode()));
+                            break;
+                        default: onPostExecute("", HttpStatus.valueOf(urlConnection.getResponseCode()));
                     }
                     break;
                 default: throw new IllegalStateException();
@@ -110,11 +116,11 @@ public class ConnectionThread extends Thread {
     }
 
     private void writeStream(OutputStream out) throws IOException {
-        if (entity.getBody() != null)
+        if (entity.getBody() != null) {
             out.write(entity.getBody().toString().getBytes());
+        }
         else
             out.write(entity.toString().getBytes());
-        Log.d("ENTITY", entity.getBody().toString());
         out.flush();
     }
 

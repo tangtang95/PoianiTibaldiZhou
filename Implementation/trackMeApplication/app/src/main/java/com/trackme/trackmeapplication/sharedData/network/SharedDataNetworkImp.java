@@ -1,7 +1,5 @@
 package com.trackme.trackmeapplication.sharedData.network;
 
-import android.util.Log;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.JsonPathException;
@@ -20,9 +18,11 @@ import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInterface {
@@ -64,7 +64,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
-                        Log.d("BODY", connectionBuilder.getConnection().getResponse());
+                        //Log.d("BODY", connectionBuilder.getConnection().getResponse());
                         return mapper.readValue(connectionBuilder.getConnection().getResponse(), User.class);
                     case UNAUTHORIZED: throw new ConnectionException();
                     case NOT_FOUND: throw new UserNotFoundException();
@@ -113,7 +113,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 return null;
             } catch (IOException e) {
                 e.printStackTrace();
-                throw  new UserNotFoundException();
+                throw new UserNotFoundException();
             }
         }
     }
@@ -129,8 +129,39 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     }
 
     @Override
-    public List<HistoryItem> getUserData(String username, String startDate, String endDate) {
-        return new ArrayList<>();
+    public List<HistoryItem> getUserData(String token, String startDate, String endDate) throws ConnectionException {
+        synchronized (lock) {
+            isLock(true);
+            try {
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(
+                        userUrlManager.getGetOwnDataLink() + "?from=" + startDate + "&to=" + endDate
+                        )
+                        .setHttpMethod(HttpMethod.GET)
+                        .setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+
+                if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
+                    List<LinkedHashMap<String, String>> list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$.healthDataList");
+                    List<HistoryItem> historyItems = new ArrayList<>();
+                    for (int i = 0; i < list.size(); i++) {
+                        historyItems.add(mapper.readValue(
+                                mapper.writeValueAsString(list.get(i)),
+                                HistoryItem.class));
+                    }
+                    return historyItems;
+                }
+                throw new ConnectionException();
+
+            } catch (InterruptedException | IOException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
+        }
     }
 
     @Override

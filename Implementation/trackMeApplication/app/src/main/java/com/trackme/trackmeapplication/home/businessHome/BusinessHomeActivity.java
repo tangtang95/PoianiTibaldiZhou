@@ -14,6 +14,7 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 
 import butterknife.BindView;
 
@@ -33,7 +34,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
     @BindView(R.id.tab_layout)protected TabLayout tabLayout;
 
     private SharedPreferences sp;
-    private String mail;
+    private String token;
 
     @NonNull
     @Override
@@ -48,7 +49,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
+        token = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
 
         super.onCreate(savedInstanceState);
 
@@ -69,7 +70,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
 
     @Override
     protected void onResume() {
-        mail = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
+        token = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
         super.onResume();
     }
 
@@ -88,13 +89,16 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
         Intent intent = new Intent(this, UserLoginActivity.class);
         AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
         try {
-            accountNetwork.thirdPartyLogout();
+            accountNetwork.thirdPartyLogout(token);
             sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
             startActivity(intent);
             finish();
         } catch (UserAlreadyLogoutException e) {
-            e.printStackTrace();
-            /*TODO*/
+            sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+            startActivity(intent);
+            finish();
+        } catch (ConnectionException e) {
+            showMessage(getString(R.string.connection_error));
         }
     }
 
@@ -104,7 +108,7 @@ public class BusinessHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public String getMail() {
-        return mail;
+    public String getToken() {
+        return token;
     }
 }

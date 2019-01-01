@@ -2,6 +2,7 @@ package com.trackme.trackmeapplication.request.individualRequest;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -49,6 +50,8 @@ public class RequestFormActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener onDateSetListenerStart;
     private DatePickerDialog.OnDateSetListener onDateSetListenerEnd;
 
+    private SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,7 +84,7 @@ public class RequestFormActivity extends AppCompatActivity {
             try {
                 individualRequestNetwork.send(new RequestItem(
                         ssn.getText().toString(),
-                        accountNetwork.getThirdParty().getName(),
+                        accountNetwork.getThirdParty(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null)).extractName(),
                         startDate.getText().toString(),
                         endDate.getText().toString(),
                         motive.getText().toString()

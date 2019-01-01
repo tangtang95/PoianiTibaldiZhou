@@ -17,6 +17,7 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.sharedData.User;
 
 import java.text.DateFormat;
@@ -104,6 +105,8 @@ public class UserRegisterFragment extends BaseFragment {
                 ((Activity)getmContext()).finish();
             } catch (UserAlreadySignUpException e) {
                 showMessage(getString(R.string.user_with_this_social_security_number_already_exist));
+            } catch (ConnectionException e) {
+                showMessage(getString(R.string.connection_error));
             }
         }
     }

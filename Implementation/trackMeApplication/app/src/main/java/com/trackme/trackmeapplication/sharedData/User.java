@@ -34,7 +34,7 @@ public class User implements Serializable {
 
     public String getUsername() { return username; }
 
-    public String   getName() {
+    public String extractName() {
         return firstName + " " + lastName;
     }
 
@@ -50,7 +50,7 @@ public class User implements Serializable {
         return password;
     }
 
-    public String getSsn() {
+    public String extractSsn() {
         return ssn;
     }
 

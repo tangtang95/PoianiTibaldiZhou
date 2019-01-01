@@ -106,8 +106,8 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
                 SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
 
                 holder.download.setOnClickListener(view -> generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
-                        items.get(position).getSsn() + " " + items.get(position).getCreationDate(),
-                        sharedDataNetwork.getIndividualRequestData(items.get(position).getID())));
+                        items.get(position).getSsn() + " " + items.get(position).getTimestamp(),
+                        sharedDataNetwork.getIndividualRequestData(items.get(position).extractResponseLink())));
             }
         }
 
@@ -137,7 +137,7 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
 
         IndividualRequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        String email = sp.getString(Constant.SD_EMAIL_DATA_KEY, null);
+        String email = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
 
         handler = new Handler();
         checkNewRequest = new Runnable() {

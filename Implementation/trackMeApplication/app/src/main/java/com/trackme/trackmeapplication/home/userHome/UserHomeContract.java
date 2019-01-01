@@ -33,6 +33,26 @@ class UserHomeContract {
         void navigateToUserLogin();
 
         /**
+         * It starts the location service in background.
+         */
+        void startLocationService();
+
+        /**
+         * It stops the location service in background.
+         */
+        void stopLocationService();
+
+        /**
+         * It starts the bluetooth service in background.
+         */
+        void startBluetoothService();
+
+        /**
+         * It stops the bluetooth service in background.
+         */
+        void stopBluetoothService();
+
+        /**
          * Getter method.
          *
          * @return the current activity.
@@ -44,7 +64,7 @@ class UserHomeContract {
          *
          * @return the username used in the login form.
          */
-        String getUsername();
+        String getToken();
 
     }
 
@@ -57,6 +77,16 @@ class UserHomeContract {
          * Call when the user click on the profile in the menu
          */
         void onProfileSelected();
+
+        /**
+         * Call when the user click on the location switch
+         */
+        void onLocationSwitch(boolean status);
+
+        /**
+         * Call when the user click on the bluetooth switch
+         */
+        void onBluetoothSwitch(boolean status);
 
         /**
          * Call when the user click on settings in the menu

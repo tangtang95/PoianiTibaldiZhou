@@ -1,56 +1,51 @@
 package com.trackme.trackmeapplication.home.userHome;
 
+import java.io.Serializable;
+
 /**
  * History item object, represent an element in the list of data showed to the user.
  *
  * @author Mattia Tibaldi
  */
-public class HistoryItem {
+public class HistoryItem implements Serializable {
 
-    private String date;
-    private String position;
-    private String pulse;
-    private String bloodPressure;
+    private String timestamp;
+    private String heartBeat;
+    private String bloodOxygenLevel;
+    private String pressureMin;
+    private String pressureMax;
 
-    /**
-     * Constructor.
-     *
-     * @param date the date when the data are taken.
-     * @param position position of the user
-     * @param pulse pulse value
-     * @param bloodPressure blood pressure value
-     */
-    HistoryItem(String date, String position, String pulse, String bloodPressure) {
-        this.date = date;
-        this.position = position;
-        this.pulse = pulse;
-        this.bloodPressure = bloodPressure;
-    }
+    public HistoryItem(){}
 
     /**
      * Getter method.
      *
-     * @return a string with pulse and blood pressure values
+     * @return a string with heartBeat and blood pressure values
      */
     String getCompactInfo() {
-        return "Pulse:" + pulse + " Pressure:" + bloodPressure;
+        return "Pulse: " + heartBeat + " Pressure: " + pressureMax + "/" + pressureMin + " B.O.L: " + bloodOxygenLevel;
     }
 
     /*Getter method*/
 
-    public String getDate() {
-        return date;
+    public String getTimestamp() {
+        return timestamp.substring(0,10);
     }
 
-    public String getPosition() {
-        return position;
+    public String getBloodOxygenLevel() {
+        return bloodOxygenLevel;
     }
 
-    public String getPulse() {
-        return pulse;
+    public String getPressureMin() {
+        return pressureMin;
     }
 
-    public String getBloodPressure() {
-        return bloodPressure;
+    public String getPressureMax() {
+        return pressureMax;
     }
+
+    public String getHeartBeat() {
+        return heartBeat;
+    }
+
 }
