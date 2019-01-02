@@ -101,10 +101,17 @@
     <string name="make_call_error_invalid_data">Cannot make call due to invalid health data</string>
     <string name="make_call_error_no_number">Cannot make call due to no number available</string>
     <string name="make_call_error_no_permission">Cannot make call due to no permission (GPS)</string>
-    <string name="make_call_error_no_gps">Cannot make call due to no GPS available</string>
+    <string name="make_call_error_due_to_threads">Cannot make call due to timeout exception (GPS or ROOM database)</string>
     <string name="notification_text">Health service is running&#8320;</string>
     <string name="b_o_l">B.O.L</string>
     <string name="location">Location</string>
     <string name="bluetooth">Bluetooth</string>
+    <string name="stop_foreground">Stop foreground service</string>
+    <string name="error_no_action">FATAL ERROR: No action passed</string>
+    <string name="foreground_stop_toast_message">Foreground service is stopped.</string>
+    <string name="foreground_start_toast_message">Foreground service is started.</string>
+    <string name="geonames_org_url"><![CDATA[http://api.geonames.org/countryCode?lat=%s&lng=%s&username=%s]]></string>
+    <string name="cannot_find_json_error">IO Exception, impossible to find the json file</string>
+>>>>>>> Stashed changes
 
 </resources>

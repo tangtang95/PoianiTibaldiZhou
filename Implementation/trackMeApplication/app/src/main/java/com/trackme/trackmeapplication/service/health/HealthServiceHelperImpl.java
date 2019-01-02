@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 
 import com.trackme.trackmeapplication.R;
@@ -15,7 +14,6 @@ import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 import com.trackme.trackmeapplication.localdb.entity.EmergencyCall;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
-import com.trackme.trackmeapplication.service.exception.GeocoderNotAvailableException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
 
 import java.sql.Timestamp;
@@ -25,6 +23,10 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class HealthServiceHelperImpl implements HealthServiceHelper {
@@ -32,10 +34,9 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
     private HealthService service;
     private AppDatabase appDatabase;
 
-    public HealthServiceHelperImpl(HealthService service) {
+    public HealthServiceHelperImpl(HealthService service, AppDatabase appDatabase) {
         this.service = service;
-        this.appDatabase = Room.databaseBuilder(service.getApplicationContext(),
-                AppDatabase.class, service.getString(R.string.persistent_database_name)).build();
+        this.appDatabase = appDatabase;
     }
 
     @Override
@@ -49,30 +50,25 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
     }
 
     @Override
-    public Handler getHealthDataHandler() {
-        return service.getHealthDataHandler();
-    }
-
-    @Override
     public void setUserBirthDate(Date birthDate) {
         service.setUserBirthDate(birthDate);
     }
 
     @Override
     public void saveHealthData(HealthData healthData) {
-        // TODO IN AsyncTask
-        //appDatabase.getHealthDataDao().insert(healthData);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> appDatabase.getHealthDataDao().insert(healthData));
     }
 
     @Override
-    public boolean hasRecentEmergencyCall() {
-        // TODO IN AsyncTask
-        //return appDatabase.getEmergencyCallDao().getNumberOfRecentCalls() > 0;
-        return false;
+    public boolean hasRecentEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<Long> numberRecentCallFuture = executor.submit(()-> appDatabase.getEmergencyCallDao().getNumberOfRecentCalls());
+        return numberRecentCallFuture.get(1, TimeUnit.SECONDS) > 0;
     }
 
     @Override
-    public boolean makeEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException, EmergencyNumberNotFoundException, GeocoderNotAvailableException {
+    public boolean makeEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException, EmergencyNumberNotFoundException {
         if (ActivityCompat.checkSelfPermission(service.getApplicationContext(), Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             throw new NoPermissionException();
@@ -90,14 +86,18 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
         EmergencyCall emergencyCall = new EmergencyCall();
         emergencyCall.setPhoneNumber(phoneNumber);
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("UTC"));
+
+        // Roll back by one hour because of SQLite now function
+        calendar.add(Calendar.HOUR, -1);
         emergencyCall.setTimestamp(new Timestamp(calendar.getTime().getTime()));
 
-        //TODO Async Task
-        //appDatabase.getEmergencyCallDao().insert(emergencyCall);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> appDatabase.getEmergencyCallDao().insert(emergencyCall));
+        executor.awaitTermination(1, TimeUnit.SECONDS);
         return true;
     }
 
-    private String getCurrentCountryCode() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException, GeocoderNotAvailableException {
+    private String getCurrentCountryCode() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException {
         return service.getCountryCode(service.getUserLocation());
     }
 }

@@ -1,10 +1,8 @@
 package com.trackme.trackmeapplication.service.health;
 
 import android.app.Service;
-import android.os.Handler;
 
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
-import com.trackme.trackmeapplication.service.exception.GeocoderNotAvailableException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
@@ -27,13 +25,6 @@ public interface HealthServiceHelper {
     Date getUserBirthDate();
 
     /**
-     * Retrieves the handler managing the health data callback
-     *
-     * @return the handler of health data callback
-     */
-    Handler getHealthDataHandler();
-
-    /**
      * Set the user birth date
      * @param birthDate the birth date of the user
      */
@@ -49,7 +40,7 @@ public interface HealthServiceHelper {
     /**
      * @return true if there are recent (within 1 hour) emergency call, false otherwise
      */
-    boolean hasRecentEmergencyCall();
+    boolean hasRecentEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException;
 
     /**
      * Make an emergency call to the number given by the HealthServiceHelper
@@ -58,5 +49,5 @@ public interface HealthServiceHelper {
      * @throws EmergencyNumberNotFoundException when there is no emergency number available in the actual country
      */
     boolean makeEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException,
-            NoPermissionException, EmergencyNumberNotFoundException, GeocoderNotAvailableException;
+            NoPermissionException, EmergencyNumberNotFoundException;
 }
