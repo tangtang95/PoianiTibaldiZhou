@@ -84,6 +84,13 @@
     <string name="b_o_l">B.O.L</string>
     <string name="location">Location</string>
     <string name="bluetooth">Bluetooth</string>
+    <string name="set_address">SET ADDRESS</string>
+    <string name="stop_foreground">Stop foreground service</string>
+    <string name="error_no_action">FATAL ERROR: No action passed</string>
+    <string name="foreground_stop_toast_message">Foreground service is stopped.</string>
+    <string name="foreground_start_toast_message">Foreground service is started.</string>
+    <string name="geonames_org_url"><![CDATA[http://api.geonames.org/countryCode?lat=%s&lng=%s&username=%s]]></string>
+    <string name="cannot_find_json_error">IO Exception, impossible to find the json file</string>
 
     <!-- Error message. -->
     <string name="user_login_error">Username and password do not match.</string>
@@ -107,6 +114,5 @@
 
     <!-- DB -->
     <string name="persistent_database_name">trackme-db</string>
-    <string name="set_address">SET ADDRESS</string>
 
 </resources>

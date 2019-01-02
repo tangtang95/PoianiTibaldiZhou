@@ -6,10 +6,12 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.arch.persistence.room.Room;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,17 +24,17 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.Tasks;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 import com.trackme.trackmeapplication.service.bluetooth.BluetoothServer;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
-import com.trackme.trackmeapplication.service.exception.GeocoderNotAvailableException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import com.trackme.trackmeapplication.service.util.Constants;
@@ -58,9 +60,14 @@ public class HealthService extends Service {
 
     private static final int HEALTH_FOREGROUND_ID = 1338;
 
+    public static final String ACTION_START_FOREGROUND_SERVICE = "ACTION_START_FOREGROUND_SERVICE";
+
+    public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
+
     private Date mBirthDate;
-    private final IBinder mBinder = new LocalBinder();
+    private IBinder mBinder = new LocalBinder();
     private Handler mHandler;
+    private BluetoothServer mBluetoothServer;
 
     public Date getUserBirthDate() {
         return mBirthDate;
@@ -87,7 +94,10 @@ public class HealthService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mHandler = new Handler(new HealthDataCallback(new HealthServiceHelperImpl(this)));
+        mHandler = new Handler(new HealthDataCallback(
+                new HealthServiceHelperImpl(this,
+                        Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
+                                getString(R.string.persistent_database_name)).build())));
     }
 
 
@@ -99,32 +109,64 @@ public class HealthService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (!intent.hasExtra(getString(R.string.birth_year_key))) {
-            return super.onStartCommand(intent, flags, startId);
+        if(intent != null)
+        {
+            String action = intent.getAction();
+            if(action == null){
+                return super.onStartCommand(intent, flags, startId);
+            }
+
+            switch (action)
+            {
+                case ACTION_START_FOREGROUND_SERVICE:
+                    if (!intent.hasExtra(getString(R.string.birth_year_key))) {
+                        return super.onStartCommand(intent, flags, startId);
+                    }
+
+                    String pattern = "yyyy-MM-dd";
+                    DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.US);
+                    try {
+                        mBirthDate = dateFormat.parse(intent.getStringExtra(getString(R.string.birth_year_key)));
+                    } catch (ParseException e) {
+                        Log.d(getString(R.string.debug_tag), getString(R.string.log_cannot_parse_date));
+                        return super.onStartCommand(intent, flags, startId);
+                    }
+                    startForegroundService();
+                    Toast.makeText(getApplicationContext(), R.string.foreground_start_toast_message, Toast.LENGTH_LONG).show();
+                    break;
+                case ACTION_STOP_FOREGROUND_SERVICE:
+                    stopForegroundService();
+                    Toast.makeText(getApplicationContext(), R.string.foreground_stop_toast_message, Toast.LENGTH_LONG).show();
+                    break;
+                default:
+                    Log.e(getString(R.string.debug_tag), getString(R.string.error_no_action));
+                    break;
+            }
         }
 
-        String pattern = "yyyy-MM-dd";
-        DateFormat dateFormat = new SimpleDateFormat(pattern, Locale.US);
-        try {
-            mBirthDate = dateFormat.parse(intent.getStringExtra(getString(R.string.birth_year_key)));
-        } catch (ParseException e) {
-            Log.d(getString(R.string.debug_tag), getString(R.string.log_cannot_parse_date));
-            return super.onStartCommand(intent, flags, startId);
-        }
+        return super.onStartCommand(intent, flags, startId);
+    }
 
+    private void startForegroundService(){
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         if (bluetoothAdapter != null) {
             Log.d(getString(R.string.debug_tag), getString(R.string.log_debug_bluetooth_existing));
             if (bluetoothAdapter.isEnabled()) {
                 Log.d(getString(R.string.debug_tag), getString(R.string.log_bluetooth_enabled));
-                BluetoothServer bluetoothServer = new BluetoothServer(bluetoothAdapter, mHandler);
-                bluetoothServer.start();
+                mBluetoothServer = new BluetoothServer(bluetoothAdapter, mHandler);
+                mBluetoothServer.start();
                 startNotification(getString(R.string.notification_text));
             }
         }
+    }
 
-        return super.onStartCommand(intent, flags, startId);
+    private void stopForegroundService(){
+        Log.d(getString(R.string.debug_tag), getString(R.string.stop_foreground));
+        if(mBluetoothServer != null)
+            mBluetoothServer.cancel();
+        stopForeground(true);
+        stopSelf();
     }
 
     /**
@@ -179,13 +221,13 @@ public class HealthService extends Service {
      * @param location the location of the user
      * @return the country code where the user is
      */
-    public String getCountryCode(Location location) throws GeocoderNotAvailableException {
+    public String getCountryCode(Location location) {
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
             List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             if(addresses.isEmpty()){
                 RestTemplate restTemplate = new RestTemplate();
-                return restTemplate.getForObject(String.format("http://api.geonames.org/countryCode?lat=%s&lng=%s&username=%s",
+                return restTemplate.getForObject(String.format(getString(R.string.geonames_org_url),
                         Double.toString(location.getLatitude()), Double.toString(location.getLongitude()), Constants.GEONAME_USERNAME),
                         String.class);
             }
@@ -208,15 +250,11 @@ public class HealthService extends Service {
         try {
             size = is.available();
             byte[] buffer = new byte[size];
-            int numBytes = is.read(buffer);
-            if (numBytes != size) {
-                Log.d(getString(R.string.debug_tag), "Cannot read every bytes of the file");
-                return "";
-            }
+            is.read(buffer);
             is.close();
             emergencyJson = new String(buffer);
         } catch (IOException e) {
-            Log.d(getString(R.string.debug_tag), "IO Exception, impossible to read from emergency number json");
+            Log.d(getString(R.string.debug_tag), getString(R.string.cannot_find_json_error));
             return "";
         }
         return emergencyJson;
@@ -268,7 +306,9 @@ public class HealthService extends Service {
 
     private Notification buildNotification(Notification.Builder builder, PendingIntent pendingIntent, String contentText) {
         return builder.setContentTitle(getText(R.string.notification_title))
-                .setSmallIcon(R.drawable.icon)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(),
+                        R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
                 .setContentText(contentText)
                 .setTicker(getText(R.string.ticker_text))

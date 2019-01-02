@@ -44,6 +44,7 @@ public class BluetoothServer extends Thread {
     @Override
     public void run() {
         BluetoothSocket socket;
+        SocketHandler socketHandler = null;
         while (true) {
             try {
                 socket = mServerSocket.accept();
@@ -51,10 +52,11 @@ public class BluetoothServer extends Thread {
                 Log.e(Constants.BLUETOOTH_LOG_TAG,e.getMessage());
                 break;
             }
-
-            if (socket != null) {
-                SocketHandler socketHandler = new SocketHandler(socket, mHandler);
-                socketHandler.start();
+            if(socketHandler == null || !socketHandler.isAlive()) {
+                if (socket != null) {
+                    socketHandler = new SocketHandler(socket, mHandler);
+                    socketHandler.start();
+                }
             }
         }
         this.cancel();
@@ -63,7 +65,7 @@ public class BluetoothServer extends Thread {
     /**
      * Closes the connect socket and causes the thread to finish.
      */
-    private void cancel() {
+    public void cancel() {
         try {
             mServerSocket.close();
         } catch (IOException e) {

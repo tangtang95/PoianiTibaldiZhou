@@ -29,7 +29,7 @@ public class IndividualRequestWrapper implements Serializable {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return timestamp.substring(0,10);
     }
 
     public String getThirdPartyName() {

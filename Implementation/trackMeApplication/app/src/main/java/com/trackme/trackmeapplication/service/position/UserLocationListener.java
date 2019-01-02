@@ -16,6 +16,9 @@ import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * User location Listener. This class saves the user position when the position change.
  */
@@ -56,7 +59,9 @@ public class UserLocationListener implements LocationListener {
                 PositionData positionData = new PositionData();
                 positionData.setLatitude(currentBestLocation.getLatitude());
                 positionData.setLongitude(currentBestLocation.getLongitude());
-                appDatabase.getPositionDataDao().insert(positionData);
+
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(()-> appDatabase.getPositionDataDao().insert(positionData));
             };
             addPositionData.run();
         }

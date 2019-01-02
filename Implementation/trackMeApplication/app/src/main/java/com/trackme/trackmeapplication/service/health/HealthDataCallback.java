@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
-import com.trackme.trackmeapplication.service.exception.GeocoderNotAvailableException;
 import com.trackme.trackmeapplication.service.exception.InvalidHealthDataException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
 import com.trackme.trackmeapplication.service.util.HealthDataInspector;
@@ -56,8 +55,8 @@ public class HealthDataCallback implements Callback {
                     Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_no_number));
                 } catch (NoPermissionException e) {
                     Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_no_permission));
-                } catch (InterruptedException|ExecutionException|TimeoutException|GeocoderNotAvailableException e) {
-                    Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_no_gps));
+                } catch (InterruptedException|ExecutionException|TimeoutException e) {
+                    Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_due_to_threads));
                 }
                 return success;
             default:

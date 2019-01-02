@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
@@ -17,6 +18,9 @@ import com.trackme.trackmeapplication.httpConnection.exception.ConnectionExcepti
 import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.service.position.LocationService;
+import com.trackme.trackmeapplication.sharedData.User;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import butterknife.BindView;
 
@@ -52,11 +56,6 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
         token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
-
-        stopService(new Intent(this, HealthService.class));
-        Intent serviceIntent = new Intent(this, HealthService.class);
-        serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
-        startService(serviceIntent);
 
         super.onCreate(savedInstanceState);
 
@@ -113,22 +112,33 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     @Override
     public void startLocationService() {
-        /*TODO TANG*/
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        serviceIntent.setAction(LocationService.ACTION_START_FOREGROUND_SERVICE);
+        startService(serviceIntent);
     }
 
     @Override
     public void stopLocationService() {
-        /*TODO TANG*/
+        Intent serviceIntent = new Intent(this, LocationService.class);
+        serviceIntent.setAction(LocationService.ACTION_STOP_FOREGROUND_SERVICE);
+        startService(serviceIntent);
     }
 
     @Override
     public void startBluetoothService() {
-        /*TODO TANG*/
+        Log.d("SOS_DEBUG", "slider activated");
+        Intent serviceIntent = new Intent(this, HealthService.class);
+        serviceIntent.setAction(HealthService.ACTION_START_FOREGROUND_SERVICE);
+        serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
+        startService(serviceIntent);
     }
 
     @Override
     public void stopBluetoothService() {
-        /*TODO TANG*/
+        Log.d("SOS_DEBUG", "slider deactivated");
+        Intent serviceIntent = new Intent(this, HealthService.class);
+        serviceIntent.setAction(HealthService.ACTION_STOP_FOREGROUND_SERVICE);
+        startService(serviceIntent);
     }
 
     @Override

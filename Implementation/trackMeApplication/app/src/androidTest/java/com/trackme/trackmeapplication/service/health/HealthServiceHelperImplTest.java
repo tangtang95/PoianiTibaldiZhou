@@ -3,6 +3,7 @@ package com.trackme.trackmeapplication.service.health;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Instrumentation;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -16,7 +17,9 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.login.BusinessLoginActivity;
+import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 
 import static android.support.test.espresso.intent.Intents.intended;
@@ -77,7 +81,9 @@ public class HealthServiceHelperImplTest {
             androidService = ((HealthService.LocalBinder) binder).getService();
             mServiceTestRule.startService(serviceIntent);
 
-            helper = new HealthServiceHelperImpl(androidService);
+            AppDatabase appDatabase = Room.inMemoryDatabaseBuilder(InstrumentationRegistry.getTargetContext(), AppDatabase.class).build();
+
+            helper = new HealthServiceHelperImpl(androidService, appDatabase);
         }
 
         @After
@@ -88,9 +94,10 @@ public class HealthServiceHelperImplTest {
 
         @Test
         public void makeEmergencyCall() throws Exception {
-            mockUpGpsLocation(47D, 10D, 1);
+            mockUpGpsLocation(47D, 12D, 1);
             helper.makeEmergencyCall();
             intended(hasAction(Intent.ACTION_CALL), times(1));
         }
+
     }
 }
