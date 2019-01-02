@@ -36,23 +36,23 @@ public class RequestBodyActivity extends AppCompatActivity {
     private String token;
 
     IndividualRequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
-    RequestItem requestItem;
+    IndividualRequestWrapper individualRequestWrapper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_body);
 
-        requestItem = (RequestItem) getIntent().getSerializableExtra(Constant.SD_INDIVIDUAL_REQUEST_KEY);
+        individualRequestWrapper = (IndividualRequestWrapper) getIntent().getSerializableExtra(Constant.SD_INDIVIDUAL_REQUEST_KEY);
         SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
         token = sp.getString(Constant.SD_USER_TOKEN_KEY, null);
 
         ButterKnife.bind(this);
 
-        thirdPartyName.setText(requestItem.getThirdPartyName());
-        String s = requestItem.getStartDate() + " to " + requestItem.getEndDate();
+        thirdPartyName.setText(individualRequestWrapper.getThirdPartyName());
+        String s = individualRequestWrapper.getStartDate() + " to " + individualRequestWrapper.getEndDate();
         period.setText(s);
-        motive.setText(requestItem.getMotivation());
+        motive.setText(individualRequestWrapper.getMotivation());
     }
 
     /**
@@ -61,7 +61,7 @@ public class RequestBodyActivity extends AppCompatActivity {
     @OnClick(R.id.requestBodyAccept)
     public void onRequestAcceptClick() {
         try {
-            individualrequestNetwork.acceptIndividualRequest(token, requestItem.extractResponseLink());
+            individualrequestNetwork.acceptIndividualRequest(token, individualRequestWrapper.extractResponseLink());
         } catch (ConnectionException e) {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
         }
@@ -77,7 +77,7 @@ public class RequestBodyActivity extends AppCompatActivity {
             switch (which){
                 case DialogInterface.BUTTON_POSITIVE:
                     try {
-                        String blockUrl = individualrequestNetwork.refuseIndividualRequest(token, requestItem.extractResponseLink());
+                        String blockUrl = individualrequestNetwork.refuseIndividualRequest(token, individualRequestWrapper.extractResponseLink());
                         individualrequestNetwork.blockThirdPartyCustomer(token, blockUrl);
                     } catch (ConnectionException e) {
                         Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
@@ -87,7 +87,7 @@ public class RequestBodyActivity extends AppCompatActivity {
 
                 case DialogInterface.BUTTON_NEGATIVE:
                     try {
-                        individualrequestNetwork.refuseIndividualRequest(token, requestItem.extractResponseLink());
+                        individualrequestNetwork.refuseIndividualRequest(token, individualRequestWrapper.extractResponseLink());
                     } catch (ConnectionException e) {
                         Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
                     }

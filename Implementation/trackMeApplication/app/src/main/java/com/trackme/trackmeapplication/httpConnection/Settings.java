@@ -3,7 +3,7 @@ package com.trackme.trackmeapplication.httpConnection;
 public class Settings {
 
     private static int serverPort = 8443;
-    private static String serverAddress = "192.168.1.152";
+    private static String serverAddress = "192.168.1.196";
     private static int refreshItemTime = 10000;
 
     public static int getServerPort() {
@@ -18,15 +18,15 @@ public class Settings {
         return refreshItemTime;
     }
 
-    public void setServerPort(int serverPort) {
+    public static void setServerPort(int serverPort) {
         Settings.serverPort = serverPort;
     }
 
-    public void setServerAddress(String serverAddress) {
+    public static void setServerAddress(String serverAddress) {
         Settings.serverAddress = serverAddress;
     }
 
-    public void setRefreshItemTime(int refreshItemTime) {
+    public static void setRefreshItemTime(int refreshItemTime) {
         Settings.refreshItemTime = refreshItemTime;
     }
 }

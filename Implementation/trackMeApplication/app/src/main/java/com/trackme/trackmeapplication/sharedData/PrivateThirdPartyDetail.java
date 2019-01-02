@@ -15,6 +15,7 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
     private Date birthDate;
     private String birthCity;
 
+    public PrivateThirdPartyDetail(){}
 
     public PrivateThirdPartyDetail(String ssn, ThirdPartyCustomer thirdPartyCustomer, String firstName, String lastName, Date birthDate, String birthCity) {
         this.ssn = ssn;

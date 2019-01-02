@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
@@ -93,8 +94,8 @@ public class UserLoginActivity extends LoginActivity {
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
 
         //Fake status for debug
-        //sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
-        //sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+        //sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, true).apply();
+        //sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, true).apply();
 
         //get app permission
         getPermission();
@@ -111,7 +112,9 @@ public class UserLoginActivity extends LoginActivity {
             try {
                 accountNetworkImp.userLogout(token);
                 sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
-            } catch (UserAlreadyLogoutException | ConnectionException e) {
+            } catch (UserAlreadyLogoutException e) {
+                sp.edit().putBoolean(Constant.USER_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+            } catch (ConnectionException e) {
                 showMessage(getString(R.string.connection_error));
             }
         } else if (sp.getBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false)){
@@ -120,7 +123,9 @@ public class UserLoginActivity extends LoginActivity {
             try {
                 accountNetworkImp.thirdPartyLogout(token);
                 sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
-            } catch (UserAlreadyLogoutException | ConnectionException e) {
+            } catch (UserAlreadyLogoutException e) {
+                sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, false).apply();
+            } catch (ConnectionException e) {
                 showMessage(getString(R.string.connection_error));
             }
         }
@@ -202,6 +207,11 @@ public class UserLoginActivity extends LoginActivity {
         finish();
     }
 
+    @OnClick(R.id.imageView)
+    public void onLogoCLick(){
+        AddressServerPopUp.showTermPopUp(this);
+    }
+
     @Override
     public void saveUserSession() {
         SharedPreferences.Editor editor = sp.edit();
@@ -247,4 +257,10 @@ public class UserLoginActivity extends LoginActivity {
         mPresenter.businessLogin();
     }
 
+    @Override
+    protected void onDestroy() {
+        if (isRegister)
+            unregisterReceiver(broadcastReceiver);
+        super.onDestroy();
+    }
 }

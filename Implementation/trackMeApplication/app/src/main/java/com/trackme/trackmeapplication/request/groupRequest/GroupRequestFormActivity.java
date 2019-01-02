@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.request.groupRequest;
 
-import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,18 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
-import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
-import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -60,8 +53,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
     protected TextView filter;
 
     private GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
-    private AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
-    private SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+    private SharedPreferences sp;
 
     /**
      * Load the activity layout and get from the server all the value useful for compiling the request.
@@ -74,6 +66,8 @@ public class GroupRequestFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_group_request_form);
 
         ButterKnife.bind(this);
+
+        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
 
         filter.setMovementMethod(new ScrollingMovementMethod());
 
@@ -109,10 +103,10 @@ public class GroupRequestFormActivity extends AppCompatActivity {
         String operator = spinnerOperator.getSelectedItem().toString();
         String n = value.getText().toString();
         if (filter.getText().toString().isEmpty()) {
-            String f = column + operator + n;
+            String f = column + " " + operator + " " + n;
             filter.setText(f);
         } else {
-            String f = filter.getText().toString() + "+" + column + operator + n;
+            String f = filter.getText().toString() + "+" + column + " " + operator + " " + n;
             filter.setText(f);
         }
 
@@ -139,33 +133,33 @@ public class GroupRequestFormActivity extends AppCompatActivity {
     /**
      * Send the group request to the server.
      */
-    @SuppressLint("SimpleDateFormat")
     @OnClick(R.id.imageViewSend)
     public void onSendButtonClick() {
         if (filter.getText().toString().isEmpty())
             Toast.makeText(this,getText(R.string.no_field_must_be_empty), Toast.LENGTH_LONG).show();
         else {
-            Calendar cal = Calendar.getInstance();
-            Date date = cal.getTime();
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-            GroupRequestItem groupRequestItem = null;
             try {
-                groupRequestItem = new GroupRequestItem(
-                        accountNetwork.getThirdParty(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null)).extractName(),
-                        dateFormat.format(date),
+
+                GroupRequestBuilder groupRequestBuilder = new GroupRequestBuilder();
+                groupRequestBuilder.addNewFilter(parseFilter(filter.getText().toString()));
+                GroupRequest groupRequest = new GroupRequest(
                         spinnerAggregator.getSelectedItem().toString(),
-                        spinnerType.getSelectedItem().toString(),
-                        filter.getText().toString());
-            } catch (UserNotFoundException e) {
-                Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+                        spinnerType.getSelectedItem().toString()
+                );
+                groupRequestBuilder.setGroupRequest(groupRequest);
+                groupRequestNetwork.send(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null), groupRequestBuilder);
+                finish();
             } catch (ConnectionException e) {
                 Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+            } catch (RequestNotWellFormedException e) {
+                Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
             }
 
-            groupRequestNetwork.send(groupRequestItem);
-            finish();
         }
+    }
+
+    private String[] parseFilter(String filter){
+        return filter.split("\\+" );
     }
 
 }

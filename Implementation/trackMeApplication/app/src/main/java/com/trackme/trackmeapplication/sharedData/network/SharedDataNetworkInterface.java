@@ -14,9 +14,9 @@ public interface SharedDataNetworkInterface {
 
     ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException, ConnectionException;
 
-    String getGroupRequestData(String requestID);
+    String getGroupRequestData(String token, String url) throws ConnectionException;
 
-    String getIndividualRequestData(String requestID);
+    String getIndividualRequestData(String token, String url) throws ConnectionException;
 
     List<HistoryItem> getUserData(String token, String startDate, String endDate) throws ConnectionException;
 

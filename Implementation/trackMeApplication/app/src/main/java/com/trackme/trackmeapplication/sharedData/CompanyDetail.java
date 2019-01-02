@@ -10,6 +10,8 @@ public class CompanyDetail implements ThirdPartyInterface{
     private String address;
     private String dunsNumber;
 
+    public CompanyDetail(){}
+
     public CompanyDetail(String companyName, ThirdPartyCustomer thirdPartyCustomer, String address, String dunsNumber) {
         this.companyName = companyName;
         this.thirdPartyCustomer = thirdPartyCustomer;

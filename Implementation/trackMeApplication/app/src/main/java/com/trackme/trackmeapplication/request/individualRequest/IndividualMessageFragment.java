@@ -46,7 +46,7 @@ public class IndividualMessageFragment extends BaseFragment {
     protected RecyclerView recyclerView;
 
     private CustomRecyclerView customRecyclerView;
-    private List<RequestItem> requestItems = new ArrayList<>();
+    private List<IndividualRequestWrapper> individualRequestWrappers = new ArrayList<>();
 
     private Handler handler;
     Thread checkNewRequest;
@@ -80,16 +80,16 @@ public class IndividualMessageFragment extends BaseFragment {
         }
 
         private Activity context;
-        private List<RequestItem> items;
+        private List<IndividualRequestWrapper> items;
 
         /**
          * Constructor.
          *
-         * @param requestItems list of item to show in the recyclerView.
+         * @param individualRequestWrappers list of item to show in the recyclerView.
          */
-        CustomRecyclerView(@NonNull Activity context, List<RequestItem> requestItems) {
+        CustomRecyclerView(@NonNull Activity context, List<IndividualRequestWrapper> individualRequestWrappers) {
             this.context = context;
-            this.items = requestItems;
+            this.items = individualRequestWrappers;
         }
 
         @NonNull
@@ -172,7 +172,7 @@ public class IndividualMessageFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), requestItems);
+        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), individualRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
@@ -193,9 +193,9 @@ public class IndividualMessageFragment extends BaseFragment {
      * Refresh the recyclerView when it changes.
      */
     private void refreshList() {
-        requestItems.clear();
+        individualRequestWrappers.clear();
         try {
-            requestItems.addAll(individualrequestNetwork.getOwnIndividualRequest(token));
+            individualRequestWrappers.addAll(individualrequestNetwork.getOwnIndividualRequest(token));
             customRecyclerView.notifyDataSetChanged();
         } catch (ConnectionException e) {
             if (this.isAdded())

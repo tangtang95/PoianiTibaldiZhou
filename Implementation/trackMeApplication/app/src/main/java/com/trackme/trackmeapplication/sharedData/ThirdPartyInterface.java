@@ -1,6 +1,8 @@
 package com.trackme.trackmeapplication.sharedData;
 
-public interface ThirdPartyInterface {
+import java.io.Serializable;
+
+public interface ThirdPartyInterface extends Serializable {
 
     String extractName();
 

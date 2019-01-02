@@ -54,25 +54,7 @@ public class BusinessLoginActivity extends LoginActivity{
     public void saveUserSession() {
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY,true);
-        editor.putString(Constant.SD_BUSINESS_TOKEN_KEY, mail.getText().toString());
         editor.apply();
-    }
-
-    /**
-     * It handles the password visibility button click event.
-     */
-    @OnClick(R.id.password_visibility)
-    public void onPasswordVisibilityClick(){
-        final int TEXT_PASSWORD = 129;
-
-        if (password.getInputType() == TEXT_PASSWORD) {
-            password.setInputType(InputType.TYPE_CLASS_TEXT);
-            passwordVisibility.setImageResource(R.drawable.ic_visibility);
-        }
-        else {
-            password.setInputType(TEXT_PASSWORD);
-            passwordVisibility.setImageResource(R.drawable.ic_visibility_off);
-        }
     }
 
     @Override

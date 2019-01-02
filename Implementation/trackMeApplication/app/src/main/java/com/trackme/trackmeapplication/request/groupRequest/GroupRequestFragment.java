@@ -11,9 +11,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.os.Handler;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.RequestStatus;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
@@ -43,10 +45,12 @@ public class GroupRequestFragment extends BaseFragment {
     protected RecyclerView recyclerView;
 
     private GroupRequestFragment.CustomRecyclerView customRecyclerView;
-    private List<GroupRequestItem> groupRequestItems = new ArrayList<>();
+    private List<GroupRequestWrapper> groupRequestWrappers = new ArrayList<>();
 
     private Handler handler;
-    private Runnable checkNewRequest;
+    private Thread checkNewRequest;
+    private String token;
+    GroupRequestNetworkInterface groupRequestNetwork;
 
     /**
      * Custom recyclerView class for showing the groupRequestItem in the recycler.
@@ -75,14 +79,14 @@ public class GroupRequestFragment extends BaseFragment {
             }
         }
 
-        private List<GroupRequestItem> items;
+        private List<GroupRequestWrapper> items;
 
         /**
          * Constructor.
          *
          * @param requestItems list of item to show in the recyclerView.
          */
-        CustomRecyclerView(List<GroupRequestItem> requestItems) {
+        CustomRecyclerView(List<GroupRequestWrapper> requestItems) {
             this.items = requestItems;
         }
 
@@ -99,14 +103,21 @@ public class GroupRequestFragment extends BaseFragment {
             holder.status.setTextColor(items.get(position).getStatus().getColor());
             holder.receiver.setText(getText(R.string.app_name));
 
-            if (items.get(position).getStatus() == RequestStatus.ACCEPT){
+            if (items.get(position).getStatus() == RequestStatus.ACCEPTED){
                 holder.download.setVisibility(View.VISIBLE);
 
                 SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
 
-                holder.download.setOnClickListener(view -> generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
-                        getString(R.string.app_name) + " " + items.get(position).getCreationDate(),
-                        sharedDataNetwork.getGroupRequestData(items.get(position).getID())));
+                holder.download.setOnClickListener(view -> {
+                    try {
+                        generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
+                                getString(R.string.app_name) + " " + items.get(position).getCreationTimestamp(),
+                                sharedDataNetwork.getGroupRequestData(token, items.get(position).extractGroupRequestLink()));
+                        showMessage(getString(R.string.download_file));
+                    } catch (ConnectionException e) {
+                        Toast.makeText(getmContext(), getString(R.string.download_file_error), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
 
@@ -131,18 +142,18 @@ public class GroupRequestFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(groupRequestItems);
+        customRecyclerView = new CustomRecyclerView(groupRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
-        GroupRequestNetworkInterface groupRequestNetwork = GroupRequestNetworkImp.getInstance();
+        groupRequestNetwork = GroupRequestNetworkImp.getInstance();
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        String email = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
+        token = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
 
         handler = new Handler();
-        checkNewRequest = new Runnable() {
+        checkNewRequest = new Thread() {
             @Override
             public void run() {
-                refreshList(groupRequestNetwork.getGroupRequest(email));
+                refreshList();
                 handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
@@ -162,11 +173,15 @@ public class GroupRequestFragment extends BaseFragment {
     /**
      * Refresh the recyclerView when it changes.
      */
-    private void refreshList(List<GroupRequestItem> newItems) {
-        groupRequestItems.clear();
-        groupRequestItems.addAll(newItems);
+    private void refreshList() {
+        groupRequestWrappers.clear();
+        try {
+            groupRequestWrappers.addAll(groupRequestNetwork.getGroupRequest(token));
+        } catch (ConnectionException e) {
+            if (this.isAdded())
+                Toast.makeText(getmContext(), getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        }
         customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
     }
 
     @Override

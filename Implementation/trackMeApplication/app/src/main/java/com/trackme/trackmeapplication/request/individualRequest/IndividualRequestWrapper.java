@@ -6,27 +6,22 @@ import com.trackme.trackmeapplication.request.RequestStatus;
 import java.io.Serializable;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RequestItem implements Serializable {
+public class IndividualRequestWrapper implements Serializable {
 
-    private String ssn;
-    private String email;
-
+    private String userSsn;
     private String status;
     private String timestamp;
     private String thirdPartyName;
     private String startDate;
     private String endDate;
     private String motivation;
+
     private String responseLink;
 
-    public RequestItem(){}
+    public IndividualRequestWrapper(){}
 
-    RequestItem(String ssn, String thirdPartyName, String startDate, String endDate, String motivation) {
-        this.thirdPartyName = thirdPartyName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.motivation = motivation;
-        this.ssn = ssn;
+    public void setResponseLink(String responseLink) {
+        this.responseLink = responseLink;
     }
 
     public RequestStatus getStatus() {
@@ -53,19 +48,10 @@ public class RequestItem implements Serializable {
         return motivation;
     }
 
-    public String getSsn() {
-        return ssn;
-    }
-
-    public void setResponseLink(String responseLink) {
-        this.responseLink = responseLink;
-    }
-
     String extractResponseLink(){
         return responseLink;
     }
 
-    String extractEmail() {
-        return email;
-    }
+    String getUserSsn(){return userSsn;}
+
 }

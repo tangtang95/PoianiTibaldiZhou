@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.RequestStatus;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
@@ -43,10 +44,12 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
     protected RecyclerView recyclerView;
 
     private IndividualMessageBusinessFragment.CustomRecyclerView customRecyclerView;
-    private List<RequestItem> requestItems = new ArrayList<>();
+    private List<IndividualRequestWrapper> individualRequestWrappers = new ArrayList<>();
 
     private Handler handler;
     private Runnable checkNewRequest;
+    private IndividualRequestNetworkIInterface individualrequestNetwork;
+    private String token;
 
 
     /**
@@ -76,15 +79,15 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
             }
         }
 
-        private List<RequestItem> items;
+        private List<IndividualRequestWrapper> items;
 
         /**
          * Constructor.
          *
-         * @param requestItems list of item to show in the recyclerView.
+         * @param individualRequestWrappers list of item to show in the recyclerView.
          */
-        CustomRecyclerView(List<RequestItem> requestItems) {
-            this.items = requestItems;
+        CustomRecyclerView(List<IndividualRequestWrapper> individualRequestWrappers) {
+            this.items = individualRequestWrappers;
         }
 
         @NonNull
@@ -98,16 +101,23 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         public void onBindViewHolder(@NonNull IndividualMessageBusinessFragment.CustomRecyclerView.MyViewHolder holder, final int position) {
             holder.status.setText(items.get(position).getStatus().name());
             holder.status.setTextColor(items.get(position).getStatus().getColor());
-            holder.ssn.setText(items.get(position).getSsn());
+            holder.ssn.setText(items.get(position).getUserSsn());
 
-            if (items.get(position).getStatus() == RequestStatus.ACCEPT){
+            if (items.get(position).getStatus() == RequestStatus.ACCEPTED){
                 holder.download.setVisibility(View.VISIBLE);
 
                 SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
 
-                holder.download.setOnClickListener(view -> generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
-                        items.get(position).getSsn() + " " + items.get(position).getTimestamp(),
-                        sharedDataNetwork.getIndividualRequestData(items.get(position).extractResponseLink())));
+                holder.download.setOnClickListener(view -> {
+                    try {
+                        generateNoteOnSD(Constant.REQUEST_FOLDER_NAME,
+                                items.get(position).getUserSsn() + " " + items.get(position).getTimestamp(),
+                                sharedDataNetwork.getIndividualRequestData(token, items.get(position).extractResponseLink()));
+                        showMessage(getString(R.string.download_file));
+                    } catch (ConnectionException e) {
+                        showMessage(getString(R.string.download_file_error));
+                    }
+                });
             }
         }
 
@@ -132,18 +142,18 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(requestItems);
+        customRecyclerView = new CustomRecyclerView(individualRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
-        IndividualRequestNetworkIInterface individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
+        individualrequestNetwork = IndividualRequestNetworkImp.getInstance();
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
-        String email = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
+        token = sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null);
 
         handler = new Handler();
-        checkNewRequest = new Runnable() {
+        checkNewRequest = new Thread() {
             @Override
             public void run() {
-                refreshList(individualrequestNetwork.getIndividualRequest(email));
+                refreshList();
                 handler.postDelayed(this, Settings.getRefreshItemTime());
             }
         };
@@ -163,11 +173,15 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
     /**
      * Refresh the recyclerView when it changes.
      */
-    private void refreshList(List<RequestItem> newItems) {
-        requestItems.clear();
-        requestItems.addAll(newItems);
+    private void refreshList() {
+        individualRequestWrappers.clear();
+        try {
+            individualRequestWrappers.addAll(individualrequestNetwork.getIndividualRequest(token));
+        } catch (ConnectionException e) {
+            if (this.isAdded())
+                showMessage(getString(R.string.connection_error));
+        }
         customRecyclerView.notifyDataSetChanged();
-        recyclerView.post(() -> recyclerView.smoothScrollToPosition(0));
     }
 
     @Override

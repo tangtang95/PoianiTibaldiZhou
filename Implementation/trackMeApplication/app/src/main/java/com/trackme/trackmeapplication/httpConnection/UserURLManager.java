@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.httpConnection;
 
+import android.util.Log;
+
 import com.jayway.jsonpath.JsonPath;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
@@ -42,6 +44,8 @@ public class UserURLManager {
     }
 
     public String getLogoutLink() {
+        if (map == null)
+            return createURLWithPort("/users/logout");
         return map.get(Constant.MAP_LOGOUT_KEY).get(Constant.MAP_HREF_KEY);
     }
 

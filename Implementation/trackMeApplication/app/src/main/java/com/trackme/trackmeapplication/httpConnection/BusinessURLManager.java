@@ -42,6 +42,8 @@ public class BusinessURLManager {
     }
 
     public String getLogoutLink() {
+        if (map == null)
+            return createURLWithPort("/thirdparties/logout");
         return map.get(Constant.MAP_LOGOUT_KEY).get(Constant.MAP_HREF_KEY);
     }
 

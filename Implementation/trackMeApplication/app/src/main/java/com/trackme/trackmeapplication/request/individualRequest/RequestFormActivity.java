@@ -12,13 +12,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
-import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
-import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -50,13 +48,15 @@ public class RequestFormActivity extends AppCompatActivity {
     private DatePickerDialog.OnDateSetListener onDateSetListenerStart;
     private DatePickerDialog.OnDateSetListener onDateSetListenerEnd;
 
-    private SharedPreferences sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+    private SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_form);
         ButterKnife.bind(this);
+
+        sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
 
         onDateSetListenerStart = (datePicker, year, month, day) -> {
             month++;
@@ -78,23 +78,20 @@ public class RequestFormActivity extends AppCompatActivity {
     @OnClick(R.id.imageViewSend)
     public void onSendButtonClick() {
         if (checkConstraintOnData()) {
-
-            AccountNetworkInterface accountNetwork = AccountNetworkImp.getInstance();
             IndividualRequestNetworkIInterface individualRequestNetwork = IndividualRequestNetworkImp.getInstance();
             try {
-                individualRequestNetwork.send(new RequestItem(
-                        ssn.getText().toString(),
-                        accountNetwork.getThirdParty(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null)).extractName(),
+                individualRequestNetwork.send(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY,null),
+                        new IndividualRequest(
                         startDate.getText().toString(),
                         endDate.getText().toString(),
                         motive.getText().toString()
-                ));
-            } catch (UserNotFoundException e) {
-                Toast.makeText(this, getString(R.string.impossible_to_find_user_detail), Toast.LENGTH_SHORT).show();
+                ), ssn.getText().toString());
+                finish();
             } catch (ConnectionException e) {
                 Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+            } catch (RequestNotWellFormedException e) {
+                Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
             }
-            finish();
         }
     }
 
@@ -157,7 +154,7 @@ public class RequestFormActivity extends AppCompatActivity {
             ssn.setError(getString(R.string.ssn_is_not_valid));
             return false;
         }
-        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("MM-dd-yyyy");
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         Date start;
         Date end;
         try {

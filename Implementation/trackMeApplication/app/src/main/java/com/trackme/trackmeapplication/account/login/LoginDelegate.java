@@ -67,7 +67,7 @@ public class LoginDelegate extends BaseActivityDelegate<LoginContract.LoginView,
                 try {
                     String token = network.thirdPartyLogin(mail, password);
                     SharedPreferences.Editor editor = sp.edit();
-                    editor.putString(Constant.SD_USER_TOKEN_KEY, token).apply();
+                    editor.putString(Constant.SD_BUSINESS_TOKEN_KEY, token).apply();
                     mPresenter.onLoginSuccess();
                 } catch (InvalidDataLoginException e) {
                     mPresenter.onLoginError();

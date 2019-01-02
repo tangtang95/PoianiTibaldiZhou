@@ -9,8 +9,9 @@ import android.graphics.Color;
  */
 public enum RequestStatus {
     PENDING(Color.YELLOW),
-    ACCEPT(Color.GREEN),
-    REFUSE(Color.RED);
+    ACCEPTED(Color.GREEN),
+    REFUSED(Color.RED),
+    UNDER_ANALYSIS(Color.BLUE);
 
     private int color;
 

@@ -2,7 +2,6 @@ package com.trackme.trackmeapplication.sharedData.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.JsonPathException;
 import com.trackme.trackmeapplication.home.userHome.HistoryItem;
 import com.trackme.trackmeapplication.httpConnection.BusinessURLManager;
 import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
@@ -29,17 +28,14 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
 
     private static SharedDataNetworkImp instance = null;
 
-    private HttpHeaders httpHeaders;
     private ObjectMapper mapper;
 
     private UserURLManager userUrlManager = null;
-    private BusinessURLManager businessURLManager = null;
 
     private final Object lock = new Object();
     private boolean isLock;
 
     private SharedDataNetworkImp() {
-        httpHeaders = new HttpHeaders();
         mapper = new ObjectMapper();
     }
 
@@ -53,6 +49,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     public User getUser(String token) throws UserNotFoundException, ConnectionException {
         synchronized (lock) {
             userUrlManager = UserURLManager.getInstance();
+            HttpHeaders httpHeaders = new HttpHeaders();
             isLock(true);
             httpHeaders.add("Authorization", "Bearer " + token);
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
@@ -83,7 +80,8 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     @Override
     public ThirdPartyInterface getThirdParty(String token) throws UserNotFoundException, ConnectionException {
         synchronized (lock) {
-            businessURLManager = BusinessURLManager.getInstance();
+            BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
+            HttpHeaders httpHeaders = new HttpHeaders();
             isLock(true);
             httpHeaders.add("Authorization", "Bearer " + token);
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
@@ -96,13 +94,13 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
-                        List<String> list;
-                        try {
-                            list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..privateThirdPartyDetail");
-                            return mapper.readValue(list.get(0), PrivateThirdPartyDetail.class);
-                        } catch (JsonPathException e) {
+                        List<LinkedHashMap<String,String>> list;
+                        list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..privateThirdPartyDetail");
+                        if (list.size() != 0)
+                            return mapper.readValue(mapper.writeValueAsString(list.get(0)), PrivateThirdPartyDetail.class);
+                        else{
                             list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$..companyDetail");
-                            return mapper.readValue(list.get(0), CompanyDetail.class);
+                            return mapper.readValue(mapper.writeValueAsString(list.get(0)), CompanyDetail.class);
                         }
                     case UNAUTHORIZED: throw new ConnectionException();
                     case NOT_FOUND: throw new UserNotFoundException();
@@ -119,19 +117,60 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     }
 
     @Override
-    public String getGroupRequestData(String requestID) {
-        return null;
+    public String getGroupRequestData(String token, String url) throws ConnectionException {
+        String accessDataLink = getAccessDataLink(url);
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(accessDataLink)
+                        .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
+                    throw new ConnectionException();
+                return connectionBuilder.getConnection().getResponse();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
     }
 
     @Override
-    public String getIndividualRequestData(String requestID) {
-        return null;
+    public String getIndividualRequestData(String token, String url) throws ConnectionException {
+        String accessDataLink = getAccessDataLink(url);
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(accessDataLink)
+                        .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
+                    throw new ConnectionException();
+                return connectionBuilder.getConnection().getResponse();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
     }
 
     @Override
     public List<HistoryItem> getUserData(String token, String startDate, String endDate) throws ConnectionException {
         synchronized (lock) {
             isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
@@ -145,21 +184,47 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 while (isLock)
                     lock.wait();
 
-                if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
-                    List<LinkedHashMap<String, String>> list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$.healthDataList");
-                    List<HistoryItem> historyItems = new ArrayList<>();
-                    for (int i = 0; i < list.size(); i++) {
-                        historyItems.add(mapper.readValue(
-                                mapper.writeValueAsString(list.get(i)),
-                                HistoryItem.class));
-                    }
-                    return historyItems;
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK:
+                        List<LinkedHashMap<String, String>> list = JsonPath.read(connectionBuilder.getConnection().getResponse(), "$.healthDataList");
+                        List<HistoryItem> historyItems = new ArrayList<>();
+                        for (int i = 0; i < list.size(); i++) {
+                            historyItems.add(mapper.readValue(
+                                    mapper.writeValueAsString(list.get(i)),
+                                    HistoryItem.class));
+                        }
+                        return historyItems;
+                    case NOT_FOUND: return new ArrayList<>();
+                    default: throw new ConnectionException();
                 }
-                throw new ConnectionException();
-
             } catch (InterruptedException | IOException e) {
                 e.printStackTrace();
                 return new ArrayList<>();
+            }
+        }
+    }
+
+    private String getAccessDataLink(String url) throws ConnectionException {
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(url)
+                        .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
+                    List<String> links = JsonPath.read(
+                            connectionBuilder.getConnection().getResponse(), "$..accessData.href");
+                    return links.get(0);
+                }
+                throw new ConnectionException();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                return null;
             }
         }
     }

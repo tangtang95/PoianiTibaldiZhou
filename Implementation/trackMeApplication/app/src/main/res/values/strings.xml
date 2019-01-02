@@ -46,8 +46,8 @@
     <string name="ssn_example_aaa_gg_ssss">AAA-GG-SSSS</string>
     <string name="date_example_mm_gg_yyyy">MM/GG/YYYY</string>
     <string name="request_form_motive">Motive</string>
-    <string name="request_form_end_date">End timestamp:</string>
-    <string name="request_form_start_date">Start timestamp:</string>
+    <string name="request_form_end_date">End Date:</string>
+    <string name="request_form_start_date">Start Date:</string>
     <string name="request_form_to">To:</string>
     <string name="notification_title">TrackMe Health Service</string>
     <string name="ticker_text">ticker_text</string>
@@ -56,7 +56,7 @@
     <string name="individual_request">INDIVIDUAL REQUEST</string>
     <string name="group_request">GROUP REQUEST</string>
     <string name="filter">Filter</string>
-    <string name="aggregator">Aggregator:</string>
+    <string name="aggregatorOperator">Aggregator:</string>
     <string name="type">type:</string>
     <string name="send_button">Send button</string>
     <string name="plus_button">Plus Button</string>
@@ -71,6 +71,19 @@
     <string name="value">Value</string>
     <string name="file_download_image_button">File download image button</string>
     <string name="accept_term_and_condition">Accept <u>Term and Condition</u></string>
+    <string name="notification_channel_id">notification_channel_id</string>
+    <string name="notification_channel_name">Service Notification Channel</string>
+    <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>
+    <string name="log_bluetooth_enabled">Bluetooth is enabled</string>
+    <string name="log_cannot_parse_date">Could not parse timestamp due to timestamp format</string>
+    <string name="make_call_error_invalid_data">Cannot make call due to invalid health data</string>
+    <string name="make_call_error_no_number">Cannot make call due to no number available</string>
+    <string name="make_call_error_no_permission">Cannot make call due to no permission (GPS)</string>
+    <string name="make_call_error_no_gps">Cannot make call due to no GPS available</string>
+    <string name="notification_text">Health service is running&#8320;</string>
+    <string name="b_o_l">B.O.L</string>
+    <string name="location">Location</string>
+    <string name="bluetooth">Bluetooth</string>
 
     <!-- Error message. -->
     <string name="user_login_error">Username and password do not match.</string>
@@ -87,24 +100,13 @@
     <string name="date_before_error">Hey! You have a temporal machine? The end timestamp is before te start timestamp!</string>
     <string name="terms_and_condition_error">"You must accept the Term and Condition of the software."</string>
     <string name="legal_note_show_error">"Impossible to show the legal note."</string>
-    <string name="date_format_error">Date format error</string>
-    <string name="impossible_to_find_user_detail">Impossible found user detail</string>
-    <string name="connection_error">"Connection error"</string>
+    <string name="date_format_error">Date format error.</string>
+    <string name="impossible_to_find_user_detail">Impossible found user detail.</string>
+    <string name="connection_error">"Connection error."</string>
+    <string name="request_not_well_formed">Request is not well formed.</string>
 
+    <!-- DB -->
     <string name="persistent_database_name">trackme-db</string>
-
-    <string name="notification_channel_id">notification_channel_id</string>
-    <string name="notification_channel_name">Service Notification Channel</string>
-    <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>
-    <string name="log_bluetooth_enabled">Bluetooth is enabled</string>
-    <string name="log_cannot_parse_date">Could not parse timestamp due to timestamp format</string>
-    <string name="make_call_error_invalid_data">Cannot make call due to invalid health data</string>
-    <string name="make_call_error_no_number">Cannot make call due to no number available</string>
-    <string name="make_call_error_no_permission">Cannot make call due to no permission (GPS)</string>
-    <string name="make_call_error_no_gps">Cannot make call due to no GPS available</string>
-    <string name="notification_text">Health service is running&#8320;</string>
-    <string name="b_o_l">B.O.L</string>
-    <string name="location">Location</string>
-    <string name="bluetooth">Bluetooth</string>
+    <string name="set_address">SET ADDRESS</string>
 
 </resources>

@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.account.network;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
@@ -36,12 +38,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
 
     private static AccountNetworkImp instance = null;
 
-    private HttpHeaders httpHeaders;
-
-    private UserURLManager userUrlManager = null;
-    private BusinessURLManager businessURLManager = null;
-
-
     private final Object lock = new Object();
     private boolean isLock;
 
@@ -50,7 +46,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
      * Constructor. (singleton)
      */
     private AccountNetworkImp() {
-        httpHeaders = new HttpHeaders();
     }
 
     public static AccountNetworkImp getInstance(){
@@ -63,7 +58,8 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public String userLogin(String username, String password) throws InvalidDataLoginException, ConnectionException {
         synchronized (lock) {
-            userUrlManager = UserURLManager.getInstance();
+            UserURLManager userUrlManager = UserURLManager.getInstance();
+            HttpHeaders httpHeaders = new HttpHeaders();
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             isLock(true);
             try {
@@ -95,7 +91,8 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public String thirdPartyLogin(String email, String password) throws InvalidDataLoginException, ConnectionException {
         synchronized (lock) {
-            businessURLManager = BusinessURLManager.getInstance();
+            HttpHeaders httpHeaders = new HttpHeaders();
+            BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             isLock(true);
             try {
@@ -129,11 +126,13 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
         synchronized (lock) {
             isLock(true);
             try {
+                HttpHeaders httpHeaders = new HttpHeaders();
+                UserURLManager userURLManager = UserURLManager.getInstance();
                 httpHeaders.add("Authorization", "Bearer " + token);
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
-                connectionBuilder.setUrl(userUrlManager.getLogoutLink()).setHttpMethod(HttpMethod.POST).setEntity(entity)
+                connectionBuilder.setUrl(userURLManager.getLogoutLink()).setHttpMethod(HttpMethod.POST).setEntity(entity)
                         .getConnection().start();
 
                 while (isLock)
@@ -156,6 +155,8 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
         synchronized (lock) {
             isLock(true);
             try {
+                HttpHeaders httpHeaders = new HttpHeaders();
+                BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
                 httpHeaders.add("Authorization", "Bearer " + token);
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
@@ -180,7 +181,8 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public void userSignUp(User user) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
-            userUrlManager = UserURLManager.getInstance();
+            HttpHeaders httpHeaders = new HttpHeaders();
+            UserURLManager userUrlManager = UserURLManager.getInstance();
             isLock(true);
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -209,9 +211,10 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
-            businessURLManager = BusinessURLManager.getInstance();
+            BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             isLock(true);
             try {
+                HttpHeaders httpHeaders = new HttpHeaders();
                 ThirdPartyPrivateWrapper thirdPartyPrivateWrapper = new ThirdPartyPrivateWrapper();
                 thirdPartyPrivateWrapper.setPrivateThirdPartyDetail(privateThirdPartyDetail);
                 thirdPartyPrivateWrapper.setThirdPartyCustomer(privateThirdPartyDetail.getThirdPartyCustomer());
@@ -239,9 +242,10 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
-            businessURLManager = BusinessURLManager.getInstance();
+            BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             isLock(true);
             try {
+                HttpHeaders httpHeaders = new HttpHeaders();
                 ThirdPartyCompanyWrapper thirdPartyCompanyWrapper = new ThirdPartyCompanyWrapper();
                 thirdPartyCompanyWrapper.setCompanyDetail(companyDetail);
                 thirdPartyCompanyWrapper.setThirdPartyCustomer(companyDetail.getThirdPartyCustomer());

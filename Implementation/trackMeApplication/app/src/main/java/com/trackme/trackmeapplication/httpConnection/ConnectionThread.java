@@ -59,12 +59,14 @@ public class ConnectionThread extends Thread {
 
     @Override
     public void run() {
+        InputStream in = null;
+        HttpsURLConnection urlConnection = null;
+        OutputStream out = null;
         try {
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection = (HttpsURLConnection) url.openConnection();
             urlConnection.setHostnameVerifier(hostnameVerifier);
             urlConnection.setSSLSocketFactory(sllContext.getSocketFactory());
             urlConnection.setDoInput(true);
-            InputStream in;
 
             if (entity.getHeaders().getAuthorization() != null)
                 urlConnection.setRequestProperty("Authorization",entity.getHeaders().getAuthorization());
@@ -77,7 +79,7 @@ public class ConnectionThread extends Thread {
                 case POST:
                     urlConnection.setDoOutput(true);
                     urlConnection.setRequestProperty("Content-type", "application/json");
-                    OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+                    out = new BufferedOutputStream(urlConnection.getOutputStream());
                     writeStream(out);
 
                     Log.d("STATUS:", String.valueOf(urlConnection.getResponseCode()));
@@ -103,6 +105,17 @@ public class ConnectionThread extends Thread {
         catch (IOException e) {
             e.printStackTrace();
             onPostExecute("", HttpStatus.INTERNAL_SERVER_ERROR);
+        } finally {
+            try {
+                if (in != null)
+                    in.close();
+                if (out != null)
+                    out.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (urlConnection != null)
+                urlConnection.disconnect();
         }
     }
 
