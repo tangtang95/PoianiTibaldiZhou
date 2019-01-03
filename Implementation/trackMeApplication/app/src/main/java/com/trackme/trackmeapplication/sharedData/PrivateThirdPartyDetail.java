@@ -5,9 +5,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Date;
 
+/**
+ * Private third party detail with all attribute of a private user.
+ *
+ * @author Mattia Tibaldi
+ * @see ThirdPartyInterface
+ * @see ThirdPartyCustomer
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PrivateThirdPartyDetail implements ThirdPartyInterface {
 
+    //attributes
     private ThirdPartyCustomer thirdPartyCustomer;
     private String ssn;
     private String name;
@@ -15,8 +23,21 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
     private Date birthDate;
     private String birthCity;
 
+    /**
+     * Constructor
+     */
     public PrivateThirdPartyDetail(){}
 
+    /**
+     * Constructor
+     *
+     * @param ssn third party ssn
+     * @param thirdPartyCustomer email and password
+     * @param firstName user name
+     * @param lastName user surname
+     * @param birthDate birth date
+     * @param birthCity birth city
+     */
     public PrivateThirdPartyDetail(String ssn, ThirdPartyCustomer thirdPartyCustomer, String firstName, String lastName, Date birthDate, String birthCity) {
         this.ssn = ssn;
         this.thirdPartyCustomer = thirdPartyCustomer;
@@ -27,6 +48,7 @@ public class PrivateThirdPartyDetail implements ThirdPartyInterface {
 
     }
 
+    //getter method
     @Override
     public String extractName() {
         return name + " " + surname;

@@ -24,6 +24,7 @@ public final class Constant {
     public static final String LOGIN_SHARED_DATA_NAME = "login_data";
     public static final String SD_BUSINESS_TOKEN_KEY = "business_token";
     public static final String SD_USER_TOKEN_KEY = "user_token";
+    public static final String SD_SERVER_ADDRESS_KEY = "server_address";
     public static final String SD_INDIVIDUAL_REQUEST_KEY = "individual_request_item";
     public static final String USER_LOGGED_BOOLEAN_VALUE_KEY = "user_logged";
     public static final String BUSINESS_LOGGED_BOOLEAN_VALUE_KEY = "business_logged";

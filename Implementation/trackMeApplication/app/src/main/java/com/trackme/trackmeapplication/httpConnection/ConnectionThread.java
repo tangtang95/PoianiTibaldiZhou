@@ -21,6 +21,11 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
+/**
+ * Connection thread is the main thread for the connection between client and server.
+ *
+ * @author Mattia Tibaldi
+ */
 public class ConnectionThread extends Thread {
 
     private URL url;
@@ -35,12 +40,24 @@ public class ConnectionThread extends Thread {
 
     private LockInterface lock;
 
+    /**
+     * Constructor
+     *
+     * @param sslContext ssl context with ssl config
+     * @param hostnameVerifier object to verify the server address.
+     * @param lockInterface interface for handling the synchronization
+     */
     ConnectionThread(SSLContext sslContext, HostnameVerifier hostnameVerifier, LockInterface lockInterface) {
         this.sllContext = sslContext;
         this.hostnameVerifier = hostnameVerifier;
         this.lock = lockInterface;
     }
 
+    /**
+     * Setter method.
+     *
+     * @param url to set.
+     */
     void setUrl(String url) {
         try {
             this.url = new URL(url);
@@ -49,10 +66,20 @@ public class ConnectionThread extends Thread {
         }
     }
 
+    /**
+     * Setter method.
+     *
+     * @param httpAction action to set.
+     */
     void setHttpAction(HttpMethod httpAction) {
         this.httpAction = httpAction;
     }
 
+    /**
+     * Setter method
+     *
+     * @param entity to set.
+     */
     void setEntity(HttpEntity entity) {
         this.entity = entity;
     }
@@ -119,6 +146,12 @@ public class ConnectionThread extends Thread {
         }
     }
 
+    /**
+     * Execute on the finishing of the run method. It set the result of the connection
+     *
+     * @param body response body
+     * @param status response status code
+     */
     private void onPostExecute(String body, HttpStatus status) {
         synchronized (lock.getLock()) {
             this.stringReturned = body;
@@ -128,6 +161,12 @@ public class ConnectionThread extends Thread {
         }
     }
 
+    /**
+     * Util for writing on the out stream
+     *
+     * @param out output stream
+     * @throws IOException error event
+     */
     private void writeStream(OutputStream out) throws IOException {
         if (entity.getBody() != null) {
             out.write(entity.getBody().toString().getBytes());
@@ -137,6 +176,13 @@ public class ConnectionThread extends Thread {
         out.flush();
     }
 
+    /**
+     * Util for reading from input stream
+     *
+     * @param in input stream
+     * @return a string with the content of the input stream
+     * @throws IOException error event
+     */
     private String readStream(InputStream in) throws IOException {
         BufferedReader r = new BufferedReader(new InputStreamReader(in));
         StringBuilder message = new StringBuilder();
@@ -148,10 +194,20 @@ public class ConnectionThread extends Thread {
         return message.toString();
     }
 
+    /**
+     * Getter method
+     *
+     * @return the response body
+     */
     public String getResponse() {
         return stringReturned;
     }
 
+    /**
+     * Getter method
+     *
+     * @return the response status.
+     */
     public HttpStatus getStatusReturned() {
         return statusReturned;
     }

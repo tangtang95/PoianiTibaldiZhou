@@ -1,13 +1,17 @@
 package com.trackme.trackmeapplication.httpConnection;
 
-import android.util.Log;
-
 import com.jayway.jsonpath.JsonPath;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Static context that allows to manage the url received from the server for all the possible
+ * action that the user can perform.
+ *
+ * @author Mattia Tibaldi
+ */
 public class UserURLManager {
 
     private static UserURLManager instance;
@@ -17,11 +21,17 @@ public class UserURLManager {
 
     private Map<String,Map<String, String>> map = null;
 
+    /**
+     * Private constructor
+     */
     private UserURLManager(){
         this.IPAddress = Settings.getServerAddress();
         this.accountPort = Settings.getServerPort();
     }
 
+    /**
+     * @return the current instance if exist otherwise it instantiates new one
+     */
     public static UserURLManager getInstance(){
         if (instance == null)
             instance = new UserURLManager();
@@ -37,38 +47,78 @@ public class UserURLManager {
         return "https://"+ IPAddress + ":" + accountPort + uri;
     }
 
+    /**
+     * Save the url revived in a Map
+     *
+     * @param urls list of urls
+     */
     public void setUrls(List<String> urls) {
         //Log.d("URLS", urls.toString());
         List<Map<String, Map<String, String>>> mapList =  JsonPath.read(urls.toString(), "$");
         map = mapList.get(0);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the logout link.
+     */
     public String getLogoutLink() {
         if (map == null)
             return createURLWithPort("/users/logout");
         return map.get(Constant.MAP_LOGOUT_KEY).get(Constant.MAP_HREF_KEY);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the info link.
+     */
     public String getUserInfoLink() {
         return map.get(Constant.MAP_USER_INFO_KEY).get(Constant.MAP_HREF_KEY);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the pending request link.
+     */
     public String getPendingRequestsLink() {
         return map.get(Constant.MAP_PENDING_REQUEST_KEY).get(Constant.MAP_HREF_KEY);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the post heath data link.
+     */
     public String getPostHealthDataLink() {
         return map.get(Constant.MAP_POST_HEALTH_DATA_KEY).get(Constant.MAP_HREF_KEY);
     }
 
-    public String getPostPositioinDataLink() {
+    /**
+     * Getter method.
+     *
+     * @return the post position data link.
+     */
+    public String getPostPositionDataLink() {
         return map.get(Constant.MAP_POST_POSITION_DATA_KEY).get(Constant.MAP_HREF_KEY);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the post cluster data link.
+     */
     public String getPostClusterDataLink() {
         return map.get(Constant.MAP_CLUSTER_DATA_KEY).get(Constant.MAP_HREF_KEY);
     }
 
+    /**
+     * Getter method.
+     *
+     * @return the own data link.
+     */
     public String getGetOwnDataLink() {
         return map.get(Constant.MAP_OWN_DATA_KEY).get(Constant.MAP_HREF_KEY);
     }

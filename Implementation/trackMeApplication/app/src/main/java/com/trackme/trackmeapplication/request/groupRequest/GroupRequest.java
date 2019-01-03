@@ -2,6 +2,11 @@ package com.trackme.trackmeapplication.request.groupRequest;
 
 import java.io.Serializable;
 
+/**
+ * Group request object.
+ *
+ * @author Mattia Tibaldi
+ */
 public class GroupRequest implements Serializable {
 
     /*private attributes*/
@@ -21,6 +26,7 @@ public class GroupRequest implements Serializable {
         this.aggregatorOperator = aggregatorOperator;
     }
 
+    //getter methods
     public String getAggregatorOperator() {
         return aggregatorOperator;
     }

@@ -9,6 +9,7 @@ import com.trackme.trackmeapplication.httpConnection.LockInterface;
 import com.trackme.trackmeapplication.httpConnection.UserURLManager;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
+import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequest;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequestWrapper;
 
@@ -22,6 +23,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * Implement the individual request interface
+ *
+ * @author Mattia Tibaldi
+ * @see IndividualRequestNetworkIInterface
+ * @see LockInterface
+ */
 public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInterface, LockInterface {
 
     private static IndividualRequestNetworkImp instance = null;
@@ -31,6 +39,9 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     private final Object lock = new Object();
     private boolean isLock;
 
+    /**
+     * Private constructor
+     */
     private IndividualRequestNetworkImp() {
         mapper = new ObjectMapper();
     }
@@ -194,7 +205,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     }
 
     @Override
-    public void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException {
+    public void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException {
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -212,6 +223,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
                     case CREATED: break;
+                    case UNAUTHORIZED: throw new ThirdPartyBlockedException();
                     case BAD_REQUEST: throw new RequestNotWellFormedException();
                     default: throw new ConnectionException();
                 }
@@ -221,6 +233,13 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
         }
     }
 
+    /**
+     * Get the link to response a request from the server
+     *
+     * @param url url to call for having the link
+     * @return the response link
+     * @throws ConnectionException throw when the connection offline
+     */
     private String getResponseLink(String url) throws ConnectionException {
         synchronized (lock) {
             isLock(true);

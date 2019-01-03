@@ -2,6 +2,8 @@ package com.trackme.trackmeapplication.request.groupRequest;
 
 /**
  * Type of object that can be requested from a group request
+ *
+ * @author Mattia Tibaldi
  */
 public enum RequestType {
     ALL,

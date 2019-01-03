@@ -14,13 +14,21 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
+/**
+ * Static context where it is possible load the ssl configuration and the keystore.
+ *
+ * @author Mattia Tibaldi
+ */
 public class SSL {
 
     private static SSL instance = null;
 
-    private SSLContext sllContext;
+    private SSLContext sslContext;
     private HostnameVerifier hostnameVerifier;
 
+    /**
+     * Private constructor.
+     */
     private SSL(){}
 
     public static SSL getInstance(){
@@ -29,7 +37,12 @@ public class SSL {
         return instance;
     }
 
-    public void setUpSLLConnection(InputStream keyStoreIn) {
+    /**
+     * Set up the ssl context and load the keystore
+     *
+     * @param keyStoreIn keystore in the raw folder.
+     */
+    public void setUpSSLConnection(InputStream keyStoreIn) {
         KeyStore keyStore;
         try {
             keyStore = KeyStore.getInstance(Constant.KEY_STORE_TYPE);
@@ -40,8 +53,8 @@ public class SSL {
             tmf.init(keyStore);
 
             // Create an SSLContext that uses our TrustManager
-            sllContext = SSLContext.getInstance("TLS");
-            sllContext.init(null, tmf.getTrustManagers(), null);
+            sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
 
             hostnameVerifier = (hostname, session) -> hostname.equals(Settings.getServerAddress());
 
@@ -51,10 +64,20 @@ public class SSL {
         }
     }
 
-    SSLContext getSllContext() {
-        return sllContext;
+    /**
+     * Getter method
+     *
+     * @return the ssl context
+     */
+    SSLContext getSslContext() {
+        return sslContext;
     }
 
+    /**
+     * Getter method
+     *
+     * @return the host name verifier
+     */
     HostnameVerifier getHostnameVerifier() {
         return hostnameVerifier;
     }

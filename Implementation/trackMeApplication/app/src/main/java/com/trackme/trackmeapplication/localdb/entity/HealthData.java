@@ -4,7 +4,9 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Comparator;
 
 @Entity(tableName = "health-data")
 public class HealthData {
@@ -106,5 +108,12 @@ public class HealthData {
                 ", pressureMax=" + pressureMax +
                 ", bloodOxygenLevel=" + bloodOxygenLevel +
                 '}';
+    }
+
+    public static class CustomComparator implements Comparator<HealthData> {
+        @Override
+        public int compare(HealthData o1, HealthData o2) {
+            return o1.getTimestamp().compareTo(o2.getTimestamp());
+        }
     }
 }

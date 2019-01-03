@@ -5,9 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * User object
+ *
+ * @author Mattia Tibaldi
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User implements Serializable {
 
+    //attributes
     private String username;
     private String firstName;
     private String lastName;
@@ -18,8 +24,23 @@ public class User implements Serializable {
     private String ssn;
     private String password;
 
+    /**
+     * Constructor for the object mapper
+     */
     public User(){}
 
+    /**
+     * Constructor
+     *
+     * @param ssn user ssn
+     * @param username username
+     * @param password password
+     * @param firstName name of the user
+     * @param lastName surname of the user
+     * @param birthDate birth date
+     * @param birthCity birth city
+     * @param birthNation birth nation
+     */
     public User(String ssn, String username, String password, String firstName, String lastName, Date birthDate, String birthCity, String birthNation) {
         this.ssn = ssn;
         this.username = username;
@@ -32,6 +53,7 @@ public class User implements Serializable {
 
     }
 
+    //getter methods
     public String getUsername() { return username; }
 
     public String extractName() {

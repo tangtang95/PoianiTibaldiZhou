@@ -17,6 +17,12 @@ import com.trackme.trackmeapplication.httpConnection.Settings;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
+
+/**
+ * Address server popUp is a popUp that allows user to insert address ip of server
+ *
+ * @author Mattia Tibaldi
+ */
 public class AddressServerPopUp {
 
 

@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.trackme.trackmeapplication.R;
 
+/**
+ * User profile view, not implemented for this project.
+ */
 public class UserProfileActivity extends AppCompatActivity {
 
     @Override

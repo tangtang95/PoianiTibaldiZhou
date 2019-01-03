@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
@@ -21,6 +20,7 @@ import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
 import com.trackme.trackmeapplication.httpConnection.SSL;
+import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 
 import java.util.ArrayList;
@@ -92,6 +92,7 @@ public class UserLoginActivity extends LoginActivity {
 
         isRegister = false;
         sp = getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);
+        Settings.setServerAddress(sp.getString(Constant.SD_SERVER_ADDRESS_KEY, "127.0.0.1"));
 
         //Fake status for debug
         //sp.edit().putBoolean(Constant.BUSINESS_LOGGED_BOOLEAN_VALUE_KEY, true).apply();
@@ -102,7 +103,7 @@ public class UserLoginActivity extends LoginActivity {
 
         //load the keystore
         SSL ssl = SSL.getInstance();
-        ssl.setUpSLLConnection(getResources().openRawResource(
+        ssl.setUpSSLConnection(getResources().openRawResource(
                 getResources().getIdentifier("keystore",
                         "raw", getPackageName())));
 
@@ -210,6 +211,7 @@ public class UserLoginActivity extends LoginActivity {
     @OnClick(R.id.imageView)
     public void onLogoCLick(){
         AddressServerPopUp.showTermPopUp(this);
+        sp.edit().putString(Constant.SD_SERVER_ADDRESS_KEY, Settings.getServerAddress()).apply();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.sharedData.network;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.trackme.trackmeapplication.home.userHome.HistoryItem;
@@ -8,7 +9,10 @@ import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
 import com.trackme.trackmeapplication.httpConnection.LockInterface;
 import com.trackme.trackmeapplication.httpConnection.UserURLManager;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.sharedData.ClusterDataWrapper;
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
+import com.trackme.trackmeapplication.sharedData.HealthDataWrapper;
+import com.trackme.trackmeapplication.sharedData.PositionDataWrapper;
 import com.trackme.trackmeapplication.sharedData.PrivateThirdPartyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyInterface;
 import com.trackme.trackmeapplication.sharedData.User;
@@ -24,6 +28,13 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * class that implement the share data interface.
+ *
+ * @author Mattia Tibaldi
+ * @see SharedDataNetworkInterface
+ * @see LockInterface
+ */
 public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInterface {
 
     private static SharedDataNetworkImp instance = null;
@@ -35,6 +46,9 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     private final Object lock = new Object();
     private boolean isLock;
 
+    /**
+     * Private constructor
+     */
     private SharedDataNetworkImp() {
         mapper = new ObjectMapper();
     }
@@ -204,6 +218,94 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
         }
     }
 
+    @Override
+    public void sendHealthData(String token, HealthDataWrapper healthData) throws ConnectionException {
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                UserURLManager userURLManager = UserURLManager.getInstance();
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(healthData), httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(userURLManager.getPostHealthDataLink())
+                        .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK: break;
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void sendPositionData(String token, PositionDataWrapper positionData) throws ConnectionException {
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                UserURLManager userURLManager = UserURLManager.getInstance();
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(positionData), httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(userURLManager.getPostPositionDataLink())
+                        .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK: break;
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void sendClusterData(String token, ClusterDataWrapper clusterData) throws ConnectionException {
+        synchronized (lock) {
+            isLock(true);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            try {
+                ObjectMapper mapper = new ObjectMapper();
+                UserURLManager userURLManager = UserURLManager.getInstance();
+                httpHeaders.add("Authorization", "Bearer " + token);
+                HttpEntity<String> entity = new HttpEntity<>(mapper.writeValueAsString(clusterData), httpHeaders);
+
+                ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
+                connectionBuilder.setUrl(userURLManager.getPostClusterDataLink())
+                        .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
+                while (isLock)
+                    lock.wait();
+                switch (connectionBuilder.getConnection().getStatusReturned()){
+                    case OK: break;
+                    case CREATED: break;
+                    default: throw new ConnectionException();
+                }
+            } catch (InterruptedException | JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Get the access data link form the url specified
+     *
+     * @param url where get the access data link
+     * @return the access data link
+     * @throws ConnectionException throw when an error event in the connection is performed
+     */
     private String getAccessDataLink(String url) throws ConnectionException {
         synchronized (lock) {
             isLock(true);

@@ -20,6 +20,9 @@ public interface HealthDataDao {
     @Query("DELETE FROM `health-data`")
     void deleteAll();
 
+    @Query("DELETE FROM `health-data` WHERE id = :elemID")
+    void deleteById(int elemID);
+
     @Query("SELECT * FROM `health-data` ORDER BY timestamp DESC LIMIT 1")
     HealthData getLast();
 }

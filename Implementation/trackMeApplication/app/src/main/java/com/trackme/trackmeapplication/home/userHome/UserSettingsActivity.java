@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.trackme.trackmeapplication.R;
 
+/**
+ * User setting view,it is not implemented for this project.
+ */
 public class UserSettingsActivity extends AppCompatActivity {
 
     @Override

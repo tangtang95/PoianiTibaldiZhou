@@ -15,6 +15,7 @@ import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
+import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 
@@ -91,6 +92,8 @@ public class RequestFormActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
             } catch (RequestNotWellFormedException e) {
                 Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
+            } catch (ThirdPartyBlockedException e) {
+                Toast.makeText(this, getString(R.string.third_party_is_block), Toast.LENGTH_SHORT).show();
             }
         }
     }

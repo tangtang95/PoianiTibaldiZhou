@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.sql.Timestamp;
+import java.util.Comparator;
 
 @Entity(tableName = "position-data")
 public class PositionData {
@@ -54,5 +55,12 @@ public class PositionData {
 
     public void setLongitude(@NonNull Double longitude) {
         this.longitude = longitude;
+    }
+
+    public static class CustomComparator implements Comparator<PositionData> {
+        @Override
+        public int compare(PositionData o1, PositionData o2) {
+            return o1.getTimestamp().compareTo(o2.getTimestamp());
+        }
     }
 }

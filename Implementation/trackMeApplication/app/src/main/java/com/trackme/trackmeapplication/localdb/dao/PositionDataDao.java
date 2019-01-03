@@ -17,6 +17,9 @@ public interface PositionDataDao {
     @Insert
     void insert(PositionData positionData);
 
+    @Query("DELETE FROM `position-data` WHERE id = :elemID")
+    void deleteById(int elemID);
+
     @Query("DELETE FROM `position-data`")
     void deleteAll();
 

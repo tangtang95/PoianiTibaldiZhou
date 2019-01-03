@@ -5,9 +5,15 @@ import com.trackme.trackmeapplication.request.RequestStatus;
 
 import java.io.Serializable;
 
+/**
+ * Individual request wrapper for parsing the response message
+ *
+ * @author Mattia Tibaldi
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IndividualRequestWrapper implements Serializable {
 
+    //attributes
     private String userSsn;
     private String status;
     private String timestamp;
@@ -18,12 +24,21 @@ public class IndividualRequestWrapper implements Serializable {
 
     private String responseLink;
 
+    /**
+     * Constructor
+     */
     public IndividualRequestWrapper(){}
 
+    /**
+     * Setter method.
+     *
+     * @param responseLink response link to set
+     */
     public void setResponseLink(String responseLink) {
         this.responseLink = responseLink;
     }
 
+    //getter methods
     public RequestStatus getStatus() {
         return RequestStatus.valueOf(status);
     }

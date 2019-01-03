@@ -12,6 +12,7 @@ import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException
 
 /**
  * Network interface with the methods to communicate with the Account service on the server side.
+ * (Controller)
  *
  * @author Mattia Tibaldi
  */

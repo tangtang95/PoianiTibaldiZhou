@@ -7,15 +7,29 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+/**
+ * Build a group request with all the filter add by the user
+ *
+ * @author Mattia Tibaldi
+ */
 public class GroupRequestBuilder implements Serializable {
 
+    //attributes
     private GroupRequest groupRequest;
     private List<LinkedHashMap<String, String>> filterStatementList;
 
-    public GroupRequestBuilder(){
+    /**
+     * Constructor
+     */
+    GroupRequestBuilder(){
         filterStatementList = new ArrayList<>();
     }
 
+    /**
+     * Add new filter to the builder
+     *
+     * @param filters new filter to add
+     */
     void addNewFilter(String[] filters){
         LinkedHashMap<String, String> item = new LinkedHashMap<>();
         for (String filter : filters) {
@@ -27,10 +41,16 @@ public class GroupRequestBuilder implements Serializable {
         }
     }
 
+    /**
+     * Setter method.
+     *
+     * @param groupRequest new group request
+     */
     public void setGroupRequest(GroupRequest groupRequest) {
         this.groupRequest = groupRequest;
     }
 
+    //getter methods
     public GroupRequest getGroupRequest() {
         return groupRequest;
     }

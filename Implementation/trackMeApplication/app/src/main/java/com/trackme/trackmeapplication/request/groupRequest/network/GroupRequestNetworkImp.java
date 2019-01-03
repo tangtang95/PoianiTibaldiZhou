@@ -8,6 +8,7 @@ import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
 import com.trackme.trackmeapplication.httpConnection.LockInterface;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
+import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.groupRequest.AggregatorOperator;
 import com.trackme.trackmeapplication.request.groupRequest.ComparisonSymbol;
 import com.trackme.trackmeapplication.request.groupRequest.FieldType;
@@ -26,6 +27,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Implement the group request interface
+ *
+ * @author Mattia Tibaldi
+ * @see GroupRequestNetworkInterface
+ * @see LockInterface
+ */
 public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, LockInterface {
 
     private static GroupRequestNetworkImp instance = null;
@@ -33,6 +41,9 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     private final Object lock = new Object();
     private boolean isLock;
 
+    /**
+     * Private constructor.
+     */
     private GroupRequestNetworkImp() {
 
     }
@@ -113,7 +124,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     }
 
     @Override
-    public void send(String token, GroupRequestBuilder groupRequestBuilder) throws RequestNotWellFormedException, ConnectionException {
+    public void send(String token, GroupRequestBuilder groupRequestBuilder) throws RequestNotWellFormedException, ConnectionException, ThirdPartyBlockedException {
         synchronized (lock) {
             isLock(true);
             try {
@@ -131,6 +142,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
                     case CREATED: break;
+                    case UNAUTHORIZED: throw new ThirdPartyBlockedException();
                     case BAD_REQUEST: throw new RequestNotWellFormedException();
                     default: throw new ConnectionException();
                 }

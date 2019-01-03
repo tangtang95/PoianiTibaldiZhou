@@ -1,12 +1,16 @@
 package com.trackme.trackmeapplication.home.userHome;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.exception.UserAlreadyLogoutException;
@@ -14,13 +18,23 @@ import com.trackme.trackmeapplication.account.login.UserLoginActivity;
 import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.account.register.UserProfileActivity;
-import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
-import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
+import com.trackme.trackmeapplication.localdb.entity.PositionData;
+import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.service.position.LocationService;
-import com.trackme.trackmeapplication.sharedData.User;
-import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
+import com.trackme.trackmeapplication.sharedData.ClusterDataWrapper;
+import com.trackme.trackmeapplication.sharedData.HealthDataWrapper;
+import com.trackme.trackmeapplication.sharedData.PositionDataWrapper;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
+import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
+
+import java.lang.ref.WeakReference;
+import java.util.List;
 
 import butterknife.BindView;
 
@@ -41,6 +55,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     private SharedPreferences sp;
     private String token;
+    private Handler handler;
+    private Thread pushData;
 
     @NonNull
     @Override
@@ -60,6 +76,17 @@ public class UserHomeActivity extends BaseDelegationActivity<
         super.onCreate(savedInstanceState);
 
         mDelegate.configureToolbar();
+
+        handler = new Handler();
+        pushData = new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                new PushDataAsyncTask(getActivity()).execute();
+                handler.postDelayed(this, Settings.getPushDataTime());
+            }
+        };
+        handler.post(pushData);
     }
 
     @Override
@@ -151,4 +178,150 @@ public class UserHomeActivity extends BaseDelegationActivity<
         return token;
     }
 
+    @Override
+    public void onDestroy() {
+        handler.removeCallbacks(pushData);
+        super.onDestroy();
+    }
+
+
+    /**
+     * asyncTask for sending data to the server.
+     *
+     * @author Mattia Tibaldi
+     */
+    private static class PushDataAsyncTask extends AsyncTask<String, Void, String> {
+
+        private WeakReference<UserHomeActivity> weakReference;
+        private String token;
+
+        PushDataAsyncTask(UserHomeActivity context) {
+            this.weakReference = new WeakReference<>(context);
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            UserHomeActivity userHomeActivity = weakReference.get();
+            SharedDataNetworkInterface sharedDataNetwork = SharedDataNetworkImp.getInstance();
+            String message = null;
+
+            if (userHomeActivity == null)
+                return "Error in load database";
+            AppDatabase appDatabase = Room.databaseBuilder(userHomeActivity,
+                    AppDatabase.class, userHomeActivity.getString(R.string.persistent_database_name)).build();
+
+            token = userHomeActivity.getToken();
+            List<HealthData> healthDataList = appDatabase.getHealthDataDao().getAll();
+            List<PositionData> positionDataList = appDatabase.getPositionDataDao().getAll();
+            healthDataList.sort(new HealthData.CustomComparator());
+            positionDataList.sort(new PositionData.CustomComparator());
+
+            if (!healthDataList.isEmpty()) {
+                if (!positionDataList.isEmpty()){
+                    int i = 0;
+                    int j = 0;
+                    boolean isAlive = true;
+                    ClusterDataWrapper clusterData = new ClusterDataWrapper();
+
+                    while (isAlive){
+                        HealthData hd = healthDataList.get(i);
+                        PositionData pd = positionDataList.get(j);
+                        if (hd.getTimestamp().equals(pd.getTimestamp())){
+                            clusterData.addNewClusterData(hd, pd);
+                            i++;
+                            j++;
+                        } else if (hd.getTimestamp().before(pd.getTimestamp())){
+                            HealthDataWrapper healthData = new HealthDataWrapper();
+                            healthData.setTimestamp(hd.getTimestamp().toString());
+                            healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
+                            healthData.setHeartBeat(hd.getHeartbeat().toString());
+                            healthData.setPressureMax(hd.getPressureMax().toString());
+                            healthData.setPressureMin(hd.getPressureMin().toString());
+
+                            try {
+                                sharedDataNetwork.sendHealthData(token, healthData);
+                                appDatabase.getHealthDataDao().deleteById(hd.getId());
+                                i++;
+                            } catch (ConnectionException e) {
+                                message = userHomeActivity.getString(R.string.connection_error);
+                                i++;
+                            }
+                        } else {
+                            PositionDataWrapper positionData = new PositionDataWrapper();
+                            positionData.setLatitude(pd.getLatitude().toString());
+                            positionData.setLongitude(pd.getLongitude().toString());
+                            positionData.setTimestamp(pd.getTimestamp().toString());
+
+                            try {
+                                sharedDataNetwork.sendPositionData(token, positionData);
+                                appDatabase.getPositionDataDao().deleteById(pd.getId());
+                                j++;
+                            } catch (ConnectionException e) {
+                                message = userHomeActivity.getString(R.string.connection_error);
+                                j++;
+                            }
+                        }
+
+                        if (i == healthDataList.size() && j == positionDataList.size())
+                            isAlive = false;
+                    }
+
+                    if (!clusterData.extractHealthIDList().isEmpty()){
+                        try {
+                            sharedDataNetwork.sendClusterData(token, clusterData);
+                            for (int k = 0; k < clusterData.extractHealthIDList().size(); k++) {
+                                appDatabase.getHealthDataDao().deleteById(clusterData.extractHealthIDList().get(k));
+                                appDatabase.getPositionDataDao().deleteById(clusterData.extractPositionIDList().get(k));
+                            }
+                        } catch (ConnectionException e) {
+                            message = userHomeActivity.getString(R.string.connection_error);
+                        }
+                    }
+                } else {
+                    for (int i = 0; i < healthDataList.size(); i++) {
+                        HealthData hd = healthDataList.get(i);
+
+                        HealthDataWrapper healthData = new HealthDataWrapper();
+                        healthData.setTimestamp(hd.getTimestamp().toString());
+                        healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
+                        healthData.setHeartBeat(hd.getHeartbeat().toString());
+                        healthData.setPressureMax(hd.getPressureMax().toString());
+                        healthData.setPressureMin(hd.getPressureMin().toString());
+
+                        try {
+                            sharedDataNetwork.sendHealthData(token, healthData);
+                            appDatabase.getHealthDataDao().deleteById(hd.getId());
+                        } catch (ConnectionException e) {
+                            message = userHomeActivity.getString(R.string.connection_error);
+                        }
+                    }
+                }
+            } if (!positionDataList.isEmpty()){
+                for (int i = 0; i < positionDataList.size(); i++) {
+                    PositionData pd = positionDataList.get(i);
+
+                    PositionDataWrapper positionData = new PositionDataWrapper();
+                    positionData.setLatitude(pd.getLatitude().toString());
+                    positionData.setLongitude(pd.getLongitude().toString());
+                    positionData.setTimestamp(pd.getTimestamp().toString());
+
+                    try {
+                        sharedDataNetwork.sendPositionData(token, positionData);
+                        appDatabase.getPositionDataDao().deleteById(pd.getId());
+                    } catch (ConnectionException e) {
+                        message = userHomeActivity.getString(R.string.connection_error);
+                    }
+                }
+            }
+
+            return message;
+        }
+
+        @Override
+        protected void onPostExecute(String message) {
+            UserHomeActivity userHomeActivity = weakReference.get();
+            if (message != null && userHomeActivity != null)
+                Toast.makeText(userHomeActivity, message, Toast.LENGTH_SHORT).show();
+        }
+    }
 }

@@ -21,7 +21,9 @@ public class GroupRequestWrapper implements Serializable {
 
     private String selfLink;
 
-
+    /**
+     * Constructor
+     */
     public GroupRequestWrapper(){}
 
     public void setSelfLink(String selfLink) {
@@ -29,7 +31,6 @@ public class GroupRequestWrapper implements Serializable {
     }
 
     /*Getter method*/
-
     public String getCreationTimestamp() {
         return creationTimestamp.substring(0,10);
     }
