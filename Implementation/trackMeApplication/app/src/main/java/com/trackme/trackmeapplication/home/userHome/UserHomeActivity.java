@@ -22,6 +22,7 @@ import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 import com.trackme.trackmeapplication.service.health.HealthService;
@@ -204,8 +205,8 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
             if (userHomeActivity == null)
                 return "Error in load database";
-            AppDatabase appDatabase = Room.databaseBuilder(userHomeActivity,
-                    AppDatabase.class, userHomeActivity.getString(R.string.persistent_database_name)).build();
+            AppDatabase appDatabase = DatabaseManager.getInstance(userHomeActivity.getApplicationContext());
+
 
             token = userHomeActivity.getToken();
             appDatabase.beginTransaction();

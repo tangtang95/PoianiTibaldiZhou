@@ -71,8 +71,11 @@
     <string name="value">Value</string>
     <string name="file_download_image_button">File download image button</string>
     <string name="accept_term_and_condition">Accept <u>Term and Condition</u></string>
-    <string name="notification_channel_id">notification_channel_id</string>
-    <string name="notification_channel_name">Service Notification Channel</string>
+    <string name="health_channel_id">1338</string>
+    <string name="health_channel_name">Service Notification Channel</string>
+    <string name="location_notification_text">Location service is running…</string>
+    <string name="location_channel_id">1339</string>
+    <string name="location_channel_name">Location service channel</string>
     <string name="log_debug_bluetooth_existing">Bluetooth adapter existing</string>
     <string name="log_bluetooth_enabled">Bluetooth is enabled</string>
     <string name="log_cannot_parse_date">Could not parse timestamp due to timestamp format</string>
@@ -92,6 +95,8 @@
     <string name="foreground_start_toast_message">Foreground service is started.</string>
     <string name="geonames_org_url"><![CDATA[http://api.geonames.org/countryCode?lat=%s&lng=%s&username=%s]]></string>
     <string name="cannot_find_json_error">IO Exception, impossible to find the json file</string>
+    <string name="creation_date">Creation Date</string>
+    <string name="request_type">Request type</string>
 
 
     <!-- Error message. -->
@@ -119,6 +124,6 @@
 
     <!-- DB -->
     <string name="persistent_database_name">trackme-db</string>
-    <string name="creation_date">Creation Date</string>
-    <string name="request_type">Request type</string>
+
+
 </resources>

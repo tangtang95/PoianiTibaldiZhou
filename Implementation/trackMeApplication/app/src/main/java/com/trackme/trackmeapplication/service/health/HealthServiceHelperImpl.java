@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
@@ -56,28 +57,20 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
 
     @Override
     public void saveHealthData(HealthData healthData) {
+        Log.d(service.getString(R.string.debug_tag), healthData.toString());
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            appDatabase.beginTransaction();
-            appDatabase.getHealthDataDao().insert(healthData);
-            appDatabase.endTransaction();
-        });
+        executor.execute(() -> appDatabase.getHealthDataDao().insert(healthData));
     }
 
     @Override
     public boolean hasRecentEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Long> numberRecentCallFuture = executor.submit(()-> {
-            appDatabase.beginTransaction();
-            Long result = appDatabase.getEmergencyCallDao().getNumberOfRecentCalls();
-            appDatabase.endTransaction();
-            return result;
-        });
+        Future<Long> numberRecentCallFuture = executor.submit(()-> appDatabase.getEmergencyCallDao().getNumberOfRecentCalls());
         return numberRecentCallFuture.get(1, TimeUnit.SECONDS) > 0;
     }
 
     @Override
-    public boolean makeEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException, EmergencyNumberNotFoundException {
+    public boolean makeEmergencyCall() throws InterruptedException, TimeoutException, NoPermissionException, EmergencyNumberNotFoundException {
         if (ActivityCompat.checkSelfPermission(service.getApplicationContext(), Manifest.permission.CALL_PHONE)
                 != PackageManager.PERMISSION_GRANTED) {
             throw new NoPermissionException();
@@ -101,16 +94,12 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
         emergencyCall.setTimestamp(new Timestamp(calendar.getTime().getTime()));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> {
-            appDatabase.beginTransaction();
-            appDatabase.getEmergencyCallDao().insert(emergencyCall);
-            appDatabase.endTransaction();
-        });
+        executor.execute(() -> appDatabase.getEmergencyCallDao().insert(emergencyCall));
         executor.awaitTermination(1, TimeUnit.SECONDS);
         return true;
     }
 
-    private String getCurrentCountryCode() throws InterruptedException, ExecutionException, TimeoutException, NoPermissionException {
+    private String getCurrentCountryCode() throws TimeoutException, NoPermissionException {
         return service.getCountryCode(service.getUserLocation());
     }
 }

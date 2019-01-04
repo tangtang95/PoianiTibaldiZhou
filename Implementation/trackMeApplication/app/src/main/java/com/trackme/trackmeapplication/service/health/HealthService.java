@@ -16,6 +16,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
@@ -26,13 +27,11 @@ import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.Tasks;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.ReadContext;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.service.bluetooth.BluetoothServer;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
@@ -52,8 +51,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class HealthService extends Service {
@@ -95,9 +92,7 @@ public class HealthService extends Service {
     public void onCreate() {
         super.onCreate();
         mHandler = new Handler(new HealthDataCallback(
-                new HealthServiceHelperImpl(this,
-                        Room.databaseBuilder(getApplicationContext(), AppDatabase.class,
-                                getString(R.string.persistent_database_name)).build())));
+                new HealthServiceHelperImpl(this, DatabaseManager.getInstance(getApplicationContext()))));
     }
 
 
@@ -196,20 +191,22 @@ public class HealthService extends Service {
     /**
      * @return the location of the user using GPS (need ACCESS_LOCATION permission)
      * @throws NoPermissionException if the permission is not granted
-     * @throws InterruptedException  if location service got interrupted
-     * @throws ExecutionException    if location service got execution problem
      * @throws TimeoutException      if location service elapsed too long
      */
-    public Location getUserLocation() throws NoPermissionException, InterruptedException, ExecutionException, TimeoutException {
-        FusedLocationProviderClient fusedLocationClient = LocationServices
-                .getFusedLocationProviderClient(this.getApplicationContext());
+    public Location getUserLocation() throws NoPermissionException, TimeoutException {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED) {
             throw new NoPermissionException();
         }
-        Location location = Tasks.await(fusedLocationClient.getLastLocation(), 1000, TimeUnit.MILLISECONDS);
+        LocationManager locationManager = (LocationManager) this.getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        Location location = null;
+        if (locationManager != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(location == null)
+                location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
         if (location == null)
             throw new TimeoutException("No last location available");
         return location;
@@ -290,8 +287,8 @@ public class HealthService extends Service {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        String channelId = getString(R.string.notification_channel_id);
-        CharSequence channelName = getString(R.string.notification_channel_name);
+        String channelId = getString(R.string.health_channel_id);
+        CharSequence channelName = getString(R.string.health_channel_name);
         int importance = NotificationManager.IMPORTANCE_LOW;
         NotificationChannel notificationChannel = new NotificationChannel(channelId, channelName, importance);
         notificationChannel.enableLights(true);
@@ -301,7 +298,7 @@ public class HealthService extends Service {
         Objects.requireNonNull(notificationManager).createNotificationChannel(notificationChannel);
 
         return buildNotification(new Notification
-                .Builder(this, getString(R.string.notification_channel_id)), pendingIntent, contentText);
+                .Builder(this, channelId), pendingIntent, contentText);
     }
 
     private Notification buildNotification(Notification.Builder builder, PendingIntent pendingIntent, String contentText) {
