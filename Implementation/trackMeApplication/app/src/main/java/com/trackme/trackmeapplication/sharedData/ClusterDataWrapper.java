@@ -38,7 +38,7 @@ public class ClusterDataWrapper implements Serializable {
      */
     public void addNewClusterData(HealthData hd, PositionData pd){
         HealthDataWrapper healthData = new HealthDataWrapper();
-        healthData.setTimestamp(hd.getTimestamp().toString());
+        healthData.setTimestamp(hd.getTimestamp().toString().replace(" ", "T"));
         healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
         healthData.setHeartBeat(hd.getHeartbeat().toString());
         healthData.setPressureMax(hd.getPressureMax().toString());
@@ -47,7 +47,7 @@ public class ClusterDataWrapper implements Serializable {
         PositionDataWrapper positionData = new PositionDataWrapper();
         positionData.setLatitude(pd.getLatitude().toString());
         positionData.setLongitude(pd.getLongitude().toString());
-        positionData.setTimestamp(pd.getTimestamp().toString());
+        positionData.setTimestamp(pd.getTimestamp().toString().replace(" ", "T"));
 
         healthDataList.add(healthData);
         positionDataList.add(positionData);
