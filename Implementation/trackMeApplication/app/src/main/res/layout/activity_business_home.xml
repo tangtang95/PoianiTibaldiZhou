@@ -69,6 +69,6 @@
         app:headerLayout="@layout/nav_business_header"
         app:itemIconTint="@color/colorWhite"
         app:itemTextColor="@color/colorWhite"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_business_menu" />
 
 </android.support.v4.widget.DrawerLayout>

@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.request.groupRequest;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
@@ -21,6 +22,7 @@ import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestN
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.request.individualRequest.RequestBodyActivity;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
@@ -79,6 +81,7 @@ public class GroupRequestFragment extends BaseFragment {
             }
         }
 
+        private Activity context;
         private List<GroupRequestWrapper> items;
 
         /**
@@ -86,7 +89,8 @@ public class GroupRequestFragment extends BaseFragment {
          *
          * @param requestItems list of item to show in the recyclerView.
          */
-        CustomRecyclerView(List<GroupRequestWrapper> requestItems) {
+        CustomRecyclerView(Activity context, List<GroupRequestWrapper> requestItems) {
+            this.context = context;
             this.items = requestItems;
         }
 
@@ -119,6 +123,12 @@ public class GroupRequestFragment extends BaseFragment {
                     }
                 });
             }
+
+            holder.receiver.setOnClickListener(view -> {
+                Intent intent = new Intent(context, GroupRequestBodyActivity.class);
+                intent.putExtra(Constant.SD_GROUP_REQUEST_KEY, items.get(position));
+                startActivity(intent);
+            });
         }
 
         @Override
@@ -142,7 +152,7 @@ public class GroupRequestFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(groupRequestWrappers);
+        customRecyclerView = new CustomRecyclerView(getActivity(), groupRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
         groupRequestNetwork = GroupRequestNetworkImp.getInstance();

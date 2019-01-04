@@ -154,6 +154,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
             );
             groupRequestBuilder.setGroupRequest(groupRequest);
             groupRequestNetwork.send(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null), groupRequestBuilder);
+
             finish();
         } catch (ConnectionException e) {
             Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();

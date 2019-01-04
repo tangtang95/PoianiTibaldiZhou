@@ -1,5 +1,6 @@
 package com.trackme.trackmeapplication.request.individualRequest;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -79,6 +80,7 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
             }
         }
 
+        private Activity context;
         private List<IndividualRequestWrapper> items;
 
         /**
@@ -86,7 +88,8 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
          *
          * @param individualRequestWrappers list of item to show in the recyclerView.
          */
-        CustomRecyclerView(List<IndividualRequestWrapper> individualRequestWrappers) {
+        CustomRecyclerView(Activity context, List<IndividualRequestWrapper> individualRequestWrappers) {
+            this.context = context;
             this.items = individualRequestWrappers;
         }
 
@@ -119,6 +122,12 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
                     }
                 });
             }
+
+            holder.ssn.setOnClickListener(view -> {
+                Intent intent = new Intent(context, IndividualRequestBusinessBodyActivity.class);
+                intent.putExtra(Constant.SD_INDIVIDUAL_REQUEST_KEY, items.get(position));
+                startActivity(intent);
+            });
         }
 
         @Override
@@ -142,7 +151,7 @@ public class IndividualMessageBusinessFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(individualRequestWrappers);
+        customRecyclerView = new CustomRecyclerView(getActivity(), individualRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
         individualrequestNetwork = IndividualRequestNetworkImp.getInstance();

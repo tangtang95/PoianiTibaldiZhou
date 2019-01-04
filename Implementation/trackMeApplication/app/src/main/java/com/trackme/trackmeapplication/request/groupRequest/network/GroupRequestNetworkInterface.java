@@ -3,7 +3,6 @@ package com.trackme.trackmeapplication.request.groupRequest.network;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedException;
 import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
-import com.trackme.trackmeapplication.request.groupRequest.GroupRequest;
 import com.trackme.trackmeapplication.request.groupRequest.GroupRequestBuilder;
 import com.trackme.trackmeapplication.request.groupRequest.GroupRequestWrapper;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
@@ -65,4 +64,5 @@ public interface GroupRequestNetworkInterface {
      * @throws ThirdPartyBlockedException Throw when a third party blocked trie to send a request
      */
     void send(String token, GroupRequestBuilder groupRequestBuilder) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException, UserNotFoundException;
+
 }

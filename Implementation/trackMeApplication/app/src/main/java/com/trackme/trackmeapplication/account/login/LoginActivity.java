@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.account.register.RegisterActivity;
 import com.trackme.trackmeapplication.baseUtility.BaseDelegationActivity;
+import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.Settings;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -78,7 +80,6 @@ public abstract class LoginActivity extends BaseDelegationActivity<
         final int TEXT_PASSWORD = 129;
 
         if (password.getInputType() == TEXT_PASSWORD) {
-            Log.d("Text type", String.valueOf(password.getInputType()));
             password.setInputType(InputType.TYPE_CLASS_TEXT);
             passwordVisibility.setImageResource(R.drawable.ic_visibility_white);
         }
@@ -93,6 +94,7 @@ public abstract class LoginActivity extends BaseDelegationActivity<
      */
     @OnClick(R.id.textViewRegister)
     public void onTextViewRegisterClick() {
+        sp.edit().putString(Constant.SD_SERVER_ADDRESS_KEY, Settings.getServerAddress()).apply();
         mPresenter.register();
     }
 

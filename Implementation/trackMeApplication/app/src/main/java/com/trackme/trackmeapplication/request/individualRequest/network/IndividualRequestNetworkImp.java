@@ -197,7 +197,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
                 while (isLock)
                     lock.wait();
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
+                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
                     throw new ConnectionException();
             } catch (InterruptedException e) {
                 e.printStackTrace();

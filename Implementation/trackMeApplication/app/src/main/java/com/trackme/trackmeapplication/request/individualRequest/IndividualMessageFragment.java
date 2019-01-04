@@ -27,7 +27,6 @@ import com.trackme.trackmeapplication.baseUtility.Constant;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.BindView;
 
@@ -87,7 +86,7 @@ public class IndividualMessageFragment extends BaseFragment {
          *
          * @param individualRequestWrappers list of item to show in the recyclerView.
          */
-        CustomRecyclerView(@NonNull Activity context, List<IndividualRequestWrapper> individualRequestWrappers) {
+        CustomRecyclerView(Activity context, List<IndividualRequestWrapper> individualRequestWrappers) {
             this.context = context;
             this.items = individualRequestWrappers;
         }
@@ -172,7 +171,7 @@ public class IndividualMessageFragment extends BaseFragment {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
 
-        customRecyclerView = new CustomRecyclerView(Objects.requireNonNull(getActivity()), individualRequestWrappers);
+        customRecyclerView = new CustomRecyclerView(getActivity(), individualRequestWrappers);
         recyclerView.setAdapter(customRecyclerView);
 
         SharedPreferences sp = getmContext().getSharedPreferences(Constant.LOGIN_SHARED_DATA_NAME, MODE_PRIVATE);

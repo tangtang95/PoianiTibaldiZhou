@@ -211,7 +211,6 @@ public class UserLoginActivity extends LoginActivity {
     @OnClick(R.id.imageView)
     public void onLogoCLick(){
         AddressServerPopUp.showTermPopUp(this);
-        sp.edit().putString(Constant.SD_SERVER_ADDRESS_KEY, Settings.getServerAddress()).apply();
     }
 
     @Override
@@ -248,6 +247,7 @@ public class UserLoginActivity extends LoginActivity {
      */
     @OnClick(R.id.userLoginButton)
     public void onUserLoginButtonClick() {
+        sp.edit().putString(Constant.SD_SERVER_ADDRESS_KEY, Settings.getServerAddress()).apply();
         mDelegate.userLogin(username.getText().toString(), password.getText().toString(), this);
     }
 
@@ -256,6 +256,7 @@ public class UserLoginActivity extends LoginActivity {
      */
     @OnClick(R.id.textViewThirdPartyLogin)
     public void onTextViewThirdPartyLoginClick() {
+        sp.edit().putString(Constant.SD_SERVER_ADDRESS_KEY, Settings.getServerAddress()).apply();
         mPresenter.businessLogin();
     }
 

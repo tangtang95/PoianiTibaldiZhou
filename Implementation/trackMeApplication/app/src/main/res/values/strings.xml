@@ -119,4 +119,6 @@
 
     <!-- DB -->
     <string name="persistent_database_name">trackme-db</string>
+    <string name="creation_date">Creation Date</string>
+    <string name="request_type">Request type</string>
 </resources>

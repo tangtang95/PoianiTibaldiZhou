@@ -76,6 +76,6 @@
         app:headerLayout="@layout/nav_header"
         app:itemIconTint="@color/colorWhite"
         app:itemTextColor="@color/colorWhite"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_user_menu" />
 
 </android.support.v4.widget.DrawerLayout>
