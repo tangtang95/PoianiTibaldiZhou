@@ -15,6 +15,7 @@ import com.trackme.trackmeapplication.request.groupRequest.FieldType;
 import com.trackme.trackmeapplication.request.groupRequest.GroupRequestBuilder;
 import com.trackme.trackmeapplication.request.groupRequest.GroupRequestWrapper;
 import com.trackme.trackmeapplication.request.groupRequest.RequestType;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -124,7 +125,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     }
 
     @Override
-    public void send(String token, GroupRequestBuilder groupRequestBuilder) throws RequestNotWellFormedException, ConnectionException, ThirdPartyBlockedException {
+    public void send(String token, GroupRequestBuilder groupRequestBuilder) throws RequestNotWellFormedException, ConnectionException, ThirdPartyBlockedException, UserNotFoundException {
         synchronized (lock) {
             isLock(true);
             try {
@@ -142,6 +143,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
                     case CREATED: break;
+                    case NOT_FOUND: throw new UserNotFoundException();
                     case UNAUTHORIZED: throw new ThirdPartyBlockedException();
                     case BAD_REQUEST: throw new RequestNotWellFormedException();
                     default: throw new ConnectionException();

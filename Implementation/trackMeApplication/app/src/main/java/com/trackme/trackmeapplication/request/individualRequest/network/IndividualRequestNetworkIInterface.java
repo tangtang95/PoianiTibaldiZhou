@@ -5,6 +5,7 @@ import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedExce
 import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequest;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequestWrapper;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -73,5 +74,5 @@ public interface IndividualRequestNetworkIInterface {
      * @throws RequestNotWellFormedException throw when a request is not well formed
      * @throws ThirdPartyBlockedException Throw when a third party blocked trie to send a request
      */
-    void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException;
+    void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException, UserNotFoundException;
 }

@@ -12,6 +12,7 @@ import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedExce
 import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequest;
 import com.trackme.trackmeapplication.request.individualRequest.IndividualRequestWrapper;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -205,7 +206,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     }
 
     @Override
-    public void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException {
+    public void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException, UserNotFoundException {
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -223,6 +224,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
                     case CREATED: break;
+                    case NOT_FOUND: throw new UserNotFoundException();
                     case UNAUTHORIZED: throw new ThirdPartyBlockedException();
                     case BAD_REQUEST: throw new RequestNotWellFormedException();
                     default: throw new ConnectionException();

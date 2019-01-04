@@ -18,6 +18,7 @@ import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedExce
 import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkImp;
 import com.trackme.trackmeapplication.request.groupRequest.network.GroupRequestNetworkInterface;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.util.List;
 
@@ -103,12 +104,16 @@ public class GroupRequestFormActivity extends AppCompatActivity {
         String column = spinnerColumn.getSelectedItem().toString();
         String operator = spinnerOperator.getSelectedItem().toString();
         String n = value.getText().toString();
-        if (filter.getText().toString().isEmpty()) {
-            String f = column + " " + operator + " " + n;
-            filter.setText(f);
-        } else {
-            String f = filter.getText().toString() + "+" + column + " " + operator + " " + n;
-            filter.setText(f);
+        if (n.isEmpty())
+            value.setError(getString(R.string.no_field_must_be_empty));
+        else {
+            if (filter.getText().toString().isEmpty()) {
+                String f = column + " " + operator + " " + n;
+                filter.setText(f);
+            } else {
+                String f = filter.getText().toString() + "+" + column + " " + operator + " " + n;
+                filter.setText(f);
+            }
         }
 
     }
@@ -121,7 +126,7 @@ public class GroupRequestFormActivity extends AppCompatActivity {
         String f = filter.getText().toString();
         StringBuilder newF = new StringBuilder();
         if (!f.isEmpty()) {
-            String[] filterItem =  f.split("\\+");
+            String[] filterItem = f.split("\\+");
             for (int i = 0; i < filterItem.length - 1; i++) {
                 newF.append(filterItem[i]);
                 if (i != filterItem.length - 2)
@@ -136,33 +141,35 @@ public class GroupRequestFormActivity extends AppCompatActivity {
      */
     @OnClick(R.id.imageViewSend)
     public void onSendButtonClick() {
-        if (filter.getText().toString().isEmpty())
-            Toast.makeText(this,getText(R.string.no_field_must_be_empty), Toast.LENGTH_LONG).show();
-        else {
-            try {
+        try {
 
-                GroupRequestBuilder groupRequestBuilder = new GroupRequestBuilder();
+            GroupRequestBuilder groupRequestBuilder = new GroupRequestBuilder();
+
+            if (!filter.getText().toString().isEmpty())
                 groupRequestBuilder.addNewFilter(parseFilter(filter.getText().toString()));
-                GroupRequest groupRequest = new GroupRequest(
-                        spinnerAggregator.getSelectedItem().toString(),
-                        spinnerType.getSelectedItem().toString()
-                );
-                groupRequestBuilder.setGroupRequest(groupRequest);
-                groupRequestNetwork.send(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null), groupRequestBuilder);
-                finish();
-            } catch (ConnectionException e) {
-                Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
-            } catch (RequestNotWellFormedException e) {
-                Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
-            } catch (ThirdPartyBlockedException e) {
-                Toast.makeText(this, getString(R.string.third_party_is_block), Toast.LENGTH_SHORT).show();
-            }
 
+            GroupRequest groupRequest = new GroupRequest(
+                    spinnerAggregator.getSelectedItem().toString(),
+                    spinnerType.getSelectedItem().toString()
+            );
+            groupRequestBuilder.setGroupRequest(groupRequest);
+            groupRequestNetwork.send(sp.getString(Constant.SD_BUSINESS_TOKEN_KEY, null), groupRequestBuilder);
+            finish();
+        } catch (ConnectionException e) {
+            Toast.makeText(this, getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+        } catch (RequestNotWellFormedException e) {
+            Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
+        } catch (ThirdPartyBlockedException e) {
+            Toast.makeText(this, getString(R.string.third_party_is_block), Toast.LENGTH_SHORT).show();
+        } catch (UserNotFoundException e) {
+            Toast.makeText(this, getString(R.string.impossible_to_find_user), Toast.LENGTH_SHORT).show();
         }
+
+
     }
 
-    private String[] parseFilter(String filter){
-        return filter.split("\\+" );
+    private String[] parseFilter(String filter) {
+        return filter.split("\\+");
     }
 
 }

@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="60dp"
+        android:layout_marginEnd="50dp"
         android:contentDescription="@string/visibility_off_button"
         android:src="@drawable/ic_visibility_off_white"
         app:layout_constraintEnd_toEndOf="parent"

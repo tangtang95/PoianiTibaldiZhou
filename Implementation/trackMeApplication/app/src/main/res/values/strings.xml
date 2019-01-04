@@ -115,6 +115,7 @@
     <string name="request_not_well_formed">Request is not well formed.</string>
     <string name="make_call_error_due_to_threads">Make call error due to threads</string>
     <string name="third_party_is_block">Impossible to send a request for this user. You are blocked.</string>
+    <string name="impossible_to_find_user">Impossible to find the user specified</string>
 
     <!-- DB -->
     <string name="persistent_database_name">trackme-db</string>

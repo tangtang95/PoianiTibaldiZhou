@@ -16,17 +16,12 @@ public class BusinessURLManager {
 
     private static BusinessURLManager instance;
 
-    private String IPAddress;
-    private int accountPort;
-
     private Map<String,Map<String, String>> map = null;
 
     /**
      * Private constructor
      */
     private BusinessURLManager(){
-        this.IPAddress = Settings.getServerAddress();
-        this.accountPort = Settings.getServerPort();
     }
 
     /**
@@ -44,7 +39,7 @@ public class BusinessURLManager {
      * @return url for accessing the resource identified by the uri
      */
     public String createURLWithPort(String uri) {
-        return "https://"+ IPAddress + ":" + accountPort + uri;
+        return "https://"+ Settings.getServerAddress() + ":" + Settings.getServerPort() + uri;
     }
 
     /**

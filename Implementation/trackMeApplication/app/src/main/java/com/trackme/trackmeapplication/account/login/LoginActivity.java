@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.text.InputType;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -77,6 +78,7 @@ public abstract class LoginActivity extends BaseDelegationActivity<
         final int TEXT_PASSWORD = 129;
 
         if (password.getInputType() == TEXT_PASSWORD) {
+            Log.d("Text type", String.valueOf(password.getInputType()));
             password.setInputType(InputType.TYPE_CLASS_TEXT);
             passwordVisibility.setImageResource(R.drawable.ic_visibility_white);
         }

@@ -18,6 +18,7 @@ import com.trackme.trackmeapplication.request.exception.RequestNotWellFormedExce
 import com.trackme.trackmeapplication.request.exception.ThirdPartyBlockedException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
+import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -95,6 +96,8 @@ public class RequestFormActivity extends AppCompatActivity {
                 Toast.makeText(this, getString(R.string.request_not_well_formed), Toast.LENGTH_SHORT).show();
             } catch (ThirdPartyBlockedException e) {
                 Toast.makeText(this, getString(R.string.third_party_is_block), Toast.LENGTH_SHORT).show();
+            } catch (UserNotFoundException e) {
+                Toast.makeText(this, getString(R.string.impossible_to_find_user), Toast.LENGTH_SHORT).show();
             }
         }
     }
