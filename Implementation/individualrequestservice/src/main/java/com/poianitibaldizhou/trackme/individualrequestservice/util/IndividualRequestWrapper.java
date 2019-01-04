@@ -13,7 +13,7 @@ public class IndividualRequestWrapper {
 
     @JsonIgnore
     private Long id;
-    
+
     private String userSsn;
 
     @JsonIgnore

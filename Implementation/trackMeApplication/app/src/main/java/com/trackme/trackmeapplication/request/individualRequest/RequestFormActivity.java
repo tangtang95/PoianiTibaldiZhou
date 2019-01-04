@@ -61,13 +61,13 @@ public class RequestFormActivity extends AppCompatActivity {
 
         onDateSetListenerStart = (datePicker, year, month, day) -> {
             month++;
-            String date = month + "/" + day + "/" + year;
+            String date = year + "/" + month + "/" + day;
             startDate.setText(date);
         };
 
         onDateSetListenerEnd = (datePicker, year, month, day) -> {
             month++;
-            String date = month + "/" + day + "/" + year;
+            String date = year + "/" + month + "/" + day;
             endDate.setText(date);
         };
 
