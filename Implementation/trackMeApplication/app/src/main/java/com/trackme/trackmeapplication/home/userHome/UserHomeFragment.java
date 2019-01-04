@@ -8,6 +8,7 @@ import android.widget.TextView;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 import java.lang.ref.WeakReference;
@@ -91,8 +92,7 @@ public class UserHomeFragment extends BaseFragment {
             UserHomeFragment userHomeFragment = weakReference.get();
             if (userHomeFragment == null)
                 return null;
-            AppDatabase appDatabase = Room.databaseBuilder(userHomeFragment.getmContext(),
-                    AppDatabase.class, userHomeFragment.getString(R.string.persistent_database_name)).build();
+            AppDatabase appDatabase = DatabaseManager.getInstance(userHomeFragment.getmContext());
 
             return appDatabase.getHealthDataDao().getLast();
         }

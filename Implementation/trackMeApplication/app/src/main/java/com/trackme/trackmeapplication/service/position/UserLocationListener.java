@@ -9,11 +9,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
+import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 
 import java.util.concurrent.Executor;
@@ -56,18 +58,14 @@ public class UserLocationListener implements LocationListener {
         if (currentBestLocation == null || isBetterLocation(location, currentBestLocation) ) {
             currentBestLocation = location;
             Runnable addPositionData = () -> {
-                AppDatabase appDatabase = Room.databaseBuilder(context,
-                        AppDatabase.class, context.getString(R.string.persistent_database_name)).build();
+                AppDatabase appDatabase = DatabaseManager.getInstance(context);
                 PositionData positionData = new PositionData();
                 positionData.setLatitude(currentBestLocation.getLatitude());
                 positionData.setLongitude(currentBestLocation.getLongitude());
 
+                Log.d("LOCATION_DEBUG", positionData.toString());
                 ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(()-> {
-                    appDatabase.beginTransaction();
-                    appDatabase.getPositionDataDao().insert(positionData);
-                    appDatabase.endTransaction();
-                });
+                executor.execute(()-> appDatabase.getPositionDataDao().insert(positionData));
             };
             addPositionData.run();
         }

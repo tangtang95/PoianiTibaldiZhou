@@ -39,6 +39,9 @@ public interface HealthServiceHelper {
 
     /**
      * @return true if there are recent (within 1 hour) emergency call, false otherwise
+     * @throws InterruptedException when the thread executing the retrieves of the recent call is interrupted
+     * @throws ExecutionException when the thread execution has some issue
+     * @throws TimeoutException when the timeout waiting for the thread has elapsed
      */
     boolean hasRecentEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException;
 
@@ -46,8 +49,11 @@ public interface HealthServiceHelper {
      * Make an emergency call to the number given by the HealthServiceHelper
      *
      * @return true if successful, false otherwise
+     * @throws InterruptedException when the thread executing the insertion of the new call is interrupted
+     * @throws TimeoutException when the timeout waiting for the thread has elapsed
+     * @throws NoPermissionException when the permission to make the call are not granted
      * @throws EmergencyNumberNotFoundException when there is no emergency number available in the actual country
      */
-    boolean makeEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException,
+    boolean makeEmergencyCall() throws InterruptedException, TimeoutException,
             NoPermissionException, EmergencyNumberNotFoundException;
 }
