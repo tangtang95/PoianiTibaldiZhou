@@ -208,6 +208,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                     AppDatabase.class, userHomeActivity.getString(R.string.persistent_database_name)).build();
 
             token = userHomeActivity.getToken();
+            appDatabase.beginTransaction();
             List<HealthData> healthDataList = appDatabase.getHealthDataDao().getAll();
             List<PositionData> positionDataList = appDatabase.getPositionDataDao().getAll();
             healthDataList.sort(new HealthData.CustomComparator());
@@ -229,7 +230,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                             j++;
                         } else if (hd.getTimestamp().before(pd.getTimestamp())){
                             HealthDataWrapper healthData = new HealthDataWrapper();
-                            healthData.setTimestamp(hd.getTimestamp().toString());
+                            healthData.setTimestamp(hd.getTimestamp().toString().replace(" ", "T"));
                             healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
                             healthData.setHeartBeat(hd.getHeartbeat().toString());
                             healthData.setPressureMax(hd.getPressureMax().toString());
@@ -247,7 +248,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                             PositionDataWrapper positionData = new PositionDataWrapper();
                             positionData.setLatitude(pd.getLatitude().toString());
                             positionData.setLongitude(pd.getLongitude().toString());
-                            positionData.setTimestamp(pd.getTimestamp().toString());
+                            positionData.setTimestamp(pd.getTimestamp().toString().replace(" ", "T"));
 
                             try {
                                 sharedDataNetwork.sendPositionData(token, positionData);
@@ -279,7 +280,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                         HealthData hd = healthDataList.get(i);
 
                         HealthDataWrapper healthData = new HealthDataWrapper();
-                        healthData.setTimestamp(hd.getTimestamp().toString());
+                        healthData.setTimestamp(hd.getTimestamp().toString().replace(" ", "T"));
                         healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
                         healthData.setHeartBeat(hd.getHeartbeat().toString());
                         healthData.setPressureMax(hd.getPressureMax().toString());
@@ -300,7 +301,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                     PositionDataWrapper positionData = new PositionDataWrapper();
                     positionData.setLatitude(pd.getLatitude().toString());
                     positionData.setLongitude(pd.getLongitude().toString());
-                    positionData.setTimestamp(pd.getTimestamp().toString());
+                    positionData.setTimestamp(pd.getTimestamp().toString().replace(" ", "T"));
 
                     try {
                         sharedDataNetwork.sendPositionData(token, positionData);
@@ -310,6 +311,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
                     }
                 }
             }
+            appDatabase.endTransaction();
 
             return message;
         }
