@@ -134,20 +134,20 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
 
     @Override
     public void acceptIndividualRequest(String token, String url) throws ConnectionException {
-        String responseUrl = getResponseLink(url);
+        String responseUrl = getResponseLink(token, url);
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
-                HttpEntity<String> entity = new HttpEntity<>("ACCEPTED", httpHeaders);
+                HttpEntity<String> entity = new HttpEntity<>("ACCEPT", httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(responseUrl)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
                 while (isLock)
                     lock.wait();
-                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
+                if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
                     throw new ConnectionException();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -157,20 +157,20 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
 
     @Override
     public String refuseIndividualRequest(String token,String url) throws ConnectionException {
-        String responseUrl = getResponseLink(url);
+        String responseUrl = getResponseLink(token, url);
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
-                HttpEntity<String> entity = new HttpEntity<>("REFUSED", httpHeaders);
+                HttpEntity<String> entity = new HttpEntity<>("REFUSE", httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(responseUrl)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
                 while (isLock)
                     lock.wait();
-                if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK) {
+                if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.CREATED) {
                     List<String> links = JsonPath.read(
                             connectionBuilder.getConnection().getResponse(), "$..blockThirdParty.href");
                     return links.get(0);
@@ -236,14 +236,16 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     /**
      * Get the link to response a request from the server
      *
+     * @param token user token
      * @param url url to call for having the link
      * @return the response link
      * @throws ConnectionException throw when the connection offline
      */
-    private String getResponseLink(String url) throws ConnectionException {
+    private String getResponseLink(String token, String url) throws ConnectionException {
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Authorization", "Bearer " + token);
             try {
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
@@ -254,7 +256,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
                     List<String> links = JsonPath.read(
-                            connectionBuilder.getConnection().getResponse(), "$..href");
+                            connectionBuilder.getConnection().getResponse(), "$..addResponse.href");
                     return links.get(0);
                 }
                 throw new ConnectionException();

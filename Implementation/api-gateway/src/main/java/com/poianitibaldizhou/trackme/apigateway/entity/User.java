@@ -22,7 +22,7 @@ import java.util.Collection;
 @Entity
 public class User implements UserDetails {
 
-    @JsonIgnore
+    @JsonView(Views.Public.class)
     @Id
     @Column(length = 16)
     private String ssn;

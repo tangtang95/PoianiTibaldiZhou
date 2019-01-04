@@ -74,6 +74,7 @@ public class SecuredUserControllerUnitTest {
 
         mvc.perform(get(Constants.SECURED_USER_API + Constants.GET_USER_INFO_API).accept(MediaType.ALL))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("ssn", is(user.getSsn())))
                 .andExpect(jsonPath("firstName", is(user.getFirstName())))
                 .andExpect(jsonPath("lastName", is(user.getLastName())))
                 .andExpect(jsonPath("birthDate", is(user.getBirthDate().toString())))

@@ -21,12 +21,18 @@ public class LocationService extends Service {
     public static final String ACTION_STOP_FOREGROUND_SERVICE = "ACTION_STOP_FOREGROUND_SERVICE";
 
     // Define a listener that responds to location updates
-    private LocationListener locationListener = new UserLocationListener(this);
+    private LocationListener mLocationListener;
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mLocationListener = new UserLocationListener(getApplicationContext());
     }
 
     @Override
@@ -68,7 +74,7 @@ public class LocationService extends Service {
         if (locationManager != null) {
             if (ActivityCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, mLocationListener);
         }
 
 

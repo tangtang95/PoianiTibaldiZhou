@@ -89,6 +89,7 @@ public class PublicUserControllerUnitTest {
         given(service.registerUser(any(User.class))).willReturn(user);
 
         String json = "{\n" +
+                "   \"ssn\":\"newUser\",\n"+
                 "   \"password\":\"tangpass\",\n" +
                 "   \"username\":\"vertex95\",\n" +
                 "   \"firstName\":\"TangTang\",\n" +
@@ -101,6 +102,7 @@ public class PublicUserControllerUnitTest {
         mvc.perform(post(Constants.PUBLIC_USER_API + "/newUser").
                 contentType(MediaTypes.HAL_JSON_VALUE + ";charset=UTF-8").content(json))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("ssn", is(user.getSsn())))
                 .andExpect(jsonPath("username", is(user.getUsername())))
                 .andExpect(jsonPath("firstName", is(user.getFirstName())))
                 .andExpect(jsonPath("lastName", is(user.getLastName())))
@@ -129,6 +131,7 @@ public class PublicUserControllerUnitTest {
         user.setUsername("alreadyPresentUsername");
 
         String json = "{\n" +
+                "   \"ssn\":\"newUser\",\n"+
                 "   \"password\":\"tangpass\",\n" +
                 "   \"username\":\"alreadyPresentUsername\",\n" +
                 "   \"firstName\":\"TangTang\",\n" +
@@ -164,6 +167,7 @@ public class PublicUserControllerUnitTest {
         user.setUsername("newUserName");
 
         String json = "{\n" +
+                "   \"ssn\":\"SsnAlreadyPresent\",\n"+
                 "   \"password\":\"tangpass\",\n" +
                 "   \"username\":\"newUserName\",\n" +
                 "   \"firstName\":\"TangTang\",\n" +

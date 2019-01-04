@@ -56,7 +56,7 @@ public class HealthDataCallback implements Callback {
                 } catch (NoPermissionException e) {
                     Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_no_permission));
                 } catch (InterruptedException|ExecutionException|TimeoutException e) {
-                    Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_due_to_threads));
+                    Log.e(helper.getService().getString(R.string.debug_tag), helper.getService().getString(R.string.make_call_error_due_to_thread));
                 }
                 return success;
             default:

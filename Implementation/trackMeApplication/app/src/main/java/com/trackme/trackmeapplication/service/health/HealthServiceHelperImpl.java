@@ -57,13 +57,22 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
     @Override
     public void saveHealthData(HealthData healthData) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> appDatabase.getHealthDataDao().insert(healthData));
+        executor.execute(() -> {
+            appDatabase.beginTransaction();
+            appDatabase.getHealthDataDao().insert(healthData);
+            appDatabase.endTransaction();
+        });
     }
 
     @Override
     public boolean hasRecentEmergencyCall() throws InterruptedException, ExecutionException, TimeoutException {
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<Long> numberRecentCallFuture = executor.submit(()-> appDatabase.getEmergencyCallDao().getNumberOfRecentCalls());
+        Future<Long> numberRecentCallFuture = executor.submit(()-> {
+            appDatabase.beginTransaction();
+            Long result = appDatabase.getEmergencyCallDao().getNumberOfRecentCalls();
+            appDatabase.endTransaction();
+            return result;
+        });
         return numberRecentCallFuture.get(1, TimeUnit.SECONDS) > 0;
     }
 
@@ -92,7 +101,11 @@ public class HealthServiceHelperImpl implements HealthServiceHelper {
         emergencyCall.setTimestamp(new Timestamp(calendar.getTime().getTime()));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.execute(() -> appDatabase.getEmergencyCallDao().insert(emergencyCall));
+        executor.execute(() -> {
+            appDatabase.beginTransaction();
+            appDatabase.getEmergencyCallDao().insert(emergencyCall);
+            appDatabase.endTransaction();
+        });
         executor.awaitTermination(1, TimeUnit.SECONDS);
         return true;
     }

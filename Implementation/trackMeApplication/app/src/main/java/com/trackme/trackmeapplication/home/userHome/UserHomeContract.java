@@ -45,12 +45,12 @@ class UserHomeContract {
         /**
          * It starts the bluetooth service in background.
          */
-        void startBluetoothService();
+        void startHealthService();
 
         /**
          * It stops the bluetooth service in background.
          */
-        void stopBluetoothService();
+        void stopHealthService();
 
         /**
          * Getter method.
@@ -86,7 +86,7 @@ class UserHomeContract {
         /**
          * Call when the user click on the bluetooth switch
          */
-        void onBluetoothSwitch(boolean status);
+        void onHealthSwitch(boolean status);
 
         /**
          * Call when the user click on settings in the menu

@@ -24,8 +24,8 @@
             app:actionLayout="@layout/switch_item" />
 
         <item
-            android:id="@+id/bluetooth_switch"
-            android:title="@string/bluetooth"
+            android:id="@+id/health_switch"
+            android:title="@string/health"
             app:actionLayout="@layout/switch_item" />
     </group>
 </menu>

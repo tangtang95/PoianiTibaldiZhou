@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
@@ -152,8 +151,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public void startBluetoothService() {
-        Log.d("SOS_DEBUG", "slider activated");
+    public void startHealthService() {
         Intent serviceIntent = new Intent(this, HealthService.class);
         serviceIntent.setAction(HealthService.ACTION_START_FOREGROUND_SERVICE);
         serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
@@ -161,8 +159,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
     }
 
     @Override
-    public void stopBluetoothService() {
-        Log.d("SOS_DEBUG", "slider deactivated");
+    public void stopHealthService() {
         Intent serviceIntent = new Intent(this, HealthService.class);
         serviceIntent.setAction(HealthService.ACTION_STOP_FOREGROUND_SERVICE);
         startService(serviceIntent);

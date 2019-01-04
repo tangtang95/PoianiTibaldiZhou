@@ -24,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -61,13 +62,13 @@ public class RequestFormActivity extends AppCompatActivity {
 
         onDateSetListenerStart = (datePicker, year, month, day) -> {
             month++;
-            String date = year + "/" + month + "/" + day;
+            String date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
             startDate.setText(date);
         };
 
         onDateSetListenerEnd = (datePicker, year, month, day) -> {
             month++;
-            String date = year + "/" + month + "/" + day;
+            String date = String.format(Locale.getDefault(), "%d-%02d-%02d", year, month, day);
             endDate.setText(date);
         };
 
@@ -157,7 +158,7 @@ public class RequestFormActivity extends AppCompatActivity {
             ssn.setError(getString(R.string.ssn_is_not_valid));
             return false;
         }
-        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date start;
         Date end;
         try {

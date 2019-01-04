@@ -46,9 +46,6 @@ public class SecuredUserControllerIntegrationTest {
     @LocalServerPort
     private int port;
 
-    @Autowired
-    private UserRepository userRepository;
-
     private HttpHeaders httpHeaders = new HttpHeaders();
 
     private RestTemplate restTemplate;
@@ -79,6 +76,7 @@ public class SecuredUserControllerIntegrationTest {
                 HttpMethod.GET, entity, String.class);
 
         String expectedBody = "{\n" +
+                "   \"ssn\":\"user1\",\n"+
                 "   \"username\":\"username1\",\n" +
                 "   \"firstName\":\"Frank\",\n" +
                 "   \"lastName\":\"Rossi\",\n" +

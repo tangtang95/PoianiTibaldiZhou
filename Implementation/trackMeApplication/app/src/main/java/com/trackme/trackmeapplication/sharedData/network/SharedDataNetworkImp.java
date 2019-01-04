@@ -132,7 +132,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
 
     @Override
     public String getGroupRequestData(String token, String url) throws ConnectionException {
-        String accessDataLink = getAccessDataLink(url);
+        String accessDataLink = getAccessDataLink(token, url);
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -157,7 +157,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
 
     @Override
     public String getIndividualRequestData(String token, String url) throws ConnectionException {
-        String accessDataLink = getAccessDataLink(url);
+        String accessDataLink = getAccessDataLink(token, url);
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
@@ -302,14 +302,16 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     /**
      * Get the access data link form the url specified
      *
+     * @param token user token
      * @param url where get the access data link
      * @return the access data link
      * @throws ConnectionException throw when an error event in the connection is performed
      */
-    private String getAccessDataLink(String url) throws ConnectionException {
+    private String getAccessDataLink(String token, String url) throws ConnectionException {
         synchronized (lock) {
             isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.add("Authorization", "Bearer " + token);
             try {
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 

@@ -28,11 +28,11 @@ public class UserHomePresenter extends BasePresenterImpl<
     }
 
     @Override
-    public void onBluetoothSwitch(boolean status) {
+    public void onHealthSwitch(boolean status) {
         if (status)
-            mView.startBluetoothService();
+            mView.startHealthService();
         else
-            mView.stopBluetoothService();
+            mView.stopHealthService();
     }
 
     @Override

@@ -16,6 +16,7 @@ import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,7 +34,7 @@ public class UserLocationListener implements LocationListener {
      * Constructor.
      * Get the last position known.
      *
-     * @param context the current activity context.
+     * @param context the current application context.
      */
     UserLocationListener(Context context) {
         this.context = context;
@@ -41,7 +42,8 @@ public class UserLocationListener implements LocationListener {
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
-            mFusedLocationClient.getLastLocation().addOnSuccessListener((Activity) context, location -> {
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(executor, location -> {
                 if (location != null) {
                     currentBestLocation = location;
                 }
@@ -61,7 +63,11 @@ public class UserLocationListener implements LocationListener {
                 positionData.setLongitude(currentBestLocation.getLongitude());
 
                 ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(()-> appDatabase.getPositionDataDao().insert(positionData));
+                executor.execute(()-> {
+                    appDatabase.beginTransaction();
+                    appDatabase.getPositionDataDao().insert(positionData);
+                    appDatabase.endTransaction();
+                });
             };
             addPositionData.run();
         }
@@ -132,12 +138,4 @@ public class UserLocationListener implements LocationListener {
 
     }
 
-    /**
-     * Getter method.
-     *
-     * @return the current location of the user or the last known.
-     */
-    public Location getCurrentBestLocation() {
-        return currentBestLocation;
-    }
 }

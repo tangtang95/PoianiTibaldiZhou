@@ -1,5 +1,7 @@
 package com.trackme.trackmeapplication.home.userHome;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -8,8 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
@@ -17,6 +21,8 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.service.health.HealthService;
+import com.trackme.trackmeapplication.service.position.LocationService;
 import com.trackme.trackmeapplication.sharedData.User;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
 
@@ -86,6 +92,10 @@ public class UserHomeDelegate extends BaseActivityDelegate<
                 R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        MenuItem healthSwitch = navigationView.getMenu().getItem(4);
+        MenuItem locationSwitch = navigationView.getMenu().getItem(3);
+        locationSwitch.setChecked(isServiceRunning(LocationService.class));
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -102,10 +112,10 @@ public class UserHomeDelegate extends BaseActivityDelegate<
             case R.id.nav_logout:
                 mPresenter.onLogoutSelected();
                 break;
-            case R.id.bluetooth_switch:
+            case R.id.health_switch:
                 check = !item.isChecked();
                 item.setChecked(check);
-                mPresenter.onBluetoothSwitch(check);
+                mPresenter.onHealthSwitch(check);
                 break;
             case R.id.location_switch:
                 check = !item.isChecked();
@@ -153,5 +163,16 @@ public class UserHomeDelegate extends BaseActivityDelegate<
     @Override
     public void onTabReselected(TabLayout.Tab tab) { }
 
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) mPresenter.getView().getActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
 }
