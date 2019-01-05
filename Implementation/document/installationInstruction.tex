@@ -35,7 +35,8 @@ The port that are needed to be free are the following: 8443 (API gateway), 8761 
 request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
 machine is which the jar will be ran, it is possible to modify this by adding "--server.port PORT\_NUMBER", while launching the jar. \\
 Furthermore, is also possible to modify any of the settings that are located within the application.properties of the various project.
-One can find these files in the various folders of the source code, within the folder "main".\\
+One can find these files in the various folders of the source code, within the folder "main". However, in order to avoid useless errors
+we suggest to not modify critical parts, such as the routes used by Zuul (API gateway settings). \\
 
 \par 
 For running the tests, it is necessary to start again the RabbitMQ server and the MySQL server. After that, it is possible to go into
@@ -56,7 +57,10 @@ paths when extracting the folder. This is a problem that have been encountered o
 by using tar.gz format. 
 
 \item When running tests that are provided with the source code, remember to not having started the application as a whole, or at least not
-the one that involves the test that is going to start. This is because the same service which is running could steal the messages from the test execution environment and, therefore, conflicts can happen, leading to some bugs. 
+the one that involves the test that is going to start. This is because the same service which is running could steal the messages from the test execution environment and, therefore, conflicts can happen, leading to some bugs. \\
+Furthermore, there is a timeout set to 1 minute, regarding the exchange of messages in the message queue. Keep in mind that you are probably
+running an entire architecture on a single machine, therefore don't get surprised if things get stuck a bit. However, we didn't encountered
+many problems in this sense.
 \end{itemize}
 
 \par
@@ -65,6 +69,10 @@ In order to run the test plans of JMeter it is necessary to have JMeter installe
 \item mysql-connector.jar (\url{https://dev.mysql.com/downloads/connector/j/}) to be moved into the lib folder of JMeter
 \item amqp-client-3.x.x.jar (\url{https://www.rabbitmq.com/java-client.html} to be moved into the lib folder of JMeter; remember to download a version starting with 3, e.g. 3.6.6 (\url{http://repo1.maven.org/maven2/com/rabbitmq/amqp-client/})
 \item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter.
+\item If you are opening the source code in your IDE (e.g. IntelliJ) and you run the program from there, you should also configure
+the databases inside the IDE. In this sense, since all the microservices are different projects, it is necessary to link each database
+to its related project. \\ A final remark is that the account service db is related to the API gateway; for what concerns the others, instead,
+the binding is trivial.   
 \end{itemize}
 After the configuration, once the services, databases and the message broker are running in background, it is possible to run the test plans of JMeter on GUI or non-GUI mode:
 \begin{itemize}
