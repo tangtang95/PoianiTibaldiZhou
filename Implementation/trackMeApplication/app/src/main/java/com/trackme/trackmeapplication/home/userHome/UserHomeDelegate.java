@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
@@ -21,7 +20,6 @@ import com.trackme.trackmeapplication.account.network.AccountNetworkImp;
 import com.trackme.trackmeapplication.account.network.AccountNetworkInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseActivityDelegate;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
-import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.service.position.LocationService;
 import com.trackme.trackmeapplication.sharedData.User;
 import com.trackme.trackmeapplication.sharedData.exception.UserNotFoundException;
@@ -97,6 +95,15 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         MenuItem locationSwitch = navigationView.getMenu().getItem(3);
         locationSwitch.setChecked(isServiceRunning(LocationService.class));
         navigationView.setNavigationItemSelectedListener(this);
+
+        healthSwitch.setActionView(R.layout.switch_item);
+        locationSwitch.setActionView(R.layout.switch_item);
+        Switch health = healthSwitch.getActionView().findViewById(R.id.switch_on_off);
+        Switch location = locationSwitch.getActionView().findViewById(R.id.switch_on_off);
+
+        health.setOnCheckedChangeListener((compoundButton, b) -> mPresenter.onHealthSwitch(b));
+        location.setOnCheckedChangeListener((compoundButton, b) -> mPresenter.onLocationSwitch(b));
+
     }
 
     @Override
@@ -111,16 +118,6 @@ public class UserHomeDelegate extends BaseActivityDelegate<
                 break;
             case R.id.nav_logout:
                 mPresenter.onLogoutSelected();
-                break;
-            case R.id.health_switch:
-                check = !item.isChecked();
-                item.setChecked(check);
-                mPresenter.onHealthSwitch(check);
-                break;
-            case R.id.location_switch:
-                check = !item.isChecked();
-                item.setChecked(check);
-                mPresenter.onLocationSwitch(check);
                 break;
         }
         closeDrawer();

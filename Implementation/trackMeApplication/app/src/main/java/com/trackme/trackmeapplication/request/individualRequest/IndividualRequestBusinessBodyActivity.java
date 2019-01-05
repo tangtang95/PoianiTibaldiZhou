@@ -1,7 +1,7 @@
 package com.trackme.trackmeapplication.request.individualRequest;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
@@ -33,7 +33,7 @@ public class IndividualRequestBusinessBodyActivity extends AppCompatActivity {
 
         IndividualRequestWrapper individualRequestWrapper = (IndividualRequestWrapper) getIntent().getSerializableExtra(Constant.SD_INDIVIDUAL_REQUEST_KEY);
 
-        thirdPartyName.setText(individualRequestWrapper.getThirdPartyName());
+        thirdPartyName.setText(individualRequestWrapper.getUserSsn());
         String s = individualRequestWrapper.getStartDate() + " to " + individualRequestWrapper.getEndDate();
         period.setText(s);
         motive.setText(individualRequestWrapper.getMotivation());

@@ -57,7 +57,7 @@ public class UserLoginActivityTest {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("Mattia"), closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText("username1"), closeSoftKeyboard());
 
         ViewInteraction appCompatEditText3 = onView(
                 allOf(withId(R.id.editTextPass),
@@ -67,7 +67,7 @@ public class UserLoginActivityTest {
                                         0),
                                 1),
                         isDisplayed()));
-        appCompatEditText3.perform(replaceText("1234"), closeSoftKeyboard());
+        appCompatEditText3.perform(replaceText("password1"), closeSoftKeyboard());
 
         pressBack();
 
@@ -109,7 +109,7 @@ public class UserLoginActivityTest {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatEditText4.perform(replaceText("Abc@v.it"), closeSoftKeyboard());
+        appCompatEditText4.perform(replaceText("tp1@provider.it"), closeSoftKeyboard());
 
         pressBack();
 
@@ -131,7 +131,7 @@ public class UserLoginActivityTest {
                                         0),
                                 1),
                         isDisplayed()));
-        appCompatEditText5.perform(replaceText("1234"), closeSoftKeyboard());
+        appCompatEditText5.perform(replaceText("password1"), closeSoftKeyboard());
 
         pressBack();
 

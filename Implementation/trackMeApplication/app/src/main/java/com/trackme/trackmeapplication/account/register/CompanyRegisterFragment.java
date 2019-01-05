@@ -16,7 +16,6 @@ import com.trackme.trackmeapplication.httpConnection.exception.ConnectionExcepti
 import com.trackme.trackmeapplication.sharedData.CompanyDetail;
 import com.trackme.trackmeapplication.sharedData.ThirdPartyCustomer;
 
-
 import butterknife.BindView;
 import butterknife.OnClick;
 

@@ -5,13 +5,13 @@ import android.os.Message;
 import android.util.Log;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
 import com.trackme.trackmeapplication.service.exception.InvalidHealthDataException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
 import com.trackme.trackmeapplication.service.util.HealthDataInspector;
 import com.trackme.trackmeapplication.service.util.HealthDataInspectorImpl;
 import com.trackme.trackmeapplication.service.util.MessageType;
-import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;

@@ -3,13 +3,12 @@ package com.trackme.trackmeapplication.account.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.text.InputType;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.home.businessHome.BusinessHomeActivity;
-import com.trackme.trackmeapplication.R;
 
 import butterknife.BindView;
 import butterknife.OnClick;

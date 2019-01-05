@@ -14,13 +14,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.baseUtility.BaseFragment;
+import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.Settings;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.RequestStatus;
-import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
-import com.trackme.trackmeapplication.baseUtility.BaseFragment;
-import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 

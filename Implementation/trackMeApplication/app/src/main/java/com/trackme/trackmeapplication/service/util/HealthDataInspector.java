@@ -1,7 +1,7 @@
 package com.trackme.trackmeapplication.service.util;
 
-import com.trackme.trackmeapplication.service.exception.InvalidHealthDataException;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
+import com.trackme.trackmeapplication.service.exception.InvalidHealthDataException;
 
 public interface HealthDataInspector {
 

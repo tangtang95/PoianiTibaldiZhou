@@ -2,9 +2,9 @@ package com.trackme.trackmeapplication.service.health;
 
 import android.app.Service;
 
+import com.trackme.trackmeapplication.localdb.entity.HealthData;
 import com.trackme.trackmeapplication.service.exception.EmergencyNumberNotFoundException;
 import com.trackme.trackmeapplication.service.exception.NoPermissionException;
-import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 import java.util.Date;
 import java.util.concurrent.ExecutionException;

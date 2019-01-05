@@ -1,8 +1,6 @@
 package com.trackme.trackmeapplication.service.position;
 
 import android.Manifest;
-import android.app.Activity;
-import android.arch.persistence.room.Room;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -13,12 +11,10 @@ import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.localdb.database.AppDatabase;
 import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

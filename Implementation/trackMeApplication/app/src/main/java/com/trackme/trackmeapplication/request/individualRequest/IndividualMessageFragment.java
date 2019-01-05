@@ -18,12 +18,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
-import com.trackme.trackmeapplication.httpConnection.Settings;
-import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
-import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
-import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.baseUtility.BaseFragment;
 import com.trackme.trackmeapplication.baseUtility.Constant;
+import com.trackme.trackmeapplication.httpConnection.Settings;
+import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
+import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
+import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
 
 import java.util.ArrayList;
 import java.util.List;

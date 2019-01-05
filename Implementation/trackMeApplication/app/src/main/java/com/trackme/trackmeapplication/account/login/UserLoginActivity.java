@@ -261,9 +261,10 @@ public class UserLoginActivity extends LoginActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    protected void onResume() {
         if (isRegister)
             unregisterReceiver(broadcastReceiver);
-        super.onDestroy();
+        isRegister = false;
+        super.onResume();
     }
 }

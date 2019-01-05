@@ -2,17 +2,17 @@ package com.trackme.trackmeapplication.request.individualRequest;
 
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
+import com.trackme.trackmeapplication.baseUtility.Constant;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkIInterface;
 import com.trackme.trackmeapplication.request.individualRequest.network.IndividualRequestNetworkImp;
-import com.trackme.trackmeapplication.baseUtility.Constant;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

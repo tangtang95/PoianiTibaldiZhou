@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
-import android.support.annotation.TransitionRes;
 
 import com.trackme.trackmeapplication.localdb.entity.PositionData;
 

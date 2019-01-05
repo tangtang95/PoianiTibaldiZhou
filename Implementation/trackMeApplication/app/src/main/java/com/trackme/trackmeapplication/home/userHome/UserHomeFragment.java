@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.home.userHome;
 
-import android.arch.persistence.room.Room;
 import android.os.AsyncTask;
 import android.widget.ImageView;
 import android.widget.TextView;

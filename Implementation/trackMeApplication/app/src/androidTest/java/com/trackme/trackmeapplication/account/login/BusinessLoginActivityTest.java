@@ -67,7 +67,7 @@ public class BusinessLoginActivityTest {
                                         0),
                                 1),
                         isDisplayed()));
-        appCompatEditText.perform(replaceText("1234"), closeSoftKeyboard());
+        appCompatEditText.perform(replaceText("password1"), closeSoftKeyboard());
 
         pressBack();
 
@@ -89,7 +89,7 @@ public class BusinessLoginActivityTest {
                                         0),
                                 0),
                         isDisplayed()));
-        appCompatEditText2.perform(replaceText("Abc@v.it"), closeSoftKeyboard());
+        appCompatEditText2.perform(replaceText("tp1@provider.it"), closeSoftKeyboard());
 
         pressBack();
 

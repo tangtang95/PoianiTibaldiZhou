@@ -2,7 +2,6 @@ package com.trackme.trackmeapplication.service.health;
 
 import android.Manifest;
 import android.app.Service;
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;

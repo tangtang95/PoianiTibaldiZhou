@@ -1,6 +1,5 @@
 package com.trackme.trackmeapplication.home.userHome;
 
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;

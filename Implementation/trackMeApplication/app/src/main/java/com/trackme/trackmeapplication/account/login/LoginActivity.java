@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.text.InputType;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 
