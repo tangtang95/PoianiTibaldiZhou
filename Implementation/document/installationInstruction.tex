@@ -12,7 +12,8 @@ the Erlang programming language. In this case, just follow \url{http://www.erlan
 of Windows that you are using
 
 \item MySQL is another critical component since it has been used as a DBMS for managing persistent data. For having this working, it
-is possible to follow the guide at : \url{https://beep.metid.polimi.it/documents/121843524/b5d81926-98f6-496f-bf45-a2a8e897228c}. \\
+is possible to follow the guide at : \url{https://beep.metid.polimi.it/documents/121843524/b5d81926-98f6-496f-bf45-a2a8e897228c} 
+(ignore all the chapter regarding NetBeans and follow the ones that deal with the installation of MySQL). \\
 Once that the server has been set up, it is necessary to create the databases and its admin: to do that, first of all, go to the MySQL 
 folder and login with root. After that, write "create user 'trackmeadmin'@'\%' identified by 'datecallmeeting95';". \\
 Now, the admin for the database has been created, and it is necessary to create all the databases used by the various microservices. \\
@@ -61,6 +62,18 @@ the one that involves the test that is going to start. This is because the same 
 Furthermore, there is a timeout set to 1 minute, regarding the exchange of messages in the message queue. Keep in mind that you are probably
 running an entire architecture on a single machine, therefore don't get surprised if things get stuck a bit. However, we didn't encountered
 many problems in this sense.
+
+\item If you are opening the source code in your IDE (e.g. IntelliJ) and you run the program from there, you should also configure
+the databases inside the IDE. In this sense, since all the microservices are different projects, it is necessary to link each database
+to its related project. \\ A final remark is that the account service db is related to the API gateway; for what concerns the others, instead,
+the binding is trivial.   
+
+\item Due to setting of the application.properties file, every time that the a jar is launched the database will be created and therefore
+it will need to be populated. A little exception holds for what concerns the API gateway: indeed a SQL script named "data.sql" will be
+executed loading a table that contains information regarding the available API. \\ 
+Anyway, if for some reasons you don't like this option, what you need to change is: spring.jpa.hibernate.ddl-auto, from create to update.
+
+\item 
 \end{itemize}
 
 \par
@@ -69,16 +82,8 @@ In order to run the test plans of JMeter it is necessary to have JMeter installe
 \item mysql-connector.jar (\url{https://dev.mysql.com/downloads/connector/j/}) to be moved into the lib folder of JMeter
 \item amqp-client-3.x.x.jar (\url{https://www.rabbitmq.com/java-client.html} to be moved into the lib folder of JMeter; remember to download a version starting with 3, e.g. 3.6.6 (\url{http://repo1.maven.org/maven2/com/rabbitmq/amqp-client/})
 \item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter.
-\item If you are opening the source code in your IDE (e.g. IntelliJ) and you run the program from there, you should also configure
-the databases inside the IDE. In this sense, since all the microservices are different projects, it is necessary to link each database
-to its related project. \\ A final remark is that the account service db is related to the API gateway; for what concerns the others, instead,
-the binding is trivial.   
 \end{itemize}
-After the configuration, once the services, databases and the message broker are running in background, it is possible to run the test plans of JMeter on GUI or non-GUI mode:
-\begin{itemize}
-\item GUI mode: a double click on bin/jmeter to launch the GUI application and then after opening a jmx file click the start button.
-\item non-GUI mode: run the command line: \textit{jmeter -n -t path/to/jmx/file -l path/to/new/jml/file}, after running this line, it is also possible to create a web report with another command line: \textit{jmeter -g path/to/jml/file -o /web-report/folder}. Then, it is possible to open the html web report by opening the file index.html in /web-report/folder.
-\end{itemize}
+After this configuration, it is possible to run the test plans of JMeter on GUI/non-GUI mode.
 
 \subsection{Android application}
 TODO MATTIA: Take in mind also the case in which the other group does not have any android device, therefore add notes on the simulator
