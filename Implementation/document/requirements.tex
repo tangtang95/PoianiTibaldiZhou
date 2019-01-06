@@ -68,9 +68,9 @@ requirement could be fully accomplished
 all the Rest API that the various microservices provide
 \item Service registry, because otherwise, one should have set up all the network communication in a more static way, and also the management
 of forwarding requests from the gateway would have been more complex 
+\item A basic load balancer is already present in the API gateway that have been used (i.e. see Zuul in the adopted developed framework 
+chapter)
 \end{itemize}
-The load balancer has not been implemented because, among the functions mentioned above is the last one that should be considered, since
-it is very complex to have one if you an API gateway and a service registry is not present. \\
 
 \par Some basic security feature have been developed also: indeed, all the passwords are stored in the database with bcrypt and the only type
 of communication allowed between clients and the API gateway, is HTTPS. In order to do this, a custom SSL certificate has been
@@ -86,15 +86,14 @@ has been done in order to simplify a bit the security issue and to focus more on
 
 \subsection{Other comments}
 The database regarding the collected health and position data, has not been deployed on the cloud at this
-early stage, because the integration was not considered necessary. Indeed, a viable prototype can be 
-exists even without this. Indeed, it is more something that regards the deploy, rather than the 
+early stage, because the integration was not considered necessary. Indeed, it is more something that regards the deploy, rather than the 
 implementation itself. \\
 The same reasoning has been applied also for the deployment of JARs in docker containers. \\
-Furthermore, the usage of HATEOAS links for introducing hypermedia content in the responses is limited to some basic features. 
-Indeed, for the a first prototype, the links provided are not that powerful and do not permit a total exploration of the application space.
-However, this was not considered a crucial part for a first prototype, due to the fact that clients can still performs the path of the
-resources.  \\
 Some checks, from a server side point of view, have not been implemented: for example, when registering a third party customer have to
 provide an email: it is not checked that the String constitutes a valid email. Things like this have been considered not crucial 
 for a prototype, compered, for example, with the set up of the distributed system or to the business function.
 Nevertheless, some controls have been made in the Android application. \\
+Finally, protocols for restoring the integrity of data in case of the failure of a node has not been implemented. 
+To clarify this statement, suppose that an individual request service crashes just before sending information on a new accepted request 
+to the message queue: the data is lost and the third party customer will never be able to access those data. Situations like the one described
+in the few lines above have not been considered fundamental in this prototype phase, but are, for sure, necessary before deploying. 
