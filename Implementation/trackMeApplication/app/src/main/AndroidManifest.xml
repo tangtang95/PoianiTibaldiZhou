@@ -44,7 +44,7 @@
         <service android:name=".service.position.LocationService" />
 
         <activity android:name=".request.groupRequest.GroupRequestBodyActivity" />
-        <activity android:name=".request.individualRequest.IndividualRequestBusinessBodyActivity"></activity>
+        <activity android:name=".request.individualRequest.IndividualRequestBusinessBodyActivity" />
     </application>
 
 </manifest>
