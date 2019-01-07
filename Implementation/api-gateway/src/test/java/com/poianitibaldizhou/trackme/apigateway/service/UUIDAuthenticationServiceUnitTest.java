@@ -85,7 +85,7 @@ public class UUIDAuthenticationServiceUnitTest {
         when(passwordEncoder.matches("password1", user.getPassword())).thenReturn(true);
 
         authenticationService.userLogin("userName1", "password1");
-        assertTrue(!authenticationService.userLogin("userName1", "password1").isPresent());
+        assertTrue(authenticationService.userLogin("userName1", "password1").isPresent());
     }
 
     /**
@@ -159,7 +159,7 @@ public class UUIDAuthenticationServiceUnitTest {
         when(passwordEncoder.matches("password1", thirdPartyCustomer.getPassword())).thenReturn(true);
 
         authenticationService.thirdPartyLogin(thirdPartyCustomer.getEmail(), "password1");
-        assertTrue(!authenticationService.thirdPartyLogin(thirdPartyCustomer.getEmail(), "password1").isPresent());
+        assertTrue(authenticationService.thirdPartyLogin(thirdPartyCustomer.getEmail(), "password1").isPresent());
     }
 
     /**

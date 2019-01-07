@@ -58,6 +58,10 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
         if(passwordEncoder.matches(password, user.getPassword()) && !mapUserByToken.values().contains(user)) {
             mapUserByToken.put(uuid, user);
             mapTokenByUsername.put(username, uuid);
+        } else if(passwordEncoder.matches(password, user.getPassword()) && mapUserByToken.values().contains(user)) {
+            mapUserByToken.remove(mapTokenByUsername.remove(username));
+            mapTokenByUsername.put(username, uuid);
+            mapUserByToken.put(uuid, user);
         } else {
             return Optional.empty();
         }
@@ -94,7 +98,12 @@ public class UUIDAuthenticationService implements UserAuthenticationService, Thi
         // Check credentials and if the third party customer is already logged
         ThirdPartyCustomer thirdPartyCustomer = thirdPartyAccountManagerService.getThirdPartyByEmail(email);
 
-        if(passwordEncoder.matches(password, thirdPartyCustomer.getPassword()) && !mapThirdPartyByToken.values().contains(thirdPartyCustomer)) {
+        if(!mapThirdPartyByToken.values().contains(thirdPartyCustomer) && passwordEncoder.matches(password, thirdPartyCustomer.getPassword())) {
+            mapThirdPartyByToken.put(uuid, thirdPartyCustomer);
+            mapTokenByEmail.put(email, uuid);
+        } else if(mapThirdPartyByToken.values().contains(thirdPartyCustomer) &&
+                passwordEncoder.matches(password, thirdPartyCustomer.getPassword())) {
+            mapThirdPartyByToken.remove(mapTokenByEmail.remove(email));
             mapThirdPartyByToken.put(uuid, thirdPartyCustomer);
             mapTokenByEmail.put(email, uuid);
         } else {
