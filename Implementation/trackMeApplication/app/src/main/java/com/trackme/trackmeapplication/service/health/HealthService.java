@@ -125,11 +125,11 @@ public class HealthService extends Service {
                         return super.onStartCommand(intent, flags, startId);
                     }
                     startForegroundService();
-                    Toast.makeText(getApplicationContext(), R.string.foreground_start_toast_message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.foreground_start_toast_message, Toast.LENGTH_SHORT).show();
                     break;
                 case ACTION_STOP_FOREGROUND_SERVICE:
                     stopForegroundService();
-                    Toast.makeText(getApplicationContext(), R.string.foreground_stop_toast_message, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), R.string.foreground_stop_toast_message, Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     Log.e(getString(R.string.debug_tag), getString(R.string.error_no_action));

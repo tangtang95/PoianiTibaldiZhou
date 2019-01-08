@@ -156,7 +156,6 @@ public class ConnectionThread extends Thread {
         synchronized (lock.getLock()) {
             this.stringReturned = body;
             this.statusReturned = status;
-            lock.isLock(false);
             lock.getLock().notifyAll();
         }
     }

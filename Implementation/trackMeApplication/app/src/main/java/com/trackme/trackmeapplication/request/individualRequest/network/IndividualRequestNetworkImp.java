@@ -38,7 +38,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     private ObjectMapper mapper;
 
     private final Object lock = new Object();
-    private boolean isLock;
 
     /**
      * Private constructor
@@ -56,7 +55,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     @Override
     public List<IndividualRequestWrapper> getIndividualRequest(String token) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
@@ -66,7 +64,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.getIndividualRequestsLink())
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -96,7 +94,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     @Override
     public List<IndividualRequestWrapper> getOwnIndividualRequest(String token) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             UserURLManager userUrlManager = UserURLManager.getInstance();
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
@@ -106,7 +103,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(userUrlManager.getPendingRequestsLink())
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -137,7 +134,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     public void acceptIndividualRequest(String token, String url) throws ConnectionException {
         String responseUrl = getResponseLink(token, url);
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
@@ -146,7 +142,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(responseUrl)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
                     throw new ConnectionException();
@@ -160,7 +156,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     public String refuseIndividualRequest(String token,String url) throws ConnectionException {
         String responseUrl = getResponseLink(token, url);
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
@@ -169,7 +164,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(responseUrl)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.CREATED) {
                     List<String> links = JsonPath.read(
@@ -186,7 +181,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     @Override
     public void blockThirdPartyCustomer(String token, String url) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
@@ -195,7 +189,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(url)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.CREATED)
                     throw new ConnectionException();
@@ -208,7 +202,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
     @Override
     public void send(String token, IndividualRequest individualRequest, String userSSN) throws ConnectionException, RequestNotWellFormedException, ThirdPartyBlockedException, UserNotFoundException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -219,7 +212,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.getNewIndividualRequestLink() + "/" + userSSN)
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
@@ -245,7 +238,6 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
      */
     private String getResponseLink(String token, String url) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Authorization", "Bearer " + token);
             try {
@@ -254,7 +246,7 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(url)
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
                     List<String> links = JsonPath.read(
@@ -274,8 +266,4 @@ public class IndividualRequestNetworkImp implements IndividualRequestNetworkIInt
         return lock;
     }
 
-    @Override
-    public void isLock(boolean b) {
-        this.isLock = b;
-    }
 }

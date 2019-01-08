@@ -40,7 +40,6 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     private static GroupRequestNetworkImp instance = null;
 
     private final Object lock = new Object();
-    private boolean isLock;
 
     /**
      * Private constructor.
@@ -86,7 +85,6 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     @Override
     public List<GroupRequestWrapper> getGroupRequest(String token) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             ObjectMapper mapper = new ObjectMapper();
             HttpHeaders httpHeaders = new HttpHeaders();
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
@@ -97,7 +95,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.getGroupRequestsLink())
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -127,7 +125,6 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
     @Override
     public void send(String token, GroupRequestBuilder groupRequestBuilder) throws RequestNotWellFormedException, ConnectionException, ThirdPartyBlockedException, UserNotFoundException {
         synchronized (lock) {
-            isLock(true);
             try {
                 ObjectMapper mapper = new ObjectMapper();
                 HttpHeaders httpHeaders = new HttpHeaders();
@@ -138,7 +135,7 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(businessURLManager.getNewGroupRequestLink())
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
@@ -159,8 +156,4 @@ public class GroupRequestNetworkImp implements GroupRequestNetworkInterface, Loc
         return lock;
     }
 
-    @Override
-    public void isLock(boolean b) {
-        this.isLock = b;
-    }
 }

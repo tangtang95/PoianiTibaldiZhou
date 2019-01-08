@@ -154,7 +154,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
     public void startHealthService() {
         Intent serviceIntent = new Intent(this, HealthService.class);
         serviceIntent.setAction(HealthService.ACTION_START_FOREGROUND_SERVICE);
-        serviceIntent.putExtra(getString(R.string.birth_year_key), "1995-02-09");
+        serviceIntent.putExtra(getString(R.string.birth_year_key), sp.getString(Constant.BIRTH_DATE_KEY, null));
         startService(serviceIntent);
     }
 
@@ -204,112 +204,29 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
             if (userHomeActivity == null)
                 return "Error in load database";
-            AppDatabase appDatabase = DatabaseManager.getInstance(userHomeActivity.getApplicationContext());
-
 
             token = userHomeActivity.getToken();
+
+            AppDatabase appDatabase = DatabaseManager.getInstance(userHomeActivity.getApplicationContext());
             appDatabase.beginTransaction();
             List<HealthData> healthDataList = appDatabase.getHealthDataDao().getAll();
             List<PositionData> positionDataList = appDatabase.getPositionDataDao().getAll();
-            healthDataList.sort(new HealthData.CustomComparator());
-            positionDataList.sort(new PositionData.CustomComparator());
 
-            if (!healthDataList.isEmpty()) {
-                if (!positionDataList.isEmpty()){
-                    int i = 0;
-                    int j = 0;
-                    boolean isAlive = true;
-                    ClusterDataWrapper clusterData = new ClusterDataWrapper();
+            ClusterDataWrapper clusterData = new ClusterDataWrapper();
+            for (HealthData hd: healthDataList) {
+                clusterData.addHealthData(hd);
+            }
 
-                    while (isAlive){
-                        HealthData hd = healthDataList.get(i);
-                        PositionData pd = positionDataList.get(j);
-                        if (hd.getTimestamp().equals(pd.getTimestamp())){
-                            clusterData.addNewClusterData(hd, pd);
-                            i++;
-                            j++;
-                        } else if (hd.getTimestamp().before(pd.getTimestamp())){
-                            HealthDataWrapper healthData = new HealthDataWrapper();
-                            healthData.setTimestamp(hd.getTimestamp().toString().replace(" ", "T"));
-                            healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
-                            healthData.setHeartBeat(hd.getHeartbeat().toString());
-                            healthData.setPressureMax(hd.getPressureMax().toString());
-                            healthData.setPressureMin(hd.getPressureMin().toString());
+            for (PositionData pd: positionDataList){
+                clusterData.addPositionData(pd);
+            }
 
-                            try {
-                                sharedDataNetwork.sendHealthData(token, healthData);
-                                appDatabase.getHealthDataDao().deleteById(hd.getId());
-                                i++;
-                            } catch (ConnectionException e) {
-                                message = userHomeActivity.getString(R.string.connection_error);
-                                i++;
-                            }
-                        } else {
-                            PositionDataWrapper positionData = new PositionDataWrapper();
-                            positionData.setLatitude(pd.getLatitude().toString());
-                            positionData.setLongitude(pd.getLongitude().toString());
-                            positionData.setTimestamp(pd.getTimestamp().toString().replace(" ", "T"));
-
-                            try {
-                                sharedDataNetwork.sendPositionData(token, positionData);
-                                appDatabase.getPositionDataDao().deleteById(pd.getId());
-                                j++;
-                            } catch (ConnectionException e) {
-                                message = userHomeActivity.getString(R.string.connection_error);
-                                j++;
-                            }
-                        }
-
-                        if (i == healthDataList.size() && j == positionDataList.size())
-                            isAlive = false;
-                    }
-
-                    if (!clusterData.extractHealthIDList().isEmpty()){
-                        try {
-                            sharedDataNetwork.sendClusterData(token, clusterData);
-                            for (int k = 0; k < clusterData.extractHealthIDList().size(); k++) {
-                                appDatabase.getHealthDataDao().deleteById(clusterData.extractHealthIDList().get(k));
-                                appDatabase.getPositionDataDao().deleteById(clusterData.extractPositionIDList().get(k));
-                            }
-                        } catch (ConnectionException e) {
-                            message = userHomeActivity.getString(R.string.connection_error);
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < healthDataList.size(); i++) {
-                        HealthData hd = healthDataList.get(i);
-
-                        HealthDataWrapper healthData = new HealthDataWrapper();
-                        healthData.setTimestamp(hd.getTimestamp().toString().replace(" ", "T"));
-                        healthData.setBloodOxygenLevel(hd.getBloodOxygenLevel().toString());
-                        healthData.setHeartBeat(hd.getHeartbeat().toString());
-                        healthData.setPressureMax(hd.getPressureMax().toString());
-                        healthData.setPressureMin(hd.getPressureMin().toString());
-
-                        try {
-                            sharedDataNetwork.sendHealthData(token, healthData);
-                            appDatabase.getHealthDataDao().deleteById(hd.getId());
-                        } catch (ConnectionException e) {
-                            message = userHomeActivity.getString(R.string.connection_error);
-                        }
-                    }
-                }
-            } if (!positionDataList.isEmpty()){
-                for (int i = 0; i < positionDataList.size(); i++) {
-                    PositionData pd = positionDataList.get(i);
-
-                    PositionDataWrapper positionData = new PositionDataWrapper();
-                    positionData.setLatitude(pd.getLatitude().toString());
-                    positionData.setLongitude(pd.getLongitude().toString());
-                    positionData.setTimestamp(pd.getTimestamp().toString().replace(" ", "T"));
-
-                    try {
-                        sharedDataNetwork.sendPositionData(token, positionData);
-                        appDatabase.getPositionDataDao().deleteById(pd.getId());
-                    } catch (ConnectionException e) {
-                        message = userHomeActivity.getString(R.string.connection_error);
-                    }
-                }
+            try {
+                sharedDataNetwork.sendClusterData(token, clusterData);
+                appDatabase.getHealthDataDao().deleteAll();
+                appDatabase.getPositionDataDao().deleteAll();
+            } catch (ConnectionException e) {
+                message = userHomeActivity.getString(R.string.connection_error);
             }
             appDatabase.endTransaction();
 

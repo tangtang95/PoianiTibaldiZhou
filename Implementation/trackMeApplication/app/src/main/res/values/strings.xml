@@ -91,8 +91,8 @@
     <string name="health">Health service</string>
     <string name="stop_foreground">Stop foreground service</string>
     <string name="error_no_action">FATAL ERROR: No action passed</string>
-    <string name="foreground_stop_toast_message">Foreground service is stopped.</string>
-    <string name="foreground_start_toast_message">Foreground service is started.</string>
+    <string name="foreground_stop_toast_message">Foreground service stopped.</string>
+    <string name="foreground_start_toast_message">Foreground service started.</string>
     <string name="geonames_org_url"><![CDATA[http://api.geonames.org/countryCode?lat=%s&lng=%s&username=%s]]></string>
     <string name="cannot_find_json_error">IO Exception, impossible to find the json file</string>
     <string name="creation_date">Creation Date</string>

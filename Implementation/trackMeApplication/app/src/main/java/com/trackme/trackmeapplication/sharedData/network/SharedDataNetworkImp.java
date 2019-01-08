@@ -6,6 +6,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.trackme.trackmeapplication.home.userHome.HistoryItem;
 import com.trackme.trackmeapplication.httpConnection.BusinessURLManager;
 import com.trackme.trackmeapplication.httpConnection.ConnectionBuilder;
+import com.trackme.trackmeapplication.httpConnection.ConnectionThread;
 import com.trackme.trackmeapplication.httpConnection.LockInterface;
 import com.trackme.trackmeapplication.httpConnection.UserURLManager;
 import com.trackme.trackmeapplication.httpConnection.exception.ConnectionException;
@@ -64,18 +65,16 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
         synchronized (lock) {
             userUrlManager = UserURLManager.getInstance();
             HttpHeaders httpHeaders = new HttpHeaders();
-            isLock(true);
             httpHeaders.add("Authorization", "Bearer " + token);
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             try {
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(userUrlManager.getUserInfoLink()).setHttpMethod(HttpMethod.GET)
                         .setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
-                        //Log.d("BODY", connectionBuilder.getConnection().getResponse());
                         return mapper.readValue(connectionBuilder.getConnection().getResponse(), User.class);
                     case UNAUTHORIZED: throw new ConnectionException();
                     case NOT_FOUND: throw new UserNotFoundException();
@@ -96,7 +95,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
         synchronized (lock) {
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             HttpHeaders httpHeaders = new HttpHeaders();
-            isLock(true);
             httpHeaders.add("Authorization", "Bearer " + token);
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
             try {
@@ -104,7 +102,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 connectionBuilder.setUrl(businessURLManager.getUserInfoLink()).setHttpMethod(HttpMethod.GET)
                         .setEntity(entity).getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -134,7 +132,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     public String getGroupRequestData(String token, String url) throws ConnectionException {
         String accessDataLink = getAccessDataLink(token, url);
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
@@ -143,7 +140,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(accessDataLink)
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
                     throw new ConnectionException();
@@ -159,16 +156,15 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     public String getIndividualRequestData(String token, String url) throws ConnectionException {
         String accessDataLink = getAccessDataLink(token, url);
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
-                connectionBuilder.setUrl(accessDataLink)
-                        .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                ConnectionThread thread = connectionBuilder.setUrl(accessDataLink)
+                        .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection();
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
                     throw new ConnectionException();
@@ -183,19 +179,19 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     @Override
     public List<HistoryItem> getUserData(String token, String startDate, String endDate) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 httpHeaders.add("Authorization", "Bearer " + token);
                 HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
-                connectionBuilder.setUrl(
+                ConnectionThread connectionThread = connectionBuilder.setUrl(
                         userUrlManager.getGetOwnDataLink() + "?from=" + startDate + "&to=" + endDate
                         )
                         .setHttpMethod(HttpMethod.GET)
-                        .setEntity(entity).getConnection().start();
-                while (isLock)
+                        .setEntity(entity).getConnection();
+                connectionThread.start();
+                while (connectionThread.getStatusReturned() == null)
                     lock.wait();
 
                 switch (connectionBuilder.getConnection().getStatusReturned()){
@@ -221,7 +217,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     @Override
     public void sendHealthData(String token, HealthDataWrapper healthData) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -232,7 +227,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(userURLManager.getPostHealthDataLink())
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
@@ -248,7 +243,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     @Override
     public void sendPositionData(String token, PositionDataWrapper positionData) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -259,7 +253,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(userURLManager.getPostPositionDataLink())
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
@@ -275,7 +269,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     @Override
     public void sendClusterData(String token, ClusterDataWrapper clusterData) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             try {
                 ObjectMapper mapper = new ObjectMapper();
@@ -286,7 +279,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(userURLManager.getPostClusterDataLink())
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK: break;
@@ -309,7 +302,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
      */
     private String getAccessDataLink(String token, String url) throws ConnectionException {
         synchronized (lock) {
-            isLock(true);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.add("Authorization", "Bearer " + token);
             try {
@@ -318,7 +310,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 connectionBuilder.setUrl(url)
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection().start();
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() == HttpStatus.OK){
                     List<String> links = JsonPath.read(
@@ -338,8 +330,4 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
         return lock;
     }
 
-    @Override
-    public void isLock(boolean b) {
-        this.isLock = b;
-    }
 }

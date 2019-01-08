@@ -29,6 +29,7 @@ public final class Constant {
     public static final String SD_GROUP_REQUEST_KEY = "group_request_item";
     public static final String USER_LOGGED_BOOLEAN_VALUE_KEY = "user_logged";
     public static final String BUSINESS_LOGGED_BOOLEAN_VALUE_KEY = "business_logged";
+    public static final String BIRTH_DATE_KEY = "birth_date";
 
     // Api regarding third parties accounts
     public static final String PUBLIC_TP_API = "/public/thirdparties";
@@ -58,6 +59,5 @@ public final class Constant {
     public static final String MAP_COLUMN_KEY = "column";
     public static final String MAP_COMPARISON_SYMBOL_KEY = "comparisonSymbol";
     public static final String MAP_VALUE_KEY = "value";
-
 
 }

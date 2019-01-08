@@ -14,12 +14,4 @@ public interface LockInterface {
      * @return the object locked
      */
     Object getLock();
-
-    /**
-     * Boolean value that is true if the object is locked, false otherwise
-     *
-     * @param b the value of the lock
-     */
-    void isLock(boolean b);
-
 }

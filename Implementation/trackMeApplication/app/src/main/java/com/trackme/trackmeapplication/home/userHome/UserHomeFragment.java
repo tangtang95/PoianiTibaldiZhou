@@ -11,6 +11,7 @@ import com.trackme.trackmeapplication.localdb.database.DatabaseManager;
 import com.trackme.trackmeapplication.localdb.entity.HealthData;
 
 import java.lang.ref.WeakReference;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -101,10 +102,13 @@ public class UserHomeFragment extends BaseFragment {
             UserHomeFragment userHomeFragment = weakReference.get();
             if (userHomeFragment != null){
                 if (healthData != null) {
-                    userHomeFragment.pulseValue.setText(healthData.getHeartbeat());
+                    CharSequence textView = userHomeFragment.pulseValue.getText();
+                    userHomeFragment.pulseValue.setText(String.format(Locale.getDefault(), "%d",
+                            healthData.getHeartbeat()));
                     String pressure = healthData.getPressureMax() + "/" + healthData.getPressureMin();
                     userHomeFragment.bloodPressureValue.setText(pressure);
-                    userHomeFragment.bloodOxygenLevelValue.setText(healthData.getBloodOxygenLevel());
+                    userHomeFragment.bloodOxygenLevelValue.setText(String.format(Locale.getDefault(), "%d",
+                            healthData.getBloodOxygenLevel()));
                     userHomeFragment.handleAnimation();
                 }
                 else {

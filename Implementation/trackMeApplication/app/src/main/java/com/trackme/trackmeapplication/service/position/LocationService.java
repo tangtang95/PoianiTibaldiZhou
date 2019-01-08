@@ -19,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.trackme.trackmeapplication.R;
 import com.trackme.trackmeapplication.home.userHome.UserHomeActivity;
@@ -69,11 +70,13 @@ public class LocationService extends Service {
     }
 
     private void startForegroundService() {
+        Toast.makeText(getApplicationContext(), R.string.foreground_start_toast_message, Toast.LENGTH_SHORT).show();
         setUpGPS();
     }
 
     private void stopForegroundService() {
         Log.d(getString(R.string.debug_tag), getString(R.string.stop_foreground));
+        Toast.makeText(getApplicationContext(), R.string.foreground_stop_toast_message, Toast.LENGTH_SHORT).show();
         stopForeground(true);
         stopSelf();
     }

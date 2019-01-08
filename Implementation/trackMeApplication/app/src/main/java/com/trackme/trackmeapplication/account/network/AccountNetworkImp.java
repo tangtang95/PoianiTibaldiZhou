@@ -37,8 +37,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     private static AccountNetworkImp instance = null;
 
     private final Object lock = new Object();
-    private boolean isLock;
-
 
     /**
      * Constructor. (singleton)
@@ -59,7 +57,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
             UserURLManager userUrlManager = UserURLManager.getInstance();
             HttpHeaders httpHeaders = new HttpHeaders();
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-            isLock(true);
             try {
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
@@ -68,7 +65,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(url).setHttpMethod(HttpMethod.POST).setEntity(entity)
                         .getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -92,7 +89,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
             HttpHeaders httpHeaders = new HttpHeaders();
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
             HttpEntity<String> entity = new HttpEntity<>(null, httpHeaders);
-            isLock(true);
             try {
 
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
@@ -101,7 +97,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(url).setHttpMethod(HttpMethod.POST).setEntity(entity)
                         .getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()){
                     case OK:
@@ -122,7 +118,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public void userLogout(String token) throws UserAlreadyLogoutException, ConnectionException {
         synchronized (lock) {
-            isLock(true);
             try {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 UserURLManager userURLManager = UserURLManager.getInstance();
@@ -133,7 +128,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(userURLManager.getLogoutLink()).setHttpMethod(HttpMethod.POST).setEntity(entity)
                         .getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
 
                 switch (connectionBuilder.getConnection().getStatusReturned()) {
@@ -151,7 +146,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     @Override
     public void thirdPartyLogout(String token) throws UserAlreadyLogoutException, ConnectionException {
         synchronized (lock) {
-            isLock(true);
             try {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
@@ -162,7 +156,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(businessURLManager.getLogoutLink()).setHttpMethod(HttpMethod.POST)
                         .setEntity(entity).getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
 
                 switch (connectionBuilder.getConnection().getStatusReturned()) {
@@ -181,7 +175,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
         synchronized (lock) {
             HttpHeaders httpHeaders = new HttpHeaders();
             UserURLManager userUrlManager = UserURLManager.getInstance();
-            isLock(true);
             try {
                 ObjectMapper mapper = new ObjectMapper();
 
@@ -192,7 +185,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                         Constant.PUBLIC_USER_API + Constant.REGISTER_USER_API + user.extractSsn()))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()) {
                     case INTERNAL_SERVER_ERROR: throw new ConnectionException();
@@ -210,7 +203,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     public void thirdPartySignUp(PrivateThirdPartyDetail privateThirdPartyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
-            isLock(true);
             try {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 ThirdPartyPrivateWrapper thirdPartyPrivateWrapper = new ThirdPartyPrivateWrapper();
@@ -223,7 +215,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(businessURLManager.createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_PRIVATE_TP_API))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()) {
                     case INTERNAL_SERVER_ERROR: throw new ConnectionException();
@@ -241,7 +233,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
     public void companySignUp(CompanyDetail companyDetail) throws UserAlreadySignUpException, ConnectionException {
         synchronized (lock) {
             BusinessURLManager businessURLManager = BusinessURLManager.getInstance();
-            isLock(true);
             try {
                 HttpHeaders httpHeaders = new HttpHeaders();
                 ThirdPartyCompanyWrapper thirdPartyCompanyWrapper = new ThirdPartyCompanyWrapper();
@@ -254,7 +245,7 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
                 connectionBuilder.setUrl(businessURLManager.createURLWithPort(Constant.PUBLIC_TP_API + Constant.REGISTER_COMPANY_TP_API))
                         .setHttpMethod(HttpMethod.POST).setEntity(entity).getConnection().start();
 
-                while (isLock)
+                while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 switch (connectionBuilder.getConnection().getStatusReturned()) {
                     case INTERNAL_SERVER_ERROR: throw new ConnectionException();
@@ -287,10 +278,6 @@ public class AccountNetworkImp implements AccountNetworkInterface, LockInterface
         return lock;
     }
 
-    @Override
-    public void isLock(boolean b) {
-        this.isLock = b;
-    }
 
 
 }
