@@ -267,7 +267,8 @@ In the next figure, it is shown the package structure and following the explanat
 The package base utility contains the implementation of the MVP pattern and the main utility used into the application. Also it contains the constant class with all the constants useful.
 
 \paragraph{Home}
-The home package contain the two main activity of the application. The UserHomeActivity that shows the home view to the user with the possibility of switching through three fragment: the home fragment that allows to the user to see the last health status register into the application by pressing the check status button, the history fragment with all the health data registered in the last week and finally the request fragment that allows to the user of seeing the individual request received and to accept or refuse it. The user home is supplied also by a lateral menu with the logout function and the possibility of activating two service bluetooth and location service for the correct working of Data4Help. Note that user settings and user profile are only fake options, adding for the completeness of the menu, but they are not so important and more times has been dedicated to improve the security of the application and the other functionalities. The second activity in this package is the business home that are similar to the first but it is composed by only two fragments: one for showing to the third party the individual requests sent and allow to him to add some one of new and the second that does the same, but for the group requests.
+The home package contain the two main activity of the application. The UserHomeActivity that shows the home view to the user with the possibility of switching through three fragment: the home fragment that allows to the user to see the last health status register into the application by pressing the check status button, the history fragment with all the health data registered in the last week and finally the request fragment that allows to the user of seeing the individual request received and to accept or refuse it. The user home is supplied also by a lateral menu with the logout function and the possibility of activating two service health and location service for the correct working of TrackMe. Note that user settings and user profile are only fake options, adding for the completeness of the menu, but they are not so important and more times has been dedicated to improve the security of the application and the other functionalities. The second activity in this package is the business home that are similar to the first but it is composed by only two fragments: one for showing to the third party the individual requests sent and allow to him to add some one of new and the second that does the same, but for the group requests.\\
+In this package the synchronization between the slider to activate health and location service with the running of the service itself has not been implemented since it is not so important to the prototype application.
 
 \paragraph{HTTP Connection}
 This package contains the main class for support a secure connection with the server. Connection thread is the only way to the server and it loads for all connections the ssl context with the certificate and the  host verifier that checks if the server IP correspond to an address knowing. The communication is synchronized by locks into the controller and they are handled by the lock interface. 
@@ -303,13 +304,24 @@ In this paragraph is presented the request package that is composed by other thr
 \end{enumerate}
 	
 \paragraph{Service}
-TODO TANG TANG
+In this package, the health service and the location service has been implemented to receive the data about health and position 
+from, respectively, smartwatch or other similar devices and GPS. The application exploit the bluetooth functionality of the mobile device to receive the health data from the smartwatch, while for the position data, it just receive it from the Location Manager of the mobile device.\\
+
+This package service is regarding AutomatedSOS and it is completely developed to work locally on the smartphone of the user to achieve a high availability. Of course, it also has to have a high reliability, therefore, it is designed to be testable as possible. 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/Service.png}
 \caption{ package service }
 \label{fig:pkgsharedata}
 \end{figure}
+
+\begin{enumerate}
+\item Package bluetooth: it contains a Bluetooth Server which is responsible to wait for client to connect and after that it starts a thread that deals with the receive of the messages from the other devices
+\item Package exception: it contains all the custom exceptions used in the service package
+\item Package health: it contains the logic behind the health service which is based, basically, on: receiving the message; saving the data if it is correct w.r.t. standard values; checking with simple threshold if the health is grave or not; if it is grave and there are no recent emergency call, then it will get own location and search for the emergency number within a json and call it (afterwards, it saves the call on the local database to avoid flood calling)
+\item Package util: it contains all the utility class necessary for the health and position package.
+\item Package location: it contains the logic behind the location service which just simply saves the position data on the local database every time a new last location is present
+\end{enumerate}
 
 \paragraph{Share data}
 At the end the share data package is commented. It follows the same line of the others. As just mentions in various paragraph above the package structure is the same, it contains an exception package with the custom exception for share data service, it contains a network package with the controller interface that expose the function that allows the communication with share data service and finally all wrapper class for the mapping of the share object with json string and vice versa.
@@ -334,13 +346,4 @@ Here are located all xml definitions files presented into the software. This fil
 \item Package raw: It contains two particular files. A json file with the last emergency call made by the user with Data4Help and keystore with the keys for secure communication.
 \item Package value: here are stored string values, colors and component styles. 
 \end{enumerate}
-
-\subsubsection{AutomatedSOS}
-The service regarding AutomatedSOS is completely developed to work locally on the smartphone of the user to achieve a high availability. Of course, it also has to have a high reliability, therefore, it is designed to be testable as possible. The project is subdivided in different packages:
-\begin{itemize}
-	\item bluetooth: this package deals with the communication between the other device collecting health data. Basically it is based on a BluetoothServer class which waits for a connection; once the connection is established, a SocketHandler object is instantiated and it waits for specific messages which will be forwarded to a HealthDataCallback that is responsible to save the health data and ask for a call if necessary.
-	\item health: here, there is the HealthService that deals with the notification and starting the bluetooth server and other objects. Another important class is the HealthServiceHelper which is used by HealthDataCallback to be able to call the service.
-	\item util: other utility classes such as HealthDataInspector which checks if a specific health data is dangerous for the user or not.
-	\item exception: all the exception that could happen during the chain of action to reach a call.
-\end{itemize}
 

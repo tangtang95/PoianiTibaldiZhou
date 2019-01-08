@@ -27,8 +27,6 @@ import com.trackme.trackmeapplication.localdb.entity.PositionData;
 import com.trackme.trackmeapplication.service.health.HealthService;
 import com.trackme.trackmeapplication.service.position.LocationService;
 import com.trackme.trackmeapplication.sharedData.ClusterDataWrapper;
-import com.trackme.trackmeapplication.sharedData.HealthDataWrapper;
-import com.trackme.trackmeapplication.sharedData.PositionDataWrapper;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkImp;
 import com.trackme.trackmeapplication.sharedData.network.SharedDataNetworkInterface;
 
@@ -138,6 +136,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     @Override
     public void startLocationService() {
+        // TODO synchronize slider with service
         Intent serviceIntent = new Intent(this, LocationService.class);
         serviceIntent.setAction(LocationService.ACTION_START_FOREGROUND_SERVICE);
         startService(serviceIntent);
@@ -152,6 +151,7 @@ public class UserHomeActivity extends BaseDelegationActivity<
 
     @Override
     public void startHealthService() {
+        // TODO synchronize slider with service
         Intent serviceIntent = new Intent(this, HealthService.class);
         serviceIntent.setAction(HealthService.ACTION_START_FOREGROUND_SERVICE);
         serviceIntent.putExtra(getString(R.string.birth_year_key), sp.getString(Constant.BIRTH_DATE_KEY, null));

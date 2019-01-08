@@ -34,7 +34,7 @@ It is necessary to start first of the service registry, and then all the other s
 order you prefer: doing this should also speed up the start. 
 The port that are needed to be free are the following: 8443 (API gateway), 8761 (service registry), 8089 (share data service), 8081 (group
 request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
-machine is which the jar will be ran, it is possible to modify this by adding "--server.port PORT\_NUMBER", while launching the jar. \\
+machine is which the jar will be ran, it is possible to modify this by adding "--server.port=PORT\_NUMBER", while launching the jar. Moreover, to expose the server to the mobile application it is important to change the server address with the local IP of the machine by adding to the api gateway jar launch "--server.address=LOCAL\_IP" \\
 Furthermore, is also possible to modify any of the settings that are located within the application.properties of the various project.
 One can find these files in the various folders of the source code, within the folder "main". However, in order to avoid useless errors
 we suggest to not modify critical parts, such as the routes used by Zuul (API gateway settings). \\
@@ -43,7 +43,9 @@ we suggest to not modify critical parts, such as the routes used by Zuul (API ga
 For running the tests, it is necessary to start again the RabbitMQ server and the MySQL server. After that, it is possible to go into
 the root of interested project and run "mvn test". \\
 Keep in mind that running the tests may take some time, due to the fact that some tests require to launch the entire spring application,
-or to connect to the RabbitMQ server, or to load data into the database. 
+or to connect to the RabbitMQ server, or to load data into the database. In case there has been some errors due to integration 
+tests with RabbitMQ, it can help to open the web server of RabbitMQ: localhost:15762, enter as guest with the password "guest" 
+and purge the queues if necessary.
 
 \par 
 Here it follows a list of further considerations: 
@@ -81,14 +83,20 @@ In order to run the test plans of JMeter it is necessary to have JMeter installe
 \begin{itemize}
 \item mysql-connector.jar (\url{https://dev.mysql.com/downloads/connector/j/}) to be moved into the lib folder of JMeter
 \item amqp-client-3.x.x.jar (\url{https://www.rabbitmq.com/java-client.html} to be moved into the lib folder of JMeter; remember to download a version starting with 3, e.g. 3.6.6 (\url{http://repo1.maven.org/maven2/com/rabbitmq/amqp-client/})
-\item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter.
+\item Download also the project \url{https://github.com/jlavallee/JMeter-Rabbit-AMQP} and build it with Ant ("brew install ant" for Mac users). Then move the generated jar file, which can be found in /target/dist, into the lib/ext folder of JMeter. To avoid searching for this jar, it is possible to download it directly on the release section of GitHub
 \end{itemize}
-After this configuration, it is possible to run the test plans of JMeter on GUI/non-GUI mode.
+After this configuration, it is possible to run the test plans of JMeter on GUI/non-GUI mode: 
+\begin{itemize}
+	\item GUI Mode: to launch this mode, just double-click on the jmeter executable or launch it with the terminal; in order to run the test, it is possible to just click on the green play button on the top bar. After that it is possible to see the results by clicking on the node: "View Results Tree" or "View Results on Table" located in every thread group
+	\item non-GUI Mode: To launch this mode, just run this code on the terminal: "jmeter -n -t [jmx file] -l [results file] -e -o [Path to web report folder]" which will output a result file of the test and a html web page report on the folder chosen where there will be graphic representation of the results of the test. If the command does not work properly it is possible to run the code separately: first "jmeter -n -t [jmx file] -l [results file]" and then run "jmeter -g [results file] -o [Path to web report folder]".
+\end{itemize}
+In case the api-gateway service is running on a IP different from localhost, then it is necessary to change the IP address of the test from the GUI: just click on the HTTP 
+request default that can be found on the left side of the graphical interface and change the IP address with the one chosen.
 
 \subsection{Android application}
-In order to install the application onto your device  it necessary to allow the installation of applications from unknown sources. This setting can be found in your device's system settings under: Settings > Applications > Unknown sources. 
+In order to install the application onto your device it is necessary to allow the installation of applications from unknown sources. This setting can be found in your device's system settings under: Settings > Applications > Unknown sources. 
 \\
-Now it is possible to download the apk from the project folder on gitHub and after it is possible to install it by launching the Downloads application. The Downloads application can be launched from web browser using the menu, or by launching the Downloads applications directly by the download folder on your device. During the first launch of the application the user must accept all the permission required. Note that if some one are refused the application will be closed. For the first execution the user should set the ip address of the server by pressing on the trackMe logo in the user login. A window with the current ip address is shown and here it is possible to change the address with the new server address. For simulating the smartwatch it is also necessary downloaded the blootooth server apk from the gitHub folder and install it on the device, by following the same instruction above.
+Now it is possible to download the apk from the project folder on GitHub and after that, it is possible to install it by launching the Downloads application. The Downloads application can be launched from web browser using the menu, or by launching the Downloads applications directly by the download folder on your device. During the first launch of the application the user must accept all the permission required. Note that if some are refused then the application will be closed. For the first execution the user should set the ip address of the server by pressing on the TrackMe logo in the user login. A window with the current ip address is shown and here it is possible to change the address with the new server address. For simulating the smartwatch it is also necessary downloaded the bluetooth client apk from the GitHub folder and install it on the device, by following the same instruction above.
 
 \par 
 Here it follows a list of further considerations: 
@@ -97,13 +105,14 @@ Here it follows a list of further considerations:
 \end{itemize}
 
 \par
-If the reader not have an mobile phone with android he can use an emulator on his pc, but his computer will must provide bluetooth connection for being able to use all the app features.
+If the reader does not have a mobile phone with android he can use an emulator on his pc, but the bluetooth connection cannot be simulated with an emulator.
 
 Regarding the tests of the health service, all the tests should be launched on an android simulator with some tweak configurations to do:
 \begin{itemize}
 \item Enable the developer settings by tapping a lot of time on the build settings of the simulator.
-\item Enable the mock position which can be found in the developer settings.
+\item Enable the mock position for the application through the developer settings.
 \end{itemize}
 Moreover, the test regarding the bluetooth does not exist due to complexity: the simulator does not have the capacity to simulate bluetooth connections. Instead, there is a stub application bluetooth client which can be used to test if the communication between bluetooth devices is working as expected. Therefore, it is necessary to have two devices supporting bluetooth which are paired. Then after starting the health service on the device containing TrackMe application, a bluetooth server is running in background waiting for other devices. Now after starting the other application, it should be possible to insert the name of the device running the server and establish the connection. Once the connection is established it is possible to simulate the sending operation of health data.
+Since the bluetooth client application is just a stub, it is not so user friendly, therefore, it can be seen that the connection is active only when the send data button is active, otherwise if it is not, check if the devices are paired and the bluetooth server is activated or just retry to connect.
 
 

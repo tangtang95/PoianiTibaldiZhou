@@ -70,7 +70,7 @@ many other. In the end, to check if the system as a whole was working as expecte
 \begin{itemize}
 \item Functional testing: without taking into consideration the concurrency and performance problems, the test plan focuses on 
 the expected return value of each request, to test if the system works as intended. It has also been checked the group 
-request accepted case when a group request is correlated to more than 1000 users.
+request accepted case when a group request is correlated to more than 1000 users. The test, basically, does not check the response body of each request, but it just check the correct flow of the server application by making request in which the status code of each request is of type 20X.
 \item Load testing: with the help of the "Random Controller", a random choice in the HTTP requests is applied and many thread 
 users has been launched to test the maximum load of the system. In the GUI mode, the test results in a latency of more than 
 20 seconds which the API Gateway discards due to a timeout. If the test has been done in a non-GUI mode, the average latency 
@@ -80,11 +80,20 @@ of the user in order to make a request.
 \end{itemize}
 There are some considerations taken during the execution of the test plans:
 \begin{itemize}
+\item Since the server application is an eventually consistent system, then for example if a user register the api-gateway add immediately the user, but the other services will be consistent with this new information only when they will receive the message from the message broker (RabbitMQ) and after consumed it. Therefore some heuristics waiting time has been added on the test to wait for the eventually consistency of the system.
 \item The test has been done locally with many applications opened, which could have interfered with the load testing.
 \item The services has been deployed all on the same machine which was different from the deployment diagram.
 \item Every time a test is launched, all the queues of the message broker are purged and the all tuples inside the DBs are deleted.
+\item Remember that the server has a timeout of one minute for each request, after that the server will stop the request.
+\item The time and date are not synchronized on a unique timezone or something like that with the clients (jmeter or app), due to complexity, therefore it is important to note that if the test is done within one hour before the midnight some tests could fail since the timestamp saved on the server could leap by one hour.
 \end{itemize}
 
 
 \subsection{Android application}
-// TODO TANG TANG AND MATTIA 
+The test that has been done here are only about the health service which it is responsible to the Automated SOS service. This is the most important test since it could be a problem of life and death for the person using the application. Therefore, many test has been done:
+\begin{itemize}
+\item Unit tests of simple POJO classes that can be found in the folder app/src/test
+\item Android tests, which are more complicated tests that need to be launched on real devices or emulators: from these test, there are unit tests, integrated tests and performance test. The last one it simply checks the average time to execute a call when a bluetooth message containing a grave health data is received. Other tests just checks the functionality of the classes with the exception of 
+bluetooth which is really difficult to test since the emulator cannot simulate a bluetooth connection.
+\end{itemize}
+

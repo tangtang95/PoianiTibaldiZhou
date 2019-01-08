@@ -114,8 +114,6 @@ public class UserHomeDelegate extends BaseActivityDelegate<
         locationSwitch.setActionView(R.layout.switch_item);
         Switch health = healthSwitch.getActionView().findViewById(R.id.switch_on_off);
         Switch location = locationSwitch.getActionView().findViewById(R.id.switch_on_off);
-        health.setChecked(isServiceRunning(HealthService.class));
-        location.setChecked(isServiceRunning(LocationManager.class));
 
         health.setOnCheckedChangeListener((compoundButton, b) -> mPresenter.onHealthSwitch(b));
         location.setOnCheckedChangeListener((compoundButton, b) -> mPresenter.onLocationSwitch(b));
@@ -175,17 +173,5 @@ public class UserHomeDelegate extends BaseActivityDelegate<
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) { }
-
-    private boolean isServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) mPresenter.getView().getActivity().getSystemService(Context.ACTIVITY_SERVICE);
-        if (manager != null) {
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (serviceClass.getName().equals(service.service.getClassName())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 
 }

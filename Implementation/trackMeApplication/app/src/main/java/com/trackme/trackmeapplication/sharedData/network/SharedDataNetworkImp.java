@@ -45,7 +45,6 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
     private UserURLManager userUrlManager = null;
 
     private final Object lock = new Object();
-    private boolean isLock;
 
     /**
      * Private constructor
