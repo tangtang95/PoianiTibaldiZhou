@@ -5,7 +5,7 @@ Here the code regarding the microservices architecture is explained. \\
 The source code that meets the requirements mentioned above has been organized in the following way: for each microservices a project
 has been set up. 
 Indeed, when dealing with this type of architecture, one should think of a microservice
-as a project that should me as much independent as possible from the others: this is the reason that stands behind the choice that has been
+as a project that should be as much independent as possible from the others: this is the reason that stands behind the choice that has been
 made. 
 Of course, in this way, it is possible to easily generate the single jars that will be deployed, when necessary, with, as mentioned
 in the design document, dockers. Therefore, the following projects are present: API gateway, service registry, group individual request
@@ -39,10 +39,9 @@ accounts. From here, it is possible to access the business functions that regard
 controller are split into secure and public controllers: the public one are accessible to everyone, while for accessing the secured ones,
 it is necessary to perform the log in
 \item Package message: it provides the functions of communicating with other microservices, by means of RabbitMQ. In particular, three
-subpackages are present here. The package publisher contains classes that helps in publishing the events of creation of new accounts to other
-other services. The package protocol defines a way of communicating the interested pieces of information, and, finally the configuration
-package specifies the configuration settings needed to convert object from JSON (and viceversa) during the exchange of data, and also
-the Rabbit queues  
+subpackages are present here. The package publisher contains classes that helps in publishing the events of creation of new accounts to other 
+services. The package protocol defines a way of communicating the interested pieces of information, and, finally the configuration
+package specifies the configuration settings needed to convert object from JSON (and viceversa) during the propagation of data and also RabbitMQ exchanges and queues\cite{rabbit-concepts} .
 \item Package security: contains the main features that have been introduced above regarding the security 
 \item Package service: contains the services that implements the business functions of the account service, with all the APIs that it exposes.
 The interfaces present here map the component interfaces of the account service
@@ -62,13 +61,13 @@ Here it follows a list of the API available:
 \begin{itemize}
 
 \item /public/users/authorize \\
-This requires two request parameters, that are user name and password. This API is necessary to login the users.
+This requires two request parameters, that are username and password. This API is necessary to login the users.
 The method is POST.
 
 \item /public/users/\{ssn\} \\
 This is the entry point for registering a new user. Here, ssn is a path variable that specifies the social security number
 of the user that will register. A request body that specifies the necessary fields of the JSON are specified in the user entity. \\
-Here is reminded that one should check the needed fields paying attention also to the defined JSON views defined. \\
+Here it is reminded that one should check the needed fields paying attention also to the defined JSON views defined. \\
 This holds also for the other methods in which a request body is needed. \\
 The method is POST.
 
@@ -78,30 +77,24 @@ This requires two parameters, that are email and password. This API is necessary
 The method is POST.
 
 \item /public/thirdparties/companies is necessary to register a third party customer that is related with a company. \\
-A request body is needed to specify all the information related to that customer.
-The method is POST.
+A request body is needed to specify all the information related to that customer. The method is POST.
 
 \item /public/thirdparties/privates is necessary to register a third party customer that is not related with a company.
-A request body is needed to specify all the information related to that customer.
-The method is POST.
+A request body is needed to specify all the information related to that customer. The method is POST.
 
-\item /users/info returns the information of the user that is accessing that API 
-The method is GET.
+\item /users/info returns the information of the user that is accessing that API. The method is GET.
 
-\item /users/logout performs the logout of a user from the system
-The method is POST.
+\item /users/logout performs the logout of the user from the system. The method is POST.
 
-\item /thirdparties/info returns the information of the third party customer that is accessing the method
-The method is GET.
+\item /thirdparties/info returns the information of the third party customer that is accessing the method. The method is GET.
 
-\item /thirdparties/logout performs the logout of a third party customer from the system 
-The method is POST.
+\item /thirdparties/logout performs the logout of the third party customer from the system. The method is POST.
 
 \end{itemize}
 
 
 \subsubsection{Service registry}
-The project of the service registry is almost empty, no package is present, but just an application class is present, annotated with 
+The project of the service registry is almost empty, no package is present, but just an application class annotated with 
 @EnableEurekaServer. The configuration of the service registry is set in the application.properties file.
 
 \subsubsection{Group request service}
@@ -136,8 +129,8 @@ The method is POST.
 
 The prefix /grouprequestservice is necessary in order to access the APIs from the API gateway. 
 Note, that by inspecting the controller, the prefix won't be shown at all: this is because the API gateway does this translation 
-and mapping autonomously. Instead, one may notice some requested headers: they are added at runtime by the gateway, and so the client
-don't have to specify them, and, if it does, they will be overwritten. \\
+and mapping autonomously. Instead, one may notice some request headers: they are added at runtime by the gateway, and so the client
+does not have to specify them, and, if it does, they will be overwritten. \\
 This comment holds, as well, for all the other microservices.
 
 
@@ -175,11 +168,11 @@ This adds a new individual request toward the user specified in the path variabl
 A request body specifies the information requested to define the individual request.
 The method is POST. 
 
-\item /individualrequestservice/responses/requests/{requestID} \\
+\item /individualrequestservice/responses/requests/\{requestID\} \\
 It is used in the case in which the user that is accessing the method
 sends a response to the request identified by requestID in the path variable.
 
-\item /individualrequestservice/responses/blockedThirdParty/thirdparties/{thirdParty} \\
+\item /individualrequestservice/responses/blockedThirdParty/thirdparties/\{thirdParty\} \\
 It is used in the case in which the user that is accessing the method blocks the third party identified by the id specified in the path variable
 \end{itemize}
 
@@ -226,7 +219,7 @@ A request body that specifies the data is required.
 This allows the user to send data regarding his position data to the system. The method is POST.
 A request body that specifies the data is required.
 
-\item /sharedataservice/datacollection/clusterdata
+\item /sharedataservice/datacollection/clusterdata \\
 This allows the user to send cluster of data (both health and position data). The method is POST.
 A request body that specifies the data is required.
 
@@ -359,7 +352,14 @@ This package regards also AutomatedSOS and it is completely developed to work lo
 saving the data if it is correct w.r.t. standard values; checking with simple threshold if the health is grave or not; if it is grave and
 there are no recent emergency call, then it will get the user location and search for the emergency number within a JSON and call it
 (afterwards, it saves the call on the local database to avoid flood calling)
-\item Package util: it contains all the utilities class necessary for the health and position package.
+\item Package util: it contains all the utilities class necessary for the health and position package. Here, it is important to  highlight the HealthDataInspectorImpl class in which it is defined the threshold of each field of health data:
+\begin{itemize}
+	\item heartbeat: the standard interval is $ [30, 220-age] $;
+	\item minimum pressure: an interval of $ [40, 100]$;
+	\item maximum pressure: an interval of $ [80, 200]$;
+	\item blood oxygen level: it is a percentage of interval $ [80,100]$.
+\end{itemize}
+All these threshold are collected by an expert. If one of these thresholds are violated (excluded the case in which the health data is incorrect, i.e. bloody oxygen level not a percentage from 0 to 100), then the health data is considered to be grave and an emergency point should be called.
 \item Package location: it contains the logic behind the location service, which just simply saves the position data on the local database
 every time a new last location is present
 \end{enumerate}

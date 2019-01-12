@@ -8,7 +8,7 @@ All the core requirements from R1 to R9 have been implemented, since, as the nam
 \subsection{Data4Help requirements and functions}
 All the requirements related to G1, G2, G8, G9, G12 and G13 have been implemented, basically because they 
 are considered as the main features and components of Data4Help. 
-This is true for all the mentioned goals expects for what concerns G9, that is the blocking of third party
+This is true for all the mentioned goals expect for what concerns G9, that is the blocking of third party
 customers, that can be considered as an additional functions, but can always be useful for engaging future users.
 The excluded ones are the following
 \begin{itemize}
@@ -23,7 +23,7 @@ project in a second time: in particular, G7 can be considered as a periodical ta
 checks and manages the time stamp of the pending requests. 
 For what concerns G14, instead, the discussion is a bit more complex, but it basically consists in introducing a new status for the
 requests and a task that operates with the requests that are in such status and that performs some checks w.r.t. to the provided dates 
-(that are the starting date and the ending date of a request: this will be clear inspecting the source code of the entities that regard the
+(that are the starting date and the ending date of a request: this will be clear after inspecting the source code of the entities that regard the
 requests). \\
 A final note on the requirements of Data4Help is the following and it regards the type of aggregated data that third parties can request.  
 All the filters mentioned in the design document have been developed, from a server-side point of view. 
@@ -42,7 +42,7 @@ The goals, and the related requirements, that involves AutomatedSOS are G3 and G
 However, in this case, not many of the requirements have been implemented, also due to some external limitations: indeed, considering
 the Android system and hardware, it is not possible to just intercept the phone call and access the microphone (for automating the phone call)
 and the speakers (to retrieve the response). 
-Therefore, in order to fully develop the requirements it would be necessary to use VoIP api, that requires some sort of payments.
+Therefore, in order to fully develop the requirements it would be necessary to use VoIP API, that requires some sort of payments.
 However, some requirements such as R12, R13, R15 and R17 have been implemented anyway, with the difference that the VoIP calls are mocked
 with normal phone calls and no automation is present for interacting with the emergency room operator. 
 This has been considered enough for a viable product also because it has been chosen to give more importance to the core business of the 
@@ -56,19 +56,19 @@ After that, the more critical part is parsing a JSON that contains the emergency
 It is thought that this should be fast enough to satisfies the requirements of the five seconds. 
 However, the process speed of code is a problem always related with the performance of the user device and the consumed resources of other 
 applications, therefore being 100\% sure that the task is accomplished within that time is impossible. Nevertheless, some tests are perfomed
-and the avarage speeds satisfies this requirement.
+and the average speeds satisfies this requirement.
 
 \subsection{Non functional requirements}
-For what concerns the non function requirements, as mentioned in the Design document, a microservices architecture has been developed. 
+For what concerns the non functional requirements, as mentioned in the Design document, a microservice architecture has been developed. 
 In particular, the main implemented features of the architecture are the following: 
 \begin{itemize}
 \item Communication between microservices, since this is crucial in order to have a viable product. Indeed, without this, almost no
 requirement could be fully accomplished
 \item API Gateway that performs also authentication and authorization: this is also a core feature, since it is the entry point for accessing
-all the Rest API that the various microservices provide
+all the REST API that the various microservices provide
 \item Service registry, because otherwise, one should have set up all the network communication in a more static way, and also the management
 of forwarding requests from the gateway would have been more complex 
-\item A basic load balancer is already present in the API gateway that have been used (i.e. see Zuul in the adopted developed framework 
+\item A basic load balancer, called Ribbon, is already present in the API gateway that have been used (i.e. see Zuul in the adopted developed framework 
 chapter)
 \end{itemize}
 
@@ -76,9 +76,9 @@ chapter)
 of communication allowed between clients and the API gateway, is HTTPS. In order to do this, a custom SSL certificate has been
 generated using the java keytool \cite{httpstool}.
 \\
-The authentication have been implemented by means of an UUID random token and the APIs has been secured in such a way that a certain client
-can access only the method that he should access: for example, a user can't access methods that regards a third party customer, but, also
-a user can't access API that regards another user (e.g. a user can access only his pending request, and not the pending requests of any
+The authentication have been implemented by means of an UUID random token and the APIs have been secured in such a way that a certain client
+can access only the method that he should access: for example, a user cannot access methods that regards a third party customer, but, also
+a user cannot access API that regards another user (e.g. a user can access only his pending request, and not the pending requests of any
 user) \\
 As one can claim, using UUID random tokens is for sure not the best way of achieving authentication, however, the code has been designed
 in such a way that is easily possible to upgrade this to the usage of JWT just implementing a single interface. This choice
@@ -90,8 +90,8 @@ early stage, because the integration was not considered necessary. Indeed, it is
 implementation itself. \\
 The same reasoning has been applied also for the deployment of JARs in docker containers. \\
 Some checks, from a server side point of view, have not been implemented: for example, when registering a third party customer have to
-provide an email: it is not checked that the String constitutes a valid email. Things like this have been considered not crucial 
-for a prototype, compered, for example, with the set up of the distributed system or to the business function.
+provide an email: it is not checked that the string constitutes a valid email. Things like this have been considered not crucial 
+for a prototype, compared, for example, with the set up of the distributed system or to the business function.
 Nevertheless, some controls have been made in the Android application. \\
 Finally, protocols for restoring the integrity of data in case of the failure of a node has not been implemented. 
 To clarify this statement, suppose that an individual request service crashes just before sending information on a new accepted request 
