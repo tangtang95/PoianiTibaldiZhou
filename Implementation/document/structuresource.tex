@@ -237,7 +237,19 @@ A request body that specifies the data is required.
 \subsection{Mobile code}
 
 \subsubsection{Data4Help}
-The source code of the mobile application has been divided in different package for microservices. The main idea is built a component user interface where each component is a microservice's view. The components are loaded programmatically and all components are assembled each other for drawing the complete user interface. This solution, even if it uses a monolithic approach, works well for relative simple mobile application and it is more easy to implement. Of course, in this way, it is possible to easily generate the single apk that will be installed on the mobile device. Now the analysis will focus on what is a service component and how it has implemented in the code. In the project a user interface component is a container, that is represented by an activity class. This classes follow the MVP pattern with delegation that allow to have activities less complex and well structured, since the base structure of an android application with the only uses of simple activity is a bad practice. The MVP patter is structured in baseUtility package and his main component are: contract (basePresenterInterface and baseViewInterface), basePresenter, baseActivity and baseDelegate. Then into the activity are loaded the fragment that truly represent the microservice's view. As already mention, the project are divided in package, one package for each microservice. Therefore, the following main package are present: account, baseUtility, home, httpConnection, local db, request, service and shareData. 
+The source code of the mobile application has been divided in different packages.
+The main idea is to build an application where each component represents a microservice's view: 
+they are loaded dynamically and they are assembled for drawing the complete user interface. 
+This solution, even if it uses a monolithic approach, works well for relative simple mobile applications and it is more easy to implement. 
+Of course, in this way, it is possible to easily generate the single APK that will be installed on the mobile device. \\
+It follows an analysis that will focus on what is a service component and how it has been implemented in the code. 
+In the project, a user interface component is a container, that is represented by an activity class. 
+This classes follow the MVP pattern with delegation, thus allowing to have activities less complex and well structured, since the base
+structure of an android application with the only uses of simple activities is a bad practice.
+The MVP pattern is matched against the baseUtility package and his main components are: contract (basePresenterInterface and
+baseViewInterface),
+basePresenter, baseActivity and baseDelegate. \\
+The fragment that truly represents the microservice's view are loaded into the activities. 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/ProjectStructure.png}
@@ -245,10 +257,10 @@ The source code of the mobile application has been divided in different package 
 \label{fig:pkgsharedata}
 \end{figure}
 
-In the following paragraph the structure of the single package are analyzed.
+In the following paragraph the structure of each package is analyzed.
 
 \paragraph{Account}
-In the next figure, it is shown the package structure and following the explanation of each part.
+In the next figure, it is shown the account package structure and, after that, comes an explanation of the single parts.
   
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/PackageAccount.png}
@@ -258,20 +270,41 @@ In the next figure, it is shown the package structure and following the explanat
 
 \begin{enumerate}
 \item Package exception: this contains the custom exceptions defined during the development for the account service.
-\item Package login: this contain the activity for the user login and the third party login. The user login is also the first activity when the application starts. It saved the user context into a persistent data base that it can be easily called by invoke SharePreferences class and it required to the user all the permission that the application needed for working, like: access to the location, internet, call phone, bluetooth and the possibility of writing on external storage.
-\item Package network: this package contain the account controller called accountNetworkInterface that expose all the functions for the communication with the account service on the server side.
-\item Package register: here all the register forms are implemented to allow to the third party (i.e. company and private third party) and user to register into the application. 
+\item Package login: this contain the activity for the user login and the third party login. 
+The user login is also the first activity when the application starts. 
+It saves the user context in a persistent way by means of SharedPreferences class, and it requires the user all the permission that the
+application needs to work properly, like: access to the location, internet, call phone, bluetooth and the possibility of writing on external
+storage.
+\item Package network: this package contains the account controller called accountNetworkInterface that exposes all the functions for the
+communication with the account service on the server side.
+\item Package register: here all the register forms are implemented to allow third parties (i.e. company and private third party) and
+users to register into the application. 
 \end{enumerate}
 
 \paragraph{Base Utility}
-The package base utility contains the implementation of the MVP pattern and the main utility used into the application. Also it contains the constant class with all the constants useful.
+The package base utility contains the implementation of the MVP pattern and the main utility used in the application. 
+Furthermore, it contains the constant class with all the useful constants.
 
 \paragraph{Home}
-The home package contain the two main activity of the application. The UserHomeActivity that shows the home view to the user with the possibility of switching through three fragment: the home fragment that allows to the user to see the last health status register into the application by pressing the check status button, the history fragment with all the health data registered in the last week and finally the request fragment that allows to the user of seeing the individual request received and to accept or refuse it. The user home is supplied also by a lateral menu with the logout function and the possibility of activating two service health and location service for the correct working of TrackMe. Note that user settings and user profile are only fake options, adding for the completeness of the menu, but they are not so important and more times has been dedicated to improve the security of the application and the other functionalities. The second activity in this package is the business home that are similar to the first but it is composed by only two fragments: one for showing to the third party the individual requests sent and allow to him to add some one of new and the second that does the same, but for the group requests.\\
-In this package the synchronization between the slider to activate health and location service with the running of the service itself has not been implemented since it is not so important to the prototype application.
+The home package contains the two main activities of the application. 
+The UserHomeActivity shows the home view to the user, with the possibility of switching through three fragments: the home fragment that allows
+the user to see his last health status, by pressing the check status button; the history fragment with all the health data registered in the 
+last week; and, finally, the request fragment that allows the user to see the individual requests received and to accept or refuse some of
+them. \\
+The user home provides also a lateral menu, with the logout function and the possibility of activating two services: health and location
+service. 
+Note that the user settings and the user profile are only fake options, added for the completeness of the menu, but they are not so important,
+and therefore they have not been implemented: more time has been devoted to other pieces of functionality. \\
+The second activity that is present in this package is the business home: it is similar to the first, but it is composed of only two
+fragments: one for showing to third parties the individual requests that they have sent and allow them create additional requests, and a
+second one that does the same, but for the group requests.\\
+In this package the synchronization between the slider that activates health and location service with the running of the service itself has
+not been implemented since it is not so important to the prototype application.
 
 \paragraph{HTTP Connection}
-This package contains the main class for support a secure connection with the server. Connection thread is the only way to the server and it loads for all connections the ssl context with the certificate and the  host verifier that checks if the server IP correspond to an address knowing. The communication is synchronized by locks into the controller and they are handled by the lock interface. 
+This package contains the main class for supporting a secure connection with the server. 
+Connection thread is the only way to connect to the server and it loads, for all the connections, the SSL context with the certificate and the 
+host verifier that checks if the server IP corresponds to an address known. 
 
 \paragraph{Local db}
 The structure of the local db realized with Room framework is now exposed.
@@ -283,13 +316,14 @@ The structure of the local db realized with Room framework is now exposed.
 \end{figure}
 
 \begin{enumerate}
-\item Package dao: It contains interfaces that are mapped java function in sql query.
+\item Package dao: It contains interfaces that maps java function in SQL query.
 \item Package database: this class contains the database abstract class.
 \item Package entity: here classes that are mapped to the databases are present 
 \end{enumerate}
 
 \paragraph{Request}
-In this paragraph is presented the request package that is composed by other three as showing in the figure below. This package implement the client side of individual request service and group request service.
+In this paragraph the request package is presented. 
+This package implements the client side of individual request service and group request service.
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/Request.png}
@@ -298,16 +332,19 @@ In this paragraph is presented the request package that is composed by other thr
 \end{figure}
 
 \begin{enumerate}
-\item Package exception: this contains the custom exceptions defined during the development for the request service.
-\item Package individual request: here is implemented the individual request user interface with fragments that can be loaded in the home containers and the wrapper object that allows to Object mapper of mapping immediately json string to request objects. 
-\item Package group request: it is very similar to the individual package, it implements the same functionality . 
+\item Package exception: this contains the custom exceptions defined during the development.
+\item Package individual request: here is implemented the individual request user interface with fragments that can be loaded in the home
+containers and the wrapper object that allows Object mapper to map immediately JSON strings to request objects. 
+\item Package group request: same as above, but for group request. 
 \end{enumerate}
 	
 \paragraph{Service}
-In this package, the health service and the location service has been implemented to receive the data about health and position 
-from, respectively, smartwatch or other similar devices and GPS. The application exploit the bluetooth functionality of the mobile device to receive the health data from the smartwatch, while for the position data, it just receive it from the Location Manager of the mobile device.\\
+In this package, the health service and the location service are implemented in order to receive data about health and position 
+from, respectively, smartwatch or other similar devices and GPS. 
+The application exploits the bluetooth functionality of the mobile device to receive the health data from the smartwatch, while for what 
+concerns position data, it just receives it from the Location Manager of the device.\\
 
-This package service is regarding AutomatedSOS and it is completely developed to work locally on the smartphone of the user to achieve a high availability. Of course, it also has to have a high reliability, therefore, it is designed to be testable as possible. 
+This package regards also AutomatedSOS and it is completely developed to work locally on the smartphone of the user. 
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/Service.png}
@@ -316,21 +353,29 @@ This package service is regarding AutomatedSOS and it is completely developed to
 \end{figure}
 
 \begin{enumerate}
-\item Package bluetooth: it contains a Bluetooth Server which is responsible to wait for client to connect and after that it starts a thread that deals with the receive of the messages from the other devices
-\item Package exception: it contains all the custom exceptions used in the service package
-\item Package health: it contains the logic behind the health service which is based, basically, on: receiving the message; saving the data if it is correct w.r.t. standard values; checking with simple threshold if the health is grave or not; if it is grave and there are no recent emergency call, then it will get own location and search for the emergency number within a json and call it (afterwards, it saves the call on the local database to avoid flood calling)
-\item Package util: it contains all the utility class necessary for the health and position package.
-\item Package location: it contains the logic behind the location service which just simply saves the position data on the local database every time a new last location is present
+\item Package bluetooth: it contains a Bluetooth Server which is responsible of managing Bluetooth clients
+\item Package exception: it contains all the custom exceptions used in the package
+\item Package health: it contains the logic behind the health service which is based, basically, on the following: receiving the message;
+saving the data if it is correct w.r.t. standard values; checking with simple threshold if the health is grave or not; if it is grave and
+there are no recent emergency call, then it will get the user location and search for the emergency number within a JSON and call it
+(afterwards, it saves the call on the local database to avoid flood calling)
+\item Package util: it contains all the utilities class necessary for the health and position package.
+\item Package location: it contains the logic behind the location service, which just simply saves the position data on the local database
+every time a new last location is present
 \end{enumerate}
 
 \paragraph{Share data}
-At the end the share data package is commented. It follows the same line of the others. As just mentions in various paragraph above the package structure is the same, it contains an exception package with the custom exception for share data service, it contains a network package with the controller interface that expose the function that allows the communication with share data service and finally all wrapper class for the mapping of the share object with json string and vice versa.
+Finally, the share data package is commented. 
+The package structure is the same: it contains an exception package with the custom exceptions; it contains a network package with the
+controller interface that exposes the function that allows the communication with share data service, and, finally, all the wrapper classes
+for the mapping of the objects with JSON strings and vice versa.
 
 \paragraph{Manifest folder}
-This folder contains the application manifest with the app property like activity definitions and user permission. 
+This folder contains the application manifest that contains the properties of the application, like the definition of activities and user permission needed. 
 
 \paragraph{Res folder}
-Here are located all xml definitions files presented into the software. This files defines the aspect of the user interface and all the components styles showing to the user.
+Here are located all XML definitions files presented into the software. 
+This files defines the aspect of the user interface and all the components styles.
 
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/Res.png}
@@ -339,11 +384,12 @@ Here are located all xml definitions files presented into the software. This fil
 \end{figure}
 
 \begin{enumerate}
-\item Package drawable: this package contains the xml definition of the drawable objects showing in the interface like images and icons.
-\item Package layout: as the name says, it contains every activity layouts. Note that the application is developed with automatically resizable layout and it supports portrait and landscape orientations.
+\item Package drawable: this package contains the XML definition of the drawable objects like images and icons.
+\item Package layout: as the name says, it contains every activity layout. 
+Note that the application is developed with automatically resizable layout and it supports portrait and landscape orientations.
 \item Package menu: here there is the menu layout for the drawable menu on the left of the application.
 \item Package mipmap: it contains the application icon.
-\item Package raw: It contains two particular files. A json file with the last emergency call made by the user with Data4Help and keystore with the keys for secure communication.
+\item Package raw: It contains two particular files. A JSON file with the last emergency call made by the user with Data4Help and keystore with the keys for secure communication.
 \item Package value: here are stored string values, colors and component styles. 
 \end{enumerate}
 
