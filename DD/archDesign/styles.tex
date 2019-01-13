@@ -76,9 +76,7 @@ The solution is to use a router that runs at a well known location.
 The router will query a service registry, which may be built into the
 router, and forwards the requests to an available service instance.
 Of course, when a new instance is created, it has to perform registration to the service registry. \\
-The API gateway will send translated requests to the router, that will load balance them onto the active instances.
-This pattern gives great benefits: indeed, the clients do not deal with the discovery of the service, but it comes with the drawback of
-an additional component that need to be installed and configured, and, if needed, replicated, in order to scale
+It is possible to see the router as a feature of the API gateway
 \item Microservices expose REST API that will be provided only by HTTPS endpoints. This will ensure
 all the benefits of REST API, such the fact that services are stateless, with the security of an high-level encryption protocol. Other
 benefits of the REST API which are relevant to the requirements of the project are: separation of concerns between client and server, reliability and scalability.
