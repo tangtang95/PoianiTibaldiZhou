@@ -15,12 +15,23 @@ of Windows that you are using
 is possible to follow the guide at : \url{https://beep.metid.polimi.it/documents/121843524/b5d81926-98f6-496f-bf45-a2a8e897228c} 
 (ignore all the chapter regarding NetBeans and follow the ones that deal with the installation of MySQL). \\
 Once that the server has been set up, it is necessary to create the databases and its admin: to do that, first of all, go to the MySQL 
-folder and login with root. After that, write "create user 'trackmeadmin'@'\%' identified by 'datecallmeeting95';". \\
+folder and login with root. After that, write:
+ \begin{verbatim}
+create user 'trackmeadmin'@'%' identified by 'datecallmeeting95';
+\end{verbatim}
 Now, the admin for the database has been created, and it is necessary to create all the databases used by the various microservices. \\
-In order to accomplish this, run "create database share \_data\_db;", "create database group \_request\_db;", 
-"create database individual \_request\_db", "create database account\_service\_db;". \\
-Finally, for each database created, it is necessary to run this command: "grant all on db \_name.* to 'trackmeadmin'@'\%';"
-where db \_name has to be substituted with share \_data\_db, group \_request\_db, account \_service\_db and individual \_request\_db. 
+In order to accomplish this, run:
+\begin{verbatim}
+create database share_data_db;
+create database group_request_db; 
+create database individual_request_db;
+create database account_service_db;
+\end{verbatim}
+Finally, for each database created, it is necessary to run this command: 
+\begin{verbatim}
+grant all on db_name.* to 'trackmeadmin'@'%';
+\end{verbatim}
+where db\_name has to be substituted with share\_data\_db, group\_request\_db, account\_service\_db and individual\_request\_db. 
 
 \end{itemize}
 
@@ -29,12 +40,15 @@ of this document, start MySQL server (following the guide mentioned above), and 
 navigate to that folder in which RabbitMQ have been installed, search for "rabbitmq-server" and launch it (if you prefer other ways to launch
 the server you may check the link provided before: indeed, the links to the installation instruction of the various operative systems,
 provide also information on how to set up the server). \\
-After that, it is possible to start the downloaded jars by means of "java -jar jar \_name". 
+After that, it is possible to start the downloaded jars by means of: 
+\begin{verbatim}
+java -jar path/to/file.jar
+\end{verbatim}
 It is necessary to start first of the service registry, and then all the other services (and, of course, also the API gateway), in the
-order you prefer: doing this should also speed up the start. 
+order you prefer. 
 The port that are needed to be free are the following: 8443 (API gateway), 8761 (service registry), 8089 (share data service), 8081 (group
-request service), 8082 (individual request service). However, if some reasons one of these ports is busy on the
-machine is which the jar will be ran, it is possible to modify this by adding "--server.port=PORT \_NUMBER", while launching the jar. Moreover, to expose the server to the mobile application it is important to change the server address with the local IP of the machine by adding to the api gateway jar launch "--server.address=LOCAL \_IP" \\
+request service), 8082 (individual request service). However, if for some reasons one of these ports is busy on the
+machine in which the jar will be ran, it is possible to modify the port by adding "--server.port=PORT\_NUMBER", while launching the jar. Moreover, to expose the server to the mobile application it is important to change the server address with the local IP of the machine by adding to the api gateway jar launch "--server.address=LOCAL\_IP" \\
 Furthermore, is also possible to modify any of the settings that are located within the application.properties of the various project.
 One can find these files in the various folders of the source code, within the folder "main". However, in order to avoid useless errors
 we suggest to not modify critical parts, such as the routes used by Zuul (API gateway settings). \\
@@ -96,7 +110,12 @@ request default that can be found on the left side of the graphical interface an
 \subsection{Android application}
 In order to install the application onto your device it is necessary to allow the installation of applications from unknown sources. This setting can be found in your device's system settings under: Settings > Applications > Unknown sources. 
 \\
-Now it is possible to download the apk from the project folder on GitHub and after that, it is possible to install it by launching the Downloads application. The Downloads application can be launched from web browser using the menu, or by launching the Downloads applications directly by the download folder on your device. During the first launch of the application the user must accept all the permission required. Note that if some are refused then the application will be closed. For the first execution the user should set the ip address of the server by pressing on the TrackMe logo in the user login. A window with the current ip address is shown and here it is possible to change the address with the new server address. For simulating the smartwatch it is also necessary downloaded the bluetooth client apk from the GitHub folder and install it on the device, by following the same instruction above.
+Now it is possible to download the apk from the project folder on GitHub and after that, it is possible to install it by launching the Downloads application. The Downloads application can be launched from web browser using the menu, or by launching the 
+Downloads applications directly by the download folder on your device. During the first launch of the application the user must 
+accept all the permission required. Note that if some are refused then the application will be closed. For the first execution the 
+user should set the ip address of the server by pressing on the TrackMe logo in the user login. A window with the current ip 
+address is shown and here it is possible to change the address with the one of the machine in which you are running the jars. 
+For simulating the smartwatch it is also necessary to download the bluetooth client APK from the GitHub folder and install it, by following the same instruction reported above.
 
 \par 
 Here it follows a list of further considerations: 
@@ -112,7 +131,18 @@ Regarding the tests of the health service, all the tests should be launched on a
 \item Enable the developer settings by tapping a lot of time on the build settings of the simulator.
 \item Enable the mock position for the application through the developer settings.
 \end{itemize}
-Moreover, the test regarding the bluetooth does not exist due to complexity: the simulator does not have the capacity to simulate bluetooth connections. Instead, there is a stub application bluetooth client which can be used to test if the communication between bluetooth devices is working as expected. Therefore, it is necessary to have two devices supporting bluetooth which are paired. Then after starting the health service on the device containing TrackMe application, a bluetooth server is running in background waiting for other devices. Now after starting the other application, it should be possible to insert the name of the device running the server and establish the connection. Once the connection is established it is possible to simulate the sending operation of health data.
-Since the bluetooth client application is just a stub, it is not so user friendly, therefore, it can be seen that the connection is active only when the send data button is active, otherwise if it is not, check if the devices are paired and the bluetooth server is activated or just retry to connect.
+Moreover, the test regarding the bluetooth does not exist due to complexity: the simulator does not have the capacity to 
+simulate bluetooth connections. Instead, there is a stub application bluetooth client which can be used to test if the 
+communication between bluetooth devices is working as expected. Therefore, it is necessary to have two devices 
+supporting bluetooth which are paired. Then after starting the health service on the device containing TrackMe application, 
+a bluetooth server is running in background waiting for other devices. Now after starting the other application, it should be possible 
+to insert the name of the device running the server and establish the connection. Once the connection is established it is possible 
+to simulate the sending operation of health data; to test the call procedure of the emergency point it is necessary to send a health 
+data which is grave (i.e. one of the threshold is violated). After sending the data, the main phone running TrackMe application 
+should make a call to a number where the suffix of the number is 118 if in Italy (due to testing reason, it was not possible to truly 
+call the emergency point since this is a prototype application).
+Since the bluetooth client application is just a stub, it is not so user friendly, therefore, it can be seen that the connection is active 
+only when the send data button is active, otherwise if it is not, check if the devices are paired and the bluetooth server is activated or 
+just retry to connect.
 
 
