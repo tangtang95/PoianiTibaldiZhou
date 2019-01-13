@@ -84,10 +84,10 @@ the databases inside the IDE. In this sense, since all the microservices are dif
 to its related project. \\ A final remark is that the account service db is related to the API gateway; for what concerns the others, instead,
 the binding is trivial.   
 
-\item Due to setting of the application.properties file, every time that the a jar is launched the database will be created and therefore
-it will need to be populated. A little exception holds for what concerns the API gateway: indeed a SQL script named "data.sql" will be
+\item Due to setting of the application.properties file, every time that a jar is launched the database will be created and therefore
+it will need to be re-populated. A little exception holds for what concerns the API gateway: indeed a SQL script named "data.sql" will be
 executed loading a table that contains information regarding the available API. \\ 
-Anyway, if for some reasons you don't like this option, what you need to change is: spring.jpa.hibernate.ddl-auto, from create to update.
+If there is the necessity to avoid creation of a new database, then when launching the jar it is possible to add "--spring.jpa.hibernate.ddl-auto=update" to set the hibernate to update mode.
 
 \item 
 \end{itemize}
