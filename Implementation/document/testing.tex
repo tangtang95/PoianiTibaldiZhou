@@ -70,11 +70,11 @@ many other. In the end, to check if the system as a whole was working as expecte
 \begin{itemize}
 \item Functional testing: without taking into consideration the concurrency and performance problems, the test plan focuses on 
 the expected return value of each request, to test if the system works as intended. It has also been checked the group 
-request accepted case when a group request is correlated to more than 1000 users. The test, basically, does not check the response body of each request, but it just check the correct flow of the server application by making request in which the status code of each request is of type 20X.
+request accepted case when a group request is correlated to more than 1000 users. The test, basically, does not check the response body of each request, but it just checks the correct flow of the server application by making request in which the status code of each request is of type 20X.
 \item Load testing: with the help of the "Random Controller", a random choice in the HTTP requests is applied and many thread 
-users has been launched to test the maximum load of the system. In the GUI mode, the test results in a latency of more than 
+users have been launched to test the maximum load of the system. In the GUI mode, the test results in a latency of more than 
 20 seconds which the API Gateway discards due to a timeout. If the test has been done in a non-GUI mode, the average latency 
-of a request would be lesser.
+of a request would be less.
 \item Real simulation testing: it is just a variation of the load testing with the ThinkTime added: a simulation of a possible think time 
 of the user in order to make a request.
 \end{itemize}
@@ -95,5 +95,5 @@ The test that has been done here are only about the health service which it is r
 \item Unit tests of simple POJO classes that can be found in the folder app/src/test
 \item Android tests, which are more complicated tests that need to be launched on real devices or emulators: from these test, there are unit tests, integrated tests and performance test. The last one it simply checks the average time to execute a call when a bluetooth message containing a grave health data is received. Other tests just checks the functionality of the classes with the exception of 
 bluetooth which is really difficult to test since the emulator cannot simulate a bluetooth connection.
+\\\\
 \end{itemize}
-

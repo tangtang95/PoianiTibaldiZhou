@@ -213,15 +213,15 @@ The method is GET.
 
 \item /sharedataservice/datacollection/healthdata \\
 This allows the user to send data regarding the health status to the system. The method is POST.
-A request body that specifies the data is required.
+A request body that specifies the data required.
 
 \item /sharedataservice/datacollection/positiondata \\
 This allows the user to send data regarding his position data to the system. The method is POST.
-A request body that specifies the data is required.
+A request body that specifies the data required.
 
 \item /sharedataservice/datacollection/clusterdata \\
 This allows the user to send cluster of data (both health and position data). The method is POST.
-A request body that specifies the data is required.
+A request body that specifies the data required.
 
 \end{itemize}
 
@@ -256,14 +256,15 @@ In the following paragraph the structure of each package is analyzed.
 In the next figure, it is shown the account package structure and, after that, comes an explanation of the single parts.
   
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{images/PackageAccount.png}
+\includegraphics[width=0.6\linewidth ]{images/PackageAccount.png}
+\centering
 \caption{ Package account}
 \label{fig:pkgsharedata}
 \end{figure}
 
 \begin{enumerate}
 \item Package exception: this contains the custom exceptions defined during the development for the account service.
-\item Package login: this contain the activity for the user login and the third party login. 
+\item Package login: this contains the activity for the user login and the third party login. 
 The user login is also the first activity when the application starts. 
 It saves the user context in a persistent way by means of SharedPreferences class, and it requires the user all the permission that the
 application needs to work properly, like: access to the location, internet, call phone, bluetooth and the possibility of writing on external
@@ -303,7 +304,8 @@ host verifier that checks if the server IP corresponds to an address known.
 The structure of the local db realized with Room framework is now exposed.
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{images/LocalDB.png}
+\includegraphics[width=0.6\linewidth]{images/LocalDB.png}
+\centering
 \caption{ Package local db}
 \label{fig:pkgsharedata}
 \end{figure}
@@ -319,14 +321,15 @@ In this paragraph the request package is presented.
 This package implements the client side of individual request service and group request service.
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{images/Request.png}
+\includegraphics[width=0.6\linewidth]{images/Request.png}
+\centering
 \caption{ Package request }
 \label{fig:pkgsharedata}
 \end{figure}
 
 \begin{enumerate}
 \item Package exception: this contains the custom exceptions defined during the development.
-\item Package individual request: here is implemented the individual request user interface with fragments that can be loaded in the home
+\item Package individual request: here it is implemented the individual request user interface with fragments that can be loaded in the home
 containers and the wrapper object that allows Object mapper to map immediately JSON strings to request objects. 
 \item Package group request: same as above, but for group request. 
 \end{enumerate}
@@ -340,7 +343,8 @@ concerns position data, it just receives it from the Location Manager of the dev
 This package regards also AutomatedSOS and it is completely developed to work locally on the smartphone of the user. 
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{images/Service.png}
+\includegraphics[width=0.6\linewidth]{images/Service.png}
+\centering
 \caption{ package service }
 \label{fig:pkgsharedata}
 \end{figure}
@@ -378,7 +382,8 @@ Here are located all XML definitions files presented into the software.
 This files defines the aspect of the user interface and all the components styles.
 
 \begin{figure}[H]
-\includegraphics[width=\linewidth]{images/Res.png}
+\includegraphics[width=0.6\linewidth]{images/Res.png}
+\centering
 \caption{ Res folder }
 \label{fig:pkgsharedata}
 \end{figure}

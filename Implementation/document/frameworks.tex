@@ -1,20 +1,20 @@
 \section{Adopted development framework}
 Most of the choices that regards the frameworks were already briefly introduced and motivated in the
 section 2.7 of the design document (that is, other design decision). 
-However, here frameworks and other API are recapped:
+However, here frameworks and other APIs are recapped:
 
 \begin{itemize}
 
 \item Spring\cite{spring} Boot has been adopted since it fits well for microservices and the set up of pattern components
 of the architecture (e.g. service registry) can be easily integrated with the usage of Spring Cloud.
-The main drawback of this choice is that spring boot does not offer much control to the developer: this of
-course limit the development time, but when something goes wrong, it may take time to fix the issue.
+The main drawback of this choice is that spring boot does not offer much control to the developer: this "of
+course" limit the development time, but when something goes wrong, it may take time to fix the issue.
 
 \item Spring Security has been used to develop the authentication and the access control of the application.
 It is basically the de-facto standard for securing Spring-based application. 
 
 \item Spring Cloud Netflix has been used to integrate and set up the API Gateway and the service registry.
-In particular, Zuul has been set up as the API gateway and Eureka as the service registry. 
+In particular, Zuul has been set up as the API gateway integrated with ribbon and the load balancer, which is already incorporated in Zuul and Eureka as the service registry. 
 These were of a great help because it is only necessary to find the right configuration settings and then everything works as expected.
 
 \item RabbitMQ\cite{rabbitMQ} is used to set up the communications among microservices. This was chosen because of its properties: durable, 
@@ -25,8 +25,7 @@ the message due to an unavailability of other machines such as databases, the me
 will be re-pulled until the operation has finished correctly. In conclusion, RabbitMQ is an essential piece to achieve the property 
 of "Eventually Consistency".
 
-\item Android: the mobile application has been developed for android, targets SDK version 27 and min SDK version 24. Here, Butter Knife has been used in order to easily bind the layout with the activities. It also enables to automatically configure listener to onClick methods. Also, Room persistence library has been used to store
-collected data that has not been sent to the system yet, and information on the performed emergency calls.
+\item Android: the mobile application has been developed for android, targets SDK version 27 and min SDK version 24. Here, Butter Knife has been used in order to easily bind the layout with the activities. It also enables to automatically configure listener to onClick methods.
 
 \end{itemize}
 

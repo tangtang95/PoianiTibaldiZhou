@@ -8,7 +8,7 @@ All the core requirements from R1 to R9 have been implemented, since, as the nam
 \subsection{Data4Help requirements and functions}
 All the requirements related to G1, G2, G8, G9, G12 and G13 have been implemented, basically because they 
 are considered as the main features and components of Data4Help. 
-This is true for all the mentioned goals expect for what concerns G9, that is the blocking of third party
+This is true for all the mentioned goals except for what concerns G9, that is the blocking of third party
 customers, that can be considered as an additional functions, but can always be useful for engaging future users.
 The excluded ones are the following
 \begin{itemize}
@@ -16,7 +16,7 @@ The excluded ones are the following
 \item G14, that is the subscription to non existing data
 \end{itemize}
 The motivation that stands behind this choice is basically a constraint on development time and the
-fact that these were considered more as a nice feature to have, and not something really critically. 
+fact that these were considered more as a nice feature to have, and not something really critical. 
 Indeed, it is still possible to have a good prototype of the service, even without these features.
 It should be noted, however, that they do not require big efforts and can be easily integrated into the
 project in a second time: in particular, G7 can be considered as a periodical task to be scheduled that
@@ -56,7 +56,7 @@ After that, the more critical part is parsing a JSON that contains the emergency
 It is thought that this should be fast enough to satisfies the requirements of the five seconds. 
 However, the process speed of code is a problem always related with the performance of the user device and the consumed resources of other 
 applications, therefore being 100\% sure that the task is accomplished within that time is impossible. Nevertheless, some tests are perfomed
-and the average speeds satisfies this requirement.
+and the average speed satisfies this requirement.
 
 \subsection{Non functional requirements}
 For what concerns the non functional requirements, as mentioned in the Design document, a microservice architecture has been developed. 
@@ -66,7 +66,7 @@ In particular, the main implemented features of the architecture are the followi
 requirement could be fully accomplished
 \item API Gateway that performs also authentication and authorization: this is also a core feature, since it is the entry point for accessing
 all the REST API that the various microservices provide
-\item Service registry, because otherwise, one should have set up all the network communication in a more static way, and also the management
+\item Service registry, because otherwise, one have to set up all the network communication in a more static way, and also the management
 of forwarding requests from the gateway would have been more complex 
 \item A basic load balancer, called Ribbon, is already present in the API gateway that have been used (i.e. see Zuul in the adopted developed framework 
 chapter)
@@ -92,8 +92,4 @@ The same reasoning has been applied also for the deployment of JARs in docker co
 Some checks, from a server side point of view, have not been implemented: for example, when registering a third party customer have to
 provide an email: it is not checked that the string constitutes a valid email. Things like this have been considered not crucial 
 for a prototype, compared, for example, with the set up of the distributed system or to the business function.
-Nevertheless, some controls have been made in the Android application. \\
-Finally, protocols for restoring the integrity of data in case of the failure of a node has not been implemented. 
-To clarify this statement, suppose that an individual request service crashes just before sending information on a new accepted request 
-to the message queue: the data is lost and the third party customer will never be able to access those data. Situations like the one described
-in the few lines above have not been considered fundamental in this prototype phase, but are, for sure, necessary before deploying. 
+Nevertheless, some controls have been made in the Android application. \\ As regards the andorid application, additional features such as the setting screen and the schematic of the user profile have not been implemented due to lack of time. Furthermore, the legal notices in the use of the application have not been explicated in the appropriate popUp.

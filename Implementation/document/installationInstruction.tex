@@ -15,21 +15,21 @@ of Windows that you are using
 is possible to follow the guide at : \url{https://beep.metid.polimi.it/documents/121843524/b5d81926-98f6-496f-bf45-a2a8e897228c} 
 (ignore all the chapter regarding NetBeans and follow the ones that deal with the installation of MySQL). \\
 Once that the server has been set up, it is necessary to create the databases and its admin: to do that, first of all, go to the MySQL 
-folder and login with root. After that, write: 
-\begin{verbatim}
-create user 'trackmeadmin'@'\%' identified by 'datecallmeeting95';
+folder and login with root. After that, write:
+ \begin{verbatim}
+create user 'trackmeadmin'@'%' identified by 'datecallmeeting95';
 \end{verbatim}
 Now, the admin for the database has been created, and it is necessary to create all the databases used by the various microservices. \\
 In order to accomplish this, run:
 \begin{verbatim}
-create database share\_data\_db;
-create database group\_request\_db; 
-create database individual\_request\_db;
-create database account\_service\_db;
+create database share_data_db;
+create database group_request_db; 
+create database individual_request_db;
+create database account_service_db;
 \end{verbatim}
 Finally, for each database created, it is necessary to run this command: 
 \begin{verbatim}
-grant all on db\_name.* to 'trackmeadmin'@'\%';
+grant all on db_name.* to 'trackmeadmin'@'%';
 \end{verbatim}
 where db\_name has to be substituted with share\_data\_db, group\_request\_db, account\_service\_db and individual\_request\_db. 
 
@@ -42,7 +42,7 @@ the server you may check the link provided before: indeed, the links to the inst
 provide also information on how to set up the server). \\
 After that, it is possible to start the downloaded jars by means of: 
 \begin{verbatim}
-java -jar [jar\_name]
+java -jar path/to/file.jar
 \end{verbatim}
 It is necessary to start first of the service registry, and then all the other services (and, of course, also the API gateway), in the
 order you prefer. 
@@ -89,6 +89,7 @@ it will need to be populated. A little exception holds for what concerns the API
 executed loading a table that contains information regarding the available API. \\ 
 Anyway, if for some reasons you don't like this option, what you need to change is: spring.jpa.hibernate.ddl-auto, from create to update.
 
+\item 
 \end{itemize}
 
 \par
@@ -143,3 +144,5 @@ call the emergency point since this is a prototype application).
 Since the bluetooth client application is just a stub, it is not so user friendly, therefore, it can be seen that the connection is active 
 only when the send data button is active, otherwise if it is not, check if the devices are paired and the bluetooth server is activated or 
 just retry to connect.
+
+
