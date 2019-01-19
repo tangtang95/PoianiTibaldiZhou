@@ -37,9 +37,41 @@ end.
 
 
 \subsubsection{G2}
+The uses cases that concerns G2 are: UC6, UC7, UC8, UC9, UC32 and UC33.  \\
+
+The first two use cases are already tested above during the test of G1.
+
+\par
+For what concerns UC8 basically the idea is searching for the user SSN. If it is found it returns a bad request (i.i. this seems strange but it is the correct chainflow) with a specific message "Should send a request to the individual to access his data". Then it will send the request: to check if it works in the test and after it checks if the user received has a new pending request.
+The result of the test is correct, but the choice to use a bad request message as an answer to a correct operation is a bit strange. Also the exception 2 has been tested and it checks that an error message will be shown.
+
+\par
+UC9 Test on this use case is skipped.
+
+\par
+Instead UC32 and UC33 have not been implemented by the other team.
+
 
 \subsubsection{G3}
+The uses cases that concerns G3 are: UC6, UC7, UC11 and UC12.  \\
+As already mentions the first two use cases are just tested above during the test of G1.
+
+\par
+During the test of UC11 is impossible to understand when there is an error message. In fact by doing the manual test, even 3 blocks of anonymized data are returned and no error message is shown. This is in conflict with that is expressed in the description of the use case of the RASD document. For checking the creation of new data into the system just leave the server up. The more time the server is up, the more data there are (i.i. every minute new data arrives), therefore we just check if the response is OK.
+
+\par
+Since UC12 seems to equivalent to UC11, therefore results already checked.
+
 
 \subsubsection{G4}
+The uses cases that concerns G4 are: UC6, UC7, UC9, UC10, UC11, UC12, UC32, UC33 and UC34. \\
+
+UC6, UC7, UC9, UC11, UC12, UC33, UC32 already discussed above.
+
+\par 
+UC10 consists in the subscription to new user data by third party customer. This case has been tested with the website. The subscribe is done when a checkbox is crossed during the search of the bulk data. Here in this test of jmeter, the HTTP method of post subscriptions has been done without doing the search of bulk data. And then to check if it works, we went to the subscription of the third party and see if there is the one that has been inserted (by checking subscription id).
+
+\par 
+UC34 has not been implemented by the other team.
 
 \subsubsection{Other tests}
