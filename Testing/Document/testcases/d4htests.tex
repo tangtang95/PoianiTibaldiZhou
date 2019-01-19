@@ -1,0 +1,45 @@
+\subsection{Data for help tests}
+\subsubsection{G1}
+The uses cases that concerns G1 are: UC1, UC2, UC3, UC4, UC5, UC6, UC7 and UC9.  \\
+
+\par 
+For what concerns UC1, the successful case has been tested (no exception is present), by using some requirements that involves the
+third party registration and the possibility to send individual request. In particular, after having created a new third party customer,
+and a new user; a request from that customer to the user is made. The user retrieves the list of pending requests (that contains only that
+element) and approves and rejects it.
+
+\par 
+UC2 to be completed
+
+\par 
+UC3
+
+\par 
+UC4
+
+\par 
+UC5
+
+\par 
+UC6 involves the sign up of user and individual requests. The successful case has been tested and also the cases in which SSN and email
+are already present in the system. \\
+The result is the following: userId and accessToken returned by the server are correct. In particular, they have been used to check
+if the user was registered by performing an http request to retrieve the user's information.  \\
+The exception about checking if fields are empty or not has been skipped since this is something that is implemented correctly in the front
+end.
+
+\par 
+UC7 consists in logging users and third parties into the system. The normal event flow and the cases of wrong credential has been tested.
+The same check adopted in UC6 has been used here. \\ 
+The exception that involves missing password or email, has been skipped since this is something that is implemented correctly in the front 
+end.
+
+
+
+\subsubsection{G2}
+
+\subsubsection{G3}
+
+\subsubsection{G4}
+
+\subsubsection{Other tests}
