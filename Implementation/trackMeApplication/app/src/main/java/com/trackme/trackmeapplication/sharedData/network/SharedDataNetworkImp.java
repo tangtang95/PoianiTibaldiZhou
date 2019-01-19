@@ -163,6 +163,7 @@ public class SharedDataNetworkImp implements SharedDataNetworkInterface, LockInt
                 ConnectionBuilder connectionBuilder = new ConnectionBuilder(this);
                 ConnectionThread thread = connectionBuilder.setUrl(accessDataLink)
                         .setHttpMethod(HttpMethod.GET).setEntity(entity).getConnection();
+                thread.start();
                 while (connectionBuilder.getConnection().getStatusReturned() == null)
                     lock.wait();
                 if (connectionBuilder.getConnection().getStatusReturned() != HttpStatus.OK)
