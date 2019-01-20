@@ -1,23 +1,28 @@
 \subsection{Data for help tests}
-\subsubsection{G1}
-The uses cases that concerns G1 are: UC1, UC2, UC3, UC4, UC5, UC6, UC7 and UC9.  \\
+\subsubsection{Goal 1}
+Goal 1 is "The individual could allow (or refuse) Data4Help to use their data".
+The uses cases that concerns G1 are: UC1, UC2, UC3, UC4, UC5, UC6, UC7 and UC9. These have been retrieved by looking
+at the requirement traceability matrix in the RASD.  
 
 \begin{itemize}
-\item For what concerns UC1, the successful case has been tested (no exception is present), by using some requirements that involves the
+\item 
+UC1 regards the scenario in which a user accepts or refuses a request. \\
+The successful case has been tested (no exception is present), by using some requirements that involves the
 third party registration and the possibility to send individual request. In particular, after having created a new third party customer,
 and a new user; a request from that customer to the user is made. The user retrieves the list of pending requests (that contains only that
 element) and approves and rejects it.
 
-\item For testing UC2 a great number of third party customers has been created and registered: they all send a request to the same user.
+\item 
+UC2 involves the fact that a logged individual can access his pending requests. \\
+For testing it, a great number of third party customers has been created and registered: they all send a request to the same user.
 The user retrieves all the pending requests and a check on the number of pending request: the behaviour is correct.
 The exceptional case, requires the use of the front end: in particular, it is said that if no pending requests are available, then a message
 should been shown to the user: however, no message is displayed.
 
-\item UC3 TODO
-
-\item UC4 TODO
-
-\item The test of UC5 has been performed togheter with UC1: after that the request is approved, we have checked that in the subscriptions
+\item 
+UC3, UC4 and UC5 regards the acceptance and the refusing of requests. In particular, they are similar to UC1, except for the fact
+that they are analyzed from a third party customer point of view. For this reason, they have been tested togheter with UC1. 
+In particular, for UC5, for instance, after that the request is approved, we have checked that in the subscriptions
 of the third party there exists one on a SSN that is equal to the user that accepted the request.
 
 \item UC6 involves the sign up of user and individual requests. The successful case has been tested and also the cases in which SSN and email
@@ -33,19 +38,21 @@ The same check adopted in UC6 has been used here. \\
 The exception that involves missing password or email, has been skipped since this is something that is implemented correctly in the front 
 end.
 
-\item UC9 TODO
+\item UC9 regards the access to individual data.
+TODO
 
 \end{itemize}
 
 
-\subsubsection{G2}
-The uses cases that regards G2 are: UC6, UC7, UC8, UC9, UC32 and UC33.  \\
-
+\subsubsection{Goal 2}
+Goal 2 is : "the third-party company should be able to access data of a specific individual".
+The uses cases that regards G2 are: UC6, UC7, UC8, UC9, UC32 and UC33.  
 
 \begin{itemize}
-\item The first two use cases (i.e. UC6 and UC7) were already presented above, while discussing G1.
+\item UC6, UC7 and UC9 were already presented above, while discussing G1.
 
-\item To test UC8, basically, the idea is searching for the user SSN. 
+\item UC8 analyses the case in which a third party sends a request. \\
+To test it, basically, the idea is searching for the user SSN. 
 If it is found, it returns a bad request (i.e. this seems strange, but it is the correct chain-flow) with a specific message "Should send a
 request to the individual to access his data". This happens because the third party customer is not subscribed to the data of that user, and
 therefore a request has to be sent.
@@ -53,34 +60,34 @@ Thus, after that, a request is sent: to check if things work properly, we have t
 The result is correct.  \\
 The exceptions have been tested successfully. 
 
-\item UC9 TODO
-
-\item UC32 and UC33 have not been implemented by the other team. TODO COMMENT ON WHAT YOU GET
+\item UC32 and UC33 (TODO ? have not been implemented by the other team) 
 
 \end{itemize}
 
-\subsubsection{G3}
-The uses cases that involves G3 are: UC6, UC7, UC11 and UC12.  \\
+\subsubsection{Goal 3}
+Goal 3 is "the third-party company should be able to access anonymized data of groups
+of individuals under certain constraints".
+The uses cases that involves G3 are: UC6, UC7, UC11 and UC12.  
 
 \begin{itemize}
 \item 
 As already mentioned, the first two use cases are just tested above during the test of G1.
 
 \item 
-During the test of UC11 is impossible to understand when there is an error message. 
+UC11 and UC12 regards the access to bulk data.
+During the test of UC11 and UC12 is impossible to understand when there is an error message. 
 In fact by doing the manual test, even 3 blocks of anonymized data are returned and no error message is shown. 
-This is in conflict with what is expressed in the description of the use case of the RASD document. TODO \\
-
-TODO CHECK WHAT IS WRITTEN HERE: TOTALLY NO SENSE, USE SOME CONTEXT
-For checking the creation of new data into the system just leave the server up. 
-The more time the server is up, the more
-data there are (i.e. every minute new data arrives), therefore we just check if the response is OK.
-
-\item Since UC12 seems to equivalent to UC11, therefore the results are already discussed in the precedent point
+This is in conflict with what is expressed in the description of the use case of the RASD document. 
+Indeed, it is mentioned that "if there are less than 1000 individuals in the request of data, an error is returned":
+however, this does not happen. \\
+To test the normal flow, however, one should note that to have many data into the system, it is necessary to leave the server up: the more the time passes, the more the pieces of data available. In UC11, we test the response code of the HTTP request to access the bulk data: the
+behaviour is correct. This is due to the fact that there is no possibility of inserting data, and, therefore, it is not possible to know which and how many pieces of data are available, in order to do more specific controls. 
 
 \end{itemize}
 
-\subsubsection{G4}
+\subsubsection{Goal 4}
+Goal 4 is "the third-party company could subscribe to get new data related to specific
+individuals or previously saved search".
 The uses cases that concerns G4 are: UC6, UC7, UC9, UC10, UC11, UC12, UC32, UC33 and UC34. \\
 
 \begin{itemize}
@@ -94,7 +101,8 @@ While testing with JMeter, the search has been skipped and only an HTTP request 
 To check if things work properly, the subscriptions of that third party are retrieved: since the subscription id is present, the
 result is correct.
 
-\item UC31 has not been implemented by the other team. TODO DESCRIBE THE BEHAV.
+\item UC31 regards the sends of individual data. 
+(TODO not implemented?)
 
 \end{itemize}
 
