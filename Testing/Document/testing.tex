@@ -9,12 +9,12 @@ behave properly, also, in these conditions. \\
 Secondly, the website has been tested manually, by exploring the UI and its possibilities. \\
 
 The tests that regards the user cases have been performed with JMeter. The source code is present in the delivery folder. 
-Before starting the testing phase it is necessary to know the structure of the json files that are sent to the server. To do this you can use
-one of the JMeter features and create a Test Script Recorder. HTTP(S) Test Script Recorder can be used to record all the requests which web
-application is making to server. As the name suggests, it will capture only the HTTP(s) requests. It can also use grouping option in this
+Before starting the testing phase it is necessary to know the structure of the JSON files that are sent to the server. To do this we used
+one of the JMeter feature: HTTP(S) Test Script Recorder which can be used to record all the requests a web
+application is making to the server. As the name suggests, it will capture only the HTTP(s) requests. To make it work, it is necessary to set a Web Proxy on the browser to localhost:port (e.g. 8888 the standard port of the Test Script Recorder) and start the recording. It can also use grouping option in this
 recorder to organize the requests in such a way that similar requests are stored together.(i.e. in the source code, in Thread group section
-all the message are stored) Add URL patterns in include and exclude list as per your requirement. In such way is possible to know how are
-structured the request and then is possible to create some one of new for testing.
+all the message are stored) Add URL patterns in include and exclude list as per your requirement. In such way it is possible to know how are
+structured the request and then it is possible to create the acceptance testing for the project.
 
 \par
 The cases are presented in the next two subsections, each of which first exposes the
