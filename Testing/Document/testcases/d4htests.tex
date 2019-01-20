@@ -80,8 +80,10 @@ In fact by doing the manual test, even 3 blocks of anonymized data are returned 
 This is in conflict with what is expressed in the description of the use case of the RASD document. 
 Indeed, it is mentioned that "if there are less than 1000 individuals in the request of data, an error is returned":
 however, this does not happen. \\
-To test the normal flow, however, one should note that to have many data into the system, it is necessary to leave the server up: the more the time passes, the more the pieces of data available. In UC11, we test the response code of the HTTP request to access the bulk data: the
-behaviour is correct. This is due to the fact that there is no possibility of inserting data, and, therefore, it is not possible to know which and how many pieces of data are available, in order to do more specific controls. 
+To test the normal flow, however, one should note that to have many data into the system, it is necessary to leave the server up: the more the
+time passes, the more the pieces of data available. In UC11, we test the response code of the HTTP request to access the bulk data: the
+behaviour is correct. This is due to the fact that there is no possibility of inserting data, and, therefore, it is not possible to know which
+and how many pieces of data are available, in order to do more specific controls. 
 
 \end{itemize}
 
@@ -107,9 +109,14 @@ result is correct.
 \end{itemize}
 
 \subsubsection{Other tests}
-Manual testing on user interface.
-\\
-Once the application is installed, it is possible to test the correct functioning of the graphic interface. The site appears to be well structured in its parts and graphically pleasing. The test has found some graphic bugs
-that do not affect the correct achievement of goals. The operations that a user can do on the site are all fairly clear and easy to understand, sign of a correct structuring of the user interface.
-The only operation not explained is the registration of the Third party, where it is required to enter a certificate, without explaining what it is.
-The test consists in the registration of different users in different age groups, this allows to see if automatedSOS is activated correctly only by users aged over 60 years. Then the test proceeds with the registration of Third party customer which send to the users previously created individual requests and group requests. Finally, back to the user profiles it checks that the requests have arrived and that the user can refuse or accept the requests received.
+As already mentioned, some other tests have been done, manual, by exploring the UI. \\ 
+Indeed, once the application is installed, it is possible to test the correct functioning of the graphic interface. 
+The site appears to be well structured in its parts and graphically pleasing. 
+The test has found some graphic bugs that do not affect the correct achievement of goals. 
+The operations that a user can do on the site are all fairly clear and easy to understand, sign of a correct structuring of the user
+interface.
+The only operation not explained is the registration of the Third party, where it is required to enter a certificate, without explaining what
+it is. \\
+We have performed some tests that regards the registration of third party customer, that sends to the users previously
+created individual requests and group requests. Finally, back to the user profiles, we have checked that the requests have arrived and that
+the user can refuse or accept the requests received.
