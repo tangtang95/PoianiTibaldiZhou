@@ -10,7 +10,8 @@ element) and approves and rejects it.
 
 \item For testing UC2 a great number of third party customers has been created and registered: they all send a request to the same user.
 The user retrieves all the pending requests and a check on the number of pending request: the behaviour is correct.
-The exceptional case, requires the use of the front end: TODO
+The exceptional case, requires the use of the front end: in particular, it is said that if no pending requests are available, then a message
+should been shown to the user: however, no message is displayed.
 
 \item UC3 TODO
 
@@ -45,12 +46,12 @@ The uses cases that regards G2 are: UC6, UC7, UC8, UC9, UC32 and UC33.  \\
 \item The first two use cases (i.e. UC6 and UC7) were already presented above, while discussing G1.
 
 \item To test UC8, basically, the idea is searching for the user SSN. 
-If it is found it returns a bad request (i.e. this seems strange, but it is the correct chain-flow) with a specific message "Should send a
-request to the individual to access his data". TODO COMMENT MORE ON THIS BEHAV.
-After that, a request is sent: to check if things work properly, we have to be sure that the user has received a new pending request. 
-The result is correct, but a the status of the HTTP request is 400 (i.e. bad request): in our opinion, this is not very good.  \\
+If it is found, it returns a bad request (i.e. this seems strange, but it is the correct chain-flow) with a specific message "Should send a
+request to the individual to access his data". This happens because the third party customer is not subscribed to the data of that user, and
+therefore a request has to be sent.
+Thus, after that, a request is sent: to check if things work properly, we have to be sure that the user has received a new pending request. 
+The result is correct.  \\
 The exceptions have been tested successfully. 
-TODO CHECK IF WHAT WRITTEN IS CORRECT
 
 \item UC9 TODO
 
@@ -68,7 +69,7 @@ As already mentioned, the first two use cases are just tested above during the t
 \item 
 During the test of UC11 is impossible to understand when there is an error message. 
 In fact by doing the manual test, even 3 blocks of anonymized data are returned and no error message is shown. 
-This is in conflict with what is expressed in the description of the use case of the RASD document. \\
+This is in conflict with what is expressed in the description of the use case of the RASD document. TODO \\
 
 TODO CHECK WHAT IS WRITTEN HERE: TOTALLY NO SENSE, USE SOME CONTEXT
 For checking the creation of new data into the system just leave the server up. 
