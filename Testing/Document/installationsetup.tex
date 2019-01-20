@@ -5,3 +5,17 @@ Furthermore, one may notice that having performed this initial release with dock
 install a virtual machine with an operative system that supports docker. However, this is considered to be reasonable, but some comments
 on this not-so-exceptional case would have been welcome. \\
 However, the docker environment allows to setup the whole system really fast, and without any problem encountered. 
+
+\subsection{Setup acceptance testing}
+The requirement to launch the JMeter acceptance testing are:
+\begin{enumerate}
+\item The server of the other team running: needs Docker and Docker Compose
+\item JMeter
+\end{enumerate}
+For each test inside the DeliveryFolder/tests we open it on JMeter:
+\begin{enumerate}
+\item After opening JMeter GUI we can run the tests by clicking the green "play" button at the top bar.
+\item To see the results, you need to check for each Thread Group the View Results Tree and Assertion Results listeners.
+\item From the View Results you can see the response and request of each HTTP requests inside that Thread Group while for the Assertion Results you can just see if there is an error in the assertions done. You should not find any error in Assertion Results. But in View Results there could be some red requests because the response code is different from 20X.
+\end{enumerate}
+It is important to note that all JMeter testing uses an UUID for creating users or third parties to have a random ssn or taxCode. In such a way the JMeter test can be repeated every time without resetting the server. It is very unlikely that an UUID generated equal to a previous one.  
