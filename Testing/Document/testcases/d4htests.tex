@@ -23,12 +23,12 @@ element) and approves/rejects it.
 \item 
 UC2 involves the fact that a logged individual can access his pending requests. \\
 For testing it, a great number of third party customers has been registered: they all send a request to the same user.
-The user retrieves all the pending requests and a check on the number of pending request: the behaviour is correct.
+The user retrieves all the pending requests and a check on the number of pending request is performed: the behaviour is correct.
 The exceptional case, requires the use of the front end: in particular, it is said that if no pending requests are available, then a message
 should been shown to the user: however, no message is displayed.
 
 \item 
-UC3 and UC4 regards sending notification to the third party when a user approve or reject an individual request. By recording the HTTP Request after changing a request to approved or rejected, this does not invoke any HTTP request. Therefore, we suppose that they are not working properly and because it cannot be further tested.
+UC3 and UC4 regards sending notification to the third party when a user approve or reject an individual request. By recording the HTTP Request after changing a request to approved or rejected, this does not invoke any HTTP request. Therefore, we suppose that they are not working properly since it is not testable.
 
 \item 
 UC5 regards the acceptance and the refusing of requests. In particular, they are similar to UC1, except for the fact
@@ -71,12 +71,12 @@ The uses cases that regards G2 are: UC6, UC7, UC8, UC9, UC32 and UC33.
 
 \item UC8 analyses the case in which a third party sends a request. \\
 To test it, basically, the idea is searching for the user SSN. 
-If it is found, it returns a bad request (i.e. this seems strange, but it is the correct chain-flow) with a specific message "Should send a
+If it is found, it returns a bad request (this seems strange, but it is the correct chain-flow) with a specific message "Should send a
 request to the individual to access his data". This happens because the third party customer is not subscribed to the data of that user, and
 therefore a request has to be sent.
 Thus, after that, it is possible to send a request: to check if things work properly, we have to be sure that the user has received a new pending request. In the end  the result is correct and the exceptions have been tested successfully. 
 
-\item UC32 and UC33 regards the receive of notification of approved/rejected individual requests by third party or AutomatedSOS. For the same reason of UC3 and UC4, they are not working properly for us since not testable.
+\item UC32 and UC33 regards the receive of notification of approved/rejected individual requests by third party or AutomatedSOS. For the same reason of UC3 and UC4, they are not working properly for us since they are not testable.
 
 \end{itemize}
 
